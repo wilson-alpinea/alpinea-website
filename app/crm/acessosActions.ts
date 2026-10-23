@@ -10,7 +10,8 @@ import { SLUG_PARCEIRO, isPapelCrm } from "@/lib/crm/unidades";
 // empreiteiras, usuários e vagas de cada empreiteira. Só admin. Usa service
 // role porque mexe em auth.users e em perfis.
 
-export type ResultadoAcesso = { ok: boolean; mensagem: string; senha?: string; email?: string };
+// `campo` indica qual campo do formulário mostra o erro (Acessos, 23/out/2026).
+export type ResultadoAcesso = { ok: boolean; mensagem: string; senha?: string; email?: string; campo?: string };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -40,38 +41,81 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   await garantirAdmin();
   const nome = String(formData.get("nome") || "").trim().slice(0, 120);
   const tipo = String(formData.get("tipo") || "");
-  if (nome.length < 2) return { ok: false, mensagem: "Informe o nome." };
-  if (tipo !== "agencia" && tipo !== "empreiteira") return { ok: false, mensagem: "Escolha o tipo." };
-  let slug = slugDe(String(formData.get("slug") || "") || nome);
-  if (!SLUG_PARCEIRO.test(slug)) return { ok: false, mensagem: "Código do link inválido (use letras, números e hífen)." };
+  if (nome.length < 2) return { ok: false, mensagem: "Informe o nome da empresa.", campo: "nome" };
+  if (tipo !== "agencia" && tipo !== "empreiteira") return { ok: false, mensagem: "Escolha o tipo.", campo: "tipo" };
+  // Código personalizado: valida como está (sem "consertar" em silêncio).
+  // Código automático: vem do nome e ganha um sufixo se já existir.
+  const slugInformado = String(formData.get("slug") || "").trim().toLowerCase();
+  let slug = slugInformado || slugDe(nome);
+  if (!SLUG_PARCEIRO.test(slug)) {
+    return { ok: false, mensagem: "Use só letras minúsculas, números e hífen (sem acentos ou espaços), até 40 caracteres.", campo: "slug" };
+  }
 
   const admin = createAdminClient();
   const { data: existe } = await admin.from("parceiros").select("id").eq("slug", slug).maybeSingle();
-  if (existe) slug = `${slug.slice(0, 34)}-${randomBytes(2).toString("hex")}`;
+  if (existe) {
+    if (slugInformado) return { ok: false, mensagem: "Esse código já está em uso por outra empresa.", campo: "slug" };
+    slug = `${slug.slice(0, 34)}-${randomBytes(2).toString("hex")}`;
+  }
   const { error } = await admin.from("parceiros").insert({ nome, tipo, slug });
   if (error) {
     console.error("Erro ao criar parceiro:", error);
     return { ok: false, mensagem: "Não foi possível salvar." };
   }
   revalidar();
-  return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : "Empreiteira"} "${nome}" cadastrado.` };
+  return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : "Empreiteira"} "${nome}" cadastrado${tipo === "agencia" ? ` · código ${slug}` : ""}.` };
 }
 
-export async function alternarParceiroAtivo(parceiroId: string, ativo: boolean) {
+// Editar empresa: nome e (em opções avançadas) o código do link. O tipo não
+// muda depois de criado — os usuários vinculados dependem dele. Mudar o nome
+// NÃO mexe no código.
+export async function editarParceiro(_: ResultadoAcesso | null, formData: FormData): Promise<ResultadoAcesso> {
   await garantirAdmin();
-  if (!UUID.test(parceiroId)) return;
-  const { error } = await createAdminClient().from("parceiros").update({ ativo }).eq("id", parceiroId);
-  if (error) console.error("Erro ao alterar parceiro:", error);
+  const id = String(formData.get("id") || "");
+  if (!UUID.test(id)) return { ok: false, mensagem: "Empresa inválida." };
+  const nome = String(formData.get("nome") || "").trim().slice(0, 120);
+  if (nome.length < 2) return { ok: false, mensagem: "Informe o nome da empresa.", campo: "nome" };
+  const admin = createAdminClient();
+  const { data: atual } = await admin.from("parceiros").select("id, slug, tipo").eq("id", id).maybeSingle();
+  if (!atual) return { ok: false, mensagem: "Empresa não encontrada." };
+  const update: Record<string, string> = { nome };
+  const slugNovo = String(formData.get("slug") || "").trim().toLowerCase();
+  if (atual.tipo === "agencia" && slugNovo && slugNovo !== atual.slug) {
+    if (!SLUG_PARCEIRO.test(slugNovo)) {
+      return { ok: false, mensagem: "Use só letras minúsculas, números e hífen (sem acentos ou espaços), até 40 caracteres.", campo: "slug" };
+    }
+    const { data: existe } = await admin.from("parceiros").select("id").eq("slug", slugNovo).neq("id", id).maybeSingle();
+    if (existe) return { ok: false, mensagem: "Esse código já está em uso por outra empresa.", campo: "slug" };
+    update.slug = slugNovo;
+  }
+  const { error } = await admin.from("parceiros").update(update).eq("id", id);
+  if (error) {
+    console.error("Erro ao editar parceiro:", error);
+    return { ok: false, mensagem: "Não foi possível salvar." };
+  }
   revalidar();
+  return { ok: true, mensagem: "Empresa atualizada." };
+}
+
+export async function alternarParceiroAtivo(parceiroId: string, ativo: boolean): Promise<ResultadoAcesso> {
+  await garantirAdmin();
+  if (!UUID.test(parceiroId)) return { ok: false, mensagem: "Empresa inválida." };
+  const { error } = await createAdminClient().from("parceiros").update({ ativo }).eq("id", parceiroId);
+  if (error) {
+    console.error("Erro ao alterar parceiro:", error);
+    return { ok: false, mensagem: "Não foi possível alterar a situação." };
+  }
+  revalidar();
+  return { ok: true, mensagem: ativo ? "Empresa reativada." : "Empresa desativada." };
 }
 
 function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<string, string>) {
   const papel = papelBruto === "sem_acesso" ? null : isPapelCrm(papelBruto) ? papelBruto : undefined;
-  if (papel === undefined) return { erro: "Escolha o tipo de acesso." } as const;
+  if (papel === undefined) return { erro: "Escolha o perfil de acesso.", campo: "papel" } as const;
   if (papel === "admin" || papel === null) return { papel, parceiroId: null } as const;
   const esperado = papel === "parceiro_agencia" ? "agencia" : "empreiteira";
   if (!UUID.test(parceiroBruto) || tipos.get(parceiroBruto) !== esperado) {
-    return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro da agência." : "Escolha a empreiteira." } as const;
+    return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro da agência." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;
   }
   return { papel, parceiroId: parceiroBruto } as const;
 }
@@ -85,9 +129,9 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
   await garantirAdmin();
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const nome = String(formData.get("nome") || "").trim().slice(0, 120);
-  if (!/^\S+@\S+\.\S+$/.test(email)) return { ok: false, mensagem: "E-mail inválido." };
+  if (!/^\S+@\S+\.\S+$/.test(email)) return { ok: false, mensagem: "Informe um e-mail válido.", campo: "email" };
   const v = validarPapel(String(formData.get("papel") || ""), String(formData.get("parceiro_id") || ""), await tiposParceiros());
-  if ("erro" in v) return { ok: false, mensagem: v.erro! };
+  if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
 
   const admin = createAdminClient();
   const senha = gerarSenha();
@@ -99,7 +143,11 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
   });
   if (error || !data.user) {
     const jaExiste = /already|registered|exists/i.test(error?.message ?? "");
-    return { ok: false, mensagem: jaExiste ? "Já existe um usuário com esse e-mail — altere o acesso dele na lista abaixo." : "Não foi possível criar o usuário." };
+    return {
+      ok: false,
+      mensagem: jaExiste ? "Já existe um usuário com esse e-mail. Use “Editar acesso” na lista." : "Não foi possível criar o usuário.",
+      campo: jaExiste ? "email" : undefined,
+    };
   }
   const { error: erroPerfil } = await admin
     .from("perfis")
@@ -109,7 +157,7 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
     return { ok: false, mensagem: "Usuário criado, mas não foi possível definir o acesso. Ajuste na lista abaixo." };
   }
   revalidar();
-  return { ok: true, mensagem: "Usuário criado. Envie o e-mail e a senha abaixo para a pessoa — a senha não aparece de novo.", senha, email };
+  return { ok: true, mensagem: "Usuário criado. Envie o e-mail e a senha para a pessoa — a senha não aparece de novo.", senha, email };
 }
 
 export async function alterarAcessoUsuario(_: ResultadoAcesso | null, formData: FormData): Promise<ResultadoAcesso> {
@@ -118,8 +166,11 @@ export async function alterarAcessoUsuario(_: ResultadoAcesso | null, formData: 
   if (!UUID.test(userId)) return { ok: false, mensagem: "Usuário inválido." };
   if (userId === acesso.userId) return { ok: false, mensagem: "Você não pode alterar o seu próprio acesso." };
   const v = validarPapel(String(formData.get("papel") || ""), String(formData.get("parceiro_id") || ""), await tiposParceiros());
-  if ("erro" in v) return { ok: false, mensagem: v.erro! };
-  const { error } = await createAdminClient().from("perfis").update({ papel: v.papel, parceiro_id: v.parceiroId }).eq("id", userId);
+  if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
+  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId };
+  const nome = String(formData.get("nome") ?? "").trim().slice(0, 120);
+  if (nome) update.nome = nome;
+  const { error } = await createAdminClient().from("perfis").update(update).eq("id", userId);
   if (error) {
     console.error("Erro ao alterar acesso:", error);
     return { ok: false, mensagem: "Não foi possível salvar." };

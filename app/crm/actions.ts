@@ -10,7 +10,6 @@ import { isEstagioEntrega, ESTAGIO_ENTREGA_LABEL } from "@/lib/crm/estagiosEntre
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 import { isTipoArquivo, TIPO_ARQUIVO_LABEL } from "@/lib/crm/arquivos";
-import { isCategoriaFornecedor } from "@/lib/crm/fornecedores";
 import { lerAndamentoManual, isEtapaManual } from "@/lib/crm/andamentoManual";
 
 export async function logout() {
@@ -426,69 +425,7 @@ export async function deleteClientes(ids: string[]) {
 // Fornecedores
 // ---------------------------------------------------------------
 
-function categoriaFornecedorOuNull(valor: FormDataEntryValue | null) {
-  const texto = String(valor ?? "").trim();
-  return isCategoriaFornecedor(texto) ? texto : null;
-}
-
-export async function createFornecedor(formData: FormData) {
-  await garantirAdmin();
-  const nome = String(formData.get("nome") || "").trim();
-  if (!nome) {
-    redirect("/crm/fornecedores/novo?erro=1");
-  }
-
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("fornecedores")
-    .insert({
-      nome,
-      categoria: categoriaFornecedorOuNull(formData.get("categoria")),
-      contato_nome: textoOuNull(formData.get("contato_nome")),
-      email: textoOuNull(formData.get("email")),
-      telefone: textoOuNull(formData.get("telefone")),
-      cidade: textoOuNull(formData.get("cidade")),
-      observacoes: textoOuNull(formData.get("observacoes")),
-    })
-    .select("id")
-    .single();
-
-  if (error || !data) {
-    console.error("Erro ao criar fornecedor:", error);
-    redirect("/crm/fornecedores/novo?erro=1");
-  }
-
-  revalidatePath("/crm/fornecedores");
-  redirect(`/crm/fornecedores/${data.id}`);
-}
-
-export async function updateFornecedor(fornecedorId: string, formData: FormData) {
-  await garantirAdmin();
-  const nome = String(formData.get("nome") || "").trim();
-
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("fornecedores")
-    .update({
-      nome: nome || undefined,
-      categoria: categoriaFornecedorOuNull(formData.get("categoria")),
-      contato_nome: textoOuNull(formData.get("contato_nome")),
-      email: textoOuNull(formData.get("email")),
-      telefone: textoOuNull(formData.get("telefone")),
-      cidade: textoOuNull(formData.get("cidade")),
-      observacoes: textoOuNull(formData.get("observacoes")),
-    })
-    .eq("id", fornecedorId);
-
-  if (error) {
-    console.error("Erro ao atualizar fornecedor:", error);
-    redirect(`/crm/fornecedores/${fornecedorId}?erro=1`);
-  }
-
-  revalidatePath(`/crm/fornecedores/${fornecedorId}`);
-  revalidatePath("/crm/fornecedores");
-  redirect(`/crm/fornecedores/${fornecedorId}`);
-}
+// Criar/editar fornecedor: app/crm/fornecedoresActions.ts (salvarFornecedor).
 
 export async function deleteFornecedores(ids: string[]) {
   await garantirAdmin();

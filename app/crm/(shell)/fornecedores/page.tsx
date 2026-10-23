@@ -1,8 +1,8 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { CATEGORIAS_FORNECEDOR } from "@/lib/crm/fornecedores";
-import { FornecedoresTable } from "./FornecedoresTable";
+import type { Fornecedor } from "@/lib/crm/types";
+import { ListaFornecedores } from "./ListaFornecedores";
 
 export const metadata: Metadata = {
   title: "Fornecedores — CRM Alpinea",
@@ -11,100 +11,15 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function FornecedoresPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; categoria?: string }>;
-}) {
-  const params = await searchParams;
-  const busca = (params.q ?? "").trim();
-  const categoriaFiltro = params.categoria ?? "";
-
+// Fornecedores (redesenho 23/out/2026): o servidor entrega a base inteira;
+// busca, filtros, ordenação e paginação acontecem na tela e ficam na URL.
+export default async function FornecedoresPage() {
   const supabase = await createClient();
-
-  let query = supabase
-    .from("fornecedores")
-    .select("id, nome, categoria, cidade, telefone, email, created_at")
-    .order("created_at", { ascending: false });
-
-  if (busca) {
-    query = query.or(`nome.ilike.%${busca}%,email.ilike.%${busca}%,telefone.ilike.%${busca}%`);
-  }
-  if (categoriaFiltro) {
-    query = query.eq("categoria", categoriaFiltro);
-  }
-
-  const { data: fornecedores, error } = await query;
+  const { data, error } = await supabase.from("fornecedores").select("*").order("nome");
   if (error) console.error("Erro ao carregar fornecedores:", error);
-
-  const lista = fornecedores ?? [];
-
   return (
-    <div>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="mb-2 text-[13px] text-[#626B75]">
-            {lista.length} {lista.length === 1 ? "fornecedor" : "fornecedores"}
-          </p>
-          <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
-            Fornecedores
-          </h1>
-        </div>
-        <Link
-          href="/crm/fornecedores/novo"
-          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
-        >
-          + Novo fornecedor
-        </Link>
-      </div>
-
-      <form className="mt-8 flex flex-wrap gap-3" method="get">
-        <input
-          type="text"
-          name="q"
-          defaultValue={busca}
-          placeholder="Buscar por nome, e-mail ou telefone…"
-          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
-        />
-        <select
-          name="categoria"
-          defaultValue={categoriaFiltro}
-          className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
-        >
-          <option value="">Todas as categorias</option>
-          {CATEGORIAS_FORNECEDOR.map((c) => (
-            <option key={c.valor} value={c.valor}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="rounded-xl border border-black/10 bg-white px-5 py-2.5 text-sm text-[#20252B] transition hover:border-[#1C3A5E]/40 hover:text-[#1C3A5E]"
-        >
-          Filtrar
-        </button>
-        {(busca || categoriaFiltro) && (
-          <Link
-            href="/crm/fornecedores"
-            className="rounded-xl px-5 py-2.5 text-sm text-[#626B75] transition hover:text-[#20252B]"
-          >
-            Limpar
-          </Link>
-        )}
-      </form>
-
-      <div className="mt-8">
-        {lista.length === 0 ? (
-          <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
-            <p className="p-8 text-center text-sm text-[#626B75]">
-              Nenhum fornecedor encontrado.
-            </p>
-          </div>
-        ) : (
-          <FornecedoresTable fornecedores={lista} />
-        )}
-      </div>
-    </div>
+    <Suspense fallback={null}>
+      <ListaFornecedores fornecedores={(data ?? []) as Fornecedor[]} erro={!!error} />
+    </Suspense>
   );
 }
