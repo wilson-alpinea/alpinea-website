@@ -58,12 +58,18 @@ export default async function CrmShellLayout({
           </div>
 
           <div className="flex shrink-0 items-center gap-4">
-            {/* Trocar para o outro CRM (Wilson, 21/out/2026). */}
+            {/* Trocar para o outro CRM (Wilson, 21/out/2026). Mais visível, na cor
+                da unidade de destino e sem a seta (Wilson, 22/out/2026). */}
             <a
               href={urlUnidade(unidade === "empregos" ? "agencia" : "empregos")}
-              className="hidden whitespace-nowrap text-[13px] text-white/45 underline-offset-4 transition hover:text-white hover:underline lg:inline"
+              className={`hidden items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-medium text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:inline-flex ${
+                unidade === "empregos" ? "bg-[#24476B] hover:bg-[#2C5480]" : "bg-[#28665D] hover:bg-[#307A6F]"
+              }`}
             >
-              CRM {unidade === "empregos" ? "Agência" : "Empregos"} →
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 7h11l-3-3M17 17H6l3 3" />
+              </svg>
+              CRM {unidade === "empregos" ? "Agência" : "Empregos"}
             </a>
             <span className="hidden text-[13px] text-white/35 xl:inline">
               {nomeExibicao}
