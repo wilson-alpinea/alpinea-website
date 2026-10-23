@@ -90,6 +90,11 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
         <Indicadores dados={dados} />
       </Suspense>
 
+      {/* Resultados do período logo abaixo dos indicadores (Wilson, 22/out/2026). */}
+      <Suspense fallback={<Esqueleto altura="h-80" />}>
+        <Resultados dados={dados} params={params} />
+      </Suspense>
+
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <Suspense fallback={<Esqueleto altura="h-72" />}>
@@ -121,9 +126,6 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
         </Suspense>
       </div>
 
-      <Suspense fallback={<Esqueleto altura="h-80" />}>
-        <Resultados dados={dados} params={params} />
-      </Suspense>
     </div>
   );
 }
