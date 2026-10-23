@@ -109,3 +109,24 @@
 .crm-ui :is(.font-thin, .font-extralight, .font-light) {
   font-weight: 400;
 }
+
+/*
+ * Tema do CRM de Empregos (Wilson, 23/out/2026) — verde-petróleo como cor
+ * principal. Remapeia as cores compartilhadas (azul da Agência, cinzas de
+ * texto e bordas) quando a página é da unidade Empregos. Cores definidas por
+ * estilo inline (ex.: botão "CRM Agência") não são afetadas.
+ */
+.crm-ui [data-unidade="empregos"].crm-pagina,
+.crm-ui [data-unidade="empregos"] .bg-\[\#FAF9F6\] {
+  background-color: #f8faf9;
+}
+.crm-ui [data-unidade="empregos"] .text-\[\#20252B\] { color: #202b28; }
+.crm-ui [data-unidade="empregos"] .text-\[\#626B75\] { color: #626e69; }
+.crm-ui [data-unidade="empregos"] :is(.border-\[\#E4E7EB\], .border-\[\#E6E9ED\], .border-\[\#D5DAE0\]) { border-color: #dee6e2; }
+.crm-ui [data-unidade="empregos"] :is(.bg-\[\#24476B\], .bg-\[\#1C3A5E\]) { background-color: #27675b; }
+.crm-ui [data-unidade="empregos"] :is(.hover\:bg-\[\#2C5480\], .hover\:bg-\[\#254a73\], .hover\:bg-\[\#1C3A5E\]\/90):hover { background-color: #20564c; }
+.crm-ui [data-unidade="empregos"] :is(.text-\[\#24476B\], .text-\[\#1C3A5E\]) { color: #27675b; }
+.crm-ui [data-unidade="empregos"] :is(.border-\[\#24476B\], .border-\[\#1C3A5E\]) { border-color: #27675b; }
+.crm-ui [data-unidade="empregos"] :is(.bg-\[\#EAF1F8\], .bg-\[\#F2F6FC\]) { background-color: #eef6f3; }
+.crm-ui [data-unidade="empregos"] :is(.accent-\[\#24476B\], .accent-\[\#1C3A5E\]) { accent-color: #27675b; }
+.crm-ui [data-unidade="empregos"] :is(input, select, textarea):focus { border-color: #27675b; }

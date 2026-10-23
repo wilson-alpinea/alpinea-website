@@ -496,118 +496,14 @@ export async function liberarFichaCandidatura(candidaturaId: string, liberar: bo
   redirect(`/crm/empregos/${candidaturaId}?salvo=1`);
 }
 
-// ── Agenda da pré-entrevista (etapa 4) — /crm/empregos/agenda ─────────
-// Wilson, 06/out/2026: "criar uma página para que nós possamos colocar as
-// restrições de horário, aí o cliente pode escolher a data baseada nesse
-// calendário".
-const HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
-const voltarAgenda = (erro?: string) =>
-  redirect(`/crm/empregos/agenda${erro ? `?erro=${encodeURIComponent(erro)}` : "?salvo=1"}`);
-
-export async function salvarConfigAgenda(formData: FormData) {
-  await garantirAdmin();
-  const supabase = await createClient();
-  const num = (k: string, min: number, max: number, padrao: number) => {
-    const n = Math.round(Number(formData.get(k)));
-    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : padrao;
-  };
-  const link = String(formData.get("link_reuniao") ?? "").trim();
-  const { error } = await supabase.from("entrevista_config").upsert({
-    id: 1,
-    duracao_min: num("duracao_min", 10, 180, 30),
-    intervalo_min: num("intervalo_min", 0, 120, 0),
-    antecedencia_horas: num("antecedencia_horas", 0, 720, 24),
-    horizonte_dias: num("horizonte_dias", 1, 120, 21),
-    vagas_por_horario: num("vagas_por_horario", 1, 20, 1),
-    link_reuniao: /^https?:\/\//.test(link) ? link : null,
-    updated_at: new Date().toISOString(),
-  });
-  if (error) {
-    console.error("Erro ao salvar config da agenda:", error);
-    voltarAgenda("Não foi possível salvar. A migração 017 já rodou?");
-  }
-  revalidatePath("/crm/empregos/agenda");
-  voltarAgenda();
-}
-
-export async function adicionarJanelaAgenda(formData: FormData) {
-  await garantirAdmin();
-  const supabase = await createClient();
-  const dias = formData.getAll("dia_semana").map(Number).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
-  const inicio = String(formData.get("inicio") ?? "");
-  const fim = String(formData.get("fim") ?? "");
-  if (!dias.length || !HORA.test(inicio) || !HORA.test(fim) || fim <= inicio) voltarAgenda("Escolha os dias e um horário válido (fim depois do início).");
-  const { error } = await supabase.from("entrevista_janelas").insert(dias.map((d) => ({ dia_semana: d, inicio, fim })));
-  if (error) {
-    console.error("Erro ao adicionar janela:", error);
-    voltarAgenda("Não foi possível adicionar.");
-  }
-  revalidatePath("/crm/empregos/agenda");
-  voltarAgenda();
-}
-
-export async function removerJanelaAgenda(id: string) {
-  await garantirAdmin();
-  const supabase = await createClient();
-  await supabase.from("entrevista_janelas").delete().eq("id", id);
-  revalidatePath("/crm/empregos/agenda");
-  voltarAgenda();
-}
-
-export async function adicionarBloqueioAgenda(formData: FormData) {
-  await garantirAdmin();
-  const supabase = await createClient();
-  const dataIni = String(formData.get("data") ?? "");
-  const dataFim = String(formData.get("data_fim") ?? "") || dataIni;
-  const diaInteiro = formData.get("dia_inteiro") === "on";
-  const inicio = diaInteiro ? null : String(formData.get("inicio") ?? "");
-  const fim = diaInteiro ? null : String(formData.get("fim") ?? "");
-  const motivo = String(formData.get("motivo") ?? "").trim().slice(0, 200) || null;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dataIni) || dataFim < dataIni) voltarAgenda("Data inválida.");
-  if (!diaInteiro && (!HORA.test(inicio ?? "") || !HORA.test(fim ?? "") || (fim ?? "") <= (inicio ?? ""))) voltarAgenda("Horário do bloqueio inválido.");
-  // Período de vários dias vira uma linha por dia (máx. 90).
-  const linhas = [];
-  for (let d = new Date(`${dataIni}T12:00:00Z`), i = 0; d.toISOString().slice(0, 10) <= dataFim && i < 90; d.setUTCDate(d.getUTCDate() + 1), i++) {
-    linhas.push({ data: d.toISOString().slice(0, 10), inicio, fim, motivo });
-  }
-  const { error } = await supabase.from("entrevista_bloqueios").insert(linhas);
-  if (error) {
-    console.error("Erro ao adicionar bloqueio:", error);
-    voltarAgenda("Não foi possível adicionar o bloqueio.");
-  }
-  revalidatePath("/crm/empregos/agenda");
-  voltarAgenda();
-}
-
-export async function removerBloqueioAgenda(id: string) {
-  await garantirAdmin();
-  const supabase = await createClient();
-  await supabase.from("entrevista_bloqueios").delete().eq("id", id);
-  revalidatePath("/crm/empregos/agenda");
-  voltarAgenda();
-}
-
-export async function atualizarStatusEntrevista(id: string, formData: FormData) {
-  await garantirAdmin();
-  const status = String(formData.get("status") ?? "");
-  if (!["agendada", "cancelada", "realizada", "faltou"].includes(status)) voltarAgenda("Status inválido.");
-  const supabase = await createClient();
-  const { error } = await supabase.from("entrevistas_agendadas").update({ status }).eq("id", id);
-  if (error) {
-    console.error("Erro ao atualizar entrevista:", error);
-    voltarAgenda("Não foi possível atualizar (horário já ocupado?).");
-  }
-  revalidatePath("/crm/empregos/agenda");
-  revalidatePath("/crm/empregos");
-  voltarAgenda();
-}
+// Agenda da pré-entrevista: app/crm/agendaActions.ts (redesenho 23/out/2026).
 
 // ── Vagas no site — /crm/empregos/vagas (Wilson, 07/out/2026: "link
 // interno onde conseguimos rapidamente ativar e desativar as vagas vendo
 // elas no formato de lista tick box"). Grava em public.vagas_status
 // (migração 018) e revalida as páginas públicas de /empregos. Devolve erro
 // em vez de redirecionar porque a lista salva cada checkbox na hora. ──
-export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Promise<{ ok: true } | { ok: false; erro: string }> {
+export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Promise<{ ok: true; alteradas: number; ignoradas: number } | { ok: false; erro: string }> {
   await garantirAdmin();
   const { VAGAS } = await import("@/app/lib/vagasCatalogo");
   const validos = new Set(VAGAS.map((v) => v.id));
@@ -630,7 +526,8 @@ export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Pro
   }
   revalidatePath("/empregos", "layout");
   revalidatePath("/crm/empregos/vagas");
-  return { ok: true };
+  // Uma única gravação (upsert): ou todas as vagas mudam, ou nenhuma.
+  return { ok: true, alteradas: ids.length, ignoradas: vagaIds.length - ids.length };
 }
 
 // ── Andamento manual da candidatura (Wilson, 15/out/2026) ─────────────

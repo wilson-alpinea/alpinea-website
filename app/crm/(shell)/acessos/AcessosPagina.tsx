@@ -37,7 +37,9 @@ export function AcessosPagina({
   vinculos,
   vagas,
   erros,
+  unidade = "agencia",
 }: {
+  unidade?: "agencia" | "empregos";
   usuarioAtualId: string;
   usuarios: UsuarioAcesso[];
   empresas: EmpresaAcesso[];
@@ -45,6 +47,8 @@ export function AcessosPagina({
   vagas: VagaAcesso[];
   erros: { usuarios: boolean; empresas: boolean; vinculos: boolean };
 }) {
+  // Em Empregos, o destaque principal (Usuários) usa o verde-petróleo da unidade.
+  const temaUsuarios = unidade === "empregos" ? { fundo: "#EEF6F3", cor: "#27675B" } : TEMA.usuarios;
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -132,7 +136,7 @@ export function AcessosPagina({
   const empSelecionada = empreiteiras.some((e) => e.id === sp.get("emp")) ? sp.get("emp")! : empreiteiras[0]?.id ?? "";
 
   const abas = [
-    { id: "usuarios", label: "Usuários", n: erros.usuarios ? null : usuarios.length, tema: TEMA.usuarios },
+    { id: "usuarios", label: "Usuários", n: erros.usuarios ? null : usuarios.length, tema: temaUsuarios },
     { id: "empresas", label: "Empresas parceiras", n: erros.empresas ? null : empresas.length, tema: TEMA.empresas },
     { id: "vagas", label: "Vínculos de vagas", n: null, tema: TEMA.vagas },
   ] as const;
@@ -172,10 +176,11 @@ export function AcessosPagina({
         <div className="space-y-6">
           <CabecalhoSecao
             tema="usuarios"
+            cores={temaUsuarios}
             icone={Icones.usuarios}
             titulo="Usuários"
             descricao="Defina quem pode acessar o CRM e quais informações pode visualizar."
-            acao={<BotaoPrimario cor={TEMA.usuarios.cor} onClick={() => setPainel({ tipo: "novo_usuario" })}>+ Novo usuário</BotaoPrimario>}
+            acao={<BotaoPrimario cor={temaUsuarios.cor} onClick={() => setPainel({ tipo: "novo_usuario" })}>+ Novo usuário</BotaoPrimario>}
           />
           <section className={`rounded-2xl border border-black/[0.06] bg-white p-6 ${SOMBRA}`} aria-label="Lista de usuários">
             <div className="flex flex-wrap gap-3">

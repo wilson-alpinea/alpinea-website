@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
@@ -18,6 +19,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AcessosPage() {
   const acesso = await exigirAdmin();
+  const unidade = (await headers()).get("x-crm-unidade") === "empregos" ? "empregos" : "agencia";
   const supabase = await createClient();
 
   const [rParceiros, rPerfis, rVinculos] = await Promise.all([
@@ -45,7 +47,7 @@ export default async function AcessosPage() {
 
   return (
     <Suspense fallback={null}>
-      <AcessosPagina usuarioAtualId={acesso.userId} usuarios={usuarios} empresas={empresas} vinculos={vinculos} vagas={vagas} erros={erros} />
+      <AcessosPagina unidade={unidade} usuarioAtualId={acesso.userId} usuarios={usuarios} empresas={empresas} vinculos={vinculos} vagas={vagas} erros={erros} />
     </Suspense>
   );
 }

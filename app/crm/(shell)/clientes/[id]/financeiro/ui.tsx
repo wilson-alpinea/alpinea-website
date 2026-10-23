@@ -59,8 +59,11 @@ export function Painel({
   }, [onFechar, noNavegador]);
 
   if (!noNavegador) return null;
+  // Herda a unidade (Agência/Empregos) da página para o tema valer no portal.
+  const unidade = document.querySelector("[data-unidade]")?.getAttribute("data-unidade") ?? undefined;
   return createPortal(
-    <div className="crm-ui fixed inset-0 z-[70] flex items-end justify-end sm:items-stretch" role="dialog" aria-modal="true" aria-labelledby={tituloId}>
+    <div className="crm-ui" style={{ display: "contents" }}>
+    <div data-unidade={unidade} className="fixed inset-0 z-[70] flex items-end justify-end sm:items-stretch" role="dialog" aria-modal="true" aria-labelledby={tituloId}>
       <button type="button" aria-label="Fechar" onClick={onFechar} className="crm-livre absolute inset-0 bg-black/30" />
       <div
         ref={caixa}
@@ -85,6 +88,7 @@ export function Painel({
         <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
         {rodape && <footer className="flex flex-wrap justify-end gap-2 border-t border-[#E6E9ED] px-5 py-4 sm:px-6">{rodape}</footer>}
       </div>
+    </div>
     </div>,
     document.body,
   );

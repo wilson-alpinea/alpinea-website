@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { VoltarLista } from "../../components/VoltarLista";
+import { CardsCandidatura } from "./CardsCandidatura";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -112,60 +114,52 @@ export default async function CandidatoPage({
 
   return (
     <div>
-      <Link href={`/crm/empregos?tipo=${classificacao}`} className="text-[13px] text-[#626B75] hover:text-[#20252B]">
-        ← Empregos
-      </Link>
-
-      <div className="mt-4 flex flex-wrap items-start justify-between gap-6">
-        <div>
-          <span className="inline-block rounded-full px-3 py-1 text-[13px] font-medium" style={{ background: tipo.fundo, color: tipo.cor }}>
-            {tipo.label}
-          </span>
-          {reclassificacao && (
-            <span className="ml-2 inline-block rounded-full border border-[#b7791f]/40 bg-[#b7791f]/10 px-3 py-1 text-[13px] font-medium text-[#8a5a12]">
-              Reclassificado manualmente por {reclassificacao.por} em {dataHoraSP(reclassificacao.em)}
-            </span>
-          )}
-          <h1 className={`mt-3 text-3xl font-medium text-[#20252B] md:text-4xl`}>
+      {/* Cabeçalho + cards Triagem / Processo seletivo (redesenho 23/out/2026). */}
+      <VoltarLista chave="crm.empregos.retorno" base="/crm/empregos" rotulo="Candidatos" className="text-[13px] text-[#626E69] hover:text-[#27675B]" />
+      <div className="mt-3 flex flex-wrap items-start justify-between gap-6">
+        <div className="min-w-0">
+          <h1 className="break-words text-[#202B28]">
             {c.nome} {c.sobrenome}
           </h1>
-          <p className="mt-2 text-sm text-[#626B75]">
-            {c.vaga_empresa} — {c.vaga_titulo}
+          <p className="mt-1 text-sm font-medium text-[#202B28]">
+            {c.vaga_empresa} — <span className="font-normal">{c.vaga_titulo}</span>
           </p>
-          <p className="mt-1 text-sm text-[#626B75]">
-            {c.email} · {c.telefone}
-            {c.idade ? ` · ${c.idade} anos` : ""}
+          <p className="mt-0.5 text-sm text-[#626E69]">
+            {[c.email, c.telefone, c.idade ? `${c.idade} anos` : null].filter(Boolean).join(" · ")}
           </p>
-          <p className="mt-1 text-[13px] text-[#626B75]">
-            Recebida em {new Date(c.created_at).toLocaleString("pt-BR", { dateStyle: "medium", timeStyle: "short" })}
+          <p className="mt-0.5 text-[13px] tabular-nums text-[#626E69]">
+            Candidatura recebida em {new Date(c.created_at).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}
           </p>
         </div>
-        <div className="flex items-stretch gap-3">
-          {/* Foto enviada pelo candidato, ao lado do score (Wilson, 15/out/2026). */}
-          {c.foto_path ? (
-            <a
-              href={urlArquivoCandidato("fotos-candidatos", c.foto_path)}
-              target="_blank"
-              rel="noreferrer"
-              title="Abrir a foto em tamanho real"
-              className="block w-[104px] shrink-0 overflow-hidden rounded-2xl border border-black/10 bg-white"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={urlArquivoCandidato("fotos-candidatos", c.foto_path)} alt={`Foto de ${c.nome}`} className="h-full w-full object-cover" />
-            </a>
-          ) : (
-            <div className="flex w-[104px] shrink-0 items-center justify-center rounded-2xl border border-dashed border-black/15 bg-white px-2 text-center text-[13px] leading-4 text-[#626B75]">
-              Foto ainda não enviada
-            </div>
-          )}
-          <div className="rounded-2xl border border-black/10 bg-white px-6 py-4 text-center">
-            <p className="text-[13px] text-[#626B75]">Score</p>
-            <p className={`text-5xl font-medium`} style={{ color: tipo.cor }}>
-              {c.pontuacao ?? "—"}
-            </p>
-            <p className="text-[13px] text-[#626B75]">de 100</p>
+        {/* Foto enviada pelo candidato (Wilson, 15/out/2026). */}
+        {c.foto_path ? (
+          <a
+            href={urlArquivoCandidato("fotos-candidatos", c.foto_path)}
+            target="_blank"
+            rel="noreferrer"
+            title="Abrir a foto em tamanho real"
+            className="block h-[120px] w-[96px] shrink-0 overflow-hidden rounded-2xl border border-[#DEE6E2] bg-white"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={urlArquivoCandidato("fotos-candidatos", c.foto_path)} alt={`Foto de ${c.nome}`} className="h-full w-full object-cover" />
+          </a>
+        ) : (
+          <div className="flex h-[120px] w-[96px] shrink-0 items-center justify-center rounded-2xl border border-dashed border-[#DEE6E2] bg-white px-2 text-center text-[13px] leading-4 text-[#626E69]">
+            Foto ainda não enviada
           </div>
-        </div>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <CardsCandidatura
+          classificacao={classificacao}
+          pontuacao={typeof c.pontuacao === "number" ? c.pontuacao : null}
+          motivos={motivos.length}
+          pontosRevisar={revisar.length}
+          reclassificacao={reclassificacao ? `Reclassificado manualmente por ${reclassificacao.por} em ${dataHoraSP(reclassificacao.em)}` : null}
+          status={c.status ?? "novo"}
+          etapas={linhaTempo.map((e) => ({ label: e.label, quando: e.quando, ok: e.ok }))}
+        />
       </div>
 
       {salvo && <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Alterações salvas.</p>}
@@ -174,8 +168,8 @@ export default async function CandidatoPage({
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">
           {motivos.length > 0 && (
-            <section className="rounded-2xl border p-5" style={{ borderColor: CLASSIFICACOES[2].cor, background: CLASSIFICACOES[2].fundo }}>
-              <h2 className="text-sm font-medium" style={{ color: CLASSIFICACOES[2].cor }}>
+            <section className="rounded-2xl border border-t-[3px] border-[#B42318]/20 border-t-[#B42318] bg-[#FDECEA] p-5">
+              <h2 className="text-[#B42318]">
                 Motivos da eliminação
               </h2>
               <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#20252B]">
@@ -186,11 +180,11 @@ export default async function CandidatoPage({
             </section>
           )}
           {revisar.length > 0 && (
-            <section className="rounded-2xl border border-amber-300 bg-amber-50 p-5">
-              <h2 className="text-sm font-medium text-amber-800">Pontos para revisar</h2>
+            <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#93703D] bg-[#FAF5EB] p-5">
+              <h2 className="text-[#93703D]">Pontos para revisar</h2>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {revisar.map((r) => (
-                  <span key={r} className="rounded-full bg-white px-2.5 py-1 text-[13px] text-amber-800">
+                  <span key={r} className="rounded-full bg-white px-2.5 py-1 text-[13px] text-[#6E5430]">
                     {r}
                   </span>
                 ))}
@@ -199,8 +193,8 @@ export default async function CandidatoPage({
           )}
 
           {criterios.length > 0 && (
-            <section className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-[#20252B]">Composição do score</h2>
+            <section id="criterios" className="scroll-mt-28 rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#75608B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+              <h2 className="text-[#202B28]">Composição do score</h2>
               <div className="mt-3 space-y-3">
                 {criterios.map((cr) => (
                   <div key={cr.label}>
@@ -221,9 +215,9 @@ export default async function CandidatoPage({
           )}
 
           {vagaExigeTestesAptidao(c.vaga_id) && (
-            <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#75608B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-sm font-medium text-[#20252B]">Testes de aptidão</h2>
+                <h2 className="text-[#202B28]">Testes de aptidão</h2>
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-[13px] font-semibold ${
                     c.testes_aptidao_aprovado === true
@@ -266,8 +260,8 @@ export default async function CandidatoPage({
             </section>
           )}
 
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Triagem</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#75608B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Triagem</h2>
             <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
               {linhasTriagemBasica(respostas).map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[180px_1fr] gap-3 py-2">
@@ -279,13 +273,13 @@ export default async function CandidatoPage({
           </section>
 
           {linhasPerfil(perfil).map((g) => (
-            <section key={g.grupo} className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-[#20252B]">{g.grupo}</h2>
+            <section key={g.grupo} className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#42658A] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+              <h2 className="text-[#202B28]">{g.grupo}</h2>
               <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
                 {g.linhas.map(([k, v, atencao]) => (
                   <div key={k} className="grid grid-cols-[180px_1fr] gap-3 py-2">
                     <dt className="text-[#626B75]">{k}</dt>
-                    <dd className={atencao ? "font-medium text-amber-800" : "text-[#20252B]"}>
+                    <dd className={atencao ? "font-medium text-[#93703D]" : "text-[#20252B]"}>
                       {atencao && "⚠ "}
                       {v}
                     </dd>
@@ -296,16 +290,16 @@ export default async function CandidatoPage({
           ))}
 
           {ficha && (
-            <h2 className={`pt-4 text-2xl font-medium text-[#20252B]`}>Etapa 2 — ficha cadastral</h2>
+            <h2 className="pt-4 text-[#202B28]">Etapa 2 — ficha cadastral</h2>
           )}
           {linhasFicha(ficha).map((g) => (
-            <section key={`ficha-${g.grupo}`} className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-[#20252B]">{g.grupo}</h2>
+            <section key={`ficha-${g.grupo}`} className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#42658A] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+              <h2 className="text-[#202B28]">{g.grupo}</h2>
               <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
                 {g.linhas.map(([k, v, atencao], i) => (
                   <div key={`${k}-${i}`} className="grid grid-cols-[180px_1fr] gap-3 py-2">
                     <dt className="text-[#626B75]">{k}</dt>
-                    <dd className={atencao ? "font-medium text-amber-800" : "text-[#20252B]"}>
+                    <dd className={atencao ? "font-medium text-[#93703D]" : "text-[#20252B]"}>
                       {atencao && "⚠ "}
                       {v}
                     </dd>
@@ -317,8 +311,8 @@ export default async function CandidatoPage({
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Andamento</h2>
+          <section id="andamento" className="scroll-mt-28 rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#27675B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Andamento</h2>
             <span className="mt-2 inline-block rounded-full px-2.5 py-0.5 text-[13px]" style={{ color: progresso.cor, background: `${progresso.cor}14` }}>
               {progresso.label}
             </span>
@@ -398,8 +392,8 @@ export default async function CandidatoPage({
             )}
           </section>
 
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Documento de Apresentação para Empreiteira</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#42658A] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Documento de Apresentação para Empreiteira</h2>
             <p className="mt-1 text-[13px] leading-5 text-[#626B75]">
               PDF resumido no padrão Ajisai, com foto — sem contato, CPF nem RG. As fichas das empreiteiras ficam na seção abaixo,
               no arquivo original.
@@ -421,8 +415,8 @@ export default async function CandidatoPage({
 
           {/* Ficha ORIGINAL de cada empreiteira (o Word/Excel que ela manda)
               preenchida com os dados do candidato — Wilson, 15/out/2026. */}
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Fichas das empreiteiras (arquivo original)</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#42658A] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Fichas das empreiteiras (arquivo original)</h2>
             <p className="mt-1 text-[13px] leading-5 text-[#626B75]">
               Preenche o próprio Word/Excel da empreiteira com os dados do candidato. Confira e complete os campos da agência antes de enviar.
             </p>
@@ -443,8 +437,8 @@ export default async function CandidatoPage({
           </section>
 
           {proposta && (
-            <section className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-[#20252B]">
+            <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#75608B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+              <h2 className="text-[#202B28]">
                 Etapa 3 — proposta {c.proposta_status === "aceita" ? "aceita" : "· quer falar com a Ajisai"}
               </h2>
               <p className="mt-1 text-[13px] text-[#626B75]">
@@ -466,8 +460,8 @@ export default async function CandidatoPage({
               </p>
             </section>
           )}
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Etapa 2 — ficha cadastral</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#42658A] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Etapa 2 — ficha cadastral</h2>
             <p className="mt-2 text-sm text-[#626B75]">
               {c.ficha_enviada_em
                 ? `Enviada em ${new Date(c.ficha_enviada_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${c.foto_path ? " · com foto" : " · sem foto"}`
@@ -495,8 +489,8 @@ export default async function CandidatoPage({
           </section>
           {/* Reclassificação manual aprovado ⇄ eliminado, sempre registrada
               com e-mail do operador, data/hora e motivo (Wilson, 15/out/2026). */}
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Reclassificar candidato</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#75608B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Reclassificar candidato</h2>
             <p className="mt-1 text-[13px] text-[#626B75]">
               Classificação atual: <strong style={{ color: tipo.cor }}>{tipo.label}</strong>
               {reclassificacao ? " (manual)" : " (automática pelo questionário)"}
@@ -534,8 +528,8 @@ export default async function CandidatoPage({
               <p className="text-[13px] text-[#626B75]">Fica registrado como alteração manual, com seu e-mail, data e hora.</p>
             </form>
           </section>
-          <form action={salvar} className="space-y-4 rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Decisão da equipe</h2>
+          <form action={salvar} className="space-y-4 rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#27675B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Decisão da equipe</h2>
             <label className="block text-[13px] text-[#626B75]">
               Status da análise (coluna “Status” da lista)
               <select name="status" defaultValue={c.status} className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B]">
@@ -563,8 +557,8 @@ export default async function CandidatoPage({
             </button>
           </form>
 
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Arquivos</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#5D6C70] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Arquivos</h2>
             {arquivos.length === 0 ? (
               <p className="mt-2 text-sm text-[#626B75]">Nenhum arquivo enviado.</p>
             ) : (
@@ -582,8 +576,8 @@ export default async function CandidatoPage({
 
           {/* Documentos do candidato — lista só do CRM, com o que já foi
               anexado pela equipe e o que falta (Wilson, 15/out/2026). */}
-          <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-[#20252B]">Documentos</h2>
+          <section className="rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#42658A] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+            <h2 className="text-[#202B28]">Documentos</h2>
             <ul className="mt-3 divide-y divide-black/[0.06] text-sm">
               {TIPOS_DOCUMENTO_CANDIDATO.filter((t) => t.key !== "outros" || documentos.some((d) => d.tipo === "outros")).map((t) => {
                 const docs = documentos.filter((d) => d.tipo === t.key);

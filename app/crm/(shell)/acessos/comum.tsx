@@ -27,18 +27,20 @@ export const ERRO_CAMPO = "mt-1 text-[13px] text-[#B42318]";
 
 export function CabecalhoSecao({
   tema,
+  cores,
   icone,
   titulo,
   descricao,
   acao,
 }: {
   tema: keyof typeof TEMA;
+  cores?: { fundo: string; cor: string };
   icone: ReactNode;
   titulo: string;
   descricao: string;
   acao?: ReactNode;
 }) {
-  const t = TEMA[tema];
+  const t = cores ?? TEMA[tema];
   return (
     <div className={`flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-t-[3px] border-black/[0.06] p-6 ${SOMBRA}`} style={{ backgroundColor: t.fundo, borderTopColor: t.cor }}>
       <div className="flex min-w-0 items-start gap-3">
