@@ -318,10 +318,17 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
             <h2 id="titulo-andamento" className="mb-2 text-[#202B28]">
               Andamento das candidaturas
             </h2>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              {ANDAMENTO.map((a) => {
+            {/* Etapas sequenciais ligadas por chevrons (Wilson, 23/out/2026): em linha
+                no desktop; empilhadas com chevron para baixo nas telas menores. */}
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)_56px_minmax(0,1fr)_56px_minmax(0,1fr)]">
+              {ANDAMENTO.map((a, i) => {
                 const sel = etapa === a.etapa;
-                return (
+                return [
+                  i > 0 && (
+                    <span key={`seta-${a.etapa}`} aria-hidden="true" className="flex h-14 items-center justify-center lg:h-auto">
+                      <ChevronEtapa className="rotate-90 lg:rotate-0" />
+                    </span>
+                  ),
                   <button
                     key={a.etapa}
                     type="button"
@@ -335,8 +342,8 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                     <span className="mt-1 block text-[24px] font-semibold leading-tight tabular-nums" style={{ color: a.cor }}>
                       {contEtapa(a.etapa)}
                     </span>
-                  </button>
-                );
+                  </button>,
+                ];
               })}
             </div>
             <p className="mt-2 text-[13px] text-[#626E69]">Triagem e andamento são dimensões diferentes — as contagens não se somam.</p>
@@ -458,8 +465,18 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
             </div>
           ) : (
             <>
-              <div className={`${CARD} hidden md:block`}>
-                <table className="w-full text-left text-sm">
+              <div className={`${CARD} hidden overflow-clip lg:block`}>
+                <table className="w-full table-fixed text-left text-sm">
+                  <colgroup>
+                    <col className="w-[19%]" />
+                    <col className="w-[15%]" />
+                    <col className="w-[18%]" />
+                    <col className="w-[17%]" />
+                    <col className="w-[11%]" />
+                    {mostrarDecisao && <col className="w-[10%]" />}
+                    <col className="w-[10%]" />
+                    <col className="w-[10%]" />
+                  </colgroup>
                   <thead className="text-[13px] text-[#626E69]">
                     <tr>
                       <Th className="rounded-tl-2xl">
@@ -473,7 +490,7 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                       <Th>Revisão</Th>
                       {mostrarDecisao && <Th>Decisão da equipe</Th>}
                       <Th>
-                        <Ordem rotulo="Data da candidatura" ativo={ordem === "data"} dir={dir} onClick={() => ordenar("data")} />
+                        <Ordem rotulo="Data" ativo={ordem === "data"} dir={dir} onClick={() => ordenar("data")} />
                       </Th>
                       <Th className="rounded-tr-2xl text-right">
                         <span className="sr-only">Ações</span>
@@ -488,10 +505,10 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                             {c.nome || "Sem nome"}
                           </Link>
                           {c.telefone && <p className="whitespace-nowrap text-[13px] tabular-nums text-[#626E69]">{c.telefone}</p>}
-                          {c.email && <p className="break-all text-[13px] text-[#626E69]">{c.email}</p>}
+                          {c.email && <p className="truncate text-[13px] text-[#626E69]" title={c.email}>{c.email}</p>}
                           {c.reclassificadoPor && <p className="mt-1 text-[13px] font-medium text-[#93703D]">{c.reclassificadoPor}</p>}
                         </td>
-                        <td className="max-w-[240px] px-4 py-3.5">
+                        <td className="px-4 py-3.5">
                           <p className="font-medium text-[#202B28]">{c.vagaEmpresa}</p>
                           <p className="line-clamp-2 text-[13px] text-[#626E69]" title={c.vagaTitulo}>
                             {c.vagaTitulo}
@@ -506,11 +523,11 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                         <td className="px-4 py-3.5">
                           <Revisao c={c} />
                         </td>
-                        {mostrarDecisao && <td className="whitespace-nowrap px-4 py-3.5 text-[#202B28]">{STATUS_CANDIDATURA.find((s) => s.valor === c.status)?.label ?? c.status}</td>}
+                        {mostrarDecisao && <td className="px-4 py-3.5 text-[#202B28]">{STATUS_CANDIDATURA.find((s) => s.valor === c.status)?.label ?? c.status}</td>}
                         <td className="whitespace-nowrap px-4 py-3.5 tabular-nums text-[#202B28]">{fmtData(c.criadoEm)}</td>
-                        <td className="whitespace-nowrap px-4 py-3.5 text-right">
-                          <Link href={`/crm/empregos/${c.id}`} className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#27675B] hover:bg-[#EEF6F3]" aria-label={`Abrir candidatura de ${c.nome} para ${c.vagaEmpresa}`}>
-                            Abrir candidatura
+                        <td className="px-4 py-3.5 text-right">
+                          <Link href={`/crm/empregos/${c.id}`} className="inline-block rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#27675B] hover:bg-[#EEF6F3]" aria-label={`Abrir candidatura de ${c.nome} para ${c.vagaEmpresa}`}>
+                            Abrir
                           </Link>
                         </td>
                       </tr>
@@ -519,7 +536,7 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                 </table>
               </div>
 
-              <ul className="space-y-3 md:hidden">
+              <ul className="space-y-3 lg:hidden">
                 {visiveis.map((c) => (
                   <li key={c.id} className={`${CARD} p-4`}>
                     <Link href={`/crm/empregos/${c.id}`} className="font-semibold text-[#202B28]">
@@ -596,9 +613,9 @@ function Ordem({ rotulo, ativo, dir, onClick }: { rotulo: string; ativo: boolean
 function Triagem({ c }: { c: CandidaturaLista }) {
   const t = c.classificacao ? TRIAGEM_EMPREGOS[c.classificacao] : null;
   return (
-    <div className="min-w-[150px]">
+    <div className="min-w-0">
       {t ? (
-        <span className="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[13px] font-medium" style={{ color: t.cor, backgroundColor: t.fundo }}>
+        <span className="inline-block max-w-full rounded-2xl px-2.5 py-0.5 text-[13px] font-medium leading-snug" style={{ color: t.cor, backgroundColor: t.fundo }}>
           {t.rotulo}
         </span>
       ) : (
@@ -617,7 +634,7 @@ function Triagem({ c }: { c: CandidaturaLista }) {
         )}
       </div>
       {c.classificacao === "eliminado" && c.motivos[0] && (
-        <p className="mt-1 line-clamp-2 max-w-[220px] text-[13px] text-[#B42318]" title={c.motivos.join(" · ")}>
+        <p className="mt-1 line-clamp-2 text-[13px] text-[#B42318]" title={c.motivos.join(" · ")}>
           {c.motivos[0]}
           {c.motivos.length > 1 && ` (+${c.motivos.length - 1})`}
         </p>
@@ -631,7 +648,7 @@ function Etapa({ c }: { c: CandidaturaLista }) {
   const cor = COR_ETAPA[c.etapa];
   return (
     <div>
-      <span className="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[13px] font-medium" style={{ color: cor.cor, backgroundColor: cor.fundo }}>
+      <span className="inline-block max-w-full rounded-2xl px-2.5 py-0.5 text-[13px] font-medium leading-snug" style={{ color: cor.cor, backgroundColor: cor.fundo }}>
         {titulo}
       </span>
       {secundario && <p className="mt-0.5 text-[13px] text-[#626E69]">{secundario}</p>}
@@ -646,7 +663,7 @@ function Revisao({ c }: { c: CandidaturaLista }) {
   return (
     <div title={c.pontosRevisar.join(" · ")}>
       <span
-        className="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[13px] font-medium"
+        className="inline-block max-w-full rounded-2xl px-2.5 py-0.5 text-[13px] font-medium leading-snug"
         style={r === "pendente" ? { color: AREA_EMPREGOS.agenda.cor, backgroundColor: AREA_EMPREGOS.agenda.fundo } : { color: AREA_EMPREGOS.historico.cor, backgroundColor: AREA_EMPREGOS.historico.fundo }}
       >
         {r === "pendente" ? "Pendente" : "Revisada"}
@@ -676,3 +693,12 @@ function Filtro({ id, rotulo, valor, onChange, opcoes }: { id: string; rotulo: s
   );
 }
 
+/** Chevron decorativo entre etapas: miolo menta #EEF6F3 com contorno #27675B. */
+function ChevronEtapa({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 48" width={32} height={48} className={`shrink-0 ${className}`} aria-hidden="true" focusable="false">
+      <path d="M9.5 8 L22.5 24 L9.5 40" fill="none" stroke="#27675B" strokeWidth={13} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.5 8 L22.5 24 L9.5 40" fill="none" stroke="#EEF6F3" strokeWidth={8} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}

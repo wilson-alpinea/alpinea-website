@@ -130,3 +130,16 @@
 .crm-ui [data-unidade="empregos"] :is(.bg-\[\#EAF1F8\], .bg-\[\#F2F6FC\]) { background-color: #eef6f3; }
 .crm-ui [data-unidade="empregos"] :is(.accent-\[\#24476B\], .accent-\[\#1C3A5E\]) { accent-color: #27675b; }
 .crm-ui [data-unidade="empregos"] :is(input, select, textarea):focus { border-color: #27675b; }
+
+/* Cursor de clique em tudo que é clicável nos dois CRMs (Wilson, 23/out/2026).
+   O Tailwind v4 deixa botões com cursor padrão; em @layer base para que
+   utilitários como cursor-wait / cursor-not-allowed continuem valendo. */
+@layer base {
+  .crm-ui :is(a[href], button, [role="button"], [role="switch"], [role="tab"], [role="link"], summary, select, label[for], label:has(> input[type="checkbox"]), label:has(> input[type="radio"]), input[type="checkbox"], input[type="radio"], input[type="file"], input[type="date"], input[type="time"], input[type="month"]) {
+    cursor: pointer;
+  }
+  .crm-ui :is(button, select, input, [role="button"], [role="switch"]):disabled,
+  .crm-ui [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
