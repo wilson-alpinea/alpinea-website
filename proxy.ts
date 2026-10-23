@@ -118,6 +118,11 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Recuperação de senha (Wilson, 23/out/2026): abertas com ou sem sessão e
+  // para qualquer papel — quem chega pelo link do e-mail ainda não tem sessão
+  // ou acabou de ganhar uma só para trocar a senha.
+  if (pathname === "/crm/esqueci-senha" || pathname === "/crm/redefinir-senha") return comCookies(NextResponse.next({ request }));
+
   const isLoginRoute = pathname === "/crm/login";
   if (!user) {
     return isLoginRoute ? comCookies(NextResponse.next({ request })) : redirecionar("/crm/login");

@@ -51,12 +51,22 @@ export function LoginForm({
           <p className="text-[13px] text-red-600">E-mail ou senha incorretos. Tente novamente.</p>
         )}
 
+        {searchParams.get("senha") === "1" && (
+          <p className="rounded-lg bg-[#EEF6F3] px-3 py-2 text-[13px] text-[#1F5248]">Senha alterada. Entre com a nova senha.</p>
+        )}
+
         <button
           type="submit"
           className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
         >
           Entrar
         </button>
+
+        <p className="text-center">
+          <a href="/crm/esqueci-senha" className="text-[13px] text-[#626B75] underline decoration-black/20 underline-offset-2 hover:text-[#1C3A5E]">
+            Esqueci minha senha
+          </a>
+        </p>
       </form>
     </main>
   );
