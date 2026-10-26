@@ -3,10 +3,10 @@
 // TERMOS_VERSAO_ESIM em app/api/esim-selfservice/route.ts.
 
 export const COMO_FUNCIONA_ESIM_SIMPREMIUM = [
-  { titulo: "Escolha as datas", texto: "Informe a chegada e a partida do Japão. O plano começa a contar na data de chegada." },
-  { titulo: "Pague online", texto: "Pix ou cartão na página segura da Stone." },
-  { titulo: "Receba o eSIM", texto: "Com o pagamento confirmado, o eSIM é emitido e as instruções de instalação chegam por e-mail." },
-  { titulo: "Conecte ao pousar", texto: "Instale antes de embarcar, com Wi-Fi, e ative a linha de dados ao chegar no Japão." },
+  { icone: "/images/icone-esim-passo-datas.png", titulo: "Escolha as datas", texto: "Informe a chegada e a partida do Japão. O plano começa a contar na data de chegada." },
+  { icone: "/images/icone-esim-passo-pagamento.png", titulo: "Pague online", texto: "Pix ou cartão na página segura da Stone." },
+  { icone: "/images/icone-esim-passo-receba.png", titulo: "Receba o eSIM", texto: "Com o pagamento confirmado, o eSIM é emitido e as instruções de instalação chegam por e-mail." },
+  { icone: "/images/icone-esim-passo-conecte.png", titulo: "Conecte ao pousar", texto: "Instale antes de embarcar, com Wi-Fi, e ative a linha de dados ao chegar no Japão." },
 ];
 
 export const TERMOS_ESIM_SIMPREMIUM = [

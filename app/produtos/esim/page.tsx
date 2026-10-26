@@ -200,17 +200,25 @@ export default function EsimPage() {
           </div>
         ) : (
           <>
-            <section className="relative -mx-5 flex items-center justify-between gap-6 overflow-hidden bg-[#0A2540] px-5 py-10 sm:mx-0 sm:rounded-2xl sm:px-10 md:py-14">
-              <div className="min-w-0">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/75">eSIM Japão</p>
+            <section className="relative -mx-5 h-[50svh] min-h-[340px] max-h-[460px] overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
+              <Image
+                src="/images/banner-esim-japao.webp"
+                alt="Casal usando o celular em um café em Asakusa, Tóquio"
+                fill
+                priority
+                sizes="(min-width: 896px) 896px, 100vw"
+                className="object-cover object-[72%_center]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-[#0A2540]/40 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540]/90 sm:via-[#0A2540]/50 sm:to-transparent" aria-hidden="true" />
+              <div className="relative flex h-full max-w-md flex-col justify-end px-5 pb-8 sm:justify-center sm:px-10 sm:pb-0">
+                <p className="text-xs uppercase tracking-[0.3em] text-white/80">eSIM Japão</p>
                 <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}>
                   Internet ilimitada desde o desembarque
                 </h1>
-                <p className="mt-3 max-w-md text-sm leading-6 text-white/70">
+                <p className="mt-3 text-sm leading-6 text-white/80">
                   Sem retirar nem devolver aparelho: o eSIM é instalado no seu celular e o seu chip brasileiro continua funcionando.
                 </p>
               </div>
-              <Image src="/images/icone-esim-v2.png" alt="" width={803} height={803} className="hidden h-28 w-28 shrink-0 object-contain invert sm:block md:h-36 md:w-36" />
             </section>
 
             <AvisoPagamentoConcluido />
@@ -220,6 +228,7 @@ export default function EsimPage() {
               <div className="mt-5 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
                 {COMO_FUNCIONA_ESIM_SIMPREMIUM.map((passo, i) => (
                   <div key={passo.titulo} className="flex min-w-0 flex-col items-center text-center">
+                    <Image src={passo.icone} alt="" width={256} height={256} className="mb-2 h-14 w-14 object-contain md:h-16 md:w-16" />
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">Passo {i + 1}</p>
                     <p className="mt-2 text-sm font-medium text-black">{passo.titulo}</p>
                     <p className="mt-1 text-xs leading-5 text-black/65">{passo.texto}</p>
