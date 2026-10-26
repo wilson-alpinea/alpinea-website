@@ -59,7 +59,7 @@ async function notificarPorEmail(params: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
+        from: "Ajisai <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
         reply_to: params.email || undefined,
         subject: `[${TAG_SELF_SERVICE}] Novo pedido de ${params.nomeProduto} — ${params.nome}`,
@@ -94,7 +94,7 @@ async function enviarCopiaContrato(params: {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
+        from: "Ajisai <contato@alpinea.io>",
         to: [params.email],
         subject: "Seu contrato de Transporte Privado — cópia assinada",
         text: `Olá, ${params.nome}!\n\nSegue a cópia do contrato que você assinou eletronicamente no site da Ajisai.\n\n${params.contratoTexto}${rodape}`,

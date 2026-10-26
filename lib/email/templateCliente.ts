@@ -73,16 +73,28 @@ function linhaDoTempo(etapas: EtapaEmail[], atual: number) {
         : feita
           ? `<span style="display:inline-block;margin-left:8px;color:${VERDE};font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:0.04em;">Concluído</span>`
           : "";
+      // Cada etapa ocupa 2 linhas da tabela: na 1ª, o círculo e o título;
+      // na 2ª, a barra vertical (célula com fundo) e o texto. A barra tem a
+      // altura do texto e encosta no próximo círculo — sem o vão que a barra
+      // de altura fixa deixava quando o texto tinha 2+ linhas.
+      const corLinha = feita ? VERDE : "#dbe3ea";
+      const celulaBarra = ultima
+        ? `<td width="2" style="padding:0;width:2px;font-size:0;line-height:0;">&nbsp;</td>`
+        : `<td width="2" bgcolor="${corLinha}" style="padding:0;width:2px;background:${corLinha};font-size:0;line-height:0;">&nbsp;</td>`;
       return `
         <tr>
-          <td width="44" valign="top" style="padding:0;">
+          <td colspan="3" width="36" height="36" align="center" valign="middle" style="padding:0;width:36px;height:36px;">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" width="32" height="32" style="width:32px;height:32px;border-radius:16px;background:${corCirculo};border:2px solid ${corBorda};color:${corNumero};font-family:Arial,sans-serif;font-size:14px;font-weight:bold;line-height:28px;">${simbolo}</td></tr></table>
-            ${ultima ? "" : `<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="18"></td><td width="2" height="28" style="background:${feita ? VERDE : "#dbe3ea"};font-size:0;line-height:0;">&nbsp;</td></tr></table>`}
           </td>
-          <td valign="top" style="padding:4px 0 ${ultima ? "0" : "14px"} 0;font-family:Arial,sans-serif;">
-            <div style="font-size:15px;font-weight:bold;color:${corTitulo};">${esc(etapa.titulo)}${etiqueta}</div>
-            ${etapa.texto ? `<div style="margin-top:3px;font-size:13px;line-height:1.5;color:#475569;">${esc(etapa.texto)}</div>` : ""}
-          </td>
+          <td width="12" style="padding:0;width:12px;font-size:0;line-height:0;">&nbsp;</td>
+          <td valign="middle" style="padding:0;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;color:${corTitulo};">${esc(etapa.titulo)}${etiqueta}</td>
+        </tr>
+        <tr>
+          <td width="17" style="padding:0;width:17px;font-size:0;line-height:0;">&nbsp;</td>
+          ${celulaBarra}
+          <td width="17" style="padding:0;width:17px;font-size:0;line-height:0;">&nbsp;</td>
+          <td width="12" style="padding:0;width:12px;font-size:0;line-height:0;">&nbsp;</td>
+          <td valign="top" style="padding:2px 0 ${ultima ? "0" : "16px"} 0;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;color:#475569;">${etapa.texto ? esc(etapa.texto) : "&nbsp;"}</td>
         </tr>`;
     })
     .join("");
@@ -112,8 +124,8 @@ export function emailClienteHtml(p: EmailClienteParams): string {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f9;"><tr><td align="center" style="padding:24px 12px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
     <tr><td style="background:${AZUL_MARINHO};padding:22px 28px;">
-      <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;letter-spacing:0.08em;color:#ffffff;">AJISAI</div>
-      <div style="margin-top:2px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9fc3e6;">${esc(p.marca ?? "Viagens ao Japão")}</div>
+      <img src="https://www.alpinea.io/images/email-logo-ajisai-branco.png" width="120" height="40" alt="AJISAI" style="display:block;width:120px;height:40px;border:0;outline:none;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:24px;letter-spacing:0.08em;color:#ffffff;">
+      <div style="margin-top:8px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9fc3e6;">${esc(p.marca ?? "Viagens ao Japão")}</div>
     </td></tr>
     <tr><td style="padding:28px 28px 8px 28px;">
       <div style="display:inline-block;padding:6px 12px;border-radius:999px;background:#e0efff;font-family:Arial,sans-serif;font-size:12px;font-weight:bold;color:${AZUL};">&#9679;&nbsp; ${esc(p.status)}</div>

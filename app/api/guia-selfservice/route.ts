@@ -39,7 +39,7 @@ async function notificarPorEmail(params: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
+        from: "Ajisai <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
         reply_to: params.email || undefined,
         subject: `[${TAG_SELF_SERVICE}] Novo pedido de Guia Turístico — ${params.nome}`,

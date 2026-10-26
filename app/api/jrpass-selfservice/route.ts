@@ -62,7 +62,7 @@ async function enviarEmail(params: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
+        from: "Ajisai <contato@alpinea.io>",
         to: params.to,
         reply_to: params.replyTo || undefined,
         subject: params.subject,
