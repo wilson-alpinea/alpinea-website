@@ -774,6 +774,7 @@ export default function CambioPage() {
           valor={preco ? formatBRL(preco.totalBRL) : null}
           detalhe={`${direcaoLabel} · ¥${quantidadeIenes.toLocaleString("pt-BR")} · ${cidadeNome}`}
           semValor="Carregando a cotação do dia…"
+          semValorAviso={false}
           rotuloBotao={ehCompra ? "Enviar pedido de compra" : "Enviar pedido de venda"}
           mostrarStone={false}
           sentinelaId="checkout-ultimo-passo"

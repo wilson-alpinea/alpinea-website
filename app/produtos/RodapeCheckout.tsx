@@ -34,6 +34,7 @@ export function RodapeCheckout({
   valor,
   detalhe,
   semValor,
+  semValorAviso = true,
   rotuloBotao,
   mostrarStone = true,
   sentinelaId,
@@ -52,6 +53,10 @@ export function RodapeCheckout({
   detalhe?: ReactNode;
   /** Texto mostrado no lugar do valor enquanto ele não existe. */
   semValor: string;
+  /** true (padrão): mostra o semValor como aviso em vermelho com ícone de
+   * atenção — pedido do Wilson, 26/out/2026. false: texto neutro (ex.:
+   * "Carregando a cotação do dia…" no Câmbio, que não é uma pendência). */
+  semValorAviso?: boolean;
   rotuloBotao: string;
   mostrarStone?: boolean;
   /** id do último passo da página — quando ele aparece na tela, o cliente
@@ -127,7 +132,18 @@ export function RodapeCheckout({
                 )}
               </>
             ) : (
-              <p className="text-xs leading-5 text-[#B8C5CE] md:text-sm">{semValor}</p>
+              semValorAviso ? (
+                <p role="alert" className="flex items-start gap-2.5 text-base font-semibold leading-6 text-[#FF6B6B] md:items-center md:text-lg">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mt-0.5 h-6 w-6 shrink-0 md:mt-0 md:h-7 md:w-7">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                  <span>{semValor}</span>
+                </p>
+              ) : (
+                <p className="text-xs leading-5 text-[#B8C5CE] md:text-sm">{semValor}</p>
+              )
             )}
           </div>
 
