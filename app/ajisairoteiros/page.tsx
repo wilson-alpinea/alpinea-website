@@ -85,25 +85,25 @@ export default function RoteirosAdsPage() {
       label: "Experiência",
       title: "+12 anos",
       text: "Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.",
-      Icon: IconClock,
+      icone: "/images/icone-porque-ajisai-experiencia.png",
     },
     {
       label: "Curadoria",
       title: "Exclusividade de Serviços",
       text: "Curadoria de restaurantes, hotelaria e consumo desenvolvida a partir de experiência própria, fluência no idioma e uma rede construída ao longo de mais de uma década no Japão.",
-      Icon: IconGem,
+      icone: "/images/icone-porque-ajisai-curadoria.png",
     },
     {
       label: "Conexão Brasil–Japão",
       title: "Referência na conexão",
       text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
-      Icon: IconExchange,
+      icone: "/images/icone-porque-ajisai-conexao.png",
     },
     {
       label: "Presença real no Japão",
       title: "Operação própria",
       text: "Nossa operação própria no Japão permite atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.",
-      Icon: IconPin,
+      icone: "/images/icone-porque-ajisai-presenca.png",
     },
   ];
 
@@ -1002,9 +1002,9 @@ export default function RoteirosAdsPage() {
                 key={item.title}
                 className="flex w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col items-center text-center md:w-auto"
               >
-                <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
-                  <item.Icon className="h-5 w-5" />
-                </span>
+                {/* Ícones novos (Wilson, 26/out/2026): arte branca, sem o círculo roxo. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.icone} alt="" className="mb-3 h-20 w-20 object-contain" />
                 <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
                   {item.label}
                 </p>
@@ -1696,25 +1696,6 @@ function IconShieldCheck({ className }: { className?: string }) {
     >
       <path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3Z" />
       <path d="M9 12l2 2 4-4.5" />
-    </svg>
-  );
-}
-
-function IconGem({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M6 3h12l3 5.5L12 21 3 8.5 6 3Z" />
-      <path d="M3 8.5h18" />
-      <path d="M9 3l3 5.5-3 12.5" />
-      <path d="M15 3l-3 5.5 3 12.5" />
     </svg>
   );
 }

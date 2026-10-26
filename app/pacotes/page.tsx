@@ -325,25 +325,25 @@ const whyAjisai = [
     label: "Experiência",
     title: "+12 anos",
     text: "Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.",
-    Icon: IconClock,
+    icone: "/images/icone-porque-ajisai-experiencia.png",
   },
   {
     label: "Curadoria",
     title: "Exclusividade de Serviços",
     text: "Curadoria de restaurantes, hotelaria e consumo desenvolvida a partir de experiência própria, fluência no idioma e uma rede construída ao longo de mais de uma década no Japão.",
-    Icon: IconGem,
+    icone: "/images/icone-porque-ajisai-curadoria.png",
   },
   {
     label: "Conexão Brasil–Japão",
     title: "Referência na conexão",
     text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
-    Icon: IconExchange,
+    icone: "/images/icone-porque-ajisai-conexao.png",
   },
   {
     label: "Presença real no Japão",
     title: "Operação própria",
     text: "Nossa operação própria no Japão permite atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.",
-    Icon: IconPin,
+    icone: "/images/icone-porque-ajisai-presenca.png",
   },
 ];
 
@@ -764,9 +764,9 @@ export default async function PacotesJapaoPage({
                   key={item.title}
                   className="flex w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col items-center text-center md:w-auto"
                 >
-                  <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
-                    <item.Icon className="h-5 w-5" />
-                  </span>
+                  {/* Ícones novos (Wilson, 26/out/2026): arte branca, sem o círculo roxo. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.icone} alt="" className="mb-3 h-20 w-20 object-contain" />
                   <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
                     {item.label}
                   </p>
@@ -963,80 +963,10 @@ function IconCheck({ className }: { className?: string }) {
   );
 }
 
-function IconClock({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3.5 2" />
-    </svg>
-  );
-}
-
 function IconStarFilled({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
-    </svg>
-  );
-}
-
-function IconGem({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M6 3h12l3 5.5L12 21 3 8.5 6 3Z" />
-      <path d="M3 8.5h18" />
-      <path d="M9 3l3 5.5-3 12.5" />
-      <path d="M15 3l-3 5.5 3 12.5" />
-    </svg>
-  );
-}
-
-function IconExchange({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M6 7h12M14 3l4 4-4 4" />
-      <path d="M18 17H6m4 4-4-4 4-4" />
-    </svg>
-  );
-}
-
-function IconPin({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" />
-      <circle cx="12" cy="9.5" r="2.3" />
     </svg>
   );
 }

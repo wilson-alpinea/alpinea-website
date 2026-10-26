@@ -324,6 +324,7 @@ export default function ProdutosPage() {
                 iconWidth={439}
                 iconHeight={504}
                 title="Roteiro Personalizado"
+                faixa="azul"
                 description="Receba um planejamento completo, criado para sua viagem, e faça suas próprias reservas."
                 cta="Conhecer o roteiro"
               />
@@ -334,6 +335,7 @@ export default function ProdutosPage() {
                 iconWidth={350}
                 iconHeight={532}
                 title="Pacote de Viagem"
+                faixa="azul"
                 description="Escolha uma viagem já estruturada e deixe reservas e organização por nossa conta."
                 cta="Ver pacotes"
               />
@@ -344,6 +346,7 @@ export default function ProdutosPage() {
                 iconWidth={1254}
                 iconHeight={1254}
                 title="Viagem Personalizada"
+                faixa="azul"
                 description="Criamos e organizamos sua viagem do zero, inteiramente de acordo com você."
                 cta="Criar minha viagem"
                 featured
@@ -1197,6 +1200,7 @@ function ProductSelectorCard({
   requirement,
   cta,
   featured = false,
+  faixa = "verde",
   className = "",
 }: {
   href: string;
@@ -1209,17 +1213,23 @@ function ProductSelectorCard({
   requirement?: string;
   cta: string;
   featured?: boolean;
+  /** Faixa discreta no topo do card (Wilson, 26/out/2026 — mesmo padrão dos
+   * indicadores do CRM): azul-escura nos produtos de viagem completa
+   * (Roteiro Personalizado, Pacote de Viagem, Viagem Personalizada) e
+   * verde-escura nos demais. */
+  faixa?: "azul" | "verde";
   className?: string;
 }) {
   return (
     <a
       href={href}
+      style={{ borderTopColor: faixa === "azul" ? "#24476B" : "#28665D" }}
       onClick={(event) => {
         if (!onClick) return;
         event.preventDefault();
         onClick();
       }}
-      className={`group relative flex h-[350px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:p-8 ${
+      className={`group relative flex h-[350px] flex-col overflow-hidden rounded-2xl border border-t-[3px] p-6 text-left transition md:p-8 ${
         featured
           ? "border-[#6ec3d9]/45 bg-[#6ec3d9]/[0.055] shadow-[0_0_34px_-12px_rgba(110,195,217,0.42)] hover:border-[#6ec3d9]/70 hover:bg-[#6ec3d9]/[0.075]"
           : "border-black/10 bg-black/[0.02] shadow-[0_18px_45px_-14px_rgba(37,99,235,0.55)] hover:border-black/25 hover:bg-black/[0.04] hover:shadow-[0_22px_55px_-12px_rgba(37,99,235,0.65)]"
