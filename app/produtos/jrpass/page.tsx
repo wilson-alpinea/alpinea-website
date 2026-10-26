@@ -28,7 +28,7 @@ import {
   JR_PASS_PRECO_USD_GREEN,
   JR_PASS_DIAS_OPCOES,
 } from "../../components/CustomPackageCard";
-import { faixaFreteSedex, somarDiasUteis, PRAZO_POSTAGEM_DIAS_UTEIS } from "../../lib/freteSedex";
+import { faixaFreteSedex, somarDiasUteis, PRAZO_POSTAGEM_DIAS_UTEIS, textoPrazoSedex } from "../../lib/freteSedex";
 import {
   display,
   WHATSAPP_NUMBER,
@@ -1389,7 +1389,7 @@ export default function JrPassPage() {
                   <li>
                     <strong>Entrega:</strong>{" "}
                     {faixaFrete
-                      ? `prazo estimado do SEDEX para ${faixaFrete.nome}: ${faixaFrete.prazoMinDiasUteis === faixaFrete.prazoMaxDiasUteis ? `${faixaFrete.prazoMaxDiasUteis} dia útil` : `${faixaFrete.prazoMinDiasUteis} a ${faixaFrete.prazoMaxDiasUteis} dias úteis`} após a postagem`
+                      ? `prazo estimado do SEDEX para ${faixaFrete.nome}: ${textoPrazoSedex(faixaFrete)} após a postagem`
                       : "o prazo do SEDEX depende da região"}
                     {" "}— varia conforme a disponibilidade dos Correios.
                   </li>

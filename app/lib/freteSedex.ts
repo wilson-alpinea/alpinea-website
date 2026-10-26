@@ -13,6 +13,12 @@
 
 export const PRAZO_POSTAGEM_DIAS_UTEIS = 3;
 
+// Prazo de entrega do SEDEX após a postagem — único para todo o Brasil:
+// 1 a 10 dias úteis (Wilson, 26/out/2026). O máximo também entra na data
+// mínima de embarque da página do JR Pass (postagem + entrega).
+const PRAZO_ENTREGA_MIN = 1;
+const PRAZO_ENTREGA_MAX = 10;
+
 export type FaixaFrete = {
   id: string;
   nome: string;
@@ -22,14 +28,14 @@ export type FaixaFrete = {
 };
 
 const FAIXAS: Record<string, FaixaFrete> = {
-  spCapital: { id: "spCapital", nome: "São Paulo capital e Grande SP", valorBRL: 25, prazoMinDiasUteis: 1, prazoMaxDiasUteis: 1 },
-  spInterior: { id: "spInterior", nome: "Interior de São Paulo", valorBRL: 32, prazoMinDiasUteis: 1, prazoMaxDiasUteis: 2 },
-  sudeste: { id: "sudeste", nome: "RJ, MG, ES e PR", valorBRL: 42, prazoMinDiasUteis: 1, prazoMaxDiasUteis: 3 },
-  sul: { id: "sul", nome: "SC e RS", valorBRL: 48, prazoMinDiasUteis: 2, prazoMaxDiasUteis: 3 },
-  centroOeste: { id: "centroOeste", nome: "DF, GO e MS", valorBRL: 55, prazoMinDiasUteis: 2, prazoMaxDiasUteis: 4 },
-  centroNorte: { id: "centroNorte", nome: "MT e TO", valorBRL: 62, prazoMinDiasUteis: 3, prazoMaxDiasUteis: 5 },
-  nordeste: { id: "nordeste", nome: "Nordeste", valorBRL: 68, prazoMinDiasUteis: 2, prazoMaxDiasUteis: 5 },
-  norte: { id: "norte", nome: "Norte", valorBRL: 78, prazoMinDiasUteis: 3, prazoMaxDiasUteis: 7 },
+  spCapital: { id: "spCapital", nome: "São Paulo capital e Grande SP", valorBRL: 25, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  spInterior: { id: "spInterior", nome: "Interior de São Paulo", valorBRL: 32, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  sudeste: { id: "sudeste", nome: "RJ, MG, ES e PR", valorBRL: 42, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  sul: { id: "sul", nome: "SC e RS", valorBRL: 48, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  centroOeste: { id: "centroOeste", nome: "DF, GO e MS", valorBRL: 55, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  centroNorte: { id: "centroNorte", nome: "MT e TO", valorBRL: 62, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  nordeste: { id: "nordeste", nome: "Nordeste", valorBRL: 68, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  norte: { id: "norte", nome: "Norte", valorBRL: 78, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
 };
 
 const UF_FAIXA: Record<string, keyof typeof FAIXAS> = {
@@ -64,4 +70,12 @@ export function somarDiasUteis(isoInicio: string, dias: number): string {
     if (dia !== 0 && dia !== 6) restantes -= 1;
   }
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/** "1 dia útil", "3 dias úteis" ou "1 a 2 dias úteis" — evita "1 a 1 dias
+ * úteis" quando o prazo mínimo e o máximo são iguais (Wilson, 26/out/2026). */
+export function textoPrazoSedex(faixa: { prazoMinDiasUteis: number; prazoMaxDiasUteis: number }): string {
+  const { prazoMinDiasUteis: min, prazoMaxDiasUteis: max } = faixa;
+  if (min === max) return max === 1 ? "1 dia útil" : `${max} dias úteis`;
+  return `${min} a ${max} dias úteis`;
 }

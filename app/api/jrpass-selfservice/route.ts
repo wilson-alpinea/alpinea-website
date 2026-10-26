@@ -5,7 +5,7 @@ import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "../../../lib/supabase/documentosJrPass";
 import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
-import { faixaFreteSedex, PRAZO_POSTAGEM_DIAS_UTEIS } from "../../lib/freteSedex";
+import { faixaFreteSedex, PRAZO_POSTAGEM_DIAS_UTEIS, textoPrazoSedex } from "../../lib/freteSedex";
 
 export const runtime = "nodejs";
 
@@ -229,7 +229,7 @@ export async function POST(req: Request) {
       ["Passes (referência)", precoPassesBRL ? `R$ ${precoPassesBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       [
         "Frete SEDEX",
-        faixaFrete ? `R$ ${freteBRL.toLocaleString("pt-BR")} (${faixaFrete.nome}, ${faixaFrete.prazoMinDiasUteis}–${faixaFrete.prazoMaxDiasUteis} dias úteis após a postagem)` : "Não calculado (UF/CEP)",
+        faixaFrete ? `R$ ${freteBRL.toLocaleString("pt-BR")} (${faixaFrete.nome}, ${textoPrazoSedex(faixaFrete)} após a postagem)` : "Não calculado (UF/CEP)",
       ],
       ["Valor total cobrado", precoTotalBRL ? `R$ ${precoTotalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Valor dos passes (USD)", precoTotalUSD ? `US$ ${precoTotalUSD.toLocaleString("en-US")}` : "Não calculado"],
@@ -419,7 +419,7 @@ export async function POST(req: Request) {
         {
           titulo: "Entrega",
           texto: faixaFrete
-            ? `Prazo estimado do SEDEX para ${faixaFrete.nome}: ${faixaFrete.prazoMinDiasUteis} a ${faixaFrete.prazoMaxDiasUteis} dias úteis após a postagem (depende dos Correios). Avisamos quando sair para entrega.`
+            ? `Prazo estimado do SEDEX para ${faixaFrete.nome}: ${textoPrazoSedex(faixaFrete)} após a postagem (depende dos Correios). Avisamos quando sair para entrega.`
             : "O prazo depende dos Correios para a sua região. Avisamos quando sair para entrega.",
         },
         { titulo: "Troca e ativação no Japão", texto: "Troque o voucher pelo passe físico num balcão JR e ative no dia que quiser — os dias contam a partir da ativação." },

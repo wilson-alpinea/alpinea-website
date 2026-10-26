@@ -9,7 +9,7 @@
 // /api/seguro-viagem/checkout (modo comissionado) → o cliente paga no link
 // do fornecedor, em nova aba.
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { inter, mascararWhatsapp, Campo, classeInput } from "../../components/transporte/compartilhado";
@@ -69,6 +69,21 @@ export default function SeguroViagemPage() {
   const [erro, setErro] = useState("");
   const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const rodapeRef = useRef<HTMLDivElement | null>(null);
+  // Espaço no fim da página = altura real do rodapé fixo (que cresce quando
+  // a lista "Faltam X itens" aparece). Com o pb-48 fixo, os Termos e o que
+  // vinha abaixo ficavam escondidos atrás do rodapé e a rolagem parava
+  // antes (Wilson, 26/out/2026). Mesmo padrão do JR Pass.
+  const [alturaRodape, setAlturaRodape] = useState(0);
+  useEffect(() => {
+    const elemento = rodapeRef.current;
+    if (!elemento) {
+      setAlturaRodape(0);
+      return;
+    }
+    const observer = new ResizeObserver(() => setAlturaRodape(elemento.offsetHeight));
+    observer.observe(elemento);
+    return () => observer.disconnect();
+  }, [status]);
 
   const hoje = hojeISO();
   const datasOk = /^\d{4}-\d{2}-\d{2}$/.test(partida) && partida >= hoje && /^\d{4}-\d{2}-\d{2}$/.test(retorno) && retorno >= partida;
@@ -167,7 +182,9 @@ export default function SeguroViagemPage() {
   }
 
   return (
-    <main className="min-h-screen overflow-x-clip bg-white pb-48 pt-14 text-black [&_input:not([type=checkbox]):not([type=radio])]:text-base [&_textarea]:text-base md:[&_input:not([type=checkbox]):not([type=radio])]:text-sm md:[&_textarea]:text-sm">
+    <main className="min-h-screen overflow-x-clip bg-white pt-14 text-black [&_input:not([type=checkbox]):not([type=radio])]:text-base [&_textarea]:text-base md:[&_input:not([type=checkbox]):not([type=radio])]:text-sm md:[&_textarea]:text-sm"
+      style={status !== "enviado" ? { paddingBottom: alturaRodape + 32 } : undefined}
+    >
       <div className="fixed inset-x-0 top-0 z-50 flex h-14 shrink-0 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
         <Link href="/produtos" className="flex min-h-[44px] items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
