@@ -263,7 +263,7 @@ export default function ProdutosPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-black">
       {/* ── HEADER ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-black/10 bg-white/90 backdrop-blur-2xl">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/30 bg-white/55 backdrop-blur-2xl backdrop-saturate-150">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
           <Link href="/">
             <img
