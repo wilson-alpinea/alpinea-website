@@ -180,7 +180,7 @@ export default function EsimPage() {
         <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
       </div>
 
-      <div className="mx-auto max-w-4xl px-5 pt-5 md:px-8 md:pt-8">
+      <div className="mx-auto max-w-5xl px-5 pt-5 md:px-8 md:pt-8">
         {status === "enviado" ? (
           <div className="mx-auto max-w-xl py-12 text-center">
             <h1 className={`${display.className} text-2xl font-medium text-black md:text-3xl`}>Recebemos seu pedido</h1>
@@ -200,22 +200,15 @@ export default function EsimPage() {
           </div>
         ) : (
           <>
-            <section className="relative -mx-5 h-[50svh] min-h-[340px] max-h-[460px] overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
-              <Image
-                src="/images/banner-esim-japao.webp"
-                alt="Casal usando o celular em um café em Asakusa, Tóquio"
-                fill
-                priority
-                sizes="(min-width: 896px) 896px, 100vw"
-                className="object-cover object-[72%_center]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-[#0A2540]/40 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540]/90 sm:via-[#0A2540]/50 sm:to-transparent" aria-hidden="true" />
-              <div className="relative flex h-full max-w-md flex-col justify-end px-5 pb-8 sm:justify-center sm:px-10 sm:pb-0">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/80">eSIM Japão</p>
-                <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}>
-                  Internet ilimitada desde o desembarque
-                </h1>
-                <p className="mt-3 text-sm leading-6 text-white/80">
+            <section className="relative -mx-5 overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
+              <div className="relative h-64 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[62%]">
+                <Image src="/images/banner-esim-japao.webp" alt="Casal usando o celular em um café em Asakusa, Tóquio" fill priority sizes="(min-width: 640px) 660px, 100vw" className="object-cover object-[72%_40%]" />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/10 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540] sm:via-[#0A2540]/0 sm:via-40% sm:to-transparent" />
+              </div>
+              <div className="relative -mt-12 px-5 pb-8 sm:mt-0 sm:flex sm:min-h-[340px] sm:max-w-[46%] sm:flex-col sm:justify-center sm:px-10 sm:py-12 md:min-h-[380px]">
+                <p className="text-xs uppercase tracking-[0.3em] text-white/75">eSIM Japão</p>
+                <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}>Internet ilimitada desde o desembarque</h1>
+                <p className="mt-3 text-sm leading-6 text-white/70">
                   Sem retirar nem devolver aparelho: o eSIM é instalado no seu celular e o seu chip brasileiro continua funcionando.
                 </p>
               </div>
@@ -228,8 +221,8 @@ export default function EsimPage() {
               <div className="mt-5 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
                 {COMO_FUNCIONA_ESIM_SIMPREMIUM.map((passo, i) => (
                   <div key={passo.titulo} className="flex min-w-0 flex-col items-center text-center">
-                    <Image src={passo.icone} alt="" width={256} height={256} className="mb-2 h-14 w-14 object-contain md:h-16 md:w-16" />
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">Passo {i + 1}</p>
+                    <Image src={passo.icone} alt="" width={256} height={256} className="mt-2 h-20 w-20 object-contain" />
                     <p className="mt-2 text-sm font-medium text-black">{passo.titulo}</p>
                     <p className="mt-1 text-xs leading-5 text-black/65">{passo.texto}</p>
                   </div>

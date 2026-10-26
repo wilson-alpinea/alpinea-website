@@ -263,13 +263,13 @@ export default function ProdutosPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-black">
       {/* ── HEADER ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 bg-black/10 backdrop-blur-2xl">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-black/55 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
           <Link href="/">
             <img
               src="/images/AJISAI-LOGO.avif"
               alt="Ajisai"
-              className="h-10 w-auto object-contain md:h-11"
+              className="h-10 w-auto object-contain drop-shadow-[0_1px_6px_rgba(0,0,0,0.6)] md:h-11"
             />
           </Link>
         </div>
@@ -532,30 +532,6 @@ export default function ProdutosPage() {
               />
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── VÍDEO — EXPLICAÇÃO DOS PRODUTOS ── */}
-      <section className="border-b border-black/10 bg-white px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
-            Assista antes de escolher
-          </p>
-          <h2
-            className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}
-          >
-            Como funcionam os produtos Ajisai
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm font-light leading-6 text-black/55">
-            Em poucos minutos, entenda a diferença entre Roteiro Personalizado,
-            Pacotes de Viagem e Guia Turístico Avulso — e qual encaixa melhor
-            no seu jeito de viajar.
-          </p>
-          <VideoPlaceholder
-            titulo="Explicação dos produtos Ajisai"
-            descricao="Vídeo institucional, apresentando as 3 formas de viajar com a Ajisai."
-            className="mx-auto mt-8 max-w-2xl"
-          />
         </div>
       </section>
 
@@ -1720,14 +1696,6 @@ export function IconCheck({ className }: { className?: string }) {
   );
 }
 
-function IconPlay({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M8 5.14v13.72c0 .8.87 1.29 1.56.87l10.99-6.86a1 1 0 0 0 0-1.7L9.56 4.27A1 1 0 0 0 8 5.14Z" />
-    </svg>
-  );
-}
-
 // Vídeo real de demonstração — player nativo com poster, sem autoplay
 // (carrega só metadata até o clique, pra não pesar a página).
 function DemoVideo({
@@ -1762,40 +1730,6 @@ function DemoVideo({
           {descricao}
         </p>
       )}
-    </div>
-  );
-}
-
-// Placeholder de vídeo — sem player/arquivo real ainda. Troque o miolo por
-// um <video>/embed quando o material estiver pronto; mantém o mesmo espaço
-// e legenda pra não quebrar o layout.
-function VideoPlaceholder({
-  titulo,
-  descricao,
-  className = "",
-}: {
-  titulo: string;
-  descricao?: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`group relative aspect-video w-full overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02] ${className}`}
-    >
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-black/25 bg-black/10 backdrop-blur transition group-hover:scale-105 group-hover:bg-black/20">
-          <IconPlay className="h-5 w-5 translate-x-0.5 text-black" />
-        </span>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-          Vídeo em breve
-        </p>
-        <p className={`${display.className} max-w-xs text-base font-medium text-black md:text-lg`}>
-          {titulo}
-        </p>
-        {descricao && (
-          <p className="max-w-sm text-xs leading-5 text-black/50">{descricao}</p>
-        )}
-      </div>
     </div>
   );
 }

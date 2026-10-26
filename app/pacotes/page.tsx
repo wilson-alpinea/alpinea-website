@@ -840,8 +840,8 @@ export default async function PacotesJapaoPage({
 
               <div className="relative aspect-[2/3] overflow-hidden rounded-2xl md:rounded-[2rem]">
                 <Image
-                  src="/images/kyoto-maiko-street.png"
-                  alt="Viajante Ajisai caminhando por rua tradicional em Kyoto, com pagode ao fundo"
+                  src="/images/quem-viajou-cerimonia-cha.webp"
+                  alt="Viajante Ajisai recebendo chá de uma anfitriã de quimono em uma casa tradicional de Kyoto"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
