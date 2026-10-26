@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 // Imagem de compartilhamento = a mesma foto do topo da página (enviada
 // pelo Wilson em 29/set/2026), como no JR Pass.
 const DESCRICAO =
-  "Seguro viagem para o Japão com Affinity, GTA ou MTA — cobertura médica e assistência 24h. Escolha a seguradora, veja o valor para o seu grupo e finalize a compra online.";
+  "Seguro viagem para o Japão — compare 3 níveis de cobertura médica e assistência 24 h, veja o valor para o seu grupo e compre online.";
 
 export const metadata: Metadata = {
   title: "Ajisai | Seguro Viagem",
