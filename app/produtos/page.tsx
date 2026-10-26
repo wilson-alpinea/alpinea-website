@@ -279,21 +279,21 @@ export default function ProdutosPage() {
       <section className="relative border-b border-black/10 bg-white">
         {/*
           HERO RESPONSIVO SEM DEFORMAÇÃO
-          - Usa a imagem original /images/produtos-hero.png
-          - Mantém a proporção nativa 1402 x 1122
-          - Nunca amplia além de 1402px
+          - Usa a imagem /images/produtos-hero-matsuri.webp (Gion Matsuri, Kyoto)
+          - Mantém a proporção nativa 1375 x 1144
+          - Nunca amplia além de 1375px
           - Em widescreen, sobra área preta nas laterais
           - Em telas menores, reduz proporcionalmente
           - Sem object-cover, sem vh, sem crop
         */}
-        <div className="relative mx-auto w-full max-w-[1402px] overflow-hidden">
+        <div className="relative mx-auto w-full max-w-[1375px] overflow-hidden">
           <Image
-            src="/images/produtos-hero.png"
-            alt="Estrada coberta de neve diante do Monte Fuji no Japão"
-            width={1402}
-            height={1122}
+            src="/images/produtos-hero-matsuri.webp"
+            alt="Viajante de yukata entre as lanternas do Gion Matsuri, em Kyoto"
+            width={1375}
+            height={1144}
             priority
-            sizes="(min-width: 1402px) 1402px, 100vw"
+            sizes="(min-width: 1375px) 1375px, 100vw"
             className="block h-auto w-full"
           />
 
