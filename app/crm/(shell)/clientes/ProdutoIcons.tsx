@@ -36,7 +36,9 @@ export const PRODUTO_ICONS: Record<string, string> = {
   seguro_viagem: "/images/icone-seguro-viagem-v2.png",
   ajisai_shopping: "/images/icone-servico-ajisai-shopping.png",
   transfer_aeroporto_hotel: "/images/icone-onibus-v2.png",
-  esim: "/images/icone-esim.svg",
+  // Pedido do Wilson, 26/out/2026: ícone novo do eSIM (o mesmo do card
+  // próprio em /produtos), arte preta sobre fundo transparente.
+  esim: "/images/icone-esim-v2.png",
   reserva_restaurantes: "/images/icone-gastronomia.png",
 
   // Valores antigos — mantidos por compatibilidade (ver comentário acima).

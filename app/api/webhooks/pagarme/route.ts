@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 import { buscarPedido } from "../../../../lib/pagarme/client";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../../lib/email/templateCliente";
+import { processarPedidosEsimPagos } from "../../../../lib/simpremium/processarPedidosPagos";
 
 export const runtime = "nodejs";
 
@@ -275,6 +276,11 @@ export async function POST(req: Request) {
     tipo: "pagamento",
     conteudo: `Pagamento confirmado via Pagar.me — R$ ${Number(pagamento.valor).toLocaleString("pt-BR")} (${pagamento.tipo_pagamento || "forma não informada"}). Pedido Pagar.me: ${pedidoIdGateway || "não informado"}.`,
   });
+
+  // eSIM (Wilson, 26/out/2026): se este pagamento for de eSIM, emite cada
+  // um na Simpremium agora (lib/simpremium/processarPedidosPagos.ts). Para
+  // os outros produtos não há linha em pedidos_esim e nada acontece.
+  await processarPedidosEsimPagos(supabase, pagamento.id);
 
   const { data: cliente } = await supabase
     .from("clientes")

@@ -432,7 +432,7 @@ export default function ProdutosPage() {
                 iconWidth={1254}
                 iconHeight={1254}
                 title="Serviços adicionais"
-                description="Conectividade, ingressos e outros serviços para completar sua viagem."
+                description="Reserva de restaurantes e outros detalhes para completar sua viagem."
                 cta="Ver serviços"
                 className="lg:col-span-2"
               />
@@ -512,6 +512,22 @@ export default function ProdutosPage() {
                 title="Ajisai Shopping"
                 description="Acompanhamento pessoal em compras durante a viagem no Japão, com negociação, tradução e apoio logístico nas lojas."
                 cta="Ver Ajisai Shopping"
+                className="lg:col-span-2"
+              />
+              {/* Pedido do Wilson, 26/out/2026: "criar um card na pagina
+                  /produtos somente para eSIM, removendo de serviços
+                  adicionais" — primeiro passo da automação da compra de
+                  eSIM; a rota própria fica em app/produtos/esim. Ícone
+                  enviado pelo Wilson (arte preta sobre fundo transparente,
+                  mesma convenção de JR Pass/Câmbio/Seguro/Ajisai Shopping). */}
+              <ProductSelectorCard
+                href="/produtos/esim"
+                icon="/images/icone-esim-v2.png"
+                iconWidth={803}
+                iconHeight={803}
+                title="eSIM"
+                description="Internet ilimitada no Japão, instalada no seu celular antes do embarque. Compra online com emissão automática."
+                cta="Ver eSIM"
                 className="lg:col-span-2"
               />
             </div>
@@ -1253,7 +1269,8 @@ function ProductSelectorCard({
               title === "JR Pass" ||
               title === "Câmbio" ||
               title === "Seguro Viagem" ||
-              title === "Ajisai Shopping"
+              title === "Ajisai Shopping" ||
+              title === "eSIM"
               ? "right-6 top-5 h-14 w-14 opacity-80 md:right-8 md:top-7"
               : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${
                   title === "Serviços adicionais" ? "brightness-0" : "opacity-90 invert"

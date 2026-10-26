@@ -6,6 +6,8 @@
 // confirma pelo WhatsApp).
 // 21/out/2026 (Wilson): Limousine Bus removido desta página — fica só na
 // Calculadora Reversa.
+// 26/out/2026 (Wilson): eSIM removido desta página — virou card próprio em
+// /produtos (rota app/produtos/esim), primeiro passo da automação da compra.
 //
 // Reestruturação de 06/out/2026 (Wilson):
 // - "mover etapa 2 para página 1, ele escolhe antes o serviço adicional e
@@ -26,10 +28,6 @@ import Link from "next/link";
 import { formatBRL, formatUSD, useCambioUSD } from "../../hooks/useCambioUSD";
 import { PRECO_RESERVA_RESTAURANTE_USD } from "../../components/CustomPackageCard";
 import {
-  PLANOS_ESIM,
-  precoEsimUSD,
-  COMO_FUNCIONA_ESIM,
-  TERMOS_ESIM,
   RESTAURANTES_ROL,
   estimativaRestauranteUSD,
   TERMOS_RESTAURANTES,
@@ -58,6 +56,7 @@ const MAX_PESSOAS = 20;
 // Produtos com página própria — só atalhos aqui.
 const OUTROS_PRODUTOS = [
   { nome: "Transfer Aeroporto", href: "/produtos/transfer-aeroporto" },
+  { nome: "eSIM", href: "/produtos/esim" },
   { nome: "Câmbio", href: "/produtos/cambio" },
   { nome: "JR Pass", href: "/produtos/jrpass" },
   { nome: "Seguro Viagem", href: "/produtos/seguro-viagem" },
@@ -115,15 +114,13 @@ function TextoTermosServicos() {
       <p className="font-medium text-black/80">Pedido e confirmação</p>
       <p className="mt-1">
         Os valores desta página são de referência. Nossa equipe confirma disponibilidade, datas e detalhes de cada serviço pelo
-        WhatsApp. Reservas de restaurante e eSIM só são contratados depois da sua aprovação e da confirmação do pagamento.
+        WhatsApp. Reservas de restaurante só são contratadas depois da sua aprovação e da confirmação do pagamento.
       </p>
       <p className="mt-3 font-medium text-black/80">Reserva de restaurantes</p>
       <ListaTermos itens={TERMOS_RESTAURANTES} />
-      <p className="mt-3 font-medium text-black/80">eSIM</p>
-      <ListaTermos itens={TERMOS_ESIM} />
       <p className="mt-3 font-medium text-black/80">Pagamento</p>
       <p className="mt-1">
-        A forma de pagamento da reserva de restaurantes e do eSIM é combinada com a nossa equipe pelo WhatsApp; valores
+        A forma de pagamento da reserva de restaurantes é combinada com a nossa equipe pelo WhatsApp; valores
         em dólar são convertidos pela cotação do dia.
       </p>
     </>
@@ -145,11 +142,6 @@ export default function ServicosAdicionaisPage() {
   const [outroRestaurante, setOutroRestaurante] = useState(false);
   const [restricoesAlimentares, setRestricoesAlimentares] = useState("");
   const [cienteRefeicoes, setCienteRefeicoes] = useState(false);
-  // ── eSIM ──
-  const [comEsim, setComEsim] = useState(false);
-  const [planoEsim, setPlanoEsim] = useState(PLANOS_ESIM[1].id);
-  const [qtdEsim, setQtdEsim] = useState(2);
-  const [esimAberto, setEsimAberto] = useState<string | null>(null);
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -186,9 +178,7 @@ export default function ServicosAdicionaisPage() {
   const refeicoesEstimadasUSD = comRestaurantes
     ? RESTAURANTES_ROL.filter((r) => restaurantesEscolhidos.includes(r.id)).reduce((s, r) => s + estimativaRestauranteUSD(r) * pessoas, 0)
     : 0;
-  const plano = PLANOS_ESIM.find((p) => p.id === planoEsim) ?? PLANOS_ESIM[0];
-  const esimUSD = comEsim ? precoEsimUSD(plano) * qtdEsim : 0;
-  const totalUSD = restaurantesUSD + esimUSD;
+  const totalUSD = restaurantesUSD;
   const totalBRL = totalUSD * cambioCotacao;
 
   type ItemResumo = { key: string; nome: string; detalhe: string; valorUSD: number; icone: string };
@@ -204,14 +194,9 @@ export default function ServicosAdicionaisPage() {
           },
         ]
       : []),
-    ...(comEsim
-      ? [{ key: "esim", nome: `eSIM — ${plano.dias} dias`, detalhe: `${qtdEsim} ${qtdEsim === 1 ? "eSIM" : "eSIMs"} · dados ilimitados`, valorUSD: esimUSD, icone: "/images/icone-esim.svg" }]
-      : []),
   ];
 
   const avisos: string[] = [];
-  if (comEsim && dias > 0 && dias > plano.dias) avisos.push(`eSIM de ${plano.dias} dias, mas a viagem tem ${dias} — considere um plano maior.`);
-  if (comEsim && qtdEsim > pessoas) avisos.push(`${qtdEsim} eSIMs para um grupo de ${pessoas} pessoas.`);
   if (comRestaurantes && refeicoesEstimadasUSD > 0)
     avisos.push(`Refeições estimadas em ${formatUSD(refeicoesEstimadasUSD)} para ${pessoas} pessoas — pagas direto aos restaurantes, fora do total.`);
 
@@ -320,7 +305,7 @@ export default function ServicosAdicionaisPage() {
           pessoas,
           servicos: escolhidos.map((s) => ({
             nome: s.nome,
-            crm: s.key === "restaurantes" ? "reserva_restaurantes" : s.key === "esim" ? "esim" : null,
+            crm: s.key === "restaurantes" ? "reserva_restaurantes" : null,
             detalhe: s.detalhe,
             valorUSD: Math.round(s.valorUSD),
             unidade: "",
@@ -328,7 +313,6 @@ export default function ServicosAdicionaisPage() {
           restaurantes: comRestaurantes
             ? { nomes: nomesRestaurantes, restricoes: restricoesAlimentares, refeicoesEstimadasUSD, cienteRefeicoes }
             : null,
-          esim: comEsim ? { plano: plano.nome, quantidade: qtdEsim } : null,
           resumo: resumoServicos,
           avisos,
           totalUSD: Math.round(totalUSD),
@@ -643,65 +627,6 @@ export default function ServicosAdicionaisPage() {
                               restaurante.
                             </span>
                           </label>
-                        </div>
-                      )}
-                    </li>
-
-                    {/* eSIM — 3 planos */}
-                    <li className={`rounded-2xl border transition ${comEsim ? "border-[#2f80c9] bg-[#2f80c9]/[0.03] ring-1 ring-[#2f80c9]" : "border-black/10 bg-white hover:border-black/25"}`}>
-                      <label className="flex cursor-pointer items-start gap-3 p-4 sm:p-5">
-                        <input
-                          type="checkbox"
-                          checked={comEsim}
-                          onChange={(e) => setComEsim(e.target.checked)}
-                          className="mt-3 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
-                        />
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-                          <Image src="/images/icone-esim.svg" alt="" width={44} height={44} className="h-11 w-11 object-contain" />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-[15px] font-medium text-black">eSIM — internet no Japão</span>
-                          <span className="mt-0.5 block text-xs leading-5 text-black/60">
-                            Dados ilimitados direto no celular, sem retirar nem devolver aparelho. Escolha o plano pela duração da viagem.
-                          </span>
-                          <span className="mt-1 block text-xs text-black/50">a partir de {formatUSD(precoEsimUSD(PLANOS_ESIM[0]))} por eSIM</span>
-                        </span>
-                      </label>
-                      {comEsim && (
-                        <div className="border-t border-black/[0.06] px-4 pb-4 pt-3 sm:px-5">
-                          <div className="grid gap-3 sm:grid-cols-3">
-                            {PLANOS_ESIM.map((p) => {
-                              const ativo = planoEsim === p.id;
-                              return (
-                                <div key={p.id} className={`rounded-xl border p-3 ${ativo ? "border-[#2f80c9] bg-white ring-1 ring-[#2f80c9]" : "border-black/10 bg-white"}`}>
-                                  <button type="button" onClick={() => setPlanoEsim(p.id)} aria-pressed={ativo} className="block w-full text-left">
-                                    <span className="block text-sm font-semibold text-[#0A2540]">{p.dias} dias · ilimitado</span>
-                                    <span className={`${inter.className} mt-1 block text-lg font-bold tabular-nums text-black`}>{formatUSD(precoEsimUSD(p))}</span>
-                                    <span className="mt-1 block text-xs leading-5 text-black/60">{p.resumo}</span>
-                                    <span className="mt-1 block text-xs text-black/45">{p.indicado}</span>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setEsimAberto(esimAberto === p.id ? null : p.id)}
-                                    className="mt-2 text-xs font-medium text-[#1f6fb8] underline underline-offset-2"
-                                  >
-                                    {esimAberto === p.id ? "Fechar detalhes" : "Como funciona e termos"}
-                                  </button>
-                                  {esimAberto === p.id && (
-                                    <div className="mt-2 text-[11px] leading-5 text-black/70">
-                                      <p className="font-medium text-black/80">Como funciona</p>
-                                      <ListaTermos itens={COMO_FUNCIONA_ESIM} />
-                                      <p className="mt-2 font-medium text-black/80">Termos de uso</p>
-                                      <ListaTermos itens={TERMOS_ESIM} />
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <div className="mt-2 sm:max-w-sm">
-                            <Contador rotulo="Quantidade de eSIMs" ajuda="Um por celular" valor={qtdEsim} min={1} max={MAX_PESSOAS} onChange={setQtdEsim} />
-                          </div>
                         </div>
                       )}
                     </li>
