@@ -39,7 +39,7 @@ export function AcessosPagina({
   erros,
   unidade = "agencia",
 }: {
-  unidade?: "agencia" | "empregos";
+  unidade?: "agencia" | "empregos" | "seguro";
   usuarioAtualId: string;
   usuarios: UsuarioAcesso[];
   empresas: EmpresaAcesso[];
@@ -48,7 +48,7 @@ export function AcessosPagina({
   erros: { usuarios: boolean; empresas: boolean; vinculos: boolean };
 }) {
   // Em Empregos, o destaque principal (Usuários) usa o verde-petróleo da unidade.
-  const temaUsuarios = unidade === "empregos" ? { fundo: "#EEF6F3", cor: "#27675B" } : TEMA.usuarios;
+  const temaUsuarios = unidade === "empregos" ? { fundo: "#EEF6F3", cor: "#27675B" } : unidade === "seguro" ? { fundo: "#F4F1F8", cor: "#75608B" } : TEMA.usuarios;
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();

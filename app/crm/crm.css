@@ -131,6 +131,26 @@
 .crm-ui [data-unidade="empregos"] :is(.accent-\[\#24476B\], .accent-\[\#1C3A5E\]) { accent-color: #27675b; }
 .crm-ui [data-unidade="empregos"] :is(input, select, textarea):focus { border-color: #27675b; }
 
+/*
+ * Tema do CRM de Seguro Viagem (Wilson, 26/out/2026) — roxo suave #75608B.
+ * Mesmo mecanismo do tema de Empregos (vale para as telas compartilhadas,
+ * como Acessos, abertas dentro do CRM de Seguro).
+ */
+.crm-ui [data-unidade="seguro"].crm-pagina,
+.crm-ui [data-unidade="seguro"] .bg-\[\#FAF9F6\] {
+  background-color: #f9f8fb;
+}
+.crm-ui [data-unidade="seguro"] .text-\[\#20252B\] { color: #24212a; }
+.crm-ui [data-unidade="seguro"] .text-\[\#626B75\] { color: #67626f; }
+.crm-ui [data-unidade="seguro"] :is(.border-\[\#E4E7EB\], .border-\[\#E6E9ED\], .border-\[\#D5DAE0\]) { border-color: #e6e1ec; }
+.crm-ui [data-unidade="seguro"] :is(.bg-\[\#24476B\], .bg-\[\#1C3A5E\]) { background-color: #75608b; }
+.crm-ui [data-unidade="seguro"] :is(.hover\:bg-\[\#2C5480\], .hover\:bg-\[\#254a73\], .hover\:bg-\[\#1C3A5E\]\/90):hover { background-color: #63507a; }
+.crm-ui [data-unidade="seguro"] :is(.text-\[\#24476B\], .text-\[\#1C3A5E\]) { color: #75608b; }
+.crm-ui [data-unidade="seguro"] :is(.border-\[\#24476B\], .border-\[\#1C3A5E\]) { border-color: #75608b; }
+.crm-ui [data-unidade="seguro"] :is(.bg-\[\#EAF1F8\], .bg-\[\#F2F6FC\]) { background-color: #f4f1f8; }
+.crm-ui [data-unidade="seguro"] :is(.accent-\[\#24476B\], .accent-\[\#1C3A5E\]) { accent-color: #75608b; }
+.crm-ui [data-unidade="seguro"] :is(input, select, textarea):focus { border-color: #75608b; }
+
 /* Cursor de clique em tudo que é clicável nos dois CRMs (Wilson, 23/out/2026).
    O Tailwind v4 deixa botões com cursor padrão; em @layer base para que
    utilitários como cursor-wait / cursor-not-allowed continuem valendo. */

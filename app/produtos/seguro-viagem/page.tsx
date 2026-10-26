@@ -24,7 +24,7 @@ const MAX_VIAJANTES = 10;
 const COMO_FUNCIONA = [
   { icone: "/images/produtos/seguro-passo-1-pedido.png", titulo: "Cote em segundos", texto: "Informe as datas e a idade de quem viaja e compare 3 níveis de cobertura." },
   { icone: "/images/produtos/seguro-passo-2-apolice.png", titulo: "Pague online", texto: "Pix ou cartão na página segura da Real Seguro Viagem, nossa parceira." },
-  { icone: "/images/produtos/seguro-passo-3-viagem.png", titulo: "Receba a apólice", texto: "A apólice chega por e-mail logo após a confirmação do pagamento." },
+  { icone: "/images/produtos/seguro-passo-3-viagem.png", titulo: "Receba a apólice", texto: "Após o pagamento, a seguradora tem até 24 horas para enviar a apólice por e-mail." },
   { icone: "/images/produtos/seguro-passo-4-assistencia.png", titulo: "Acione quando precisar", texto: "Durante a viagem, fale direto com a central 24 h da seguradora." },
 ];
 
@@ -32,7 +32,7 @@ const TERMOS = [
   "O seguro é contratado com a seguradora indicada no plano, por intermédio da Real Seguro Viagem, parceira da Ajisai. O pagamento é feito na página segura do fornecedor.",
   "Coberturas, limites, carências e exclusões seguem as Condições Gerais da seguradora (link em cada plano). Leia antes de contratar.",
   "Os dados dos viajantes (nome, data de nascimento e CPF ou passaporte) precisam estar corretos: são eles que constam na apólice.",
-  "A apólice é emitida após a confirmação do pagamento e enviada por e-mail. Cancelamentos e reembolsos seguem as regras da seguradora.",
+  "Após a confirmação do pagamento, a seguradora tem até 24 horas para emitir e enviar a apólice por e-mail. Cancelamentos e reembolsos seguem as regras da seguradora.",
   "Em caso de necessidade durante a viagem, acione a central de atendimento da seguradora antes de fazer despesas por conta própria.",
 ];
 
@@ -204,7 +204,7 @@ export default function SeguroViagemPage() {
           <div className="mx-auto max-w-xl py-12 text-center">
             <h1 className={`${display.className} text-2xl font-medium text-black md:text-3xl`}>Falta só o pagamento</h1>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-black/70">
-              O pagamento abriu em uma nova aba, na página segura da Real Seguro Viagem. Depois de pagar, a apólice chega por e-mail.
+              O pagamento abriu em uma nova aba, na página segura da Real Seguro Viagem. Depois de pagar, a seguradora tem até 24 horas para enviar a apólice por e-mail.
               Também mandamos o link para {email}.
             </p>
             {linkPagamento && (
@@ -374,7 +374,7 @@ export default function SeguroViagemPage() {
             {planos && (
               <div className="mt-8 border-t border-black/10 pt-6">
                 <TituloPasso numero={4} titulo="Seus dados e dos viajantes" />
-                <p className="mt-1 text-sm text-black/70">O link de pagamento e a apólice chegam neste e-mail.</p>
+                <p className="mt-1 text-sm text-black/70">O link de pagamento chega neste e-mail, e a apólice em até 24 horas após o pagamento.</p>
                 <div className="mt-5 grid gap-4 sm:grid-cols-3">
                   <Campo rotulo="Seu nome completo"><input value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={classeInput(false)} /></Campo>
                   <Campo rotulo="E-mail"><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" className={classeInput(false)} /></Campo>

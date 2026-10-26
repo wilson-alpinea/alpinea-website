@@ -12,11 +12,11 @@ export const runtime = "nodejs";
 
 // Fecha a compra do Seguro Viagem na Real Seguro Viagem (modo
 // "comissionado": o cliente paga custo + nossa margem direto no link do
-// fornecedor — Wilson, 26/out/2026) e registra o lead no CRM.
+// fornecedor — Wilson, 26/out/2026) e registra o pedido no CRM de Seguro.
 // A margem é recalculada aqui a partir das idades (nunca vem do navegador).
 //
 // ⚠️ A API não tem webhook nem consulta de status: o CRM não sabe sozinho
-// se o cliente pagou. O lead entra como "link de pagamento enviado" e a
+// se o cliente pagou. O pedido entra como "link de pagamento enviado" e a
 // confirmação é feita pelo painel do fornecedor.
 
 const TERMOS_VERSAO = "seguro-viagem-realseguro-2026-10-26";
@@ -108,34 +108,47 @@ export async function POST(req: Request) {
     ];
     const resumo = ["Novo pedido — Seguro Viagem (Real Seguro Viagem)", "", `Nome: ${nome}`, `E-mail: ${email}`, `Celular: ${celular}`, "", ...linhas.map(([r, v]) => `${r}: ${v}`)].join("\n");
 
-    // CRM — nunca derruba a venda (o link já foi gerado).
+    // CRM de Seguro Viagem (Wilson, 26/out/2026) — o pedido vai para
+    // seguro_pedidos (seguro.alpinea.io), não mais para clientes da Agência.
+    // Nunca derruba a venda (o link já foi gerado).
     try {
       const supabase = createAdminClient();
       const atribuicao = await atribuicaoDaRequisicao(req, supabase);
-      const { data: cliente, error } = await supabase
-        .from("clientes")
-        .insert({
-          ...atribuicao,
-          nome,
-          email,
-          telefone: celular,
-          origem: `${TAG_SELF_SERVICE} — Seguro Viagem (Real Seguro Viagem)`,
-          produto_principal: "servico_individual",
-          produto_secundario: ["seguro_viagem"],
-          valor_proposta: valorEstimado,
-          data_viagem: dados.partida,
-          estagio: "proposta_enviada",
-          observacoes: `[${TAG_SELF_SERVICE}]\n${resumo}`,
-          checkout_ip: ipDaRequisicao(req),
-          checkout_user_agent: req.headers.get("user-agent"),
-          termos_aceitos: true,
-          termos_versao: TERMOS_VERSAO,
-          termos_aceitos_em: new Date().toISOString(),
-        })
-        .select("id")
-        .single();
-      if (error || !cliente) console.error("Erro ao gravar lead (seguro-viagem checkout):", error);
-      else await supabase.from("interacoes").insert({ cliente_id: cliente.id, tipo: "simulacao", conteudo: `[${TAG_SELF_SERVICE}]\n${resumo}` });
+      const agora = new Date().toISOString();
+      const { error } = await supabase.from("seguro_pedidos").insert({
+        parceiro_id: atribuicao.parceiro_id,
+        canal: atribuicao.canal,
+        canal_detalhe: atribuicao.canal_detalhe,
+        utm: atribuicao.utm,
+        etapa: "link_enviado",
+        nome,
+        email,
+        telefone: celular,
+        fornecedor: "Real Seguro Viagem",
+        plano: dados.nome,
+        seguradora: dados.seguradora,
+        partida: dados.partida,
+        retorno: dados.retorno,
+        viajantes: viajantes.map((v, i) => ({
+          nome: v.nome_completo,
+          nascimento: v.data_nascimento,
+          idade: idades[i],
+          documento: v.passaporte_cpf,
+          tipo_documento: v.cidadania === "brasil" ? "cpf" : "passaporte",
+        })),
+        valor_cliente: valorEstimado,
+        custo: dados.custo,
+        margem_pct: margem,
+        link_pagamento: checkout.url,
+        aviso_fornecedor: checkout.aviso,
+        observacoes_cliente: observacoes || null,
+        checkout_ip: ipDaRequisicao(req),
+        checkout_user_agent: req.headers.get("user-agent"),
+        termos_versao: TERMOS_VERSAO,
+        termos_aceitos_em: agora,
+        historico: [{ em: agora, por: "site", tipo: "nota", texto: "Pedido feito no site; link de pagamento enviado ao cliente." }],
+      });
+      if (error) console.error("Erro ao gravar pedido (seguro-viagem checkout):", error);
     } catch (erroCrm) {
       console.error("Erro no CRM (seguro-viagem checkout):", erroCrm);
     }
@@ -154,13 +167,13 @@ export async function POST(req: Request) {
     const emailCliente: EmailClienteParams = {
       nome,
       titulo: "Seu seguro viagem está quase pronto",
-      intro: "Falta só o pagamento. Use o link seguro abaixo para pagar com Pix ou cartão — a apólice é emitida pela seguradora logo após a confirmação.",
+      intro: "Falta só o pagamento. Use o link seguro abaixo para pagar com Pix ou cartão — após a confirmação, a seguradora tem até 24 horas para enviar a apólice.",
       status: "Aguardando pagamento",
       etapaAtual: 1,
       etapas: [
         { titulo: "Plano escolhido", texto: `${dados.nome} — ${dados.seguradora}.` },
         { titulo: "Pagamento", texto: `Link de pagamento: ${checkout.url}` },
-        { titulo: "Apólice emitida", texto: "A apólice chega por e-mail após a confirmação do pagamento." },
+        { titulo: "Apólice emitida", texto: "A seguradora envia a apólice por e-mail em até 24 horas após a confirmação do pagamento." },
         { titulo: "Viagem protegida", texto: "Em caso de necessidade, acione a central de atendimento da seguradora indicada na apólice." },
       ],
       resumo: [

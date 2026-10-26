@@ -2,8 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import {
   COOKIE_INDICACAO,
-  HOST_AGENCIA,
-  HOST_EMPREGOS,
+  HOST_UNIDADE,
+  INICIO_UNIDADE,
   SLUG_PARCEIRO,
   inicioDoPapel,
   isPapelCrm,
@@ -20,7 +20,7 @@ import { COOKIE_UTM, PARAMS_CAMPANHA, type DadosCampanha } from "./lib/crm/canal
 //    num cookie de 30 dias — os formulários self-service usam para marcar
 //    o lead com o parceiro (Wilson, 21/out/2026).
 // 2. Domínios dos CRMs: crm.alpinea.io = agência, empregos.alpinea.io =
-//    empregos. Cada domínio só abre as telas da sua unidade.
+//    empregos, seguro.alpinea.io = seguro viagem. Cada domínio só abre as telas da sua unidade.
 // 3. /crm/*: exige sessão e respeita o papel — parceiro da agência só abre
 //    /crm/parceiro, empreiteira só /crm/empreiteira, admin abre tudo.
 export async function proxy(request: NextRequest) {
@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
     // Domínio de CRM fora de /crm → início da unidade.
     if (unidadeHost) {
       const url = request.nextUrl.clone();
-      url.pathname = unidadeHost === "empregos" ? "/crm/empregos" : "/crm";
+      url.pathname = INICIO_UNIDADE[unidadeHost];
       url.search = "";
       return NextResponse.redirect(url);
     }
@@ -156,7 +156,7 @@ export async function proxy(request: NextRequest) {
     // casos fica no início da própria unidade.
     const navegacaoInterna = request.headers.has("rsc") || request.headers.has("next-action") || request.headers.has("next-router-prefetch");
     if (navegacaoInterna) return redirecionar(inicioDoPapel(papel, unidadeHost));
-    return redirecionar(pathname, unidadeRota === "empregos" ? HOST_EMPREGOS : HOST_AGENCIA);
+    return redirecionar(pathname, HOST_UNIDADE[unidadeRota]);
   }
 
   // Unidade atual vai num header para o layout montar o menu certo.

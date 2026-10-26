@@ -2,7 +2,7 @@ import Link from "next/link";
 import { NavCrm } from "./NavCrm";
 import { headers } from "next/headers";
 import { exigirAdmin } from "@/lib/crm/acesso";
-import { urlUnidade } from "@/lib/crm/unidades";
+import { INICIO_UNIDADE, UNIDADES_CRM, UNIDADE_COR, UNIDADE_LABEL, isUnidadeCrm, urlUnidade } from "@/lib/crm/unidades";
 import { logout } from "../actions";
 
 // Dois CRMs (Wilson, 21/out/2026): agência de viagens e empregos, cada um
@@ -20,6 +20,12 @@ const NAV_EMPREGOS = [
   { href: "/crm/empregos/vagas", label: "Vagas" },
   { href: "/crm/acessos", label: "Acessos" },
 ];
+// CRM de Seguro Viagem (Wilson, 26/out/2026).
+const NAV_SEGURO = [
+  { href: "/crm/seguro", label: "Pedidos" },
+  { href: "/crm/acessos", label: "Acessos" },
+];
+const NAV_UNIDADE = { agencia: NAV_AGENCIA, empregos: NAV_EMPREGOS, seguro: NAV_SEGURO };
 
 export default async function CrmShellLayout({
   children,
@@ -29,16 +35,17 @@ export default async function CrmShellLayout({
   // Só a equipe (admin) entra nas telas do CRM; parceiros têm portal próprio.
   const acesso = await exigirAdmin();
   const nomeExibicao = acesso.nome;
-  const unidade = (await headers()).get("x-crm-unidade") === "empregos" ? "empregos" : "agencia";
-  const NAV = unidade === "empregos" ? NAV_EMPREGOS : NAV_AGENCIA;
-  const rotuloUnidade = unidade === "empregos" ? "Empregos" : "Agência";
+  const h = (await headers()).get("x-crm-unidade");
+  const unidade = isUnidadeCrm(h) ? h : "agencia";
+  const NAV = NAV_UNIDADE[unidade];
+  const rotuloUnidade = UNIDADE_LABEL[unidade];
 
   return (
     <div data-unidade={unidade} className="crm-pagina min-h-screen bg-[#FAF9F6] text-[#20252B]">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
           <div className="flex min-w-0 items-center gap-6 lg:gap-8">
-            <Link href={unidade === "empregos" ? "/crm/empregos" : "/crm"} className="flex items-center gap-4">
+            <Link href={INICIO_UNIDADE[unidade]} className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/ajisai-group-white-crop.png"
@@ -60,18 +67,21 @@ export default async function CrmShellLayout({
           <div className="flex shrink-0 items-center gap-4">
             {/* Trocar para o outro CRM (Wilson, 21/out/2026). Mais visível, na cor
                 da unidade de destino e sem a seta (Wilson, 22/out/2026). */}
-            <a
-              href={urlUnidade(unidade === "empregos" ? "agencia" : "empregos")}
-              // Cor por estilo inline: o tema de Empregos remapeia as classes azuis
-              // para verde-petróleo, mas este botão indica a unidade de DESTINO.
-              className="hidden items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-medium text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:inline-flex"
-              style={{ backgroundColor: unidade === "empregos" ? "#24476B" : "#27675B" }}
-            >
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M7 7h11l-3-3M17 17H6l3 3" />
-              </svg>
-              CRM {unidade === "empregos" ? "Agência" : "Empregos"}
-            </a>
+            {/* Com três CRMs, um botão por destino, cada um na cor da unidade de
+                destino (estilo inline: o tema da unidade atual não o remapeia). */}
+            {UNIDADES_CRM.filter((u) => u !== unidade).map((u) => (
+              <a
+                key={u}
+                href={urlUnidade(u)}
+                className="hidden items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-medium text-white shadow-sm transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 lg:inline-flex"
+                style={{ backgroundColor: UNIDADE_COR[u] }}
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M7 7h11l-3-3M17 17H6l3 3" />
+                </svg>
+                CRM {u === "seguro" ? "Seguro" : UNIDADE_LABEL[u]}
+              </a>
+            ))}
             <span className="hidden text-[13px] text-white/35 xl:inline">
               {nomeExibicao}
             </span>

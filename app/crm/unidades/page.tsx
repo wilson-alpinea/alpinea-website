@@ -3,7 +3,7 @@ import { exigirAdmin } from "@/lib/crm/acesso";
 import { urlUnidade } from "@/lib/crm/unidades";
 import { PortalShell } from "../PortalShell";
 
-// alpinea.io/crm — escolha do CRM (Wilson, 21/out/2026): "ao acessar o
+// alpinea.io/crm — escolha do CRM (Wilson, 21/out/2026; + Seguro Viagem 26/out): "ao acessar o
 // domínio /crm, precisa ter uma opção pra entrar no CRM da agência ou da
 // parte de empregos, ambos são CRMs".
 
@@ -42,6 +42,18 @@ const UNIDADES = [
     corHover: "#307A6F",
     tonal: "#DCEEE9",
   },
+  {
+    unidade: "seguro" as const,
+    titulo: "Seguro Viagem",
+    descricao: "Acompanhe pedidos, pagamentos e o envio das apólices.",
+    botao: "Acessar seguro viagem",
+    aqui: "/crm/seguro",
+    icone: null,
+    fundo: "#F6F3F9",
+    cor: "#75608B",
+    corHover: "#63507A",
+    tonal: "#E9E2F1",
+  },
 ];
 
 export default async function EscolherCrmPage() {
@@ -53,7 +65,7 @@ export default async function EscolherCrmPage() {
         <h1 className="text-[#20252B]">Escolha sua área de trabalho</h1>
         <p className="mt-1 text-[15px] text-[#626B75]">Acesse a unidade que deseja gerenciar.</p>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {UNIDADES.map((u) => (
             <section
               key={u.unidade}
@@ -61,8 +73,16 @@ export default async function EscolherCrmPage() {
               style={{ backgroundColor: u.fundo, borderTopColor: u.cor }}
             >
               <span className="flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: u.tonal }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={u.icone} alt="" aria-hidden="true" className="h-12 w-12" />
+                {u.icone ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={u.icone} alt="" aria-hidden="true" className="h-12 w-12" />
+                ) : (
+                  // Escudo (seguro) desenhado no próprio estilo dos outros ícones.
+                  <svg viewBox="0 0 48 48" className="h-11 w-11" fill="none" aria-hidden="true">
+                    <path d="M24 5 9 10.5v11.2c0 9.6 6.4 17.7 15 20.3 8.6-2.6 15-10.7 15-20.3V10.5L24 5Z" fill="#fff" stroke={u.cor} strokeWidth={3} strokeLinejoin="round" />
+                    <path d="m17.5 24 4.5 4.5 8.5-9" stroke={u.cor} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
               </span>
               {/* 22 px por estilo inline: a regra global de h2 (18 px) não vale aqui. */}
               <h2 className="mt-5 font-semibold text-[#20252B]" style={{ fontSize: 22 }}>
@@ -81,7 +101,7 @@ export default async function EscolherCrmPage() {
         </div>
 
         <p className="mt-6 text-[13px] text-[#626B75]">
-          Use o mesmo e-mail e senha nas duas unidades. No primeiro acesso, pode ser necessário entrar novamente.
+          Use o mesmo e-mail e senha em todas as unidades. No primeiro acesso, pode ser necessário entrar novamente.
         </p>
 
         {/* Alternativa: abrir a unidade sem sair de alpinea.io (não pede novo login). */}

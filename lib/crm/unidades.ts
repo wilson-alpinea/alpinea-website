@@ -2,7 +2,13 @@
 // de viagens e 1 somente para empregos", cada um com URL própria.
 // Sem dependências de servidor — usado também pelo proxy.ts.
 
-export type UnidadeCrm = "agencia" | "empregos";
+// + Seguro Viagem (Wilson, 26/out/2026): terceiro CRM, seguro.alpinea.io.
+export type UnidadeCrm = "agencia" | "empregos" | "seguro";
+export const UNIDADES_CRM: UnidadeCrm[] = ["agencia", "empregos", "seguro"];
+export const UNIDADE_LABEL: Record<UnidadeCrm, string> = { agencia: "Agência", empregos: "Empregos", seguro: "Seguro Viagem" };
+/** Cor principal de cada CRM (botões de troca, cards de escolha). */
+export const UNIDADE_COR: Record<UnidadeCrm, string> = { agencia: "#24476B", empregos: "#27675B", seguro: "#75608B" };
+export const isUnidadeCrm = (v: unknown): v is UnidadeCrm => v === "agencia" || v === "empregos" || v === "seguro";
 export type PapelCrm = "admin" | "parceiro_agencia" | "empreiteira";
 
 export const isPapelCrm = (v: unknown): v is PapelCrm =>
@@ -18,27 +24,32 @@ export const PAPEL_LABEL: Record<PapelCrm, string> = {
 // mexer no código. O CRM continua acessível em alpinea.io/crm (admin).
 export const HOST_AGENCIA = (process.env.CRM_HOST_AGENCIA || "crm.alpinea.io").toLowerCase();
 export const HOST_EMPREGOS = (process.env.CRM_HOST_EMPREGOS || "empregos.alpinea.io").toLowerCase();
+export const HOST_SEGURO = (process.env.CRM_HOST_SEGURO || "seguro.alpinea.io").toLowerCase();
+export const HOST_UNIDADE: Record<UnidadeCrm, string> = { agencia: HOST_AGENCIA, empregos: HOST_EMPREGOS, seguro: HOST_SEGURO };
 
 export function unidadeDoHost(host: string | null | undefined): UnidadeCrm | null {
   const h = (host || "").toLowerCase().split(":")[0];
   if (h === HOST_AGENCIA) return "agencia";
   if (h === HOST_EMPREGOS) return "empregos";
+  if (h === HOST_SEGURO) return "seguro";
   return null;
 }
 
-// Rotas compartilhadas (servem às duas unidades).
+// Rotas compartilhadas (servem a todas as unidades).
 const ROTAS_COMPARTILHADAS = ["/crm/login", "/crm/acessos", "/crm/sem-acesso", "/crm/unidades"];
 
 export function unidadeDaRota(pathname: string): UnidadeCrm | "compartilhada" {
   if (ROTAS_COMPARTILHADAS.some((r) => pathname === r || pathname.startsWith(`${r}/`))) return "compartilhada";
   if (pathname === "/crm/empregos" || pathname.startsWith("/crm/empregos/")) return "empregos";
   if (pathname === "/crm/empreiteira" || pathname.startsWith("/crm/empreiteira/")) return "empregos";
+  if (pathname === "/crm/seguro" || pathname.startsWith("/crm/seguro/")) return "seguro";
   return "agencia";
 }
 
 export const INICIO_UNIDADE: Record<UnidadeCrm, string> = {
   agencia: "/crm",
   empregos: "/crm/empregos",
+  seguro: "/crm/seguro",
 };
 
 // Página inicial de cada papel.
@@ -62,7 +73,7 @@ export function rotaPermitida(papel: PapelCrm | null, pathname: string): boolean
 
 /** Endereço completo do início de cada CRM no domínio próprio. */
 export function urlUnidade(unidade: UnidadeCrm): string {
-  return `https://${unidade === "empregos" ? HOST_EMPREGOS : HOST_AGENCIA}${INICIO_UNIDADE[unidade]}`;
+  return `https://${HOST_UNIDADE[unidade]}${INICIO_UNIDADE[unidade]}`;
 }
 
 // Cookie do link de indicação (?parceiro=<slug>).
