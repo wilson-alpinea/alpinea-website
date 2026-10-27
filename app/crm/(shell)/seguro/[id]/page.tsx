@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { PedidoSeguro } from "@/lib/crm/seguro";
+import { completarPedido, type PedidoSeguro } from "@/lib/crm/seguro";
 import { DetalheSeguro } from "./DetalheSeguro";
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default async function PedidoSeguroPage({ params }: { params: Promise<{ i
     );
   }
   const pedido = { ...data, viajantes: Array.isArray(data.viajantes) ? data.viajantes : [], historico: Array.isArray(data.historico) ? data.historico : [] } as PedidoSeguro;
-  return <DetalheSeguro pedido={pedido} agora={agoraMs()} />;
+  return <DetalheSeguro pedido={completarPedido(pedido)} agora={agoraMs()} />;
 }
 
 // Hora do servidor no momento da renderização (prazo de 24 h da apólice).

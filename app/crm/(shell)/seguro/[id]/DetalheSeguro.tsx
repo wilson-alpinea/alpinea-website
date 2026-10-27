@@ -59,7 +59,7 @@ function Linhas({ itens }: { itens: [string, React.ReactNode][] }) {
   );
 }
 
-export function DetalheSeguro({ pedido: p, agora }: { pedido: PedidoSeguro; agora: number }) {
+export function DetalheSeguro({ pedido: p, agora }: { pedido: PedidoSeguro & { dadosDoTexto?: boolean }; agora: number }) {
   const router = useRouter();
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
   const [painel, setPainel] = useState<null | { tipo: "etapa"; para?: EtapaSeguro } | { tipo: "dados" }>(null);
@@ -75,7 +75,6 @@ export function DetalheSeguro({ pedido: p, agora }: { pedido: PedidoSeguro; agor
   const prox = PROXIMA[p.etapa];
   const prazo = prazoApolice(p, agora);
   const idx = FLUXO_SEGURO.indexOf(p.etapa);
-  const viagem = p.partida ? `${dataBR(p.partida)}${p.retorno ? ` a ${dataBR(p.retorno)}` : ""}` : "Não informada";
 
   return (
     <div className="space-y-6">
@@ -115,6 +114,8 @@ export function DetalheSeguro({ pedido: p, agora }: { pedido: PedidoSeguro; agor
           </button>
         </p>
       )}
+
+      <CardSeguro p={p} />
 
       {/* Andamento */}
       <section className={`rounded-2xl border border-t-[3px] border-[#E6E1EC] bg-white p-5 ${SOMBRA}`} style={{ borderTopColor: etapa.cor }}>
@@ -176,18 +177,6 @@ export function DetalheSeguro({ pedido: p, agora }: { pedido: PedidoSeguro; agor
           />
         </Card>
 
-        <Card titulo="Plano e viagem" cor="#42658A">
-          <Linhas
-            itens={[
-              ["Plano", p.plano ?? "Não informado"],
-              ["Seguradora", p.seguradora ?? "Não informada"],
-              ["Fornecedor", p.fornecedor ?? "Não informado"],
-              ["Viagem", viagem],
-              ["Viajantes", String(p.viajantes.length || "Não informado")],
-            ]}
-          />
-        </Card>
-
         <Card titulo="Pagamento" cor="#93703D">
           <Linhas
             itens={[
@@ -219,27 +208,6 @@ export function DetalheSeguro({ pedido: p, agora }: { pedido: PedidoSeguro; agor
           />
         </Card>
       </div>
-
-      <Card titulo="Viajantes" cor="#42658A">
-        {p.viajantes.length === 0 ? (
-          <p className="text-sm text-[#67626F]">Não informados neste pedido. {p.cliente_origem_id && "Veja o texto original nas notas abaixo."}</p>
-        ) : (
-          <ul className="divide-y divide-[#F0ECF4] text-sm">
-            {p.viajantes.map((v, i) => (
-              <li key={i} className="grid gap-1 py-2.5 sm:grid-cols-[minmax(0,2fr)_1fr_1fr]">
-                <span className="font-medium text-[#24212A]">{v.nome}</span>
-                <span className="tabular-nums text-[#67626F]">
-                  {v.nascimento ? dataBR(v.nascimento) : "Nascimento não informado"}
-                  {v.idade != null && ` · ${v.idade} anos`}
-                </span>
-                <span className="tabular-nums text-[#67626F]">
-                  {v.tipo_documento === "passaporte" ? "Passaporte" : "CPF"}: {v.documento || "não informado"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
 
       {p.notas && (
         <Card titulo="Texto original do pedido" cor="#5D6C70">
@@ -443,5 +411,67 @@ function PainelDados({ pedido: p, onFechar, onSalvo }: { pedido: PedidoSeguro; o
         {erro && <p role="alert" className="rounded-lg bg-[#FDECEA] px-3 py-2 text-[13px] text-[#B42318]">{erro}</p>}
       </div>
     </Painel>
+  );
+}
+
+/** Card em destaque com o seguro contratado — o plano em primeiro lugar. */
+function CardSeguro({ p }: { p: PedidoSeguro & { dadosDoTexto?: boolean } }) {
+  const dias = p.partida && p.retorno ? Math.round((Date.parse(p.retorno) - Date.parse(p.partida)) / 86_400_000) + 1 : null;
+  const itens: [string, React.ReactNode][] = [
+    [
+      "Período",
+      p.partida ? (
+        <>
+          <span className="tabular-nums">
+            {dataBR(p.partida)}
+            {p.retorno && ` a ${dataBR(p.retorno)}`}
+          </span>
+          {dias != null && dias > 0 && <span className="block text-[13px] font-normal text-[#67626F]">{dias} {dias === 1 ? "dia" : "dias"}</span>}
+        </>
+      ) : (
+        "Não informado"
+      ),
+    ],
+    ["Viajantes", p.viajantes.length ? `${p.viajantes.length} ${p.viajantes.length === 1 ? "pessoa" : "pessoas"}` : "Não informado"],
+    ["Valor ao cliente", <span key="v" className="tabular-nums">{brl(p.valor_cliente)}</span>],
+    ["Fornecedor", p.fornecedor ?? "Não informado"],
+  ];
+  return (
+    <section aria-labelledby="titulo-seguro" className={`rounded-2xl border border-t-[3px] border-[#75608B]/25 border-t-[#75608B] bg-[#F4F1F8] p-6 ${SOMBRA}`}>
+      <p id="titulo-seguro" className="text-[13px] font-semibold uppercase tracking-wide text-[#75608B]">
+        Seguro contratado
+      </p>
+      <p className="mt-2 font-semibold leading-tight text-[#24212A]" style={{ fontSize: 24 }}>
+        {p.plano ?? "Plano não informado"}
+      </p>
+      <p className="mt-1 text-[15px] text-[#4E4757]">{p.seguradora ? `Seguradora: ${p.seguradora}` : "Seguradora não informada"}</p>
+
+      <dl className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {itens.map(([k, v]) => (
+          <div key={k} className="rounded-xl bg-white px-4 py-3">
+            <dt className="text-[13px] text-[#67626F]">{k}</dt>
+            <dd className="mt-0.5 text-[15px] font-semibold text-[#24212A]">{v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {p.viajantes.length > 0 && (
+        <div className="mt-4 rounded-xl bg-white px-4 py-2">
+          <ul className="divide-y divide-[#F0ECF4] text-sm">
+            {p.viajantes.map((v, i) => (
+              <li key={i} className="grid gap-1 py-2.5 sm:grid-cols-[minmax(0,2fr)_1fr_1fr]">
+                <span className="font-medium text-[#24212A]">{v.nome}</span>
+                <span className="tabular-nums text-[#67626F]">
+                  {v.nascimento ? dataBR(v.nascimento) : v.idade != null ? "" : "Nascimento não informado"}
+                  {v.idade != null && `${v.nascimento ? " · " : ""}${v.idade} anos`}
+                </span>
+                <span className="tabular-nums text-[#67626F]">{v.documento ? `${v.tipo_documento === "passaporte" ? "Passaporte" : "CPF"}: ${v.documento}` : "Documento não informado"}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {p.dadosDoTexto && <p className="mt-3 text-[13px] text-[#67626F]">Pedido trazido do CRM da Agência: dados lidos do texto original (abaixo).</p>}
+    </section>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { completarPedido } from "@/lib/crm/seguro";
 import { ListaSeguro, type LinhaSeguro } from "./ListaSeguro";
 
 // CRM de Seguro Viagem — lista de pedidos (Wilson, 26/out/2026).
@@ -15,11 +16,16 @@ export default async function SeguroPage() {
   await exigirAdmin();
   const { data, error } = await createAdminClient()
     .from("seguro_pedidos")
-    .select("id, created_at, etapa, nome, email, telefone, plano, seguradora, partida, retorno, viajantes, valor_cliente, pago_em, numero_apolice")
+    .select("id, created_at, etapa, nome, email, telefone, plano, seguradora, partida, retorno, viajantes, valor_cliente, pago_em, numero_apolice, notas")
     .order("created_at", { ascending: false })
     .limit(3000);
   if (error) console.error("Erro ao ler seguro_pedidos:", error);
-  const pedidos = (data ?? []).map((p) => ({ ...p, viajantes: Array.isArray(p.viajantes) ? p.viajantes.length : 0 })) as unknown as LinhaSeguro[];
+  // Pedidos antigos só têm o texto original: completa plano, datas e valor a partir dele.
+  const pedidos = (data ?? []).map((bruto) => {
+    const { notas: _n, ...p } = completarPedido(bruto as never) as Record<string, unknown> & { viajantes: unknown[] };
+    void _n;
+    return { ...p, viajantes: Array.isArray(p.viajantes) ? p.viajantes.length : 0 };
+  }) as unknown as LinhaSeguro[];
 
   return (
     <div className="space-y-6">
