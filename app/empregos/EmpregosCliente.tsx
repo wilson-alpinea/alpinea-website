@@ -1129,17 +1129,22 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
           os botões "Ver vagas"/"Falar com a Ajisai" removidos daqui — o CTA
           "Ver vagas" já existe no header fixo. ── */}
       <section className="relative overflow-hidden border-b border-black/10 bg-[#0A2540]">
-        <div className="absolute inset-0">
+        {/* Widescreen (Wilson, 27/out/2026): a colagem (2752×1536) não passa de
+            1400 px de largura — acima disso o object-cover ampliava e cortava
+            demais. As laterais ficam no azul da seção, com esmaecimento. */}
+        <div className="absolute inset-y-0 left-1/2 w-full max-w-[1400px] -translate-x-1/2">
           <Image
             src="/images/empregos-hero-colagem.jpg"
             alt="Trabalhadores em fábricas no Japão — linha alimentícia, automotiva, eletrônicos e logística"
             fill
             priority
-            sizes="100vw"
-            className="object-cover"
+            sizes="(min-width: 1400px) 1400px, 100vw"
+            className="object-cover object-top"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] from-15% via-[#0A2540]/75 via-45% to-[#0A2540]/10 to-90%" />
+          <div className="absolute inset-y-0 left-0 hidden w-40 bg-gradient-to-r from-[#0A2540] to-transparent min-[1400px]:block" />
+          <div className="absolute inset-y-0 right-0 hidden w-40 bg-gradient-to-l from-[#0A2540] to-transparent min-[1400px]:block" />
         </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] from-15% via-[#0A2540]/75 via-45% to-[#0A2540]/10 to-90%" />
         <div className="relative flex min-h-[520px] flex-col justify-end px-6 pb-8 pt-28 md:min-h-[640px] md:px-10 md:pb-10 md:pt-36">
           <div className="mx-auto w-full max-w-4xl text-center">
             <h1 className={`${display.className} text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
