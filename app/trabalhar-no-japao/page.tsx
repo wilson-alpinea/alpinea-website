@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
@@ -14,12 +15,16 @@ import { WHATSAPP_AJISAI_NUMERO } from "@/lib/email/templateCliente";
 
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
-export const metadata = metaEmpregos({
+export const metadata: Metadata = {
+  // Sem as palavras-chave de turismo de luxo herdadas do layout raiz.
+  keywords: ["trabalhar no Japão", "emprego no Japão", "emprego formal no Japão", "brasileiros no Japão", "Ajisai Empregos", "fábricas no Japão"],
+  ...metaEmpregos({
   titulo: "Trabalhar no Japão com apoio em português — Ajisai",
   descricao:
     "Conheça a Ajisai: há mais de 12 anos no Japão, apoiando brasileiros que buscam emprego formal no país, com atendimento em português do primeiro contato à mudança.",
   url: "https://www.alpinea.io/trabalhar-no-japao",
-});
+  }),
+};
 
 const CATALOGO = "/empregos#vagas";
 const whatsapp = `https://wa.me/${WHATSAPP_AJISAI_NUMERO}?text=${encodeURIComponent("Olá! Conheci a Ajisai pela página Trabalhar no Japão e queria saber mais.")}`;
