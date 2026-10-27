@@ -133,7 +133,17 @@ export const SECOES: Secao[] = [
           { v: "viuvo", l: "Viúvo(a)" },
         ],
       },
-      { id: "cidadeNascimento", label: "Cidade e estado de nascimento", tipo: "texto", obrigatorio: true, placeholder: "Ex.: Londrina / PR", largura: "meia" },
+      // Cidade e estado em campos separados (Wilson, 27/out/2026). Fichas
+      // antigas têm os dois juntos em cidadeNascimento ("Londrina / PR").
+      { id: "cidadeNascimento", label: "Cidade de nascimento", tipo: "texto", obrigatorio: true, placeholder: "Ex.: Londrina", largura: "meia" },
+      {
+        id: "estadoNascimento",
+        label: "Estado de nascimento",
+        tipo: "select",
+        obrigatorio: true,
+        largura: "meia",
+        opcoes: [...UFS, { v: "exterior", l: "Nasci fora do Brasil" }],
+      },
       {
         id: "nacionalidade",
         label: "Nacionalidade",
@@ -157,6 +167,10 @@ export const SECOES: Secao[] = [
         opcoes: [
           { v: "google", l: "Google / site" },
           { v: "redesSociais", l: "Redes sociais" },
+          // Canais incluídos pelo Wilson, 27/out/2026.
+          { v: "youtubeTudoSobreJapao", l: "YouTube – Tudo Sobre O Japão" },
+          { v: "youtubeFrttt", l: "YouTube – FRTTT" },
+          { v: "chatgpt", l: "ChatGPT" },
           { v: "anuncio", l: "Anúncio (jornal, rádio, cartaz)" },
           { v: "indicacao", l: "Indicação de alguém" },
           { v: "outro", l: "Outro" },

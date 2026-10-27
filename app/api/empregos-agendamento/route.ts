@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { enviarConversaoOpenAI } from "../../../lib/openaiAds/conversoes";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { carregarCandidaturaPublica } from "../../../lib/empregos/candidaturaPublica";
@@ -89,6 +90,9 @@ export async function POST(req: Request) {
       emailClienteHtml(emailCandidato),
     );
 
+    // Conversão do ChatGPT Ads: pré-entrevista marcada (Wilson, 27/out/2026).
+    // Id fixo por candidatura — remarcar não conta de novo.
+    await enviarConversaoOpenAI({ id: `agendamento_${c.id}`, tipo: "registration_completed", sourceUrl: req.headers.get("referer") });
     return NextResponse.json({ sucesso: true, inicio: escolhido.inicio, linkReuniao: config.link_reuniao });
   } catch (err) {
     console.error("Erro no agendamento:", err);

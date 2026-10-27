@@ -357,7 +357,7 @@ export const MODELOS_PARCEIROS: ModeloParceiro[] = [
           nomeCompleto,
           F("Data de nascimento", "dataNascimento"),
           idade,
-          F("Cidade de nascimento", "cidadeNascimento"),
+          FX("Cidade de nascimento", (x) => [valorFicha(x.f, "cidadeNascimento"), valorFicha(x.f, "estadoNascimento")].filter(Boolean).join(" / ")),
           F("Identidade", "rg"),
           F("CPF", "cpf"),
           endereco,

@@ -372,19 +372,39 @@ export default function FichaForm({
 
   return (
     <div className="mt-8">
-      {/* Progresso */}
-      <div className="flex gap-1">
+      {/* Progresso — mais visível, com a etapa atual em destaque (Wilson, 27/out/2026) */}
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-sm font-semibold text-black">
+          Etapa {passo + 1} de {ETAPAS.length} <span className="font-normal text-black/50">· {etapa.titulo}</span>
+        </p>
+        <p className="shrink-0 text-xs font-medium tabular-nums" style={{ color: AZUL }}>
+          {Math.round(((passo + 1) / ETAPAS.length) * 100)}%
+        </p>
+      </div>
+      <div
+        className="mt-2 flex gap-1.5"
+        role="progressbar"
+        aria-valuemin={1}
+        aria-valuemax={ETAPAS.length}
+        aria-valuenow={passo + 1}
+        aria-valuetext={`Etapa ${passo + 1} de ${ETAPAS.length}: ${etapa.titulo}`}
+      >
         {ETAPAS.map((e, i) => (
-          <div key={e.id} className="h-1 flex-1 rounded-full" style={{ background: i <= passo ? AZUL : "rgba(0,0,0,0.08)" }} />
+          <div
+            key={e.id}
+            title={`${i + 1}. ${e.titulo}`}
+            className={`h-2.5 flex-1 rounded-full transition-colors ${i === passo ? "ring-2 ring-offset-1" : ""}`}
+            style={{ background: i <= passo ? AZUL : "rgba(0,0,0,0.08)", ["--tw-ring-color" as string]: `${AZUL}55` }}
+          />
         ))}
       </div>
-      <p className="mt-2 text-xs text-black/45">
-        Passo {passo + 1} de {ETAPAS.length} · {etapa.titulo}
-      </p>
 
       <form onSubmit={enviar} className="mt-4 rounded-3xl bg-white p-5 shadow-sm sm:p-8">
         {secao ? (
           <>
+            <p className="mb-2 inline-block rounded-full px-3 py-1 text-xs font-semibold" style={{ color: AZUL, backgroundColor: `${AZUL}14` }}>
+              Etapa {passo + 1} de {ETAPAS.length}
+            </p>
             <h2 className="text-lg font-medium text-black">{secao.titulo}</h2>
             {secao.descricao && <p className="mt-1 text-xs leading-5 text-black/50">{secao.descricao}</p>}
             <div className="mt-5 grid grid-cols-6 gap-4">
@@ -399,6 +419,9 @@ export default function FichaForm({
           </>
         ) : (
           <>
+            <p className="mb-2 inline-block rounded-full px-3 py-1 text-xs font-semibold" style={{ color: AZUL, backgroundColor: `${AZUL}14` }}>
+              Etapa {passo + 1} de {ETAPAS.length}
+            </p>
             <h2 className="text-lg font-medium text-black">Foto</h2>
             <p className="mt-1 text-xs leading-5 text-black/55">
               Foto tipo 3x4 recente, com fundo claro/liso, boa iluminação e o rosto bem visível — sem boné, chapéu ou

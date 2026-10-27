@@ -8,7 +8,9 @@ import { useEffect } from "react";
 // só nas páginas de /empregos (Wilson, 27/out/2026). Fonte de dados
 // "My first pixel". Conversão: candidatura enviada (registration_completed),
 // disparada em EmpregosCliente.tsx e também pelo servidor (Conversions API,
-// lib/openaiAds/conversoes.ts) com o mesmo id. Docs: developers.openai.com/ads/measurement-pixel
+// lib/openaiAds/conversoes.ts) com o mesmo id. Pré-entrevista marcada:
+// também registration_completed, id agendamento_<id> (AgendamentoForm.tsx +
+// api/empregos-agendamento). Docs: developers.openai.com/ads/measurement-pixel
 export const PIXEL_OPENAI_EMPREGOS = "6domiRibtibKAc65xR1w8H";
 
 type Oaiq = (...args: unknown[]) => void;
