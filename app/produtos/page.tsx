@@ -163,6 +163,16 @@ export default function ProdutosPage() {
     if (params.get("abrir") === "hoteis") {
       setHoteisModalOpen(true);
     }
+    // ?abrir=roteiro e o evento do menu de três barras (MenuProdutos) abrem
+    // o popup do Roteiro Personalizado (Wilson, 27/out/2026).
+    if (params.get("abrir") === "roteiro") {
+      setRoteiroModalOpen(true);
+    }
+    const abrirPeloMenu = (e: Event) => {
+      if ((e as CustomEvent<string>).detail === "roteiro") setRoteiroModalOpen(true);
+    };
+    window.addEventListener("alpinea:abrir-produto", abrirPeloMenu);
+    return () => window.removeEventListener("alpinea:abrir-produto", abrirPeloMenu);
   }, []);
 
   useEffect(() => {

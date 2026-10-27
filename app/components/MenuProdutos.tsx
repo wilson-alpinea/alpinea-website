@@ -7,10 +7,11 @@ import { useEffect, useId, useRef, useState } from "react";
 // Lista todos os produtos de /produtos. Fecha com Esc, clique fora ou ao
 // escolher um item.
 
-const GRUPOS: { titulo: string; itens: { href: string; nome: string }[] }[] = [
+const GRUPOS: { titulo: string; itens: { href: string; nome: string; abrir?: string }[] }[] = [
   {
     titulo: "Organize sua viagem",
     itens: [
+      { href: "/produtos?abrir=roteiro", nome: "Roteiro Personalizado", abrir: "roteiro" },
       { href: "/pacotes", nome: "Pacote de Viagem" },
       { href: "/viagem-personalizada", nome: "Viagem Personalizada" },
     ],
@@ -89,7 +90,17 @@ export function MenuProdutos({ claro = false }: { claro?: boolean }) {
               <ul>
                 {g.itens.map((i) => (
                   <li key={i.href}>
-                    <a href={i.href} onClick={() => setAberto(false)} className="block rounded-lg px-3 py-2 text-sm transition hover:bg-black/[0.05]">
+                    <a
+                      href={i.href}
+                      onClick={(e) => {
+                        setAberto(false);
+                        // Já em /produtos: abre o popup sem recarregar a página.
+                        if (i.abrir && window.location.pathname === "/produtos") {
+                          e.preventDefault();
+                          window.dispatchEvent(new CustomEvent("alpinea:abrir-produto", { detail: i.abrir }));
+                        }
+                      }}
+                      className="block rounded-lg px-3 py-2 text-sm transition hover:bg-black/[0.05]">
                       {i.nome}
                     </a>
                   </li>
