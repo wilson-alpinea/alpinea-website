@@ -1,3 +1,4 @@
+import { enviarConversaoOpenAI } from "../../../lib/openaiAds/conversoes";
 import { NextResponse } from "next/server";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { randomUUID } from "crypto";
@@ -404,6 +405,9 @@ export async function POST(req: Request) {
             regiao: v.regiao,
             salario: v.salario,
           }));
+
+    // Conversão do ChatGPT Ads pelo servidor (mesmo id do pixel → sem duplicar).
+    await enviarConversaoOpenAI({ id: `candidatura_${candidatura.id}`, tipo: "registration_completed", sourceUrl: req.headers.get("referer") });
 
     return NextResponse.json({
       candidaturaId: candidatura.id,

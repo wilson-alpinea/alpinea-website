@@ -9,6 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
+import { medirOpenAI } from "./PixelOpenAI";
 import { VAGAS, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
@@ -1849,6 +1850,8 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
       setFichaUrl(typeof dados.fichaUrl === "string" ? dados.fichaUrl : null);
       setSugestoes(Array.isArray(dados.sugestoes) ? dados.sugestoes : []);
       setCandidatura(dados.tokenCandidatura ? { id: dados.candidaturaId, token: dados.tokenCandidatura } : null);
+      // Conversão do ChatGPT Ads: candidatura enviada (Wilson, 27/out/2026).
+      medirOpenAI("registration_completed", { type: "customer_action" }, typeof dados.candidaturaId === "string" ? { event_id: `candidatura_${dados.candidaturaId}` } : undefined);
       setEtapa("resultado");
     } catch {
       setErro("Não foi possível enviar sua candidatura agora. Tente novamente.");
