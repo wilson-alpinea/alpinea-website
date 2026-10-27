@@ -124,7 +124,7 @@ export function emailClienteHtml(p: EmailClienteParams): string {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f9;"><tr><td align="center" style="padding:24px 12px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
     <tr><td style="background:${AZUL_MARINHO};padding:22px 28px;">
-      <img src="https://www.alpinea.io/images/email-logo-ajisai-branco.png" width="120" height="40" alt="AJISAI" style="display:block;width:120px;height:40px;border:0;outline:none;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:24px;letter-spacing:0.08em;color:#ffffff;">
+      <img src="https://www.alpinea.io/images/email-logo-ajisai-branco-solido.png" width="120" height="40" alt="AJISAI" style="display:block;width:120px;height:40px;border:0;outline:none;text-decoration:none;font-family:Georgia,'Times New Roman',serif;font-size:24px;letter-spacing:0.08em;color:#ffffff;">
       <div style="margin-top:8px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9fc3e6;">${esc(p.marca ?? "Viagens ao Japão")}</div>
     </td></tr>
     <tr><td style="padding:28px 28px 8px 28px;">
