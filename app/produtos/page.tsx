@@ -20,6 +20,7 @@ import {
 } from "../components/CustomPackageCard";
 import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
 import { ContactCTA } from "../components/ContactCTA";
+import { MenuProdutos } from "../components/MenuProdutos";
 import {
   TAXA_MAQUINA_CARTAO,
   TAXA_JUROS_CARTAO_MES,
@@ -272,6 +273,8 @@ export default function ProdutosPage() {
               className="h-10 w-auto object-contain invert md:h-11"
             />
           </Link>
+          {/* Menu com todos os produtos (Wilson, 26/out/2026). */}
+          <MenuProdutos />
         </div>
       </header>
 
