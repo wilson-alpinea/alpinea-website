@@ -40,3 +40,23 @@ export function PixelOpenAI() {
     </Script>
   );
 }
+
+// ── Google Ads (Wilson, 27/out/2026) ─────────────────────────────────
+// Mesmos dois momentos da OpenAI: candidatura concluída e pré-entrevista
+// marcada. A tag AW-18262525346 já é carregada em app/layout.tsx.
+// GOOGLE_ADS_EMPREGOS_SEND_TO = "AW-18262525346/<rótulo>" da ação de
+// conversão "Empregos — candidatura" criada no Google Ads. Vazio = só envia
+// o evento do GA4 (generate_lead), sem conversão do Ads.
+export const GOOGLE_ADS_EMPREGOS_SEND_TO = "AW-18262525346/7t-HCLvY-6odEKKLoIRE"; // ação "Empregos - Candidatura"
+
+type Gtag = (...args: unknown[]) => void;
+
+/** Conversão de Empregos no Google Ads + evento generate_lead no GA4. */
+export function medirGoogleEmpregos(momento: "candidatura" | "agendamento", id: string) {
+  try {
+    const gtag = (window as unknown as { gtag?: Gtag }).gtag;
+    if (!gtag) return;
+    gtag("event", "generate_lead", { form_name: `empregos_${momento}` });
+    if (GOOGLE_ADS_EMPREGOS_SEND_TO) gtag("event", "conversion", { send_to: GOOGLE_ADS_EMPREGOS_SEND_TO, transaction_id: `${momento}_${id}` });
+  } catch {}
+}

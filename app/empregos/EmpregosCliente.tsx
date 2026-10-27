@@ -9,7 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
-import { medirOpenAI } from "./PixelOpenAI";
+import { medirGoogleEmpregos, medirOpenAI } from "./PixelOpenAI";
 import { VAGAS, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
@@ -30,7 +30,7 @@ import {
   OPCOES_FLEXIBILIDADE,
   OPCOES_HORAS_EXTRAS,
   PERFIL_VAZIO,
-  PLACAS_DALTONISMO,
+  sortearPlacasDaltonismo,
   PROVINCIAS_JAPAO,
   OPCOES_FINANCIAMENTO,
   REGIOES_TATUAGEM,
@@ -1766,7 +1766,9 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
     });
   const turnoEliminatorio = criteriosDaVaga(vaga).turnoAlternado === "eliminatorio";
   const [respostasDaltonismo, setRespostasDaltonismo] = useState<Record<string, string>>({});
-  const testeDaltonismoCompleto = PLACAS_DALTONISMO.every((pl) => (respostasDaltonismo[pl.id] ?? "") !== "");
+  // Placas sorteadas uma vez por formulário (controle + 3, ordem aleatória).
+  const [placasDaltonismo] = useState(sortearPlacasDaltonismo);
+  const testeDaltonismoCompleto = placasDaltonismo.every((pl) => (respostasDaltonismo[pl.id] ?? "") !== "");
   const perfilParaEnvio: PerfilCandidato = {
     ...perfil,
     testeDaltonismo: exigeTesteDaltonismo && testeDaltonismoCompleto ? avaliarTesteDaltonismo(respostasDaltonismo) : null,
@@ -1854,6 +1856,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
       setCandidatura(dados.tokenCandidatura ? { id: dados.candidaturaId, token: dados.tokenCandidatura } : null);
       // Conversão do ChatGPT Ads: candidatura enviada (Wilson, 27/out/2026).
       medirOpenAI("registration_completed", { type: "customer_action" }, typeof dados.candidaturaId === "string" ? { event_id: `candidatura_${dados.candidaturaId}` } : undefined);
+      if (typeof dados.candidaturaId === "string") medirGoogleEmpregos("candidatura", dados.candidaturaId);
       setEtapa("resultado");
     } catch {
       setErro("Não foi possível enviar sua candidatura agora. Tente novamente.");
@@ -2202,7 +2205,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                     Faça com o brilho da tela normal e sem filtro de luz azul/modo noturno.
                   </p>
                   <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    {PLACAS_DALTONISMO.map((pl, i) => {
+                    {placasDaltonismo.map((pl, i) => {
                       const v = respostasDaltonismo[pl.id] ?? "";
                       return (
                         <div key={pl.id} className="flex flex-col items-center">

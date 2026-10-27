@@ -210,10 +210,34 @@ export const PLACAS_DALTONISMO: { id: string; imagem: string; resposta: string; 
   { id: "p8", imagem: "/images/empregos/daltonismo-placa-8.webp", resposta: "8" },
   { id: "p5", imagem: "/images/empregos/daltonismo-placa-5.webp", resposta: "5" },
   { id: "p6", imagem: "/images/empregos/daltonismo-placa-6.webp", resposta: "6" },
+  // Banco ampliado para o sorteio (Wilson, 27/out/2026: "ideal que seja
+  // randômico os 4") — mesmas folhas de teste.
+  { id: "p2", imagem: "/images/empregos/daltonismo-placa-2.webp", resposta: "2" },
+  { id: "p3", imagem: "/images/empregos/daltonismo-placa-3.webp", resposta: "3" },
+  { id: "p4", imagem: "/images/empregos/daltonismo-placa-4.webp", resposta: "4" },
+  { id: "p9", imagem: "/images/empregos/daltonismo-placa-9.webp", resposta: "9" },
 ];
 
-// Só 4 placas (Wilson, 06/out/2026: "deixar só 4 bolinhas") — controle
-// + 3 de teste. Com só 3 placas, 1 erro já é 33% do teste, então a
+/** Quantas placas de teste (além da de controle) cada candidato responde. */
+export const PLACAS_POR_TESTE = 3;
+
+/** Sorteia o teste: a placa de controle + 3 de teste, em ordem aleatória. */
+export function sortearPlacasDaltonismo() {
+  const embaralhar = <T,>(a: T[]) => {
+    const r = [...a];
+    for (let i = r.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [r[i], r[j]] = [r[j], r[i]];
+    }
+    return r;
+  };
+  const controle = PLACAS_DALTONISMO.filter((p) => p.controle);
+  const testes = embaralhar(PLACAS_DALTONISMO.filter((p) => !p.controle)).slice(0, PLACAS_POR_TESTE);
+  return embaralhar([...controle, ...testes]);
+}
+
+// Só 4 placas por candidato (Wilson, 06/out/2026: "deixar só 4 bolinhas") —
+// controle + 3 de teste, sorteadas do banco acima. Com só 3 placas, 1 erro já é 33% do teste, então a
 // aprovação passou a exigir controle certo + todas as 3 certas.
 export const ERROS_MAXIMOS_DALTONISMO = 0;
 
@@ -227,16 +251,19 @@ export type ResultadoTesteDaltonismo = {
 
 export function avaliarTesteDaltonismo(respostas: Record<string, string>): ResultadoTesteDaltonismo {
   const limpa = (v: unknown) => String(v ?? "").replace(/\D/g, "");
-  const testes = PLACAS_DALTONISMO.filter((p) => !p.controle);
+  // Avalia só as placas que o candidato recebeu no sorteio (as respondidas).
+  const respondida = (id: string) => String(respostas[id] ?? "") !== "";
+  const testes = PLACAS_DALTONISMO.filter((p) => !p.controle && respondida(p.id));
   const controle = PLACAS_DALTONISMO.find((p) => p.controle);
   const acertos = testes.filter((p) => limpa(respostas[p.id]) === p.resposta).length;
   const controleOk = controle ? limpa(respostas[controle.id]) === controle.resposta : true;
   return {
-    respostas: Object.fromEntries(PLACAS_DALTONISMO.map((p) => [p.id, String(respostas[p.id] ?? "").slice(0, 10)])),
+    respostas: Object.fromEntries(PLACAS_DALTONISMO.filter((p) => respondida(p.id)).map((p) => [p.id, String(respostas[p.id] ?? "").slice(0, 10)])),
     acertos,
     total: testes.length,
     controleOk,
-    aprovado: controleOk && testes.length - acertos <= ERROS_MAXIMOS_DALTONISMO,
+    // Precisa ter respondido as 3 placas de teste — menos que isso não aprova.
+    aprovado: controleOk && testes.length >= PLACAS_POR_TESTE && testes.length - acertos <= ERROS_MAXIMOS_DALTONISMO,
   };
 }
 

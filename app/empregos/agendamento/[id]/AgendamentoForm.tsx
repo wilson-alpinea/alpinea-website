@@ -1,6 +1,6 @@
 "use client";
 
-import { medirOpenAI } from "../../PixelOpenAI";
+import { medirGoogleEmpregos, medirOpenAI } from "../../PixelOpenAI";
 import { useState } from "react";
 import { formatarDataHoraBrasilia, type Horario } from "@/app/lib/agendaEntrevista";
 
@@ -46,6 +46,7 @@ export default function AgendamentoForm(props: {
       setAgendado(d.inicio);
       // Conversão do ChatGPT Ads (mesmo id do servidor → conta uma vez só).
       medirOpenAI("registration_completed", { type: "customer_action" }, { event_id: `agendamento_${props.candidaturaId}` });
+      medirGoogleEmpregos("agendamento", props.candidaturaId);
       setRemarcando(false);
       setEscolhido(null);
     } catch {
