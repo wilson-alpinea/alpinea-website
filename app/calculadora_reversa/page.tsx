@@ -29,6 +29,8 @@ import {
   DIARIA_GUIA_USD,
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
+  GORJETA_GUIA_USD_PAX_DIA,
+  AVISO_DESLOCAMENTO_GUIA,
   DIARIA_SEGURO_VIAGEM,
   JR_PASS_DIAS_OPCOES,
   JR_PASS_PRECO_USD,
@@ -2318,7 +2320,9 @@ export default function CalculadoraReversaPage() {
     // Privado" — TransportePrivadoCalculator.tsx).
     const diariaGuiaUSD = guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD;
     const precoGuia = Math.round(
-      diariaGuiaUSD * guiaDias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
+      (diariaGuiaUSD * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) + GORJETA_GUIA_USD_PAX_DIA * pessoas) *
+        guiaDias *
+        cambioCotacao,
     );
     if (guiaDias > 0) {
       const guiaRecomendado = cabe(precoGuia);
@@ -2332,7 +2336,9 @@ export default function CalculadoraReversaPage() {
             : "Guia particular estrangeiro (português limitado ou inglês) acompanhando o roteiro.",
           "Ajuda com trajetos, horários e filas.",
           `US$ ${diariaGuiaUSD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+          `Gorjeta do guia: US$ ${GORJETA_GUIA_USD_PAX_DIA} por pessoa/dia (incluída)`,
           `${guiaDias} de ${dias} dia${dias === 1 ? "" : "s"} da viagem`,
+          AVISO_DESLOCAMENTO_GUIA,
         ],
         precoBRL: precoGuia,
         recomendado: guiaRecomendado,
@@ -4234,8 +4240,11 @@ export default function CalculadoraReversaPage() {
             </div>
             <span className="mt-1.5 block text-[11px] text-black/60">
               US$ {guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD}/dia a cada{" "}
-              {GUIA_TAMANHO_GRUPO} pessoas
+              {GUIA_TAMANHO_GRUPO} pessoas + gorjeta US$ {GORJETA_GUIA_USD_PAX_DIA}/pessoa/dia
             </span>
+            {guiaDias > 0 && (
+              <span className="mt-1 block text-[11px] text-black/50">{AVISO_DESLOCAMENTO_GUIA}</span>
+            )}
             </>
             )}
           </div>

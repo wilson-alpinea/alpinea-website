@@ -72,8 +72,8 @@ export default function DocumentacaoPage() {
           <div className="mt-7 grid gap-4 md:grid-cols-3">
             <CardServico
               href="/documentacao/visto"
-              imagem="/images/documentacao-visto.webp"
-              alt="Consultora entregando o passaporte com o visto"
+              imagem="/images/documentacao-visto-especifico.webp"
+              alt="Detalhe de um visto japonês com as palavras JAPAN VISA e 日本国査証"
               kicker="Nisseis, sanseis e família"
               titulo="Visto específico"
               texto="Preparamos o processo e damos entrada no consulado japonês por você. Valor final por pessoa, com a taxa consular inclusa."
@@ -82,8 +82,8 @@ export default function DocumentacaoPage() {
             />
             <CardServico
               href="/documentacao/elegibilidade"
-              imagem="/images/documentacao-elegibilidade.webp"
-              alt="Consultora preenchendo o formulário do certificado com a cliente"
+              imagem="/images/documentacao-elegibilidade-coe.webp"
+              alt="Exemplo de Certificate of Eligibility (在留資格認定証明書) emitido pela imigração japonesa"
               kicker="Com garantidor no Japão"
               titulo="Certificado de Elegibilidade"
               texto="O COE é emitido pela imigração no Japão e encurta o visto para cerca de 2 semanas. Advogado de imigração e tradução inclusos."
@@ -132,11 +132,12 @@ export default function DocumentacaoPage() {
       <Secao kicker="Experiência" titulo="Quem já passou por isso com a gente">
         <div className="grid grid-cols-3 gap-3 md:gap-4">
           {[
-            [EXPERIENCIA.vistos, "vistos emitidos"],
-            [EXPERIENCIA.elegibilidades, "certificados de elegibilidade"],
-            [EXPERIENCIA.pets, "pets levados ao Japão"],
-          ].map(([n, t]) => (
-            <div key={t} className="rounded-2xl border border-black/10 p-4 text-center md:p-6">
+            [EXPERIENCIA.vistos, "vistos emitidos", "/images/icone-documentacao-visto.png"],
+            [EXPERIENCIA.elegibilidades, "certificados de elegibilidade", "/images/icone-documentacao-elegibilidade.png"],
+            [EXPERIENCIA.pets, "pets levados ao Japão", "/images/icone-documentacao-pet.png"],
+          ].map(([n, t, icone]) => (
+            <div key={t} className="rounded-2xl border border-black/10 bg-white p-4 text-center md:p-6">
+              <Image src={icone} alt="" width={256} height={256} className="mx-auto mb-3 h-12 w-12 object-contain md:h-16 md:w-16" />
               <p className={`${display.className} text-3xl md:text-4xl`} style={{ color: VERDE }}>{n}</p>
               <p className="mt-1 text-xs leading-5 text-black/55 md:text-sm">{t}</p>
             </div>

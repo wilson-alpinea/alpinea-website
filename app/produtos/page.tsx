@@ -17,6 +17,7 @@ import {
   HotelExemplosPropriedades,
   JR_PASS_DIAS_OPCOES,
   COMISSAO_AJISAI_SHOPPING_PCT,
+  DIARIA_GUIA_ESTRANGEIRO_USD,
 } from "../components/CustomPackageCard";
 import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
 import { ContactCTA } from "../components/ContactCTA";
@@ -82,10 +83,11 @@ const PRODUTOS: Record<
     nome: "Guia Turístico Avulso",
     // Diária cotada nativamente em dólar (não é conversão de um valor em
     // reais) — precoUSD tem prioridade sobre precoBRL no cálculo do preço.
-    // US$ 350/dia, cobre até 4 pessoas (mesmo valor usado no calculador do
-    // Pacote Personalizado — ver DIARIA_GUIA_USD em CustomPackageCard.tsx).
+    // Diária do guia local (fornecedor HK Tourist, ¥40.000/dia + margem),
+    // cobre até 4 pessoas — mesmo valor do Pacote Personalizado e da
+    // Calculadora Reversa (DIARIA_GUIA_ESTRANGEIRO_USD em CustomPackageCard.tsx).
     precoBRL: null,
-    precoUSD: 350,
+    precoUSD: DIARIA_GUIA_ESTRANGEIRO_USD,
     href: "/produtos/guia-turistico",
   },
 };

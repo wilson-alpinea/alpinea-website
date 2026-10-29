@@ -3,6 +3,7 @@
 import { comMargemEImposto, IMPOSTO_SOBRE_LUCRO } from "../lib/margemPadrao";
 import { DIARIA_SEGURO_VIAGEM } from "../lib/precoSeguroViagem";
 import { PRECO_CAMBIO_BRASIL, CUSTO_ENTREGA_AEROPORTO_CAMBIO } from "../lib/precoCambioIene";
+import { JPY_POR_USD_REFERENCIA } from "../lib/servicosAdicionaisCatalogo";
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
@@ -820,8 +821,22 @@ export const DIARIA_TRANSPORTE = comMargemEImposto(1000);
 // de mais de um guia, cobrado proporcionalmente — nativo em dólar,
 // convertido pra reais com a cotação do dia antes de entrar no total (ver
 // calcPreco abaixo e cambioCotacao em PrecoCtx).
-export const DIARIA_GUIA_ESTRANGEIRO_USD = 350;
+//
+// Atualizado 29/out/2026 (pedido do Wilson): custo do fornecedor HK Tourist
+// Japan Travel (Daikichi), e-mail de 27/out/2026 — guia em português ou
+// espanhol a ¥40.000/dia em Tóquio, Osaka, Kyoto, Nara, Fuji, Hakone etc.
+// Agora passa por comMargemEImposto (custo ÷ ¥150/US$ × 1,495 ≈ US$399).
+// Antes: US$350 fixo (valor final).
+export const CUSTO_GUIA_JPY_DIA = 40000;
+export const DIARIA_GUIA_ESTRANGEIRO_USD = comMargemEImposto(CUSTO_GUIA_JPY_DIA / JPY_POR_USD_REFERENCIA);
 export const GUIA_TAMANHO_GRUPO = 4;
+// Gorjeta do guia — exigida pelo fornecedor (US$7 por pessoa, por dia de
+// guia). Repassada ao cliente sem margem, somada ao preço do guia.
+export const GORJETA_GUIA_USD_PAX_DIA = 7;
+// Hospedagem e Shinkansen do guia quando ele acompanha o grupo entre
+// cidades — cobrados à parte conforme o itinerário (só aviso, fora do total).
+export const AVISO_DESLOCAMENTO_GUIA =
+  "Se o guia acompanhar o grupo entre cidades diferentes, hospedagem e Shinkansen do guia são cotados à parte, conforme o itinerário.";
 // Guia brasileiro — pedido do Wilson, 25/set/2026: "guia brasileiro e 40%
 // mais caro a diaria" (referente ao guia estrangeiro acima). Direto sobre
 // DIARIA_GUIA_ESTRANGEIRO_USD, não mais via comMargemEImposto (que dava
@@ -1129,12 +1144,12 @@ const OPCOES = [
     iconeImg: "/images/produtos/guia-turistico.png",
     descricao: `Guia turístico acompanhando o roteiro — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
     detalhe:
-      `Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ ${DIARIA_GUIA_USD} por dia a cada ${GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.`,
+      `Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ ${DIARIA_GUIA_USD} por dia a cada ${GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente. Inclui gorjeta do guia (US$ ${GORJETA_GUIA_USD_PAX_DIA} por pessoa/dia). ${AVISO_DESLOCAMENTO_GUIA}`,
     calcPreco: (ctx: PrecoCtx) =>
       Math.round(
-        DIARIA_GUIA_USD *
+        (DIARIA_GUIA_USD * Math.max(1, Math.ceil(ctx.pessoas / GUIA_TAMANHO_GRUPO)) +
+          GORJETA_GUIA_USD_PAX_DIA * ctx.pessoas) *
           ctx.dias *
-          Math.max(1, Math.ceil(ctx.pessoas / GUIA_TAMANHO_GRUPO)) *
           ctx.cambioCotacao,
       ),
   },

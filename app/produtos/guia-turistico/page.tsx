@@ -14,7 +14,8 @@
 //
 // Preço = mesma regra do motor de preço (CustomPackageCard.tsx):
 // DIARIA_GUIA_USD (brasileiro, +40%) ou DIARIA_GUIA_ESTRANGEIRO_USD por dia,
-// um guia a cada GUIA_TAMANHO_GRUPO pessoas. O card em /produtos diz
+// um guia a cada GUIA_TAMANHO_GRUPO pessoas, + gorjeta GORJETA_GUIA_USD_PAX_DIA
+// por pessoa/dia (fornecedor HK Tourist, atualizado 29/out/2026). O card em /produtos diz
 // "Requer Roteiro Personalizado" — por isso o Roteiro entra no total, a
 // menos que o cliente marque que já contratou.
 
@@ -26,6 +27,8 @@ import {
   DIARIA_GUIA_USD,
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
+  GORJETA_GUIA_USD_PAX_DIA,
+  AVISO_DESLOCAMENTO_GUIA,
   ROTEIRO_PRECO_BASE,
 } from "../../components/CustomPackageCard";
 import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
@@ -80,6 +83,7 @@ const INCLUIDO_GUIA = [
   "Ajuda com idioma: tradução em lojas, restaurantes, templos e bilheterias",
   "Orientação de trajetos, horários e como evitar filas",
   "Alimentação e transporte do próprio guia durante o passeio — você não paga nada a mais por isso",
+  `Gorjeta do guia (US$ ${GORJETA_GUIA_USD_PAX_DIA} por pessoa, por dia) já incluída no preço`,
 ];
 const NAO_INCLUIDO_GUIA = [
   "O guia não é motorista particular — não dirige nem leva carro (veja Transporte Privado)",
@@ -87,6 +91,7 @@ const NAO_INCLUIDO_GUIA = [
   "O guia não espera você no aeroporto (para isso, veja Transfer Aeroporto)",
   "O guia não é responsável pela sua alimentação: refeições do grupo são pagas à parte",
   "Ingressos, passagens de trem/metrô/táxi do grupo e compras não estão incluídos",
+  "Se o guia acompanhar o grupo entre cidades, hospedagem e Shinkansen do guia são cotados à parte",
   "Guia que fala português não é necessariamente brasileiro (o guia brasileiro é uma opção específica)",
   "Não é babá nem acompanhante de crianças sem os pais",
 ];
@@ -141,7 +146,8 @@ function TextoTermosGuia() {
       <p className="font-medium text-black/80">Serviço</p>
       <p className="mt-1">
         O guia acompanha o grupo nos dias contratados, seguindo o roteiro combinado com a nossa equipe. Cada guia atende até{" "}
-        {GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.
+        {GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente. O preço inclui a
+        gorjeta do guia (US$ {GORJETA_GUIA_USD_PAX_DIA} por pessoa, por dia).
       </p>
       <p className="mt-3 font-medium text-black/80">Escopo do guia</p>
       <p className="mt-1">
@@ -152,7 +158,7 @@ function TextoTermosGuia() {
       <p className="mt-3 font-medium text-black/80">O que não está incluído</p>
       <p className="mt-1">
         Ingressos, refeições e transporte (trem, metrô, táxi ou motorista) do grupo são pagos à parte. A alimentação e o
-        transporte do próprio guia durante o passeio já estão incluídos — o cliente não paga nada a mais por eles.
+        transporte do próprio guia durante o passeio já estão incluídos — o cliente não paga nada a mais por eles. {AVISO_DESLOCAMENTO_GUIA}
       </p>
       <p className="mt-3 font-medium text-black/80">Roteiro Personalizado</p>
       <p className="mt-1">
@@ -229,7 +235,9 @@ export default function GuiaTuristicoPage() {
   const diasForaDoPeriodo = Object.keys(diasGuia).filter((d) => !diasViagem.includes(d));
   const guia = GUIAS.find((g) => g.key === tipoGuia);
   const diariaUSD = guia?.diariaUSD ?? 0;
-  const guiaUSD = diariaUSD * guiasPorDia * diasEscolhidos.length;
+  const gorjetaDiaUSD = GORJETA_GUIA_USD_PAX_DIA * pessoas;
+  const guiaDiaUSD = diariaUSD * guiasPorDia + gorjetaDiaUSD;
+  const guiaUSD = guiaDiaUSD * diasEscolhidos.length;
   const roteiroUSD = diasEscolhidos.length > 0 && !temRoteiro ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
   const totalUSD = guiaUSD + roteiroUSD;
   const totalBRL = totalUSD * cambioCotacao;
@@ -239,6 +247,7 @@ export default function GuiaTuristicoPage() {
     avisos.push("Guia no dia de chegada ou de partida — o tempo útil depende do horário do voo; combinamos pelo WhatsApp.");
   }
   if (guiasPorDia > 1) avisos.push(`Grupo de ${pessoas} pessoas: ${guiasPorDia} guias por dia (1 a cada ${GUIA_TAMANHO_GRUPO}).`);
+  if (new Set(diasEscolhidos.map((d) => diasGuia[d])).size > 1) avisos.push(AVISO_DESLOCAMENTO_GUIA);
   if (diasEscolhidos.some((d) => diasGuia[d] === "Outra")) avisos.push("Cidade “Outra” — informe qual nas observações.");
 
   const digitosWhatsapp = whatsapp.replace(/\D/g, "").length;
@@ -399,7 +408,7 @@ export default function GuiaTuristicoPage() {
   const mensagemWhatsapp = `Olá! Acabei de pedir guia turístico pelo site da Ajisai — ${guia?.nome ?? ""}, ${resumoDias}.${nome ? ` Meu nome é ${nome}.` : ""}`;
 
   const totalExibidoUSD: number | null =
-    diasEscolhidos.length > 0 && guia ? totalUSD : guia ? diariaUSD * guiasPorDia : null;
+    diasEscolhidos.length > 0 && guia ? totalUSD : guia ? guiaDiaUSD : null;
 
   const conteudoResumo = (
     <div>
@@ -685,7 +694,7 @@ export default function GuiaTuristicoPage() {
                     Escolha o guia
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">
-                    Diária por guia, para até {GUIA_TAMANHO_GRUPO} pessoas.
+                    Diária por guia, para até {GUIA_TAMANHO_GRUPO} pessoas, + gorjeta de {formatUSD(GORJETA_GUIA_USD_PAX_DIA)} por pessoa/dia.
                     {guiasPorDia > 1 && ` O seu grupo precisa de ${guiasPorDia} guias por dia.`}
                   </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -768,7 +777,7 @@ export default function GuiaTuristicoPage() {
                           )}
                           {ativo && guia && (
                             <span className={`${inter.className} hidden w-20 shrink-0 text-right text-sm tabular-nums text-black/70 sm:block`}>
-                              {formatUSD(diariaUSD * guiasPorDia)}
+                              {formatUSD(guiaDiaUSD)}
                             </span>
                           )}
                         </li>

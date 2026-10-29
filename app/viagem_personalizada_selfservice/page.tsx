@@ -38,6 +38,7 @@ import {
   DIARIA_GUIA_USD,
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
+  GORJETA_GUIA_USD_PAX_DIA,
   PRECO_CAMBIO_BRASIL,
 } from "../components/CustomPackageCard";
 import { MotoristaPrivadoPicker } from "../components/MotoristaPrivadoPicker";
@@ -302,7 +303,7 @@ function calcularExtras(p: {
     const diaria = p.guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD;
     linhas.push({
       label: `Guia turístico ${p.guiaTipo === "brasileiro" ? "brasileiro" : "estrangeiro"} (${p.guiaDias} ${p.guiaDias === 1 ? "dia" : "dias"})`,
-      precoBRL: Math.round(diaria * p.guiaDias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * c),
+      precoBRL: Math.round((diaria * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) + GORJETA_GUIA_USD_PAX_DIA * pessoas) * p.guiaDias * c),
     });
   }
 
@@ -1651,7 +1652,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               </div>
               <p className="mt-1.5 text-[11px] text-black/60">
                 {rotuloUSD(guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD)}/dia a cada{" "}
-                {GUIA_TAMANHO_GRUPO} pessoas
+                {GUIA_TAMANHO_GRUPO} pessoas + gorjeta {rotuloUSD(GORJETA_GUIA_USD_PAX_DIA)}/pessoa/dia
               </p>
             </div>
 
