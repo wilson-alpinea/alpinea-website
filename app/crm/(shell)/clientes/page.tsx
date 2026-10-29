@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { obterAcesso } from "@/lib/crm/acesso";
+import { donoObrigatorio, obterAcesso } from "@/lib/crm/acesso";
 import { produtoVisivel } from "@/lib/crm/permissoes";
 
 import { execucaoIniciada } from "@/lib/crm/processo";
@@ -53,8 +53,12 @@ export default async function ClientesPage() {
   }
 
   // Consultor (migração 030): só os produtos liberados para ele.
-  const permissoes = (await obterAcesso())?.permissoes ?? null;
-  const lista: ClienteLista[] = (clientes ?? []).filter((c) => produtoVisivel(permissoes, "agencia", c.produto_principal)).map((c) => {
+  const acessoAtual = await obterAcesso();
+  const permissoes = acessoAtual?.permissoes ?? null;
+  const dono = donoObrigatorio(acessoAtual);
+  const lista: ClienteLista[] = (clientes ?? [])
+    .filter((c) => produtoVisivel(permissoes, "agencia", c.produto_principal) && (!dono || c.responsavel_id === dono))
+    .map((c) => {
     const iniciada = execucaoIniciada(c.estagio_entrega as EstagioEntrega, comExecucao.has(c.id));
     return {
       id: c.id,

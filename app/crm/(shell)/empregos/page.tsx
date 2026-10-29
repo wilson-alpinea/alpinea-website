@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { donoObrigatorio, obterAcesso } from "@/lib/crm/acesso";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { isClassificacao, progressoCandidatura } from "@/lib/crm/empregos";
@@ -20,9 +21,13 @@ export const dynamic = "force-dynamic";
 
 export default async function CandidatosPage() {
   const supabase = await createClient();
+  // Consultor: só os candidatos dele (migração 030).
+  const dono = donoObrigatorio(await obterAcesso());
+  let consulta = supabase.from("candidaturas_vagas").select("*").order("created_at", { ascending: false }).limit(5000);
+  if (dono) consulta = consulta.eq("responsavel_id", dono);
   const [rCand, rEntrevistas] = await Promise.all([
     // "*" para funcionar antes e depois das migrações 016/020.
-    supabase.from("candidaturas_vagas").select("*").order("created_at", { ascending: false }).limit(5000),
+    consulta,
     supabase.from("entrevistas_agendadas").select("candidatura_id, inicio").eq("status", "agendada"),
   ]);
   if (rCand.error) console.error("Erro ao carregar candidaturas:", rCand.error);
@@ -53,7 +58,7 @@ export default async function CandidatosPage() {
 
   return (
     <Suspense fallback={null}>
-      <ListaCandidaturas candidaturas={lista} erro={!!rCand.error} acoes={<SinoUnidade unidade="empregos" />} />
+      <ListaCandidaturas candidaturas={lista} erro={!!rCand.error} acoes={dono ? null : <SinoUnidade unidade="empregos" />} />
     </Suspense>
   );
 }

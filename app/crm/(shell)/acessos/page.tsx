@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { exigirSomenteAdmin as exigirAdmin } from "@/lib/crm/acesso";
+import { lerPermissoes } from "@/lib/crm/permissoes";
 import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
 import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso } from "./AcessosPagina";
 
@@ -25,7 +26,7 @@ export default async function AcessosPage() {
 
   const [rParceiros, rPerfis, rVinculos] = await Promise.all([
     supabase.from("parceiros").select("id, nome, slug, tipo, ativo, created_at").order("nome"),
-    supabase.from("perfis").select("id, nome, email, papel, parceiro_id, created_at").order("created_at"),
+    supabase.from("perfis").select("*").order("created_at"), // "*": permissoes/cargo (migração 030)
     supabase.from("vagas_empreiteira").select("vaga_id, parceiro_id"),
   ]);
   const erros = {
@@ -42,6 +43,8 @@ export default async function AcessosPage() {
     email: u.email,
     papel: u.papel ?? null,
     parceiroId: u.parceiro_id ?? null,
+    permissoes: u.papel === "consultor" ? lerPermissoes(u.permissoes) : null,
+    cargo: (u.cargo as string | null) ?? null,
   }));
   const vinculos: Record<string, string> = Object.fromEntries((rVinculos.data ?? []).map((v) => [v.vaga_id, v.parceiro_id]));
   const vagas: VagaAcesso[] = VAGAS.map((v) => ({ id: v.id, titulo: v.titulo, codigo: v.codigo, empresa: v.empresa, local: localVaga(v) }));

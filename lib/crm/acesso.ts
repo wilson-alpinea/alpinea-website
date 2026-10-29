@@ -134,3 +134,7 @@ export async function exigirDespachante(): Promise<Acesso> {
   if (acesso.papel !== "despachante") redirect("/crm/sem-acesso");
   return acesso;
 }
+
+/** Consultor só enxerga os registros dele (responsavel_id = ele). Devolve o
+ * id para filtrar, ou null para admin (vê tudo). */
+export const donoObrigatorio = (a: Acesso | null | undefined): string | null => (a?.papel === "consultor" ? a.userId : null);

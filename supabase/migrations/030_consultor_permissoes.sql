@@ -29,3 +29,13 @@ security definer set search_path = public
 as $$
   select coalesce((select papel in ('admin', 'consultor') from public.perfis where id = auth.uid()), false);
 $$;
+
+-- Consultor vê SÓ os registros dele (Wilson, 29/out/2026: "o novo usuário só
+-- deve conseguir enxergar os dados gerados por ele mesmo"). Na Agência já
+-- existe clientes.responsavel_id; nos outros CRMs passa a existir também.
+alter table public.seguro_pedidos add column if not exists responsavel_id uuid references public.perfis (id) on delete set null;
+alter table public.documentacao_processos add column if not exists responsavel_id uuid references public.perfis (id) on delete set null;
+alter table public.candidaturas_vagas add column if not exists responsavel_id uuid references public.perfis (id) on delete set null;
+create index if not exists seguro_pedidos_responsavel_idx on public.seguro_pedidos (responsavel_id);
+create index if not exists documentacao_processos_responsavel_idx on public.documentacao_processos (responsavel_id);
+create index if not exists candidaturas_vagas_responsavel_idx on public.candidaturas_vagas (responsavel_id);

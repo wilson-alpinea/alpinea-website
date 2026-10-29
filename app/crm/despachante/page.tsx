@@ -26,7 +26,7 @@ export default async function DespachantePage() {
   const lista = data ?? [];
 
   return (
-    <PortalShell titulo="Documentação" empresa="Despachante" usuario={acesso.email}>
+    <PortalShell titulo="Despachante" empresa={acesso.nome} usuario={acesso.email} crm={{ nome: "Documentação", cor: "#8A5A3C" }}>
       <h1 className="text-[#20252B]">Processos atribuídos a você</h1>
       <p className="mt-1 text-sm text-[#626B75]">Dados do cadastro, ficha e documentos de cada processo. Para dúvidas, fale com a equipe Ajisai.</p>
       {lista.length === 0 ? (

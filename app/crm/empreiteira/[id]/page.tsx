@@ -26,7 +26,7 @@ export default async function CandidatoEmpreiteiraPage({ params }: { params: Pro
   const coluna = COLUNAS_EMPREITEIRA.find((k) => k.key === c.coluna)?.label ?? "";
 
   return (
-    <PortalShell titulo="Empreiteiras" empresa={acesso.parceiro.nome} usuario={acesso.email}>
+    <PortalShell titulo="Empreiteiras" empresa={acesso.parceiro.nome} usuario={acesso.email} crm={{ nome: "Empregos", cor: "#27675B" }}>
       <Link href="/crm/empreiteira" className="text-[13px] text-[#626B75] hover:text-[#20252B]">
         ← Candidatos
       </Link>

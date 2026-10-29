@@ -62,7 +62,7 @@ export default async function ProcessoDespachantePage({ params }: { params: Prom
   const etapas = ((Array.isArray(p.historico) ? p.historico : []) as EventoDoc[]).filter((h) => h.tipo === "etapa" && h.para).reverse();
 
   return (
-    <PortalShell titulo="Documentação" empresa="Despachante" usuario={acesso.email}>
+    <PortalShell titulo="Despachante" empresa={acesso.nome} usuario={acesso.email} crm={{ nome: "Documentação", cor: "#8A5A3C" }}>
       <Link href="/crm/despachante" className="text-[13px] text-[#626B75] hover:text-[#20252B]">← Processos</Link>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div>

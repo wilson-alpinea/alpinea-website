@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { exigirAdmin } from "@/lib/crm/acesso";
+import { donoObrigatorio, exigirAdmin } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { completarPedido } from "@/lib/crm/seguro";
 import Link from "next/link";
@@ -15,12 +15,16 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function SeguroPage() {
-  await exigirAdmin();
-  const { data, error } = await createAdminClient()
+  const acesso = await exigirAdmin();
+  const dono = donoObrigatorio(acesso);
+  let consulta = createAdminClient()
     .from("seguro_pedidos")
     .select("id, created_at, etapa, nome, email, telefone, plano, seguradora, partida, retorno, viajantes, valor_cliente, pago_em, numero_apolice, notas")
     .order("created_at", { ascending: false })
     .limit(3000);
+  // Consultor: só os pedidos dele (migração 030).
+  if (dono) consulta = consulta.eq("responsavel_id", dono);
+  const { data, error } = await consulta;
   if (error) console.error("Erro ao ler seguro_pedidos:", error);
   // Pedidos antigos só têm o texto original: completa plano, datas e valor a partir dele.
   const pedidos = (data ?? []).map((bruto) => {
@@ -40,8 +44,8 @@ export default async function SeguroPage() {
         </div>
         {/* Sino e botões rápidos (Wilson, 29/out/2026). */}
         <div className="flex flex-wrap items-center gap-2">
-          <SinoUnidade unidade="seguro" />
-          <Link href="/crm/seguro/visao-geral" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50">Visão geral</Link>
+          {!dono && <SinoUnidade unidade="seguro" />}
+          {!dono && <Link href="/crm/seguro/visao-geral" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50">Visão geral</Link>}
           <a href="/produtos/seguro-viagem/direto" target="_blank" rel="noreferrer" className="rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#2C5480]">
             Link venda direta ↗
           </a>

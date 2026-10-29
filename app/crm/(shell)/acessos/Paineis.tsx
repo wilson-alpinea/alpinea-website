@@ -12,6 +12,8 @@ import {
 } from "../../acessosActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, CAMPO, LABEL, Painel, Spinner } from "../clientes/[id]/financeiro/ui";
 import type { EmpresaAcesso, UsuarioAcesso } from "./AcessosPagina";
+import { PRODUTOS_POR_CRM, type Permissoes } from "@/lib/crm/permissoes";
+import { UNIDADES_CRM, UNIDADE_LABEL, type UnidadeCrm } from "@/lib/crm/unidades";
 import { Copiar, ERRO_CAMPO, Mensagem, PERFIS, rotuloPerfil } from "./comum";
 
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/;
@@ -36,6 +38,71 @@ function ErroDoCampo({ estado, campo }: { estado: ResultadoAcesso | null; campo:
   );
 }
 const erroGeral = (estado: ResultadoAcesso | null) => (estado && !estado.ok && !estado.campo ? estado.mensagem : null);
+
+// ── Consultor: níveis 2 a 5 (Wilson, 29/out/2026) ─────────────────
+function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes | null; cargo: string; estado: ResultadoAcesso | null }) {
+  const [crms, setCrms] = useState<UnidadeCrm[]>(inicial?.crms ?? []);
+  const [deletar, setDeletar] = useState(inicial?.deletar ?? false);
+  const [editar, setEditar] = useState(inicial?.editar ?? false);
+  const caixa = "h-4 w-4 shrink-0 accent-[#24476B]";
+  return (
+    <div className="space-y-5 rounded-xl border border-[#E6E9ED] bg-[#F7F9FB] p-4">
+      <div>
+        <label className={LABEL} htmlFor="u-cargo">Cargo</label>
+        <input id="u-cargo" name="cargo" defaultValue={cargo} maxLength={80} placeholder="Ex.: Consultora de viagens" className={CAMPO} />
+      </div>
+      <div>
+        <p className={LABEL}>CRMs que pode acessar</p>
+        <div className="mt-1 grid gap-2 sm:grid-cols-2">
+          {UNIDADES_CRM.map((u) => (
+            <label key={u} className="flex items-center gap-2 text-sm text-[#20252B]">
+              <input
+                type="checkbox"
+                name="crms"
+                value={u}
+                checked={crms.includes(u)}
+                onChange={(e) => setCrms((c) => (e.target.checked ? [...c, u] : c.filter((x) => x !== u)))}
+                className={caixa}
+              />
+              {UNIDADE_LABEL[u]}
+            </label>
+          ))}
+        </div>
+        <ErroDoCampo estado={estado} campo="crms" />
+      </div>
+      {crms.filter((u) => PRODUTOS_POR_CRM[u]).map((u) => (
+        <div key={u}>
+          <p className={LABEL}>Produtos que pode ver — {UNIDADE_LABEL[u]}</p>
+          <p className="text-[13px] text-[#626B75]">Nenhum marcado = todos os produtos.</p>
+          <div className="mt-1 grid gap-2 sm:grid-cols-2">
+            {PRODUTOS_POR_CRM[u]!.map((p) => (
+              <label key={p.valor} className="flex items-center gap-2 text-sm text-[#20252B]">
+                <input type="checkbox" name={`prod_${u}`} value={p.valor} defaultChecked={inicial?.produtos[u]?.includes(p.valor)} className={caixa} />
+                {p.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div>
+        <p className={LABEL}>O que pode fazer</p>
+        <div className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#20252B]">
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked disabled className={caixa} /> Ver
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="editar" checked={editar || deletar} onChange={(e) => setEditar(e.target.checked)} disabled={deletar} className={caixa} /> Editar
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="deletar" checked={deletar} onChange={(e) => setDeletar(e.target.checked)} className={caixa} /> Deletar
+          </label>
+        </div>
+        {deletar && <input type="hidden" name="editar" value="on" />}
+      </div>
+      <p className="text-[13px] text-[#626B75]">O consultor vê somente os registros dele mesmo — os que ele criou ou que forem atribuídos a ele.</p>
+    </div>
+  );
+}
 
 // ── Usuário: novo / editar acesso ────────────────────────────────
 export function PainelUsuario({
@@ -155,6 +222,7 @@ export function PainelUsuario({
             {descricao && <p className="mt-1.5 text-[13px] text-[#626B75]">{descricao}</p>}
             <ErroDoCampo estado={estado} campo="papel" />
           </div>
+          {papel === "consultor" && <PermissoesConsultor inicial={usuario?.permissoes ?? null} cargo={usuario?.cargo ?? ""} estado={estado} />}
           {tipo && (
             <div>
               <label className={LABEL} htmlFor="u-empresa">

@@ -2,7 +2,7 @@ import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { obterAcesso } from "@/lib/crm/acesso";
+import { donoObrigatorio, obterAcesso } from "@/lib/crm/acesso";
 import { produtoVisivel } from "@/lib/crm/permissoes";
 
 import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR, DESTAQUE_INTERACAO } from "@/lib/crm/interacoes";
@@ -70,7 +70,11 @@ export default async function ClienteDetalhePage({
 
   if (error) console.error("Erro ao carregar cliente:", error);
   if (!cliente) notFound();
-  if (!produtoVisivel((await obterAcesso())?.permissoes ?? null, "agencia", cliente.produto_principal)) notFound();
+  {
+    const a = await obterAcesso();
+    const dono = donoObrigatorio(a);
+    if (!produtoVisivel(a?.permissoes ?? null, "agencia", cliente.produto_principal) || (dono && cliente.responsavel_id !== dono)) notFound();
+  }
 
   const { data: interacoes } = await supabase
     .from("interacoes")

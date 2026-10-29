@@ -92,9 +92,11 @@ export default async function EscolherCrmPage() {
               style={{ backgroundColor: u.fundo, borderTopColor: u.cor }}
             >
               {/* Sino com as notificações recentes de cada CRM (Wilson, 29/out/2026). */}
-              <div className="absolute right-5 top-5 z-10 md:right-6 md:top-6">
-                <SinoUnidade unidade={u.unidade} />
-              </div>
+              {acesso.papel === "admin" && (
+                <div className="absolute right-5 top-5 z-10 md:right-6 md:top-6">
+                  <SinoUnidade unidade={u.unidade} />
+                </div>
+              )}
               <span className="flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: u.tonal }}>
                 {u.icone ? (
                   // eslint-disable-next-line @next/next/no-img-element

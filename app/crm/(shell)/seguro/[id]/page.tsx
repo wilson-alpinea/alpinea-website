@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { exigirAdmin } from "@/lib/crm/acesso";
+import { donoObrigatorio, exigirAdmin } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { completarPedido, type PedidoSeguro } from "@/lib/crm/seguro";
 import { DetalheSeguro } from "./DetalheSeguro";
@@ -12,12 +12,13 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function PedidoSeguroPage({ params }: { params: Promise<{ id: string }> }) {
-  await exigirAdmin();
+  const acesso = await exigirAdmin();
   const { id } = await params;
   const valido = /^[0-9a-f-]{36}$/i.test(id);
   const { data, error } = valido ? await createAdminClient().from("seguro_pedidos").select("*").eq("id", id).maybeSingle() : { data: null, error: null };
   if (error) console.error("Erro ao ler pedido de seguro:", error);
-  if (!data) {
+  const dono = donoObrigatorio(acesso);
+  if (!data || (dono && (data as { responsavel_id?: string | null }).responsavel_id !== dono)) {
     return (
       <div className="rounded-2xl border border-[#E6E1EC] bg-white p-8 text-center">
         <p className="text-base font-semibold text-[#24212A]">{error ? "Não foi possível carregar o pedido." : "Pedido não encontrado."}</p>

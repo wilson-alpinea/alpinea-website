@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { donoObrigatorio, obterAcesso } from "@/lib/crm/acesso";
 import { VoltarLista } from "../../components/VoltarLista";
 import { CardsCandidatura } from "./CardsCandidatura";
 import { notFound } from "next/navigation";
@@ -48,6 +49,11 @@ export default async function CandidatoPage({
   const { data: c, error } = await supabase.from("candidaturas_vagas").select("*").eq("id", id).maybeSingle();
   if (error) console.error("Erro ao carregar candidatura:", error);
   if (!c) notFound();
+  {
+    // Consultor: só os candidatos dele (migração 030).
+    const dono = donoObrigatorio(await obterAcesso());
+    if (dono && c.responsavel_id !== dono) notFound();
+  }
 
   const classificacao = isClassificacao(c.classificacao) ? c.classificacao : "aprovado_baixo";
   const tipo = CLASSIFICACOES.find((x) => x.valor === classificacao)!;

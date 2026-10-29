@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { exigirAdmin } from "@/lib/crm/acesso";
+import { donoObrigatorio, exigirAdmin } from "@/lib/crm/acesso";
 import { produtoVisivel } from "@/lib/crm/permissoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PagamentoDoc, ProcessoDoc } from "@/lib/crm/documentacao";
@@ -28,7 +28,8 @@ export default async function ProcessoDocPage({ params }: { params: Promise<{ id
       </div>
     );
   }
-  if (!produtoVisivel(acesso.permissoes, "documentacao", data.servico)) {
+  const dono = donoObrigatorio(acesso);
+  if (!produtoVisivel(acesso.permissoes, "documentacao", data.servico) || (dono && data.responsavel_id !== dono)) {
     return <div className="rounded-2xl border border-[#EAE2DB] bg-white p-8 text-center text-sm text-[#6B635D]">Seu acesso não inclui este serviço.</div>;
   }
   const processo = {

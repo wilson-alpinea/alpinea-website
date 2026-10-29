@@ -3,7 +3,7 @@ import { NavCrm } from "./NavCrm";
 import { MenuCrm } from "./MenuCrm";
 import { headers } from "next/headers";
 import { exigirAdmin } from "@/lib/crm/acesso";
-import { INICIO_UNIDADE, UNIDADES_CRM, UNIDADE_COR, UNIDADE_CURTO, UNIDADE_LABEL, isUnidadeCrm, urlUnidade } from "@/lib/crm/unidades";
+import { INICIO_UNIDADE, NAV_CONSULTOR, UNIDADES_CRM, UNIDADE_COR, UNIDADE_CURTO, UNIDADE_LABEL, isUnidadeCrm, urlUnidade } from "@/lib/crm/unidades";
 import { logout } from "../actions";
 
 // Dois CRMs (Wilson, 21/out/2026): agência de viagens e empregos, cada um
@@ -48,7 +48,7 @@ export default async function CrmShellLayout({
   const unidade = isUnidadeCrm(h) ? h : "agencia";
   // Consultor (migração 030): sem "Acessos" e só os CRMs liberados no menu.
   const consultor = acesso.papel === "consultor";
-  const NAV = consultor ? NAV_UNIDADE[unidade].filter((i) => i.href !== "/crm/acessos") : NAV_UNIDADE[unidade];
+  const NAV = consultor ? [NAV_CONSULTOR[unidade]] : NAV_UNIDADE[unidade];
   const crmsVisiveis = consultor ? UNIDADES_CRM.filter((u) => acesso.permissoes?.crms.includes(u)) : UNIDADES_CRM;
   const rotuloUnidade = UNIDADE_LABEL[unidade];
 
@@ -57,7 +57,7 @@ export default async function CrmShellLayout({
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
           <div className="flex min-w-0 items-center gap-6 lg:gap-8">
-            <Link href={INICIO_UNIDADE[unidade]} className="flex items-center gap-4">
+            <Link href={consultor ? NAV_CONSULTOR[unidade].href : INICIO_UNIDADE[unidade]} className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/ajisai-group-white-crop.png"

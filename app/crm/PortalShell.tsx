@@ -3,7 +3,8 @@ import { logout } from "./actions";
 // Moldura dos portais de parceiro/empreiteira (Wilson, 21/out/2026) — sem o
 // menu da equipe.
 
-export function PortalShell({ titulo, empresa, usuario, children }: { titulo: string; empresa: string; usuario: string; children: React.ReactNode }) {
+// `crm`: selo com o CRM em que a pessoa está (Wilson, 29/out/2026).
+export function PortalShell({ titulo, empresa, usuario, crm, children }: { titulo: string; empresa: string; usuario: string; crm?: { nome: string; cor: string }; children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#20252B]">
       <header className="border-b border-white/10 bg-black">
@@ -13,7 +14,14 @@ export function PortalShell({ titulo, empresa, usuario, children }: { titulo: st
             <img src="/images/ajisai-group-white-crop.png" alt="Alpinea — Empresa do Grupo Ajisai" className="h-10 w-auto sm:h-12" />
             <span className="hidden h-8 w-px bg-white/15 sm:block" />
             <div className="min-w-0">
-              <p className="text-2xl font-semibold leading-[1.1] text-white">{titulo}</p>
+              <p className="flex flex-wrap items-center gap-2 text-2xl font-semibold leading-[1.1] text-white">
+                {titulo}
+                {crm && (
+                  <span className="rounded-full px-2.5 py-0.5 text-[12px] font-medium leading-5 text-white" style={{ backgroundColor: crm.cor }}>
+                    CRM {crm.nome}
+                  </span>
+                )}
+              </p>
               <p className="mt-1 truncate text-[13px] text-white/45">{empresa}</p>
             </div>
           </div>

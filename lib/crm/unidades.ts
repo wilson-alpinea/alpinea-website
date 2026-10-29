@@ -65,13 +65,34 @@ export const INICIO_UNIDADE: Record<UnidadeCrm, string> = {
   documentacao: "/crm/documentacao/visao-geral",
 };
 
+// Consultor (Wilson, 29/out/2026): só enxerga os registros dele mesmo.
+export const INICIO_CONSULTOR: Record<UnidadeCrm, string> = {
+  agencia: "/crm/clientes",
+  empregos: "/crm/empregos",
+  seguro: "/crm/seguro",
+  documentacao: "/crm/documentacao",
+};
+const ROTAS_CONSULTOR: Record<UnidadeCrm, string[]> = {
+  agencia: ["/crm/clientes", "/crm/arquivo-cliente", "/crm/documento-jrpass"],
+  empregos: ["/crm/empregos"],
+  seguro: ["/crm/seguro"],
+  documentacao: ["/crm/documentacao"],
+};
+const BLOQUEADAS_CONSULTOR = ["/crm/empregos/agenda", "/crm/empregos/vagas", "/crm/seguro/visao-geral", "/crm/documentacao/visao-geral"];
+export const NAV_CONSULTOR: Record<UnidadeCrm, { href: string; label: string }> = {
+  agencia: { href: "/crm/clientes", label: "Meus clientes" },
+  empregos: { href: "/crm/empregos", label: "Meus candidatos" },
+  seguro: { href: "/crm/seguro", label: "Meus pedidos" },
+  documentacao: { href: "/crm/documentacao", label: "Meus processos" },
+};
+
 // Página inicial de cada papel.
 export function inicioDoPapel(papel: PapelCrm | null, unidade: UnidadeCrm | null, crms: UnidadeCrm[] = []): string {
   // Consultor (Wilson, 29/out/2026): início do CRM do domínio, se puder; senão o 1º CRM liberado.
   if (papel === "consultor") {
-    if (unidade && crms.includes(unidade)) return INICIO_UNIDADE[unidade];
+    if (unidade && crms.includes(unidade)) return INICIO_CONSULTOR[unidade];
     if (crms.length > 1 && !unidade) return "/crm/unidades";
-    return crms[0] ? INICIO_UNIDADE[crms[0]] : "/crm/sem-acesso";
+    return crms[0] ? INICIO_CONSULTOR[crms[0]] : "/crm/sem-acesso";
   }
   if (papel === "parceiro_agencia") return "/crm/parceiro";
   if (papel === "empreiteira") return "/crm/empreiteira";
@@ -89,8 +110,12 @@ export function rotaPermitida(papel: PapelCrm | null, pathname: string, crms: Un
     if (pathname === "/crm/acessos" || pathname.startsWith("/crm/acessos/")) return false;
     if (pathname === "/crm/unidades" || pathname.startsWith("/crm/esqueci") || pathname.startsWith("/crm/redefinir")) return true;
     if (pathname.startsWith("/crm/parceiro") || pathname.startsWith("/crm/empreiteira") || pathname.startsWith("/crm/despachante")) return false;
+    // Só as listas e fichas dos registros dele — sem painéis, agenda,
+    // vagas, pipeline, financeiro ou atividade (dados de todos).
     const u = unidadeDaRota(pathname);
-    return u === "compartilhada" ? false : crms.includes(u);
+    if (u === "compartilhada" || !crms.includes(u)) return false;
+    if (BLOQUEADAS_CONSULTOR.some((b) => pathname === b || pathname.startsWith(`${b}/`))) return false;
+    return ROTAS_CONSULTOR[u].some((b) => pathname === b || pathname.startsWith(`${b}/`));
   }
   const dentro = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
   if (papel === "parceiro_agencia") return dentro("/crm/parceiro");

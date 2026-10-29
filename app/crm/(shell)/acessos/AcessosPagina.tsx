@@ -1,5 +1,8 @@
 "use client";
 
+import { resumoPermissoes, type Permissoes } from "@/lib/crm/permissoes";
+import { UNIDADE_LABEL } from "@/lib/crm/unidades";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AbaVagas } from "./AbaVagas";
@@ -10,7 +13,7 @@ import { BotaoPrimario, CAMPO_FILTRO, CabecalhoSecao, Copiar, Icones, MenuAcoes,
 // na URL (voltar de uma edição mantém tudo). A tela só reorganiza: as
 // permissões continuam sendo checadas no servidor.
 
-export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null };
+export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null };
 export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira"; ativo: boolean };
 export type VagaAcesso = { id: string; titulo: string; codigo: string; empresa: string; local: string };
 
@@ -81,7 +84,7 @@ export function AcessosPagina({
 
   const situacaoDe = (u: UsuarioAcesso): Situacao => {
     if (!u.papel) return "sem_acesso";
-    if (u.papel !== "admin") {
+    if (u.papel === "parceiro_agencia" || u.papel === "empreiteira") {
       const e = u.parceiroId ? empresaPorId.get(u.parceiroId) : null;
       if (!e || !e.ativo) return "bloqueado";
     }
@@ -249,7 +252,11 @@ export function AcessosPagina({
                         <td className="px-4 py-3">
                           <NomeUsuario u={u} voce={u.id === usuarioAtualId} />
                         </td>
-                        <td className="px-4 py-3 text-[#20252B]">{rotuloPerfil(u.papel)}</td>
+                        <td className="px-4 py-3 text-[#20252B]">
+                          {rotuloPerfil(u.papel)}
+                          {u.cargo && <span className="block text-[13px] text-[#626B75]">{u.cargo}</span>}
+                          {u.permissoes && <span className="block text-[12px] text-[#8A929B]">{resumoPermissoes(u.permissoes, (x) => UNIDADE_LABEL[x])}</span>}
+                        </td>
                         <td className="px-4 py-3 text-[#20252B]">{u.parceiroId ? empresaPorId.get(u.parceiroId)?.nome ?? "—" : <span className="text-[#8A929B]">—</span>}</td>
                         <td className="px-4 py-3">
                           <SeloSituacao s={situacaoDe(u)} />

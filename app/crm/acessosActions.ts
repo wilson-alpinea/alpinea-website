@@ -1,10 +1,12 @@
 "use server";
 
+import { lerPermissoes } from "@/lib/crm/permissoes";
+
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { garantirSomenteAdmin as garantirAdmin } from "@/lib/crm/acesso";
-import { SLUG_PARCEIRO, isPapelCrm } from "@/lib/crm/unidades";
+import { SLUG_PARCEIRO, isPapelCrm, isUnidadeCrm } from "@/lib/crm/unidades";
 
 // Gestão de acessos do CRM (Wilson, 21/out/2026): parceiros da agência,
 // empreiteiras, usuários e vagas de cada empreiteira. Só admin. Usa service
@@ -112,12 +114,25 @@ export async function alternarParceiroAtivo(parceiroId: string, ativo: boolean):
 function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<string, string>) {
   const papel = papelBruto === "sem_acesso" ? null : isPapelCrm(papelBruto) ? papelBruto : undefined;
   if (papel === undefined) return { erro: "Escolha o perfil de acesso.", campo: "papel" } as const;
-  if (papel === "admin" || papel === "despachante" || papel === null) return { papel, parceiroId: null } as const;
+  if (papel === "admin" || papel === "despachante" || papel === "consultor" || papel === null) return { papel, parceiroId: null } as const;
   const esperado = papel === "parceiro_agencia" ? "agencia" : "empreiteira";
   if (!UUID.test(parceiroBruto) || tipos.get(parceiroBruto) !== esperado) {
     return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro da agência." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;
   }
   return { papel, parceiroId: parceiroBruto } as const;
+}
+
+// Consultor (migração 030): nível 2 CRMs, nível 3 produtos, nível 4 ações, nível 5 cargo.
+function permissoesDoForm(formData: FormData) {
+  const crms = formData.getAll("crms").map(String).filter(isUnidadeCrm);
+  const produtos: Record<string, string[]> = {};
+  for (const u of crms) {
+    const lista = formData.getAll(`prod_${u}`).map(String);
+    if (lista.length) produtos[u] = lista;
+  }
+  const permissoes = lerPermissoes({ crms, produtos, editar: formData.get("editar") === "on", deletar: formData.get("deletar") === "on" });
+  const cargo = String(formData.get("cargo") ?? "").trim().slice(0, 80) || null;
+  return { permissoes, cargo };
 }
 
 async function tiposParceiros() {
@@ -132,6 +147,7 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
   if (!/^\S+@\S+\.\S+$/.test(email)) return { ok: false, mensagem: "Informe um e-mail válido.", campo: "email" };
   const v = validarPapel(String(formData.get("papel") || ""), String(formData.get("parceiro_id") || ""), await tiposParceiros());
   if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
+  if (v.papel === "consultor" && permissoesDoForm(formData).permissoes.crms.length === 0) return { ok: false, mensagem: "Escolha pelo menos um CRM.", campo: "crms" };
 
   const admin = createAdminClient();
   const senha = gerarSenha();
@@ -151,10 +167,20 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
   }
   const { error: erroPerfil } = await admin
     .from("perfis")
-    .upsert({ id: data.user.id, email, nome: nome || email.split("@")[0], papel: v.papel, parceiro_id: v.parceiroId }, { onConflict: "id" });
+    .upsert(
+      {
+        id: data.user.id,
+        email,
+        nome: nome || email.split("@")[0],
+        papel: v.papel,
+        parceiro_id: v.parceiroId,
+        ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}),
+      },
+      { onConflict: "id" },
+    );
   if (erroPerfil) {
     console.error("Erro ao gravar perfil:", erroPerfil);
-    return { ok: false, mensagem: "Usuário criado, mas não foi possível definir o acesso. Ajuste na lista abaixo." };
+    return { ok: false, mensagem: "Usuário criado, mas não foi possível definir o acesso (a migração 030 já rodou no Supabase?). Ajuste na lista abaixo." };
   }
   revalidar();
   return { ok: true, mensagem: "Usuário criado. Envie o e-mail e a senha para a pessoa — a senha não aparece de novo.", senha, email };
@@ -167,13 +193,13 @@ export async function alterarAcessoUsuario(_: ResultadoAcesso | null, formData: 
   if (userId === acesso.userId) return { ok: false, mensagem: "Você não pode alterar o seu próprio acesso." };
   const v = validarPapel(String(formData.get("papel") || ""), String(formData.get("parceiro_id") || ""), await tiposParceiros());
   if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
-  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId };
+  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}) };
   const nome = String(formData.get("nome") ?? "").trim().slice(0, 120);
   if (nome) update.nome = nome;
   const { error } = await createAdminClient().from("perfis").update(update).eq("id", userId);
   if (error) {
     console.error("Erro ao alterar acesso:", error);
-    return { ok: false, mensagem: "Não foi possível salvar." };
+    return { ok: false, mensagem: "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
   }
   revalidar();
   return { ok: true, mensagem: "Acesso atualizado." };
