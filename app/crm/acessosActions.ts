@@ -1,6 +1,6 @@
 "use server";
 
-import { PERMISSOES_VAZIAS, acoesDoNivel, lerPermissoes, lerProdutosParceiro } from "@/lib/crm/permissoes";
+import { PERMISSOES_VAZIAS, PRODUTOS_PARCEIRO_GRUPOS, acoesDoNivel, lerPermissoes, lerProdutosParceiro, lerUnidadesParceiro, type RemuneracaoProdutos } from "@/lib/crm/permissoes";
 
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
@@ -61,7 +61,9 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   }
   const rem = remuneracaoDoForm(formData);
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
-  const { data: criado, error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem, produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null }).select("id").single();
+  const remP = remuneracaoProdutosDoForm(formData);
+  if ("erro" in remP) return { ok: false, mensagem: remP.erro, campo: "remuneracao_valor" };
+  const { data: criado, error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem, produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null, unidades: tipo !== "empreiteira" && unidadesParceiroDoForm(formData).length ? unidadesParceiroDoForm(formData) : null, remuneracao_produtos: Object.keys(remP.regras).length ? remP.regras : null }).select("id").single();
   if (error || !criado) {
     console.error("Erro ao criar parceiro:", error);
     return { ok: false, mensagem: "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
@@ -90,8 +92,14 @@ export async function editarParceiro(_: ResultadoAcesso | null, formData: FormDa
   if (!atual) return { ok: false, mensagem: "Empresa não encontrada." };
   const rem = remuneracaoDoForm(formData);
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
-  const update: Record<string, unknown> = { nome, ...rem };
-  if (atual.tipo !== "empreiteira") update.produtos = produtosParceiroDoForm(formData);
+  const remP = remuneracaoProdutosDoForm(formData);
+  if ("erro" in remP) return { ok: false, mensagem: remP.erro, campo: "remuneracao_valor" };
+  const update: Record<string, unknown> = { nome, ...rem, remuneracao_produtos: Object.keys(remP.regras).length ? remP.regras : null };
+  if (atual.tipo !== "empreiteira") {
+    update.produtos = produtosParceiroDoForm(formData);
+    const unidades = unidadesParceiroDoForm(formData);
+    update.unidades = unidades.length ? unidades : null;
+  }
   const logo = await salvarLogoParceiro(id, formData);
   if (logo && "erro" in logo) return { ok: false, mensagem: logo.erro, campo: "logo" };
   if (logo) update.logo_url = logo.url;
@@ -186,14 +194,37 @@ async function salvarLogoParceiro(parceiroId: string, formData: FormData): Promi
 }
 
 // Produtos liberados ao parceiro/afiliado (Wilson, 29/out/2026). Vazio = todos.
+// Unidades de negócio marcadas acima dos produtos; só valem produtos das unidades marcadas.
+function unidadesParceiroDoForm(formData: FormData) {
+  return lerUnidadesParceiro(formData.getAll("unidades_parceiro").map(String));
+}
 function produtosParceiroDoForm(formData: FormData): string[] | null {
-  const lista = lerProdutosParceiro(formData.getAll("produtos_parceiro"));
+  const unidades = unidadesParceiroDoForm(formData);
+  const daUnidade = new Map(PRODUTOS_PARCEIRO_GRUPOS.flatMap((g) => g.produtos.map((p) => [p.valor, g.unidade] as const)));
+  const lista = lerProdutosParceiro(formData.getAll("produtos_parceiro")).filter((p) => unidades.length === 0 || unidades.includes(daUnidade.get(p)!));
   return lista.length ? lista : null;
 }
 
+// Remuneração por produto (Wilson, 29/out/2026): campos remp_tipo_<produto> e
+// remp_valor_<produto>, só dos produtos marcados. "padrao" = usa a regra geral.
+function remuneracaoProdutosDoForm(formData: FormData): { regras: RemuneracaoProdutos } | { erro: string } {
+  const out: RemuneracaoProdutos = {};
+  for (const p of lerProdutosParceiro(formData.getAll("produtos_parceiro"))) {
+    const tipo = String(formData.get(`remp_tipo_${p}`) ?? "padrao");
+    if (tipo !== "percentual" && tipo !== "fixo") continue;
+    const bruto = String(formData.get(`remp_valor_${p}`) ?? "").replace(/[^\d.,]/g, "");
+    const valor = Number(bruto.includes(",") ? bruto.replace(/\./g, "").replace(",", ".") : bruto);
+    if (!Number.isFinite(valor) || valor <= 0) return { erro: "Informe o valor da remuneração de cada produto com regra própria." };
+    if (tipo === "percentual" && valor > 100) return { erro: "O percentual vai de 0 a 100." };
+    out[p] = { tipo, valor: Math.round(valor * 100) / 100 };
+  }
+  return { regras: out };
+}
+
 function permissoesParceiroDoForm(formData: FormData) {
+  const unidades = unidadesParceiroDoForm(formData);
   const lista = produtosParceiroDoForm(formData);
-  return { permissoes: { ...PERMISSOES_VAZIAS, crms: ["agencia"], produtos: lista ? { agencia: lista } : {} } };
+  return { permissoes: { ...PERMISSOES_VAZIAS, crms: unidades, produtos: {}, produtosParceiro: lista ?? [] } };
 }
 
 async function tiposParceiros() {
@@ -211,6 +242,9 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
   if (v.papel === "consultor" && permissoesDoForm(formData).permissoes.crms.length === 0) return { ok: false, mensagem: "Escolha pelo menos um CRM.", campo: "crms" };
   const remU = remuneracaoDoForm(formData);
   if ("erro" in remU) return { ok: false, mensagem: remU.erro, campo: "remuneracao_valor" };
+  const remPUx = remuneracaoProdutosDoForm(formData);
+  if ("erro" in remPUx) return { ok: false, mensagem: remPUx.erro, campo: "remuneracao_valor" };
+  const remPU = Object.keys(remPUx.regras).length ? remPUx.regras : null;
 
   const admin = createAdminClient();
   const senha = gerarSenha();
@@ -240,6 +274,7 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
         ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}),
         ...(v.papel === "parceiro_agencia" ? permissoesParceiroDoForm(formData) : {}),
         ...(v.papel && v.papel !== "admin" ? remU : {}),
+        ...(v.papel === "parceiro_agencia" ? { remuneracao_produtos: remPU } : {}),
       },
       { onConflict: "id" },
     );
@@ -260,7 +295,9 @@ export async function alterarAcessoUsuario(_: ResultadoAcesso | null, formData: 
   if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
   const remU = remuneracaoDoForm(formData);
   if ("erro" in remU) return { ok: false, mensagem: remU.erro, campo: "remuneracao_valor" };
-  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}), ...(v.papel === "parceiro_agencia" ? permissoesParceiroDoForm(formData) : {}), ...(v.papel && v.papel !== "admin" ? remU : {}) };
+  const remPUx = remuneracaoProdutosDoForm(formData);
+  if ("erro" in remPUx) return { ok: false, mensagem: remPUx.erro, campo: "remuneracao_valor" };
+  const update: Record<string, unknown> = { ...(v.papel === "parceiro_agencia" ? { remuneracao_produtos: Object.keys(remPUx.regras).length ? remPUx.regras : null } : {}), papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}), ...(v.papel === "parceiro_agencia" ? permissoesParceiroDoForm(formData) : {}), ...(v.papel && v.papel !== "admin" ? remU : {}) };
   const nome = String(formData.get("nome") ?? "").trim().slice(0, 120);
   if (nome) update.nome = nome;
   const { error } = await createAdminClient().from("perfis").update(update).eq("id", userId);

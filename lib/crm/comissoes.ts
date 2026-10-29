@@ -10,12 +10,15 @@
 //   - fixo: valor por venda fechada (etapa "Fechado — Ganho") no mês.
 // Só servidor (usa service role).
 import { createAdminClient } from "@/lib/supabase/admin";
+import { lerRemuneracaoProdutos, type RemuneracaoProdutos } from "./permissoes";
+// + Regra por produto (migração 032): se o cliente tem um produto com regra
+// própria na empresa/usuário, vale ela; senão, a remuneração padrão.
 
 export type Beneficiario = {
   chave: string;
   nome: string;
   tipo: "empresa" | "usuario";
-  regra: "percentual" | "fixo";
+  regra: "percentual" | "fixo" | "por_produto";
   valorRegra: number;
   vendas: number;
   recebidoC: number;
@@ -48,28 +51,40 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
   const [rPar, rPerf, rCli, rFech, rPag, rRec] = await Promise.all([
     db.from("parceiros").select("*"),
     db.from("perfis").select("*"),
-    db.from("clientes").select("id, parceiro_id, responsavel_id, arquivado_em"),
+    db.from("clientes").select("*"),
     db.from("interacoes").select("cliente_id, estagio_destino, data_evento, created_at").eq("tipo", "mudanca_estagio").eq("estagio_destino", "fechado_ganho"),
     db.from("pagamentos").select("id, cliente_id"),
     db.from("recebimentos").select("pagamento_id, tipo, valor, data"),
   ]);
   if (rPar.error || rPerf.error || rCli.error) return { erro: "Não foi possível carregar os dados (rodou a migração 030?)." };
 
-  type Regra = { nome: string; tipo: "percentual" | "fixo"; valor: number };
+  type Regra = { nome: string; tipo: "percentual" | "fixo" | "por_produto"; valor: number; porProduto: RemuneracaoProdutos };
   const regra = (x: { remuneracao_tipo?: string | null; remuneracao_valor?: unknown }) =>
     (x.remuneracao_tipo === "percentual" || x.remuneracao_tipo === "fixo") && Number(x.remuneracao_valor) > 0
       ? { tipo: x.remuneracao_tipo as "percentual" | "fixo", valor: Number(x.remuneracao_valor) }
       : null;
   const empresas = new Map<string, Regra>();
+  const montar = (nome: string, x: Record<string, unknown>): Regra | null => {
+    const r = regra(x);
+    const porProduto = lerRemuneracaoProdutos(x.remuneracao_produtos);
+    if (!r && Object.keys(porProduto).length === 0) return null;
+    return { nome, tipo: Object.keys(porProduto).length ? "por_produto" : r!.tipo, valor: r?.valor ?? 0, porProduto, ...(r ? { padrao: r } : {}) } as Regra & { padrao?: { tipo: "percentual" | "fixo"; valor: number } };
+  };
   for (const p of rPar.data ?? []) {
-    const r = regra(p);
-    if (r) empresas.set(p.id, { nome: p.nome, ...r });
+    const r = montar(p.nome, p);
+    if (r) empresas.set(p.id, r);
   }
   const usuarios = new Map<string, Regra>();
   for (const u of rPerf.data ?? []) {
-    const r = regra(u);
-    if (r && u.papel !== "admin") usuarios.set(u.id, { nome: u.nome || u.email, ...r });
+    const r = montar(u.nome || u.email, u);
+    if (r && u.papel !== "admin") usuarios.set(u.id, r);
   }
+  // Regra que vale para um cliente: a do 1º produto dele com regra própria, ou a padrão.
+  const regraDoCliente = (r: Regra & { padrao?: { tipo: "percentual" | "fixo"; valor: number } }, c: Record<string, unknown>) => {
+    const produtos = [c.produto_principal, ...(Array.isArray(c.produto_secundario) ? c.produto_secundario : [])].filter(Boolean) as string[];
+    for (const p of produtos) if (r.porProduto[p]) return r.porProduto[p];
+    return r.padrao ?? null;
+  };
   const clientes = new Map((rCli.data ?? []).map((c) => [c.id as string, c]));
   const clienteDoPag = new Map((rPag.data ?? []).map((p) => [p.id as string, p.cliente_id as string]));
 
@@ -80,12 +95,15 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
       if (!b) acc.set(chave, (b = { chave, nome: r.nome, tipo, regra: r.tipo, valorRegra: r.valor, vendas: 0, recebidoC: 0, comissaoC: 0 }));
       return b;
     };
+    // Cada dono do cliente + a regra que vale para ESTE cliente.
     const donos = (clienteId: string) => {
-      const c = clientes.get(clienteId);
+      const c = clientes.get(clienteId) as Record<string, unknown> | undefined;
       if (!c) return [];
-      const out: Beneficiario[] = [];
-      if (c.parceiro_id && empresas.has(c.parceiro_id)) out.push(pegar(`e:${c.parceiro_id}`, empresas.get(c.parceiro_id)!, "empresa"));
-      if (c.responsavel_id && usuarios.has(c.responsavel_id)) out.push(pegar(`u:${c.responsavel_id}`, usuarios.get(c.responsavel_id)!, "usuario"));
+      const out: { b: Beneficiario; r: { tipo: "percentual" | "fixo"; valor: number } | null }[] = [];
+      const pid = c.parceiro_id as string | null;
+      const rid = c.responsavel_id as string | null;
+      if (pid && empresas.has(pid)) out.push({ b: pegar(`e:${pid}`, empresas.get(pid)!, "empresa"), r: regraDoCliente(empresas.get(pid)!, c) });
+      if (rid && usuarios.has(rid)) out.push({ b: pegar(`u:${rid}`, usuarios.get(rid)!, "usuario"), r: regraDoCliente(usuarios.get(rid)!, c) });
       return out;
     };
     // Vendas fechadas no mês (uma por cliente).
@@ -94,17 +112,24 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
       const dia = String(f.data_evento ?? f.created_at).slice(0, 7);
       if (dia === mes) vendidos.add(f.cliente_id);
     }
-    for (const id of vendidos) for (const b of donos(id)) b.vendas++;
+    for (const id of vendidos)
+      for (const { b, r } of donos(id)) {
+        b.vendas++;
+        if (r?.tipo === "fixo") b.comissaoC += Math.round(r.valor * 100);
+      }
     // Recebido no mês.
     for (const r of rRec.data ?? []) {
       if (String(r.data ?? "").slice(0, 7) !== mes) continue;
       const cid = clienteDoPag.get(r.pagamento_id);
       if (!cid) continue;
       const v = (r.tipo === "estorno" ? -1 : r.tipo === "recebimento" ? 1 : 0) * centavos(r.valor);
-      for (const b of donos(cid)) b.recebidoC += v;
+      for (const { b, r } of donos(cid)) {
+        b.recebidoC += v;
+        if (r?.tipo === "percentual") b.comissaoC += Math.round((v * r.valor) / 100);
+      }
     }
     const beneficiarios = [...acc.values()]
-      .map((b) => ({ ...b, comissaoC: b.regra === "fixo" ? Math.round(b.vendas * b.valorRegra * 100) : Math.round((Math.max(0, b.recebidoC) * b.valorRegra) / 100) }))
+      .map((b) => ({ ...b, comissaoC: Math.max(0, b.comissaoC) }))
       .filter((b) => b.comissaoC > 0 || b.vendas > 0 || b.recebidoC > 0)
       .sort((a, b) => b.comissaoC - a.comissaoC);
     return { mes, rotuloMes: rotulo(mes), prazo: prazoComissao(mes), beneficiarios, totalC: beneficiarios.reduce((s, b) => s + b.comissaoC, 0) };

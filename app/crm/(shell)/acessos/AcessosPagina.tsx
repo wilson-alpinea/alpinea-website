@@ -1,7 +1,7 @@
 "use client";
 
-import { resumoPermissoes, type Permissoes } from "@/lib/crm/permissoes";
-import { UNIDADE_LABEL } from "@/lib/crm/unidades";
+import { resumoPermissoes, type Permissoes, type RemuneracaoProdutos } from "@/lib/crm/permissoes";
+import { UNIDADE_LABEL, type UnidadeCrm } from "@/lib/crm/unidades";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -13,9 +13,9 @@ import { BotaoPrimario, CAMPO_FILTRO, CabecalhoSecao, Copiar, Icones, MenuAcoes,
 // na URL (voltar de uma edição mantém tudo). A tela só reorganiza: as
 // permissões continuam sendo checadas no servidor.
 
-export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null; remuneracao?: Remuneracao; produtos?: string[] };
+export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null; remuneracao?: Remuneracao; produtos?: string[]; unidades?: UnidadeCrm[]; remuneracaoProdutos?: RemuneracaoProdutos };
 export type Remuneracao = { tipo: "percentual" | "fixo" | null; valor: number | null };
-export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean; remuneracao?: Remuneracao; produtos?: string[]; logoUrl?: string | null };
+export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean; remuneracao?: Remuneracao; produtos?: string[]; unidades?: UnidadeCrm[]; remuneracaoProdutos?: RemuneracaoProdutos; logoUrl?: string | null };
 export type VagaAcesso = { id: string; titulo: string; codigo: string; empresa: string; local: string };
 
 type Situacao = "ativo" | "sem_acesso" | "bloqueado";

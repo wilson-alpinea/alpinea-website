@@ -12,7 +12,7 @@ import {
 } from "../../acessosActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, CAMPO, LABEL, Painel, Spinner } from "../clientes/[id]/financeiro/ui";
 import type { EmpresaAcesso, Remuneracao, UsuarioAcesso } from "./AcessosPagina";
-import { NIVEIS_ACAO, PRODUTOS_POR_CRM, nivelDe, type Permissoes } from "@/lib/crm/permissoes";
+import { NIVEIS_ACAO, PRODUTOS_PARCEIRO_GRUPOS, PRODUTOS_POR_CRM, nivelDe, type Permissoes, type RegraRemuneracao, type RemuneracaoProdutos } from "@/lib/crm/permissoes";
 import { UNIDADES_CRM, UNIDADE_LABEL, type UnidadeCrm } from "@/lib/crm/unidades";
 import { Copiar, ERRO_CAMPO, Mensagem, PERFIS, rotuloPerfil } from "./comum";
 
@@ -45,7 +45,7 @@ function CamposRemuneracao({ inicial, estado }: { inicial?: Remuneracao; estado:
   return (
     <div className="space-y-3 rounded-xl border border-[#E6E9ED] bg-[#FFFBF2] p-4">
       <p className="text-sm font-semibold text-[#20252B]">
-        Remuneração do parceiro <span className="text-[12px] font-normal text-[#8A929B]">· visível só para administradores</span>
+        Remuneração padrão do parceiro <span className="text-[12px] font-normal text-[#8A929B]">· visível só para administradores · cada produto pode ter a sua, abaixo</span>
       </p>
       <div className="grid gap-2 sm:grid-cols-3">
         {[
@@ -135,19 +135,96 @@ function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes |
 }
 
 // Produtos que o parceiro/afiliado pode ver (Wilson, 29/out/2026). Nenhum marcado = todos.
-function ProdutosParceiro({ inicial, ajuda }: { inicial?: string[]; ajuda: string }) {
+// Produto + remuneração própria (Wilson, 29/out/2026: "cada valor tem que ser
+// atribuído por produto"). Sem regra própria = usa a remuneração padrão.
+function LinhaProduto({ valor, label, marcadoInicial, regra }: { valor: string; label: string; marcadoInicial: boolean; regra?: RegraRemuneracao }) {
+  const [marcado, setMarcado] = useState(marcadoInicial);
+  const [tipo, setTipo] = useState<string>(regra?.tipo ?? "padrao");
   return (
-    <div className="rounded-xl border border-[#E6E9ED] bg-[#F7F9FB] p-4">
-      <p className="text-sm font-semibold text-[#20252B]">Produtos que pode ver</p>
-      <p className="text-[13px] text-[#626B75]">{ajuda}</p>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-        {PRODUTOS_POR_CRM.agencia!.map((p) => (
-          <label key={p.valor} className="flex items-center gap-2 text-sm text-[#20252B]">
-            <input type="checkbox" name="produtos_parceiro" value={p.valor} defaultChecked={inicial?.includes(p.valor)} className="h-4 w-4 shrink-0 accent-[#24476B]" />
-            {p.label}
-          </label>
-        ))}
-      </div>
+    <div className={`rounded-lg border p-2.5 transition ${marcado ? "border-[#24476B]/30 bg-white" : "border-transparent"}`}>
+      <label className="flex items-center gap-2 text-sm text-[#20252B]">
+        <input type="checkbox" name="produtos_parceiro" value={valor} checked={marcado} onChange={(e) => setMarcado(e.target.checked)} className="h-4 w-4 shrink-0 accent-[#24476B]" />
+        {label}
+      </label>
+      {marcado && (
+        <div className="mt-2 flex flex-wrap items-center gap-2 pl-6">
+          <select
+            name={`remp_tipo_${valor}`}
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value)}
+            aria-label={`Remuneração de ${label}`}
+            className="h-9 rounded-lg border border-[#D5DAE0] bg-white px-2 text-[13px] text-[#20252B]"
+          >
+            <option value="padrao">Remuneração padrão</option>
+            <option value="percentual">% da receita líquida</option>
+            <option value="fixo">Valor fixo por venda (R$)</option>
+          </select>
+          {tipo !== "padrao" && (
+            <input
+              name={`remp_valor_${valor}`}
+              defaultValue={regra?.valor != null ? String(regra.valor).replace(".", ",") : ""}
+              inputMode="decimal"
+              placeholder={tipo === "percentual" ? "Ex.: 10" : "Ex.: 150,00"}
+              aria-label={`Valor da remuneração de ${label}`}
+              className="h-9 w-28 rounded-lg border border-[#D5DAE0] bg-white px-2 text-[13px] tabular-nums text-[#20252B]"
+            />
+          )}
+          {tipo === "percentual" && <span className="text-[13px] text-[#626B75]">%</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProdutosParceiro({ inicial, unidadesIniciais, remuneracao, ajuda }: { inicial?: string[]; unidadesIniciais?: UnidadeCrm[]; remuneracao?: RemuneracaoProdutos; ajuda: string }) {
+  // 1º a unidade de negócio, depois os produtos dela (Wilson, 29/out/2026).
+  const [unidades, setUnidades] = useState<UnidadeCrm[]>(unidadesIniciais ?? []);
+  const grupos = PRODUTOS_PARCEIRO_GRUPOS.filter((g) => unidades.includes(g.unidade));
+  return (
+    <div className="space-y-4 rounded-xl border border-[#E6E9ED] bg-[#F7F9FB] p-4">
+      <fieldset>
+        <legend className="text-sm font-semibold text-[#20252B]">Unidades de negócio</legend>
+        <p className="text-[13px] text-[#626B75]">Com quais áreas este parceiro trabalha. Nenhuma marcada = todas.</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {PRODUTOS_PARCEIRO_GRUPOS.map((g) => {
+            const marcada = unidades.includes(g.unidade);
+            return (
+              <label
+                key={g.unidade}
+                className={`flex cursor-pointer items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition ${marcada ? "border-[#24476B] bg-[#24476B] text-white" : "border-[#D5DAE0] bg-white text-[#20252B] hover:border-[#24476B]/50"}`}
+              >
+                <input
+                  type="checkbox"
+                  name="unidades_parceiro"
+                  value={g.unidade}
+                  checked={marcada}
+                  onChange={(e) => setUnidades((u) => (e.target.checked ? [...u, g.unidade] : u.filter((x) => x !== g.unidade)))}
+                  className="sr-only"
+                />
+                {g.crm}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+      {grupos.length > 0 && (
+        <div>
+          <p className="text-sm font-semibold text-[#20252B]">Produtos que pode ver</p>
+          <p className="text-[13px] text-[#626B75]">{ajuda}</p>
+          <div className="mt-3 space-y-4">
+            {grupos.map((g) => (
+              <fieldset key={g.unidade}>
+                <legend className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#626B75]">{g.crm}</legend>
+                <div className="grid gap-1.5 sm:grid-cols-2">
+                  {g.produtos.map((p) => (
+                    <LinhaProduto key={p.valor} valor={p.valor} label={p.label} marcadoInicial={!!inicial?.includes(p.valor)} regra={remuneracao?.[p.valor]} />
+                  ))}
+                </div>
+              </fieldset>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -352,7 +429,9 @@ export function PainelUsuario({
             <ProdutosParceiro
               key={usuario?.id ?? "novo"}
               inicial={usuario?.produtos}
-              ajuda="Nenhum marcado = todos os produtos liberados para a empresa. Os leads de outros produtos não aparecem no portal."
+              unidadesIniciais={usuario?.unidades}
+              remuneracao={usuario?.remuneracaoProdutos}
+              ajuda="Marque os produtos e, em cada um, a remuneração — ou deixe a padrão. Em cada unidade, nenhum marcado = todos os produtos dela liberados para a empresa."
             />
           )}
           {papel === "consultor" && <PermissoesConsultor inicial={usuario?.permissoes ?? null} cargo={usuario?.cargo ?? ""} estado={estado} />}
@@ -514,7 +593,9 @@ export function PainelEmpresa({
         {comLink && (
           <ProdutosParceiro
             inicial={empresa?.produtos}
-            ajuda="Nenhum marcado = todos. Vale para todos os usuários da empresa; cada usuário pode ser restringido ainda mais."
+            unidadesIniciais={empresa?.unidades}
+            remuneracao={empresa?.remuneracaoProdutos}
+            ajuda="Marque os produtos e, em cada um, a remuneração — ou deixe a padrão (acima). Em cada unidade, nenhum marcado = todos os produtos dela."
           />
         )}
 

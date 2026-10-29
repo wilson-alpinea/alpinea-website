@@ -5,7 +5,7 @@ import { ESTAGIOS, ESTAGIO_COR } from "@/lib/crm/estagios";
 import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
 import type { Estagio } from "@/lib/crm/types";
 import { PortalShell } from "../PortalShell";
-import { lerPermissoes, lerProdutosParceiro, produtosLiberadosParceiro } from "@/lib/crm/permissoes";
+import { lerAcessoUsuarioParceiro, lerProdutosParceiro, lerUnidadesParceiro, produtosLiberadosParceiro, unidadeLiberada } from "@/lib/crm/permissoes";
 
 // Portal do parceiro da agência (Wilson, 21/out/2026): vê SOMENTE os leads
 // gerados por ele, sem editar. Leitura com service role, filtrando pelo
@@ -23,6 +23,7 @@ type LeadParceiro = {
   nome: string;
   estagio: Estagio;
   produto_principal: string | null;
+  produto_secundario: string[] | null;
   valor_proposta: number | null;
   data_viagem: string | null;
   created_at: string;
@@ -40,15 +41,18 @@ export default async function PortalParceiroPage() {
     admin.from("parceiros").select("*").eq("id", acesso.parceiro.id).maybeSingle(),
     admin.from("perfis").select("*").eq("id", acesso.userId).maybeSingle(),
   ]);
-  const liberados = produtosLiberadosParceiro(lerProdutosParceiro(emp?.produtos), lerPermissoes(perfil?.permissoes).produtos.agencia ?? []);
+  const acessoUsuario = lerAcessoUsuarioParceiro(perfil?.permissoes);
+  const liberados = produtosLiberadosParceiro(lerProdutosParceiro(emp?.produtos), acessoUsuario.produtos);
+  // Unidade "Viagens" desmarcada (na empresa ou no usuário) = sem leads da Agência aqui.
+  const veViagens = unidadeLiberada(lerUnidadesParceiro(emp?.unidades), "agencia") && unidadeLiberada(acessoUsuario.unidades, "agencia");
   const { data: brutos, error } = await admin
     .from("clientes")
-    .select("id, nome, estagio, produto_principal, valor_proposta, data_viagem, created_at, arquivado_em")
+    .select("id, nome, estagio, produto_principal, produto_secundario, valor_proposta, data_viagem, created_at, arquivado_em")
     .eq("parceiro_id", acesso.parceiro.id)
     .order("created_at", { ascending: false })
     .limit(2000);
   if (error) console.error("Erro ao carregar leads do parceiro:", error);
-  const leads = ((brutos ?? []) as LeadParceiro[]).filter((l) => !/^\s*\[TESTE\]/i.test(l.nome) && (!liberados || (!!l.produto_principal && liberados.includes(l.produto_principal))));
+  const leads = ((brutos ?? []) as LeadParceiro[]).filter((l) => veViagens && !/^\s*\[TESTE\]/i.test(l.nome) && (!liberados || (!!l.produto_principal && liberados.includes(l.produto_principal)) || (l.produto_secundario ?? []).some((p) => liberados.includes(p))));
 
   const ativos = leads.filter((l) => !l.arquivado_em);
   const ganhos = leads.filter((l) => l.estagio === "fechado_ganho").length;

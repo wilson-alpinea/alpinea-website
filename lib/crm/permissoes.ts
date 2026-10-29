@@ -1,6 +1,6 @@
 // Permissões do perfil Consultor (Wilson, 29/out/2026) — migração 030.
 // Sem dependências de servidor (usado no proxy, nas telas e nas actions).
-import { PRODUTOS_PRINCIPAIS } from "./produtos";
+import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "./produtos";
 import { isUnidadeCrm, type UnidadeCrm } from "./unidades";
 
 export type Permissoes = {
@@ -38,9 +38,66 @@ export const PRODUTOS_POR_CRM: Partial<Record<UnidadeCrm, { valor: string; label
   ],
 };
 
+/** Todos os serviços de todos os CRMs, agrupados, para escolher o que o
+ * parceiro/afiliado pode ver (Wilson, 29/out/2026: "todos os serviços de
+ * todos os CRMs devem aparecer"). Os valores da Agência são os mesmos de
+ * produto_principal/produto_secundario dos clientes; os de Documentação têm
+ * prefixo doc_ para não colidir. */
+const SECUNDARIOS = (v: string[]) => PRODUTOS_SECUNDARIOS.filter((p) => v.includes(p.valor)).map((p) => ({ valor: p.valor, label: p.label }));
+export const PRODUTOS_PARCEIRO_GRUPOS: { unidade: UnidadeCrm; crm: string; produtos: { valor: string; label: string }[] }[] = [
+  {
+    unidade: "agencia",
+    crm: "Viagens (Agência)",
+    produtos: [
+      ...PRODUTOS_PRINCIPAIS.map((p) => ({ valor: p.valor, label: p.label })),
+      ...SECUNDARIOS(["passagem_aerea", "hoteis", "guia", "transporte_privado", "transfer_aeroporto_hotel", "jr_pass", "reserva_restaurantes", "ajisai_shopping"]),
+    ],
+  },
+  { unidade: "seguro", crm: "Seguro Viagem & eSIM", produtos: SECUNDARIOS(["seguro_viagem", "esim"]) },
+  { unidade: "cambio", crm: "Câmbio", produtos: SECUNDARIOS(["cambio"]) },
+  {
+    unidade: "documentacao",
+    crm: "Documentação",
+    produtos: [
+      { valor: "doc_visto", label: "Visto específico" },
+      { valor: "doc_elegibilidade", label: "Certificado de Elegibilidade" },
+      { valor: "doc_pet", label: "Exportação de pet" },
+    ],
+  },
+  { unidade: "empregos", crm: "Empregos", produtos: [{ valor: "empregos", label: "Vagas de emprego no Japão" }] },
+];
+
+/** Remuneração por produto (migração 032). */
+export type RegraRemuneracao = { tipo: "percentual" | "fixo"; valor: number };
+export type RemuneracaoProdutos = Record<string, RegraRemuneracao>;
+export function lerRemuneracaoProdutos(v: unknown): RemuneracaoProdutos {
+  const out: RemuneracaoProdutos = {};
+  if (!v || typeof v !== "object") return out;
+  for (const [k, r] of Object.entries(v as Record<string, unknown>)) {
+    const o = (r ?? {}) as { tipo?: unknown; valor?: unknown };
+    const valor = Number(o.valor);
+    if ((o.tipo === "percentual" || o.tipo === "fixo") && valor > 0) out[k] = { tipo: o.tipo, valor };
+  }
+  return out;
+}
+
+/** Unidades de negócio liberadas ao parceiro (empresa ou usuário). Vazio = todas. */
+export function lerUnidadesParceiro(v: unknown): UnidadeCrm[] {
+  return Array.isArray(v) ? v.filter(isUnidadeCrm) : [];
+}
+
+/** Lista do parceiro gravada em perfis.permissoes (usuário). */
+export function lerAcessoUsuarioParceiro(v: unknown): { unidades: UnidadeCrm[]; produtos: string[] } {
+  const o = (v && typeof v === "object" ? v : {}) as { crms?: unknown; produtosParceiro?: unknown; produtos?: { agencia?: unknown } };
+  return { unidades: lerUnidadesParceiro(o.crms), produtos: lerProdutosParceiro(o.produtosParceiro ?? o.produtos?.agencia) };
+}
+
+/** Unidade liberada? (lista vazia = todas) */
+export const unidadeLiberada = (unidades: UnidadeCrm[], u: UnidadeCrm) => unidades.length === 0 || unidades.includes(u);
+
 /** Produtos liberados a um parceiro/afiliado (empresa ou usuário). Vazio = todos. */
 export function lerProdutosParceiro(v: unknown): string[] {
-  const validos = PRODUTOS_POR_CRM.agencia!.map((p) => p.valor);
+  const validos = PRODUTOS_PARCEIRO_GRUPOS.flatMap((g) => g.produtos.map((p) => p.valor));
   return Array.isArray(v) ? v.map(String).filter((x) => validos.includes(x)) : [];
 }
 

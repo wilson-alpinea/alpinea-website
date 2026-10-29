@@ -191,9 +191,11 @@ async function Comissoes() {
                           <span className="block font-medium text-[#20252B]">{b.nome}</span>
                           <span className="block text-[13px] text-[#626B75]">
                             {b.tipo === "empresa" ? "Empresa parceira" : "Usuário"} ·{" "}
-                            {b.regra === "percentual"
-                              ? `${b.valorRegra.toLocaleString("pt-BR")}% sobre ${brl(Math.max(0, b.recebidoC))} recebidos`
-                              : `${b.vendas} ${b.vendas === 1 ? "venda" : "vendas"} × ${brl(Math.round(b.valorRegra * 100))}`}
+                            {b.regra === "por_produto"
+                              ? `Regras por produto · ${b.vendas} ${b.vendas === 1 ? "venda" : "vendas"} · ${brl(Math.max(0, b.recebidoC))} recebidos`
+                              : b.regra === "percentual"
+                                ? `${b.valorRegra.toLocaleString("pt-BR")}% sobre ${brl(Math.max(0, b.recebidoC))} recebidos`
+                                : `${b.vendas} ${b.vendas === 1 ? "venda" : "vendas"} × ${brl(Math.round(b.valorRegra * 100))}`}
                           </span>
                         </span>
                         <span className="shrink-0 font-semibold tabular-nums text-[#20252B]">{brl(b.comissaoC)}</span>

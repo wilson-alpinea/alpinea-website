@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { exigirSomenteAdmin as exigirAdmin } from "@/lib/crm/acesso";
-import { lerPermissoes, lerProdutosParceiro } from "@/lib/crm/permissoes";
+import { lerAcessoUsuarioParceiro, lerPermissoes, lerProdutosParceiro, lerRemuneracaoProdutos, lerUnidadesParceiro } from "@/lib/crm/permissoes";
 import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
 import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso, type Remuneracao } from "./AcessosPagina";
 
@@ -40,7 +40,7 @@ export default async function AcessosPage() {
     tipo: x.remuneracao_tipo === "percentual" || x.remuneracao_tipo === "fixo" ? x.remuneracao_tipo : null,
     valor: x.remuneracao_valor == null ? null : Number(x.remuneracao_valor),
   });
-  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p), produtos: lerProdutosParceiro(p.produtos), logoUrl: (p.logo_url as string | null) ?? null }));
+  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p), produtos: lerProdutosParceiro(p.produtos), unidades: lerUnidadesParceiro(p.unidades), remuneracaoProdutos: lerRemuneracaoProdutos(p.remuneracao_produtos), logoUrl: (p.logo_url as string | null) ?? null }));
   const usuarios: UsuarioAcesso[] = (rPerfis.data ?? []).map((u) => ({
     id: u.id,
     nome: u.nome ?? null,
@@ -48,7 +48,9 @@ export default async function AcessosPage() {
     papel: u.papel ?? null,
     parceiroId: u.parceiro_id ?? null,
     permissoes: u.papel === "consultor" ? lerPermissoes(u.permissoes) : null,
-    produtos: u.papel === "parceiro_agencia" ? lerPermissoes(u.permissoes).produtos.agencia ?? [] : [],
+    produtos: u.papel === "parceiro_agencia" ? lerAcessoUsuarioParceiro(u.permissoes).produtos : [],
+    unidades: u.papel === "parceiro_agencia" ? lerAcessoUsuarioParceiro(u.permissoes).unidades : [],
+    remuneracaoProdutos: lerRemuneracaoProdutos(u.remuneracao_produtos),
     cargo: (u.cargo as string | null) ?? null,
     remuneracao: remun(u),
   }));
