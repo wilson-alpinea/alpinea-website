@@ -43,7 +43,7 @@ const NOME: Record<Servico, string> = { visto: "Visto específico", elegibilidad
 const PASSOS: Record<Servico, { id: PassoId; titulo: string; descricao: string }[]> = {
   visto: [
     { id: "perfil", titulo: "Perfil", descricao: "Confirme que o visto específico é para você." },
-    { id: "valor", titulo: "Consulado e valor", descricao: "O valor final sai da tabela do seu consulado — sem surpresa depois." },
+    { id: "valor", titulo: "Consulado e valor", descricao: "Escolha o consulado e o número de pessoas para ver o valor final — sem surpresa depois." },
     { id: "dados", titulo: "Seus dados e cadastro", descricao: "Contato do responsável e as perguntas do caso." },
     { id: "solicitantes", titulo: "Solicitantes", descricao: "Dados de cada pessoa, como estão no passaporte." },
     { id: "titular", titulo: "Endereço e ascendência", descricao: "Onde você mora e de quem vem a ascendência japonesa." },

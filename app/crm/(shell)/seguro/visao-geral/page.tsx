@@ -8,6 +8,7 @@ import { Badge, Card, LinkAcao, SOMBRA, Vazio, dataCurta, dataHora, diasEntre } 
 import { Alerta, Detalhe, IconeEvento, Indicador, LinhaBarra, Numero, SemBase, Stat } from "../../components/PainelUnidade";
 import { PeriodoSelector } from "../../components/PeriodoSelector";
 import { GraficoDiario } from "../../components/GraficoDiario";
+import { SinoUnidade } from "../../components/SinoUnidade";
 
 // Visão geral do CRM de Seguro Viagem (Wilson, 29/out/2026: "quero eles tão
 // arrojados e avançados quanto os outros 2") — mesmo desenho da Visão geral
@@ -157,6 +158,10 @@ export default async function VisaoGeralSeguroPage({ searchParams }: { searchPar
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <SinoUnidade unidade="seguro" />
+          <a href="/produtos/seguro-viagem/direto" target="_blank" rel="noreferrer" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50">
+            Link venda direta ↗
+          </a>
           <Link href="/crm/seguro" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50">
             Ver pedidos
           </Link>

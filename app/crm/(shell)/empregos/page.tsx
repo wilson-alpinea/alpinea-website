@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isClassificacao, progressoCandidatura } from "@/lib/crm/empregos";
 import { ultimaReclassificacao } from "@/lib/crm/andamentoManual";
 import { ListaCandidaturas, type CandidaturaLista } from "./ListaCandidaturas";
+import { SinoUnidade } from "../components/SinoUnidade";
 
 // Candidatos (CRM de Empregos) — redesenho 23/out/2026. O servidor entrega
 // as candidaturas (só admin, via RLS) já com a etapa calculada pela mesma
@@ -52,7 +53,7 @@ export default async function CandidatosPage() {
 
   return (
     <Suspense fallback={null}>
-      <ListaCandidaturas candidaturas={lista} erro={!!rCand.error} />
+      <ListaCandidaturas candidaturas={lista} erro={!!rCand.error} acoes={<SinoUnidade unidade="empregos" />} />
     </Suspense>
   );
 }

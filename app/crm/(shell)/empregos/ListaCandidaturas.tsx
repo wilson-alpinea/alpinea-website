@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -111,7 +113,7 @@ function lerColunas() {
   }
 }
 
-export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: CandidaturaLista[]; erro: boolean }) {
+export function ListaCandidaturas({ candidaturas, erro, acoes }: { candidaturas: CandidaturaLista[]; erro: boolean; acoes?: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -290,7 +292,8 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
             </p>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {acoes}
           <Link href="/crm/empregos/vagas" className="rounded-xl border border-[#DEE6E2] bg-white px-4 py-2.5 text-sm font-medium text-[#202B28] transition hover:border-[#27675B]/50">
             Vagas no site
           </Link>

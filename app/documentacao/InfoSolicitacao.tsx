@@ -11,7 +11,7 @@ import type { ReactNode } from "react";
 import { Etapas, ListaCheck, Prazos, Termos, VERDE, display } from "./componentes";
 import { formatBRL, formatJPY } from "../hooks/useCambioUSD";
 import {
-  COE_FAMILIA_JPY, COE_INDIVIDUAL_JPY, CONSULADOS, EXPERIENCIA, PRECO_PET_BRL, RACAS_RESTRITAS_CAES, RACAS_RESTRITAS_GATOS,
+  COE_FAMILIA_JPY, COE_INDIVIDUAL_JPY, EXPERIENCIA, PRECO_PET_BRL, RACAS_RESTRITAS_CAES, RACAS_RESTRITAS_GATOS,
   TERMOS_PET, TERMOS_RACAS, TERMOS_VISTO_COE, type RacaRestrita,
 } from "./conteudo";
 
@@ -101,29 +101,6 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
     if (passo === "valor")
       return (
         <div className="space-y-4">
-          <Painel titulo="Valor por pessoa, por consulado" recolhivel>
-            <div className="overflow-x-auto rounded-xl border border-black/10 bg-white">
-              <table className="w-full min-w-[420px] text-left text-sm">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-[0.15em] text-black/45">
-                    <th className="px-4 py-2.5 font-medium">Consulado</th>
-                    <th className="px-4 py-2.5 font-medium">Com elegibilidade</th>
-                    <th className="px-4 py-2.5 font-medium">Sem elegibilidade</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {CONSULADOS.map((c) => (
-                    <tr key={c.id} className="border-t border-black/5">
-                      <td className="px-4 py-2.5 text-black/75">{c.nome}{c.dica && <span className="block text-xs text-black/45">{c.dica}</span>}</td>
-                      <td className="px-4 py-2.5">{formatBRL(c.comCOE)}</td>
-                      <td className="px-4 py-2.5">{formatBRL(c.semCOE)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-3 text-xs leading-5 text-black/50">Taxa consular inclusa. Com o certificado, o consulado emite em cerca de 2 semanas; sem, em cerca de 3 meses.</p>
-          </Painel>
           <Painel titulo="O que está incluso" recolhivel>
             <ListaCheck
               itens={[

@@ -17,7 +17,7 @@ function CardServico({ href, imagem, alt, kicker, titulo, texto, preco, cta, sep
   return (
     <Link
       href={href}
-      className={`group flex flex-col overflow-hidden rounded-2xl border transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.35)] ${separado ? "border-black/10 bg-[#F6F7F5]" : "border-black/10 bg-white"}`}
+      className={`group flex flex-col overflow-hidden rounded-2xl border shadow-[0_12px_32px_-14px_rgba(10,37,64,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_44px_-16px_rgba(10,37,64,0.5)] ${separado ? "border-black/10 bg-[#F6F7F5]" : "border-black/10 bg-white"}`}
     >
       <Image src={imagem} alt={alt} width={1254} height={1254} sizes="(min-width: 768px) 33vw, 100vw" className="block aspect-square h-auto w-full object-cover" />
       <div className="flex flex-1 flex-col p-6 md:p-7">

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import type { Notificacao } from "@/lib/crm/notificacoes";
+import type { Notificacao, UnidadeNotificacao } from "@/lib/crm/notificacoes";
 import { marcarNotificacoesLidas } from "../../notificacoesActions";
 
 // Sino de notificações da Visão geral (Wilson, 22/out/2026): contorno quando
@@ -17,9 +17,22 @@ const COR_TIPO: Record<Notificacao["tipo"], string> = {
   etapa: "#24476B",
   execucao: "#28665D",
   pagamento: "#28665D",
+  alerta: "#B42318",
 };
 
-export function Notificacoes({ lista, naoLidas, erro }: { lista: Notificacao[]; naoLidas: number; erro?: boolean }) {
+export function Notificacoes({
+  lista,
+  naoLidas,
+  erro,
+  unidade = "agencia",
+  verTudo = { href: "/crm/atividade", rotulo: "Ver toda a atividade" },
+}: {
+  lista: Notificacao[];
+  naoLidas: number;
+  erro?: boolean;
+  unidade?: UnidadeNotificacao;
+  verTudo?: { href: string; rotulo: string };
+}) {
   const [aberto, setAberto] = useState(false);
   // Destaques do momento em que o painel abriu (continuam visíveis até fechar).
   const [destacadas, setDestacadas] = useState<Set<string>>(new Set());
@@ -43,7 +56,7 @@ export function Notificacoes({ lista, naoLidas, erro }: { lista: Notificacao[]; 
   function alternar() {
     if (!aberto && naoLidas > 0) {
       setDestacadas(new Set(lista.filter((n) => !n.lida).map((n) => n.id)));
-      iniciar(() => marcarNotificacoesLidas()); // abrir = ler
+      iniciar(() => marcarNotificacoesLidas(unidade)); // abrir = ler
     }
     setAberto(!aberto);
   }
@@ -87,7 +100,7 @@ export function Notificacoes({ lista, naoLidas, erro }: { lista: Notificacao[]; 
                 return (
                   <li key={n.id}>
                     <Link
-                      href={`/crm/clientes/${n.clienteId}`}
+                      href={n.href ?? `/crm/clientes/${n.clienteId}`}
                       onClick={() => setAberto(false)}
                       className={`flex gap-3 px-4 py-3 transition hover:bg-[#F7F9FB] ${nova ? "bg-[#F2F6FC]" : ""}`}
                     >
@@ -108,8 +121,8 @@ export function Notificacoes({ lista, naoLidas, erro }: { lista: Notificacao[]; 
             </ul>
           )}
           <div className="border-t border-[#EEF0F2] px-4 py-2.5 text-right">
-            <Link href="/crm/atividade" onClick={() => setAberto(false)} className="text-sm font-medium text-[#24476B] hover:underline">
-              Ver toda a atividade
+            <Link href={verTudo.href} onClick={() => setAberto(false)} className="text-sm font-medium text-[#24476B] hover:underline">
+              {verTudo.rotulo}
             </Link>
           </div>
         </div>

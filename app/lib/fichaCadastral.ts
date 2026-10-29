@@ -474,6 +474,51 @@ export const SECOES: Secao[] = [
         obrigatorio: true,
         se: { campo: "levarFamilia", valores: ["juntos", "depois"] },
       },
+      // Outros adultos da família que também querem trabalhar (Wilson,
+      // 29/out/2026: "permitir a candidatura do cônjuge também e outros
+      // adultos" — dentro da ficha do titular, sem candidatura separada).
+      {
+        id: "familiaTrabalhar",
+        label: "O cônjuge ou outro adulto da família também quer trabalhar no Japão pela Ajisai?",
+        tipo: "radio",
+        opcoes: SN,
+        obrigatorio: true,
+        atencao: ["sim"],
+      },
+      {
+        id: "adultosTrabalhar",
+        tipo: "lista",
+        label: "Adultos da família que também querem trabalhar",
+        rotuloItem: "Adulto da família",
+        max: 5,
+        ajuda: "Preencha um por pessoa (cônjuge, filho maior de 18 anos, irmão…). A equipe avalia cada um e indica as vagas compatíveis.",
+        campos: [
+          { id: "nome", label: "Nome completo", tipo: "texto", obrigatorio: true, largura: "meia" },
+          {
+            id: "parentesco",
+            label: "Parentesco com você",
+            tipo: "select",
+            obrigatorio: true,
+            largura: "meia",
+            opcoes: [
+              { v: "conjuge", l: "Cônjuge" },
+              { v: "filho", l: "Filho(a) maior de 18 anos" },
+              { v: "irmao", l: "Irmão(ã)" },
+              { v: "paiMae", l: "Pai ou mãe" },
+              { v: "outro", l: "Outro" },
+            ],
+          },
+          { id: "nascimento", label: "Data de nascimento", tipo: "data", obrigatorio: true, largura: "terco" },
+          { id: "sexo", label: "Sexo", tipo: "radio", opcoes: [{ v: "masculino", l: "Masculino" }, { v: "feminino", l: "Feminino" }], obrigatorio: true, largura: "terco" },
+          { id: "telefone", label: "WhatsApp", tipo: "tel", obrigatorio: true, largura: "terco" },
+          { id: "japones", label: "Japonês — conversação", tipo: "select", opcoes: NIVEL_FALA, obrigatorio: true, largura: "meia" },
+          { id: "experienciaJapao", label: "Já trabalhou em fábrica no Japão?", tipo: "radio", opcoes: SN, obrigatorio: true, largura: "meia" },
+          { id: "experiencia", label: "Experiência profissional (resumo)", tipo: "texto", largura: "inteira", placeholder: "Ex.: 3 anos de montagem em linha de produção" },
+          { id: "turno", label: "Turnos que aceita", tipo: "texto", largura: "meia", placeholder: "Diurno, noturno, alternado…" },
+          { id: "restricoes", label: "Restrição de saúde ou tatuagem visível?", tipo: "texto", largura: "meia", placeholder: "Ex.: não — ou descreva" },
+          { id: "mesmaFabrica", label: "Precisa trabalhar na mesma fábrica/cidade que você?", tipo: "radio", opcoes: SN, obrigatorio: true, largura: "meia" },
+        ],
+      },
       // "Pretende levar animal de estimação?" foi para a etapa 1 (perfil) em 15/out/2026.
       { id: "emergBrNome", label: "Contato de emergência no Brasil — nome", tipo: "texto", obrigatorio: true, largura: "meia" },
       { id: "emergBrParentesco", label: "Parentesco", tipo: "texto", obrigatorio: true, largura: "terco" },
@@ -778,6 +823,8 @@ export function pendenciasFicha(f: FichaCadastral, secaoId?: string): string[] {
           for (const c of item.campos)
             if (c.obrigatorio && campoVisivel(c, it, f.valores) && vazio(it[c.id])) faltas.push(`${item.rotuloItem} ${idx + 1}: ${c.label}`);
         });
+        if (item.id === "adultosTrabalhar" && f.valores.familiaTrabalhar === "sim" && !(f.listas[item.id] ?? []).length)
+          faltas.push("Adultos da família que também querem trabalhar — adicione pelo menos um");
         continue;
       }
       if (!item.obrigatorio || !campoVisivel(item, f.valores)) continue;
