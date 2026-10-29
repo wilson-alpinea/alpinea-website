@@ -10,19 +10,24 @@ export const dynamic = "force-dynamic";
 // (custo da agência) nem nada da conta da Ajisai na Simpremium.
 export async function GET() {
   if (!simpremiumConfigurado()) {
-    return NextResponse.json({ disponivel: false, planos: [] }, { status: 200 });
+    return NextResponse.json({ disponivel: false, planos: [], motivo: "nao_configurado" }, { status: 200 });
   }
+  // `motivo` (Wilson, 29/out/2026: "o plano não está carregando"): diz POR
+  // QUE a venda está desligada sem expor nada da conta — nao_configurado
+  // (variáveis da Simpremium), faturado (crédito faturado não liberado),
+  // sem_planos (nenhum ilimitado do Japão no catálogo) ou erro (API fora).
   try {
     // Sem faturado liberado não há como pagar a Simpremium (não usamos
     // saldo pré-pago) — a página mostra "indisponível" e o WhatsApp.
     const faturado = await faturadoDisponivel();
     if (!faturado.ok) {
       console.error("[esim] venda desligada:", faturado.motivo);
-      return NextResponse.json({ disponivel: false, planos: [] }, { status: 200 });
+      return NextResponse.json({ disponivel: false, planos: [], motivo: "faturado" }, { status: 200 });
     }
     const ofertas = await buscarOfertasEsim();
     return NextResponse.json({
       disponivel: ofertas.planos.length > 0,
+      ...(ofertas.planos.length === 0 ? { motivo: "sem_planos" } : {}),
       cotacao: ofertas.cotacao,
       planos: ofertas.planos.map((p) => ({
         id: p.id,
@@ -32,6 +37,6 @@ export async function GET() {
     });
   } catch (erro) {
     console.error("Erro ao listar planos de eSIM na Simpremium:", erro);
-    return NextResponse.json({ disponivel: false, planos: [] }, { status: 200 });
+    return NextResponse.json({ disponivel: false, planos: [], motivo: "erro" }, { status: 200 });
   }
 }
