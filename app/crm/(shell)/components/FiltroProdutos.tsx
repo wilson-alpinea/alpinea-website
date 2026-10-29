@@ -31,7 +31,7 @@ export function FiltroProdutos({
   const atual = opcoes.find((o) => o.valor === ativo) ?? null;
   // Fundo leve na cor do CRM + hover com cor e leve elevação (Wilson, 29/out/2026).
   const quadrado =
-    "group flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_6px_14px_-8px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+    "group flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_6px_14px_-8px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0";
   const vars = { ["--cor" as string]: cor, ["--leve" as string]: `${cor}12`, ["--hover" as string]: `${cor}26` } as CSSProperties;
 
   return (
@@ -41,7 +41,7 @@ export function FiltroProdutos({
         scroll={false}
         aria-current={!atual ? "true" : undefined}
         title="Todos os produtos"
-        className={`${quadrado} text-[11px] font-semibold ${!atual ? "text-white" : "border-transparent bg-[var(--leve)] text-[#20252B] hover:border-[var(--cor)]/40 hover:bg-[var(--hover)]"}`}
+        className={`${quadrado} text-[13px] font-semibold ${!atual ? "text-white" : "border-transparent bg-[var(--leve)] text-[#20252B] hover:border-[var(--cor)]/40 hover:bg-[var(--hover)]"}`}
         style={!atual ? { backgroundColor: cor, borderColor: cor } : undefined}
       >
         Todos
@@ -61,7 +61,7 @@ export function FiltroProdutos({
           >
             {/* Ícones do repositório em preto (brightness-0), como no site. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={o.icone} alt="" aria-hidden="true" className={`h-6 w-6 object-contain transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none ${o.opaco ? "mix-blend-multiply" : "brightness-0"}`} />
+            <img src={o.icone} alt="" aria-hidden="true" className={`h-8 w-8 object-contain transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none ${o.opaco ? "mix-blend-multiply" : "brightness-0"}`} />
           </Link>
         );
       })}
