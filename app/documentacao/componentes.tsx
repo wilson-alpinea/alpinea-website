@@ -68,8 +68,8 @@ export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, 
       {fundo && (
         <>
           <Image src={fundo} alt="" fill priority sizes="100vw" className="-z-20 object-cover object-center" />
-          <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(90deg, rgba(6,38,30,0.93) 0%, rgba(11,61,48,0.8) 35%, rgba(11,61,48,0.38) 65%, rgba(11,61,48,0.08) 100%)` }} />
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1/3" style={{ background: "linear-gradient(0deg, rgba(6,38,30,0.45), transparent)" }} />
+          <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(90deg, rgba(6,38,30,0.96) 0%, rgba(8,48,38,0.92) 40%, rgba(11,61,48,0.82) 62%, rgba(11,61,48,0.62) 100%)` }} />
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1/3" style={{ background: "linear-gradient(0deg, rgba(6,38,30,0.6), transparent)" }} />
         </>
       )}
       <div className={`mx-auto max-w-5xl px-5 pb-12 pt-10 md:px-8 md:pb-20 md:pt-16 ${comFoto ? "md:grid md:grid-cols-[1.25fr_1fr] md:items-center md:gap-10" : ""}`}>
