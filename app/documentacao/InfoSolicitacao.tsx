@@ -181,14 +181,15 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
             <ListaCheck
               itens={[
                 "Orientação dos documentos para você e para o garantidor no Japão",
-                "Advogado de imigração cadastrado para dar entrada presencial — o garantidor não precisa faltar no trabalho",
+                "Traduções e elaboração de declarações",
+                "Entrada do pedido por despachante credenciado na imigração ou pelo sistema online, quando elegível — o garantidor não precisa faltar no trabalho",
                 "Acompanhamento das solicitações da imigração",
-                "Busca e emissão do koseki tohon no Japão",
+                "Emissão do koseki tohon no Japão (é necessário ter uma cópia do Kouseki Touhon)",
                 "Postagem expressa Japão ⇄ Brasil (DHL ou UPS) pelo malote da Ajisai",
                 "Atendimento da equipe Ajisai em todas as etapas",
               ]}
             />
-            <NaoIncluso className="mt-4" itens={["Traduções simples (não juramentadas): R$ 90 por documento", "Elaboração de declarações: R$ 90 por declaração", "Apostila de Haia (apostilamento em cartório), quando exigida", "Valor da postagem dos documentos dentro do Brasil (Correios/Sedex)", "O visto específico — pedido à parte no consulado, depois de o COE ser emitido"]} />
+            <NaoIncluso className="mt-4" itens={["Apostila de Haia (apostilamento em cartório), quando exigida", "Valor da postagem dos documentos dentro do Brasil (Correios/Sedex)", "O visto específico — pedido à parte no consulado, depois de o COE ser emitido"]} />
           </Painel>
         </div>
       );
@@ -198,7 +199,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
           <Painel titulo="Como funciona, depois do pagamento" recolhivel>
             <Etapas
               itens={[
-                { titulo: "Documentos no Japão", texto: "Conferência dos documentos, para você e o garantidor." },
+                { titulo: "Documentos no Japão", texto: "Conferência e traduções, para você e o garantidor." },
                 { titulo: "Entrada na imigração", texto: "Segundos 50% antes do protocolo." },
                 { titulo: "Emissão do certificado", texto: "Acompanhamento até a decisão." },
                 { titulo: "Envio para o Brasil", texto: "Pronto para pedir o visto específico." },

@@ -591,6 +591,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                 {servico === "elegibilidade" && preco?.moeda === "JPY" ? (
                   <>
                     <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight">{formatJPY(preco.total)}</p>
+                    {brlAprox ? <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-white/90">≈ {formatBRL(brlAprox)}</p> : null}
                     <p className="mt-1 text-sm text-white/75">Em 2 parcelas de {formatJPY(preco.total / 2)} — a 1ª agora, a 2ª antes da entrada na imigração. Você escolhe pagar em reais ou em ienes no próximo passo.</p>
                   </>
                 ) : (

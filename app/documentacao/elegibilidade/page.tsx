@@ -17,7 +17,7 @@ export default function ElegibilidadePage() {
       <HeroServico
         kicker="Documentação · Elegibilidade"
         titulo="Certificado de Elegibilidade"
-        subtitulo="O documento emitido pela imigração do Japão que libera o visto específico em cerca de 2 semanas. Cuidamos do processo no Japão, com advogado de imigração e atendimento em português. Solicitação e pagamento 100% online."
+        subtitulo="O documento emitido pela imigração do Japão que libera o visto específico em cerca de 2 semanas. Cuidamos do processo no Japão, com despachante credenciado na imigração e atendimento em português. Solicitação e pagamento 100% online."
         fundo="/images/documentacao-elegibilidade-banner.webp"
         imagem="/images/documentacao-elegibilidade.webp"
         alt="Consultora preenchendo o formulário do certificado com a cliente"

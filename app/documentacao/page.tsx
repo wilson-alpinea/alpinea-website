@@ -85,7 +85,7 @@ export default function DocumentacaoPage() {
               alt="Exemplo de Certificate of Eligibility (在留資格認定証明書) emitido pela imigração japonesa"
               kicker="Com garantidor no Japão"
               titulo="Certificado de Elegibilidade"
-              texto="O COE é emitido pela imigração no Japão — não é o visto. Com ele em mãos, o visto específico sai em cerca de 2 semanas (pedido à parte). Advogado de imigração incluso."
+              texto="O COE é emitido pela imigração no Japão — não é o visto. Com ele em mãos, o visto específico sai em cerca de 2 semanas (pedido à parte). Traduções inclusas."
               cta="Ver elegibilidade"
             />
             <CardServico
@@ -146,7 +146,7 @@ export default function DocumentacaoPage() {
             "Você fala com a equipe Ajisai em português, não com o despachante ou o consulado.",
             "Documentos conferidos por quem conhece o que a imigração aceita.",
             "Equipe no Brasil e no Japão — inclusive para conversar com o garantidor em japonês.",
-            "Valor do pacote informado antes de começar. Traduções simples e declarações, quando necessárias, custam R$ 90 cada; Apostila de Haia à parte.",
+            "Valor do pacote informado antes de começar. No visto, traduções simples e declarações custam R$ 90 cada; no COE já estão inclusas. Apostila de Haia à parte.",
           ]}
         />
       </Secao>
