@@ -10,6 +10,8 @@ import { comMargemEImposto } from "./margemPadrao";
 export type FaixaPreco = { minDays: number; maxDays: number; priceUsd: number };
 
 export const MAX_DIAS_ESIM = 90;
+// Duração mínima do eSIM (Wilson, 29/out/2026: "duração mínima 5 dias"): viagens mais curtas levam o plano de 5 dias.
+export const MIN_DIAS_ESIM = 5;
 export const MAX_ESIMS_POR_PEDIDO = 10;
 
 /** Dias de eSIM para um período, contando o dia da chegada e o da partida
@@ -26,6 +28,7 @@ export function diasEsim(chegada: string, partida: string): number {
  * usa a menor faixa maior que a viagem. */
 export function faixaParaViagem(faixas: FaixaPreco[], diasViagem: number): { faixa: FaixaPreco; diasPedido: number } | null {
   if (!(diasViagem > 0)) return null;
+  diasViagem = Math.max(diasViagem, MIN_DIAS_ESIM);
   const ordenadas = [...faixas].sort((a, b) => a.minDays - b.minDays);
   const exata = ordenadas.find((f) => diasViagem >= f.minDays && diasViagem <= f.maxDays);
   if (exata) return { faixa: exata, diasPedido: diasViagem };

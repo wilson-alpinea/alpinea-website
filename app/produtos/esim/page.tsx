@@ -17,7 +17,7 @@ import { inter, mascararWhatsapp, formatarDiaMes, Campo, classeInput } from "../
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
-import { diasEsim, faixaParaViagem, MAX_DIAS_ESIM, MAX_ESIMS_POR_PEDIDO, type FaixaPreco } from "../../lib/precoEsim";
+import { diasEsim, faixaParaViagem, MAX_DIAS_ESIM, MIN_DIAS_ESIM, MAX_ESIMS_POR_PEDIDO, type FaixaPreco } from "../../lib/precoEsim";
 import { COMO_FUNCIONA_ESIM_SIMPREMIUM, TERMOS_ESIM_SIMPREMIUM } from "../../lib/esimConteudo";
 
 type FaixaPublica = { minDays: number; maxDays: number; precoUSD: number; precoBRL: number };
@@ -306,7 +306,7 @@ export default function EsimPage() {
                             </span>
                             {e && (
                               <span className="block text-xs text-black/50">
-                                por eSIM · {e.diasPedido} dias{e.diasPedido > dias ? ` (menor plano que cobre ${dias} dias)` : ""}
+                                por eSIM · {e.diasPedido} dias{e.diasPedido > dias ? (dias < MIN_DIAS_ESIM ? ` (duração mínima de ${MIN_DIAS_ESIM} dias)` : ` (menor plano que cobre ${dias} dias)`) : ""}
                               </span>
                             )}
                             {periodoValido && !e && <span className="block text-xs text-red-600">Sem plano para {dias} dias.</span>}
