@@ -15,18 +15,18 @@ export default async function DocumentacaoCrmPage() {
   await exigirAdmin();
   const { data, error } = await createAdminClient()
     .from("documentacao_processos")
-    .select("id, created_at, servico, etapa, nome, email, telefone, resumo, valor_referencia_brl, valor_final")
-    .order("created_at", { ascending: false })
+    .select("id, created_at, updated_at, servico, etapa, nome, email, telefone, resumo, campos, valor_referencia_brl, valor_final, valor_total, ficha_enviada_em, contrato_aceito_em, motivo_saida")
+    .order("updated_at", { ascending: false })
     .limit(3000);
   if (error) console.error("Erro ao ler documentacao_processos:", error);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div>
-        <h1 className="text-[#25211E]" style={{ fontSize: 28, fontWeight: 600 }}>
+        <h1 className="text-[#25211E]" style={{ fontSize: 26, fontWeight: 600 }}>
           Processos de documentação
         </h1>
-        <p className="mt-1 text-sm text-[#6B635D]">Vistos, certificados de elegibilidade e exportação de pets cadastrados em /documentacao.</p>
+        <p className="mt-1 text-sm text-[#6B635D]">Visto específico, Certificado de Elegibilidade e exportação de pet — onde cada processo está e qual é a próxima ação.</p>
       </div>
       <Suspense>
         <ListaDocumentacao processos={(data ?? []) as LinhaDoc[]} erro={!!error} />

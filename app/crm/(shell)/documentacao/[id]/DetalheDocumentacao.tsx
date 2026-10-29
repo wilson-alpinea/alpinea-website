@@ -1,25 +1,26 @@
 "use client";
 
-// Ficha do processo no CRM de Documentação (Wilson, 29/out/2026) — mesmo
-// padrão da ficha do CRM de Seguro: etapa, contato, valores, cadastro
-// completo, registro do aceite dos termos e histórico com notas.
+// Ficha do processo no CRM de Documentação — redesenho (Wilson, 29/out/2026):
+// topo (cliente, serviço, etapa) → pendência e próxima ação em destaque →
+// documentos e checklist do serviço, dados do pedido e observações à
+// esquerda; histórico, comercial/pagamento, contato e portal à direita.
 
 import { useCallback, useState, useSyncExternalStore, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ETAPAS_DOC, FLUXO_DOC, SAIDAS_DOC, etapaDoc, servicoDoc, type EtapaDoc, type PagamentoDoc, type ProcessoDoc } from "@/lib/crm/documentacao";
+import { ETAPAS_DOC, FLUXO_DOC, GRUPOS_FLUXO, QUEM_PENDENCIA, SAIDAS_DOC, etapaDoc, pendenciaDoc, servicoDoc, type EtapaDoc, type PagamentoDoc, type ProcessoDoc } from "@/lib/crm/documentacao";
 import { adicionarNotaDoc, mudarEtapaDoc, salvarDadosDoc } from "../../../documentacaoActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
-import { BadgeEtapaDoc, BadgeServicoDoc } from "../ListaDocumentacao";
+import { AZUL, BadgeEtapaDoc, detalhePedido } from "../ListaDocumentacao";
 import { DOC_COMPROVANTE, MAX_PESSOAS_FICHA, documentosServico, linhasFichaDoc, parseFichaDoc, urlPortal } from "@/app/documentacao/processo";
 
-const COR = "#8A5A3C";
 const SOMBRA = "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]";
-const CAMPO = "w-full rounded-xl border border-[#EAE2DB] bg-white px-3.5 py-2.5 text-base text-[#25211E] outline-none focus:border-[#8A5A3C] focus:ring-2 focus:ring-[#8A5A3C]/25";
+const CAMPO = "w-full rounded-xl border border-[#EAE2DB] bg-white px-3.5 py-2.5 text-base text-[#25211E] outline-none focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/20";
 const LABEL = "mb-1.5 block text-[13px] font-medium text-[#6B635D]";
 const FUSO = "America/Sao_Paulo";
 const dataHora = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString("pt-BR", { timeZone: FUSO, day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false }) : "—";
+const dataCurta = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("pt-BR", { timeZone: FUSO }) : "—");
 const brl = (v: number | null) => (v == null ? "Não calculado" : Number(v).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
 
 const semAssinatura = () => () => {};
@@ -42,11 +43,11 @@ const PROXIMA: Partial<Record<EtapaDoc, { etapa: EtapaDoc; rotulo: string; ajuda
   protocolado: { etapa: "concluido", rotulo: "Concluir (entregue ao cliente)", ajuda: "Visto, certificado ou CVI entregues. Se as autoridades negarem, use “Mudar etapa”." },
 };
 
-function Card({ titulo, cor = COR, acao, children }: { titulo: string; cor?: string; acao?: React.ReactNode; children: React.ReactNode }) {
+function Card({ titulo, acao, children, id }: { titulo: string; cor?: string; acao?: React.ReactNode; children: React.ReactNode; id?: string }) {
   return (
-    <section className={`rounded-2xl border border-t-[3px] border-[#EAE2DB] bg-white p-5 ${SOMBRA}`} style={{ borderTopColor: cor }}>
+    <section id={id} className={`rounded-2xl border border-[#EAE2DB] bg-white p-5 ${SOMBRA}`}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 style={{ color: cor }}>{titulo}</h2>
+        <h2 className="text-[15px] font-semibold text-[#25211E]">{titulo}</h2>
         {acao}
       </div>
       {children}
@@ -67,6 +68,8 @@ function Linhas({ itens, larguraRotulo = "9rem" }: { itens: [string, React.React
   );
 }
 
+const BOTAO_LINK = "rounded-lg px-2.5 py-1 text-[13px] font-medium hover:bg-[#24476B]/10";
+
 export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo: ProcessoDoc; pagamentos?: PagamentoDoc[] }) {
   const router = useRouter();
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
@@ -78,38 +81,49 @@ export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo
   };
   const voltar = useSyncExternalStore(semAssinatura, lerVoltar, () => "/crm/documentacao");
 
-  const etapa = etapaDoc(p.etapa);
   const prox = PROXIMA[p.etapa];
-  const idx = FLUXO_DOC.indexOf(p.etapa);
   const saiu = SAIDAS_DOC.includes(p.etapa);
   const servico = servicoDoc(p.servico);
+  const pend = pendenciaDoc(p);
+  const det = detalhePedido(p);
+  const idx = FLUXO_DOC.indexOf(p.etapa);
+  const grupoAtual = GRUPOS_FLUXO.find((g) => g.etapas.includes(p.etapa));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* Topo: cliente, serviço e etapa */}
       <div>
-        <Link href={voltar} className="text-[13px] text-[#6B635D] hover:text-[#8A5A3C]">
+        <Link href={voltar} className="text-[13px] text-[#6B635D] hover:text-[#24476B]">
           ← Processos
         </Link>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="text-[#25211E]" style={{ fontSize: 28, fontWeight: 600 }}>
+            <h1 className="text-[#25211E]" style={{ fontSize: 26, fontWeight: 600 }}>
               {p.nome}
             </h1>
-            <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#6B635D]">
-              <BadgeServicoDoc servico={p.servico} />
+            <p className="mt-1.5 flex flex-wrap items-center gap-2 text-sm text-[#6B635D]">
+              <span className="font-medium text-[#25211E]">{servico.label}</span>
+              <span aria-hidden="true">·</span>
               <BadgeEtapaDoc etapa={p.etapa} />
-              <span>Cadastro em {dataHora(p.created_at)}</span>
+              <span aria-hidden="true">·</span>
+              <span className="tabular-nums">#{p.id.slice(0, 8).toUpperCase()}</span>
+              {det && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{det}</span>
+                </>
+              )}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setPainel({ tipo: "etapa" })} className="rounded-xl border border-[#EAE2DB] bg-white px-4 py-2.5 text-sm font-medium text-[#25211E] hover:border-[#24476B]/50">
+              Mudar etapa
+            </button>
             {!saiu && (
-              <button type="button" onClick={() => setPainel({ tipo: "etapa", para: "cancelado" })} className="rounded-xl border border-[#B42318]/30 bg-white px-4 py-2.5 text-sm font-medium text-[#B42318] hover:border-[#B42318]">
+              <button type="button" onClick={() => setPainel({ tipo: "etapa", para: "cancelado" })} className="rounded-xl border border-[#EAE2DB] bg-white px-4 py-2.5 text-sm font-medium text-[#6B635D] hover:border-[#B42318]/40 hover:text-[#B42318]">
                 Encerrar processo
               </button>
             )}
-            <button type="button" onClick={() => setPainel({ tipo: "etapa" })} className="rounded-xl border border-[#EAE2DB] bg-white px-4 py-2.5 text-sm font-medium text-[#25211E] hover:border-[#8A5A3C]/50">
-              Mudar etapa
-            </button>
           </div>
         </div>
       </div>
@@ -123,125 +137,63 @@ export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo
         </p>
       )}
 
-      {/* Destaque do serviço */}
-      <section className={`rounded-2xl border border-t-[3px] p-6 ${SOMBRA}`} style={{ backgroundColor: servico.fundo, borderColor: `${servico.cor}40`, borderTopColor: servico.cor }}>
-        <p className="text-[13px] font-semibold uppercase tracking-wide" style={{ color: servico.cor }}>{servico.label}</p>
-        <p className="mt-2 font-semibold leading-tight text-[#25211E]" style={{ fontSize: 22 }}>{p.resumo || "Sem resumo"}</p>
-      </section>
-
-      {/* Andamento */}
-      <section className={`rounded-2xl border border-t-[3px] border-[#EAE2DB] bg-white p-5 ${SOMBRA}`} style={{ borderTopColor: etapa.cor }}>
-        {saiu ? (
-          <p className="text-sm" style={{ color: etapa.cor }}>
-            {etapa.label}
-            {p.motivo_saida ? ` — ${p.motivo_saida}` : ""}.
-          </p>
-        ) : (
-          <ol className="grid gap-2 sm:grid-cols-4 lg:grid-cols-7">
+      {/* Pendência e próxima ação em destaque */}
+      <section className={`rounded-2xl border border-[#24476B]/20 bg-[#F3F6FA] p-5 ${SOMBRA}`}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#24476B]">
+              {saiu ? "Processo encerrado" : `Pendência${QUEM_PENDENCIA[pend.quem] ? ` · ${QUEM_PENDENCIA[pend.quem]}` : ""}`}
+            </p>
+            <p className="mt-1 text-[17px] font-semibold text-[#25211E]">{pend.texto}</p>
+            {prox && <p className="mt-1 text-[13px] text-[#55606B]">{prox.ajuda}</p>}
+          </div>
+          {prox && (
+            <button type="button" onClick={() => setPainel({ tipo: "etapa", para: prox.etapa })} className="shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium text-white hover:brightness-110" style={{ backgroundColor: AZUL }}>
+              {prox.rotulo}
+            </button>
+          )}
+        </div>
+        {!saiu && grupoAtual && (
+          <ol className="mt-4 flex flex-wrap items-center gap-1 border-t border-[#24476B]/10 pt-3 text-[12px]">
             {FLUXO_DOC.map((f, i) => {
-              const e = etapaDoc(f);
               const feito = i < idx;
               const atual = i === idx;
               return (
-                <li key={f} className="flex items-center gap-2 rounded-xl px-3 py-2 text-[13px]" style={{ backgroundColor: atual ? e.fundo : feito ? "#F8F5F2" : "transparent", color: atual ? e.cor : feito ? "#25211E" : "#A29A93" }}>
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold ${atual ? "text-white" : feito ? "bg-[#8A5A3C]/15 text-[#8A5A3C]" : "border border-[#EAE2DB]"}`} style={atual ? { backgroundColor: e.cor } : undefined}>
-                    {feito ? "✓" : i + 1}
+                <li key={f} className="flex items-center gap-1">
+                  <span className={`rounded-md px-2 py-0.5 ${atual ? "font-semibold text-white" : feito ? "text-[#25211E]" : "text-[#9AA3AD]"}`} style={atual ? { backgroundColor: AZUL } : undefined}>
+                    {feito && "✓ "}
+                    {etapaDoc(f).label}
                   </span>
-                  <span className={atual ? "font-semibold" : ""}>{e.curto}</span>
+                  {i < FLUXO_DOC.length - 1 && <span className="text-[#C3CBD4]" aria-hidden="true">›</span>}
                 </li>
               );
             })}
           </ol>
         )}
-        {prox && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#F2ECE6] pt-4">
-            <p className="text-[13px] text-[#6B635D]">{prox.ajuda}</p>
-            <button type="button" onClick={() => setPainel({ tipo: "etapa", para: prox.etapa })} className="rounded-xl px-4 py-2.5 text-sm font-medium text-white hover:brightness-110" style={{ backgroundColor: COR }}>
-              {prox.rotulo}
-            </button>
-          </div>
-        )}
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card
-          titulo="Contato"
-          acao={
-            <button type="button" onClick={() => setPainel({ tipo: "dados" })} className="rounded-lg px-2.5 py-1 text-[13px] font-medium hover:bg-[#F8F3EF]" style={{ color: COR }}>
-              Editar
-            </button>
-          }
-        >
-          <Linhas
-            itens={[
-              ["Nome", p.nome],
-              ["E-mail", p.email ? <a key="e" href={`mailto:${p.email}`} className="hover:underline" style={{ color: COR }}>{p.email}</a> : "Não informado"],
-              ["WhatsApp", p.telefone ? <a key="t" href={`https://wa.me/${p.telefone.replace(/\D/g, "")}`} target="_blank" rel="noopener" className="tabular-nums hover:underline" style={{ color: COR }}>{p.telefone} ↗</a> : "Não informado"],
-              ["Origem", [p.canal, p.canal_detalhe].filter(Boolean).join(" · ") || "Não informada"],
-            ]}
-          />
-        </Card>
-
-        <Card
-          titulo="Valores e marcos"
-          cor="#93703D"
-          acao={
-            <button type="button" onClick={() => setPainel({ tipo: "dados" })} className="rounded-lg px-2.5 py-1 text-[13px] font-medium text-[#93703D] hover:bg-[#FAF5EB]">
-              {p.valor_final ? "Editar valor" : "Informar valor final"}
-            </button>
-          }
-        >
-          <Linhas
-            itens={[
-              ["Mostrado no site", brl(p.valor_referencia_brl)],
-              ["Valor final", p.valor_final || "A definir"],
-              ["Pago em", p.pago_em ? dataHora(p.pago_em) : "Ainda não confirmado"],
-              ["Protocolado em", p.protocolado_em ? dataHora(p.protocolado_em) : "—"],
-              ["Concluído em", p.concluido_em ? dataHora(p.concluido_em) : "—"],
-            ]}
-          />
-        </Card>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-5">
+          <DocumentosChecklist p={p} />
+          <DadosPedido p={p} />
+          <Observacoes processo={p} onSalvo={concluido} />
+        </div>
+        <div className="min-w-0 space-y-5">
+          <HistoricoEtapas p={p} pagamentos={pagamentos} />
+          <Comercial p={p} pagamentos={pagamentos} onEditar={() => setPainel({ tipo: "dados" })} />
+          <Card titulo="Contato" acao={<button type="button" onClick={() => setPainel({ tipo: "dados" })} className={BOTAO_LINK} style={{ color: AZUL }}>Editar</button>}>
+            <Linhas
+              itens={[
+                ["E-mail", p.email ? <a key="e" href={`mailto:${p.email}`} className="hover:underline" style={{ color: AZUL }}>{p.email}</a> : "Não informado"],
+                ["WhatsApp", p.telefone ? <a key="t" href={`https://wa.me/${p.telefone.replace(/\D/g, "")}`} target="_blank" rel="noopener" className="tabular-nums hover:underline" style={{ color: AZUL }}>{p.telefone} ↗</a> : "Não informado"],
+                ["Responsável", <span key="r" className="text-[#9A918A]">Não definido</span>],
+                ["Origem", [p.canal, p.canal_detalhe].filter(Boolean).join(" · ") || "Não informada"],
+              ]}
+            />
+          </Card>
+          <LinkPortal p={p} />
+        </div>
       </div>
-
-      <PortalCliente p={p} />
-
-      <Card titulo="Pagamentos (Stone)" cor="#93703D">
-        {pagamentos.length === 0 ? (
-          <p className="text-sm text-[#6B635D]">Nenhum link de pagamento gerado ainda. O cliente paga pelo portal depois de aceitar o contrato.</p>
-        ) : (
-          <ul className="divide-y divide-[#F2ECE6] text-sm">
-            {pagamentos.map((g) => (
-              <li key={g.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                <span>
-                  Parcela {g.parcela} · <span className="tabular-nums">{brl(g.valor_brl)}</span>
-                  {g.valor_jpy ? <span className="text-[13px] text-[#6B635D]"> (¥{Number(g.valor_jpy).toLocaleString("ja-JP")} · PTAX {Number(g.cotacao_brl_por_jpy).toFixed(4)})</span> : null}
-                </span>
-                <span className={`text-[13px] font-medium ${g.status === "pago" ? "text-[#27675B]" : g.status === "cancelado" ? "text-[#76706A]" : "text-[#93703D]"}`}>
-                  {g.status === "pago" ? `Pago em ${dataHora(g.pago_em)}${g.forma_pagamento ? ` · ${g.forma_pagamento === "pix" ? "Pix" : "cartão"}` : ""}` : g.status === "cancelado" ? "Link substituído" : `Link gerado em ${dataHora(g.created_at)}`}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
-
-      <Card titulo="Cadastro inicial (pré-análise)" cor="#42658A">
-        <Linhas larguraRotulo="22rem" itens={p.respostas.map(([k, v]) => [k, v] as [string, React.ReactNode])} />
-      </Card>
-
-      <Card titulo="Aceite dos termos" cor="#5D6C70">
-        <Linhas
-          itens={[
-            ["Versão dos termos", p.termos_versao ?? "Não informada"],
-            ["Aceito em", dataHora(p.termos_aceitos_em)],
-            ["IP", p.checkout_ip ?? "Não identificado"],
-            ["Navegador", p.checkout_user_agent ?? "Não identificado"],
-            ["Itens aceitos", p.aceites.length ? <ul key="a" className="list-disc space-y-1 pl-4">{p.aceites.map((a) => <li key={a}>{a}</li>)}</ul> : "Nenhum"],
-          ]}
-        />
-      </Card>
-
-      <Historico processo={p} onSalvo={concluido} />
 
       {painel?.tipo === "etapa" && <PainelEtapa processo={p} para={painel.para} onFechar={fechar} onSalvo={concluido} />}
       {painel?.tipo === "dados" && <PainelDados processo={p} onFechar={fechar} onSalvo={concluido} />}
@@ -249,94 +201,236 @@ export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo
   );
 }
 
-function PortalCliente({ p }: { p: ProcessoDoc }) {
-  const [copiado, setCopiado] = useState(false);
-  const link = p.acesso_token ? `https://www.alpinea.io${urlPortal(p.id, p.acesso_token)}` : null;
-  const ficha = p.ficha ? linhasFichaDoc(p.servico, parseFichaDoc(p.servico, p.ficha, MAX_PESSOAS_FICHA)) : [];
+/** Documentos e checklist do serviço — a lista vem de documentosServico (mesmas regras do portal). */
+function DocumentosChecklist({ p }: { p: ProcessoDoc }) {
   const docs = Array.isArray(p.documentos) ? p.documentos : [];
-  const rotuloDoc = (tipo: string) => (tipo === DOC_COMPROVANTE ? "Comprovante de pagamento" : documentosServico(p.servico).find((t) => t.id === tipo)?.rotulo ?? tipo);
+  const tipos = documentosServico(p.servico);
+  const extras = docs.filter((d) => !tipos.some((t) => t.id === d.tipo));
+  const rotuloDoc = (tipo: string) => (tipo === DOC_COMPROVANTE ? "Comprovante de pagamento" : tipos.find((t) => t.id === tipo)?.rotulo ?? tipo);
+  const obrig = tipos.filter((t) => t.obrigatorio);
+  const ok = obrig.filter((t) => docs.some((d) => d.tipo === t.id)).length;
+  const Arquivo = ({ d }: { d: (typeof docs)[number] }) => (
+    <li className="flex items-center justify-between gap-3 py-1 text-[13px]">
+      <span className="min-w-0 truncate text-[#25211E]">{d.nome}</span>
+      <span className="flex shrink-0 items-center gap-3">
+        <span className="text-[#9A918A]">{dataCurta(d.enviado_em)}</span>
+        <a href={`/crm/documentacao/arquivo?path=${encodeURIComponent(d.path)}`} target="_blank" rel="noopener" className="font-medium hover:underline" style={{ color: AZUL }}>Abrir</a>
+      </span>
+    </li>
+  );
   return (
-    <>
-      <Card titulo="Portal do cliente" cor="#27675B">
-        {link ? (
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            <code className="min-w-0 flex-1 truncate rounded-lg bg-[#F8F5F2] px-3 py-2 text-[13px] text-[#25211E]">{link}</code>
-            <button type="button" onClick={() => { void navigator.clipboard?.writeText(link); setCopiado(true); }} className="rounded-xl border border-[#EAE2DB] px-3 py-2 text-[13px] font-medium" style={{ color: COR }}>
-              {copiado ? "Copiado" : "Copiar link"}
-            </button>
-            <a href={link} target="_blank" rel="noopener" className="rounded-xl border border-[#EAE2DB] px-3 py-2 text-[13px] font-medium" style={{ color: COR }}>Abrir ↗</a>
-          </div>
-        ) : (
-          <p className="text-sm text-[#6B635D]">Rode a migração 027 para ativar o portal online.</p>
-        )}
-        <p className="mt-3 text-[13px] text-[#6B635D]">
-          Ficha completa: {p.ficha_enviada_em ? `enviada em ${dataHora(p.ficha_enviada_em)}` : p.ficha ? "rascunho em andamento" : "ainda não iniciada"} · Contrato: {p.contrato_aceito_em ? `aceito em ${dataHora(p.contrato_aceito_em)}` : p.liberado_contrato_em ? "liberado, aguardando aceite" : "não liberado"}
-        </p>
-      </Card>
-
-      <Card titulo={`Documentos enviados (${docs.length})`} cor="#75608B">
-        {docs.length === 0 ? (
-          <p className="text-sm text-[#6B635D]">Nenhum arquivo ainda.</p>
-        ) : (
-          <ul className="divide-y divide-[#F2ECE6] text-sm">
-            {docs.map((d) => (
-              <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                <span className="min-w-0">
-                  <span className="block text-[13px] text-[#6B635D]">{rotuloDoc(d.tipo)}</span>
-                  <span className="block truncate text-[#25211E]">{d.nome}</span>
-                </span>
-                <span className="flex items-center gap-3 text-[13px]">
-                  <span className="text-[#6B635D]">{dataHora(d.enviado_em)}</span>
-                  <a href={`/crm/documentacao/arquivo?path=${encodeURIComponent(d.path)}`} target="_blank" rel="noopener" className="font-medium hover:underline" style={{ color: COR }}>Abrir</a>
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
-
-      {ficha.length > 0 && (
-        <Card titulo={p.ficha_enviada_em ? "Ficha completa" : "Ficha completa (rascunho)"} cor="#42658A">
-          <div className="space-y-5">
-            {ficha.map((b) => (
-              <div key={b.titulo}>
-                <p className="mb-1 text-[13px] font-semibold text-[#25211E]">{b.titulo}</p>
-                <Linhas larguraRotulo="18rem" itens={b.linhas.map(([k, v]) => [k, v] as [string, React.ReactNode])} />
+    <Card titulo="Documentos e checklist" acao={<span className="text-[13px] tabular-nums text-[#6B635D]">{ok}/{obrig.length} obrigatórios</span>}>
+      <ul className="divide-y divide-[#F2ECE6]">
+        {tipos.map((t) => {
+          const deste = docs.filter((d) => d.tipo === t.id);
+          const feito = deste.length > 0;
+          return (
+            <li key={t.id} className="py-2.5">
+              <div className="flex items-start gap-2.5">
+                <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${feito ? "bg-[#E9F4EE] text-[#23704F]" : "border border-[#DCD3CA] text-transparent"}`} aria-hidden="true">✓</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-[#25211E]">
+                    {t.rotulo}
+                    {!t.obrigatorio && <span className="text-[12px] text-[#9A918A]"> · opcional</span>}
+                    {t.obrigatorio && !feito && <span className="text-[12px] text-[#93703D]"> · pendente</span>}
+                  </p>
+                  {deste.length > 0 && <ul className="mt-1">{deste.map((d) => <Arquivo key={d.id} d={d} />)}</ul>}
+                </div>
               </div>
-            ))}
-          </div>
-        </Card>
+            </li>
+          );
+        })}
+      </ul>
+      {extras.length > 0 && (
+        <div className="mt-2 border-t border-[#F2ECE6] pt-2">
+          {extras.map((d) => (
+            <div key={d.id}>
+              <p className="text-[12px] text-[#6B635D]">{rotuloDoc(d.tipo)}</p>
+              <ul><Arquivo d={d} /></ul>
+            </div>
+          ))}
+        </div>
       )}
-
-      {p.contrato && (
-        <Card titulo="Contrato aceito" cor="#7A6233">
-          <Linhas
-            itens={[
-              ["Assinado por", `${p.contrato.nome} — CPF ${p.contrato.cpf}`],
-              ["Aceito em", dataHora(p.contrato.aceito_em)],
-              ["IP", p.contrato.ip ?? "—"],
-              ["Navegador", p.contrato.user_agent ?? "—"],
-              ["SHA-256", <span key="h" className="break-all font-mono text-[12px]">{p.contrato.hash}</span>],
-              ["Versão", p.contrato.versao],
-            ]}
-          />
-          <details className="mt-3 text-[13px]">
-            <summary className="cursor-pointer font-medium" style={{ color: COR }}>Ver texto integral</summary>
-            <div className="mt-3 space-y-2 text-[#25211E]">{[p.contrato.texto.titulo, ...p.contrato.texto.clausulas].map((c, i) => <p key={i}>{c}</p>)}</div>
-          </details>
-        </Card>
-      )}
-    </>
+      <p className="mt-3 text-[13px] text-[#6B635D]">
+        Ficha completa: {p.ficha_enviada_em ? `enviada em ${dataHora(p.ficha_enviada_em)}` : p.ficha ? "rascunho em andamento" : "ainda não iniciada pelo cliente"}
+      </p>
+    </Card>
   );
 }
 
-function Historico({ processo: p, onSalvo }: { processo: ProcessoDoc; onSalvo: (t: string) => void }) {
+/** Dados específicos do pedido: cadastro inicial (pré-análise) e ficha completa. */
+function DadosPedido({ p }: { p: ProcessoDoc }) {
+  const ficha = p.ficha ? linhasFichaDoc(p.servico, parseFichaDoc(p.servico, p.ficha, MAX_PESSOAS_FICHA)) : [];
+  return (
+    <Card titulo="Dados do pedido">
+      <details open className="group">
+        <summary className="cursor-pointer list-none text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8A8079]">Cadastro inicial (pré-análise) <span className="group-open:hidden">+</span></summary>
+        <div className="mt-2"><Linhas larguraRotulo="20rem" itens={p.respostas.map(([k, v]) => [k, v] as [string, React.ReactNode])} /></div>
+      </details>
+      {ficha.length > 0 && (
+        <details className="group mt-4 border-t border-[#F2ECE6] pt-3">
+          <summary className="cursor-pointer list-none text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8A8079]">
+            {p.ficha_enviada_em ? "Ficha completa" : "Ficha completa (rascunho)"} <span className="group-open:hidden">+</span>
+          </summary>
+          <div className="mt-2 space-y-4">
+            {ficha.map((b) => (
+              <div key={b.titulo}>
+                <p className="mb-1 text-[13px] font-semibold text-[#25211E]">{b.titulo}</p>
+                <Linhas larguraRotulo="16rem" itens={b.linhas.map(([k, v]) => [k, v] as [string, React.ReactNode])} />
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
+      <details className="group mt-4 border-t border-[#F2ECE6] pt-3">
+        <summary className="cursor-pointer list-none text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8A8079]">Aceite dos termos no cadastro <span className="group-open:hidden">+</span></summary>
+        <div className="mt-2">
+          <Linhas
+            itens={[
+              ["Versão", p.termos_versao ?? "Não informada"],
+              ["Aceito em", dataHora(p.termos_aceitos_em)],
+              ["IP", p.checkout_ip ?? "Não identificado"],
+              ["Itens aceitos", p.aceites.length ? <ul key="a" className="list-disc space-y-1 pl-4">{p.aceites.map((a) => <li key={a}>{a}</li>)}</ul> : "Nenhum"],
+            ]}
+          />
+        </div>
+      </details>
+    </Card>
+  );
+}
+
+/** Marcos registrados + mudanças de etapa, em ordem. */
+function HistoricoEtapas({ p, pagamentos }: { p: ProcessoDoc; pagamentos: PagamentoDoc[] }) {
+  const marcos: [string, string | null][] = [
+    ["Cadastro recebido", p.created_at],
+    ["Ficha e documentos enviados", p.ficha_enviada_em],
+    ["Pré-aprovado — contrato liberado", p.liberado_contrato_em],
+    ["Contrato aceito pelo cliente", p.contrato_aceito_em],
+    ...pagamentos.filter((g) => g.status === "pago").map((g) => [`Pagamento confirmado${pagamentos.some((x) => x.parcela === 2) || p.servico === "elegibilidade" ? ` — parcela ${g.parcela}` : ""}`, g.pago_em] as [string, string | null]),
+    ["Protocolado", p.protocolado_em],
+    ["Concluído — entregue", p.concluido_em],
+  ];
+  const registrados = marcos.filter(([, d]) => d).sort((a, b) => String(a[1]).localeCompare(String(b[1])));
+  const etapas = p.historico.filter((e) => e.tipo === "etapa").reverse();
+  return (
+    <Card titulo="Histórico">
+      <ol className="space-y-2">
+        {registrados.map(([t, d]) => (
+          <li key={t} className="flex items-baseline justify-between gap-3 text-sm">
+            <span className="text-[#25211E]">{t}</span>
+            <span className="shrink-0 text-[13px] tabular-nums text-[#6B635D]">{dataHora(d)}</span>
+          </li>
+        ))}
+      </ol>
+      {saidaInfo(p)}
+      {etapas.length > 0 && (
+        <details className="mt-3 border-t border-[#F2ECE6] pt-3">
+          <summary className="cursor-pointer text-[13px] font-medium" style={{ color: AZUL }}>Mudanças de etapa ({etapas.length})</summary>
+          <ol className="mt-2 space-y-2">
+            {etapas.map((ev, i) => (
+              <li key={i} className="rounded-xl bg-[#F8F5F2] px-3 py-2 text-[13px]">
+                <p className="text-[#6B635D]">{dataHora(ev.em)} · {ev.por}</p>
+                <p className="font-medium text-[#25211E]">
+                  {etapaDoc(ev.de ?? "").label} → {etapaDoc(ev.para ?? "").label}
+                  {ev.texto && <span className="font-normal text-[#6B635D]"> — {ev.texto}</span>}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+    </Card>
+  );
+}
+
+function saidaInfo(p: ProcessoDoc) {
+  if (!SAIDAS_DOC.includes(p.etapa)) return null;
+  const e = etapaDoc(p.etapa);
+  return (
+    <p className="mt-3 rounded-xl px-3 py-2 text-sm" style={{ backgroundColor: e.fundo, color: e.cor }}>
+      {e.label}
+      {p.motivo_saida ? ` — ${p.motivo_saida}` : " — motivo não informado"}
+    </p>
+  );
+}
+
+/** Informações comerciais e de pagamento. */
+function Comercial({ p, pagamentos, onEditar }: { p: ProcessoDoc; pagamentos: PagamentoDoc[]; onEditar: () => void }) {
+  return (
+    <Card titulo="Comercial e pagamento" acao={<button type="button" onClick={onEditar} className={BOTAO_LINK} style={{ color: AZUL }}>{p.valor_final ? "Editar valor" : "Informar valor final"}</button>}>
+      <Linhas
+        itens={[
+          ["Valor final", p.valor_final || <span key="v" className="text-[#9A918A]">Não definido</span>],
+          ["Simulação no site", brl(p.valor_referencia_brl)],
+          ["Contrato", p.contrato ? `Aceito por ${p.contrato.nome} em ${dataHora(p.contrato.aceito_em)}` : p.liberado_contrato_em ? "Liberado, aguardando aceite" : "Não liberado"],
+        ]}
+      />
+      <p className="mb-1 mt-3 text-[13px] font-semibold text-[#25211E]">Pagamentos (Stone)</p>
+      {pagamentos.length === 0 ? (
+        <p className="text-[13px] text-[#6B635D]">Nenhum link gerado. O cliente paga pelo portal depois de aceitar o contrato.</p>
+      ) : (
+        <ul className="divide-y divide-[#F2ECE6] text-[13px]">
+          {pagamentos.map((g) => (
+            <li key={g.id} className="flex flex-wrap items-center justify-between gap-2 py-1.5">
+              <span>
+                Parcela {g.parcela} · <span className="tabular-nums">{brl(g.valor_brl)}</span>
+                {g.valor_jpy ? <span className="text-[#6B635D]"> (¥{Number(g.valor_jpy).toLocaleString("ja-JP")})</span> : null}
+              </span>
+              <span className={g.status === "pago" ? "font-medium text-[#23704F]" : "text-[#6B635D]"}>
+                {g.status === "pago" ? `Pago ${dataCurta(g.pago_em)}${g.forma_pagamento ? ` · ${g.forma_pagamento === "pix" ? "Pix" : "cartão"}` : ""}` : g.status === "cancelado" ? "Link substituído" : "Link gerado, não pago"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {p.contrato && (
+        <details className="mt-3 border-t border-[#F2ECE6] pt-3 text-[13px]">
+          <summary className="cursor-pointer font-medium" style={{ color: AZUL }}>Registro do contrato</summary>
+          <div className="mt-2">
+            <Linhas
+              itens={[
+                ["Assinado por", `${p.contrato.nome} — CPF ${p.contrato.cpf}`],
+                ["IP", p.contrato.ip ?? "—"],
+                ["SHA-256", <span key="h" className="break-all font-mono text-[12px]">{p.contrato.hash}</span>],
+                ["Versão", p.contrato.versao],
+              ]}
+            />
+            <div className="mt-2 space-y-2 text-[#25211E]">{[p.contrato.texto.titulo, ...p.contrato.texto.clausulas].map((c, i) => <p key={i}>{c}</p>)}</div>
+          </div>
+        </details>
+      )}
+    </Card>
+  );
+}
+
+function LinkPortal({ p }: { p: ProcessoDoc }) {
+  const [copiado, setCopiado] = useState(false);
+  const link = p.acesso_token ? `https://www.alpinea.io${urlPortal(p.id, p.acesso_token)}` : null;
+  return (
+    <Card titulo="Portal do cliente">
+      {link ? (
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <code className="min-w-0 flex-1 truncate rounded-lg bg-[#F8F5F2] px-3 py-2 text-[12px] text-[#25211E]">{link}</code>
+          <button type="button" onClick={() => { void navigator.clipboard?.writeText(link); setCopiado(true); }} className={BOTAO_LINK} style={{ color: AZUL }}>
+            {copiado ? "Copiado" : "Copiar"}
+          </button>
+          <a href={link} target="_blank" rel="noopener" className={BOTAO_LINK} style={{ color: AZUL }}>Abrir ↗</a>
+        </div>
+      ) : (
+        <p className="text-sm text-[#6B635D]">Portal indisponível para este processo.</p>
+      )}
+    </Card>
+  );
+}
+
+/** Observações da equipe (notas e edições) com campo para nova nota. */
+function Observacoes({ processo: p, onSalvo }: { processo: ProcessoDoc; onSalvo: (t: string) => void }) {
   const [texto, setTexto] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [pendente, iniciar] = useTransition();
-  const eventos = [...p.historico].reverse();
+  const eventos = p.historico.filter((e) => e.tipo !== "etapa").reverse();
   return (
-    <Card titulo="Histórico" cor="#5D6C70">
+    <Card titulo="Observações">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -350,37 +444,26 @@ function Historico({ processo: p, onSalvo }: { processo: ProcessoDoc; onSalvo: (
             } else setErro(r.erro);
           });
         }}
-        className="mb-4 space-y-2"
+        className="mb-3 space-y-2"
       >
-        <label htmlFor="nota-doc" className="sr-only">
-          Nova nota
-        </label>
-        <textarea id="nota-doc" value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={2000} placeholder="Registrar uma nota (ex.: garantidor confirmou holerites)…" className={CAMPO} />
+        <label htmlFor="nota-doc" className="sr-only">Nova observação</label>
+        <textarea id="nota-doc" value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={2000} placeholder="Registrar uma observação (ex.: garantidor confirmou holerites)…" className={CAMPO} />
         {erro && <p className="text-[13px] text-[#B42318]">{erro}</p>}
         <div className="flex justify-end">
-          <button type="submit" disabled={pendente || !texto.trim()} className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50" style={{ backgroundColor: COR }}>
+          <button type="submit" disabled={pendente || !texto.trim()} className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50" style={{ backgroundColor: AZUL }}>
             {pendente && <Spinner />}
-            Registrar nota
+            Registrar
           </button>
         </div>
       </form>
       {eventos.length === 0 ? (
-        <p className="text-sm text-[#6B635D]">Nenhum registro ainda.</p>
+        <p className="text-sm text-[#6B635D]">Nenhuma observação ainda.</p>
       ) : (
-        <ol className="space-y-3">
+        <ol className="space-y-2">
           {eventos.map((ev, i) => (
-            <li key={i} className={`rounded-xl px-4 py-2.5 text-sm ${ev.tipo === "etapa" ? "border border-[#8A5A3C]/20 bg-[#F8F3EF]" : "bg-[#F8F5F2]"}`}>
-              <p className="text-[13px] text-[#6B635D]">
-                {dataHora(ev.em)} · {ev.por}
-              </p>
-              {ev.tipo === "etapa" ? (
-                <p className="font-medium text-[#25211E]">
-                  {etapaDoc(ev.de ?? "").curto} → {etapaDoc(ev.para ?? "").curto}
-                  {ev.texto && <span className="font-normal text-[#6B635D]"> — {ev.texto}</span>}
-                </p>
-              ) : (
-                <p className="whitespace-pre-wrap text-[#25211E]">{ev.texto}</p>
-              )}
+            <li key={i} className="rounded-xl bg-[#F8F5F2] px-3 py-2 text-sm">
+              <p className="text-[12px] text-[#6B635D]">{dataHora(ev.em)} · {ev.por}</p>
+              <p className="whitespace-pre-wrap text-[#25211E]">{ev.texto}</p>
             </li>
           ))}
         </ol>
@@ -430,8 +513,8 @@ function PainelEtapa({ processo: p, para, onFechar, onSalvo }: { processo: Proce
         <fieldset className="space-y-2">
           <legend className={LABEL}>Nova etapa</legend>
           {(para === "cancelado" ? ETAPAS_DOC.filter((e) => SAIDAS_DOC.includes(e.valor)) : ETAPAS_DOC).map((e) => (
-            <label key={e.valor} className={`flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-sm ${escolha === e.valor ? "border-[#8A5A3C] bg-[#F8F3EF]" : "border-[#EAE2DB]"}`}>
-              <input type="radio" name="etapa" value={e.valor} checked={escolha === e.valor} onChange={() => setEscolha(e.valor)} className="accent-[#8A5A3C]" />
+            <label key={e.valor} className={`flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-sm ${escolha === e.valor ? "border-[#24476B] bg-[#F3F6FA]" : "border-[#EAE2DB]"}`}>
+              <input type="radio" name="etapa" value={e.valor} checked={escolha === e.valor} onChange={() => setEscolha(e.valor)} className="accent-[#24476B]" />
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: e.cor }} aria-hidden="true" />
               <span className="text-[#25211E]">{e.label}</span>
               {e.valor === p.etapa && <span className="ml-auto text-[13px] text-[#6B635D]">atual</span>}
