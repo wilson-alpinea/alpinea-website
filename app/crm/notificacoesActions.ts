@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { garantirAdmin } from "@/lib/crm/acesso";
+import { garantirEquipe as garantirAdmin } from "@/lib/crm/acesso";
 import { cookieNotificacoes, type UnidadeNotificacao } from "@/lib/crm/notificacoes";
 
 // Marca todas as notificações como lidas neste navegador.

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { exigirAdmin } from "@/lib/crm/acesso";
+import { ehEquipe, obterAcesso } from "@/lib/crm/acesso";
+import { redirect } from "next/navigation";
 import { urlUnidade } from "@/lib/crm/unidades";
 import { PortalShell } from "../PortalShell";
 import { SinoUnidade } from "../(shell)/components/SinoUnidade";
@@ -72,7 +73,11 @@ const UNIDADES = [
 
 export default async function EscolherCrmPage() {
   // Só a equipe (admin) chega aqui; parceiros têm portal próprio.
-  const acesso = await exigirAdmin();
+  // Admin vê os 4 CRMs; consultor só os liberados para ele (migração 030).
+  const acesso = await obterAcesso();
+  if (!acesso) redirect("/crm/login");
+  if (!ehEquipe(acesso)) redirect("/crm/sem-acesso");
+  const visiveis = acesso.papel === "consultor" ? UNIDADES.filter((u) => acesso.permissoes?.crms.includes(u.unidade)) : UNIDADES;
   return (
     <PortalShell titulo="CRM" empresa="Alpinea" usuario={acesso.email}>
       <div className="mx-auto max-w-[960px]">
@@ -80,7 +85,7 @@ export default async function EscolherCrmPage() {
         <p className="mt-1 text-[15px] text-[#626B75]">Acesse a unidade que deseja gerenciar.</p>
 
         <div className="mt-6 grid gap-6 md:grid-cols-2">
-          {UNIDADES.map((u) => (
+          {visiveis.map((u) => (
             <section
               key={u.unidade}
               className="relative flex flex-col rounded-2xl border border-t-[3px] has-[[role=dialog]]:z-50 border-black/[0.06] p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(0,0,0,0.05),0_22px_40px_-22px_rgba(0,0,0,0.25)] md:p-8"
@@ -135,7 +140,7 @@ export default async function EscolherCrmPage() {
             Abre a unidade aqui mesmo, em alpinea.io, sem trocar de endereço — útil se você não quiser entrar de novo agora.
           </p>
           <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
-            {UNIDADES.map((u) => (
+            {visiveis.map((u) => (
               <li key={u.unidade}>
                 <a href={u.aqui} className="font-medium text-[#20252B] underline underline-offset-2 hover:text-[#24476B]">
                   {u.titulo} neste endereço

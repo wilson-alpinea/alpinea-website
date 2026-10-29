@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { exigirAdmin } from "@/lib/crm/acesso";
+import { produtoVisivel } from "@/lib/crm/permissoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { GRUPOS_FLUXO, SAIDAS_DOC, SERVICOS_DOC, etapaDoc, pendenciaDoc, servicoDoc, type EventoDoc, type ProcessoDoc } from "@/lib/crm/documentacao";
 import { dentro, diaDe, diasDoIntervalo, pct, reais, resolverPeriodo, type BuscaPeriodo } from "@/lib/crm/periodoPainel";
@@ -34,7 +35,7 @@ type Processo = Pick<ProcessoDoc, "id" | "created_at" | "updated_at" | "servico"
 type Pagamento = { processo_id: string; valor_brl: number; status: string; pago_em: string | null };
 
 export default async function VisaoGeralDocumentacaoPage({ searchParams }: { searchParams: Promise<BuscaPeriodo> }) {
-  await exigirAdmin();
+  const acesso = await exigirAdmin();
   const params = await searchParams;
   const db = createAdminClient();
   const [rp, rg] = await Promise.all([
@@ -57,8 +58,9 @@ export default async function VisaoGeralDocumentacaoPage({ searchParams }: { sea
     );
   }
 
-  const processos = ((rp.data ?? []) as Processo[]).map((p) => ({ ...p, historico: Array.isArray(p.historico) ? p.historico : [] }));
-  const pagamentos = ((rg.data ?? []) as Pagamento[]).map((g) => ({ ...g, valor_brl: Number(g.valor_brl) || 0 }));
+  const processos = ((rp.data ?? []) as Processo[]).filter((p) => produtoVisivel(acesso.permissoes, "documentacao", p.servico)).map((p) => ({ ...p, historico: Array.isArray(p.historico) ? p.historico : [] }));
+  const idsVisiveis = new Set(processos.map((p) => p.id));
+  const pagamentos = ((rg.data ?? []) as Pagamento[]).filter((g) => idsVisiveis.has(g.processo_id)).map((g) => ({ ...g, valor_brl: Number(g.valor_brl) || 0 }));
   const semPagamentos = !!rg.error;
 
   const { periodo, de, ate, rotulo, hoje } = resolverPeriodo(params);

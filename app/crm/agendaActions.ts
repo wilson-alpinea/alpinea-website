@@ -70,7 +70,7 @@ export async function editarHorario(id: string, inicio: string, fim: string): Pr
 }
 
 export async function removerHorario(id: string): Promise<ResultadoAgenda> {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   if (!UUID.test(id)) return { ok: false, erro: "Horário inválido." };
   const { error } = await (await createClient()).from("entrevista_janelas").delete().eq("id", id);
   if (error) return { ok: false, erro: "Não foi possível remover." };
@@ -141,7 +141,7 @@ export async function salvarBloqueio(
 
 /** Remove todas as linhas de um bloqueio (um período de vários dias = várias linhas). */
 export async function removerBloqueio(ids: string[]): Promise<ResultadoAgenda> {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   const validos = ids.filter((i) => UUID.test(i));
   if (!validos.length) return { ok: false, erro: "Bloqueio inválido." };
   const { error } = await (await createClient()).from("entrevista_bloqueios").delete().in("id", validos);

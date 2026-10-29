@@ -331,7 +331,7 @@ export async function addInteracao(clienteId: string, formData: FormData) {
 }
 
 export async function deleteInteracao(clienteId: string, interacaoId: string, formData: FormData) {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   void formData;
   const supabase = await createClient();
   const { error } = await supabase.from("interacoes").delete().eq("id", interacaoId);
@@ -388,7 +388,7 @@ export async function addArquivo(clienteId: string, formData: FormData) {
 }
 
 export async function deleteArquivo(clienteId: string, arquivoId: string, formData: FormData) {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   void formData;
   const supabase = await createClient();
   // Arquivo enviado para o storage: apaga também o arquivo (Wilson, 21/out/2026).
@@ -407,7 +407,7 @@ export async function deleteArquivo(clienteId: string, arquivoId: string, formDa
 }
 
 export async function deleteClientes(ids: string[]) {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   if (!ids || ids.length === 0) return;
   const supabase = await createClient();
   const { error } = await supabase.from("clientes").delete().in("id", ids);
@@ -428,7 +428,7 @@ export async function deleteClientes(ids: string[]) {
 // Criar/editar fornecedor: app/crm/fornecedoresActions.ts (salvarFornecedor).
 
 export async function deleteFornecedores(ids: string[]) {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   if (!ids || ids.length === 0) return;
   const supabase = await createClient();
   const { error } = await supabase.from("fornecedores").delete().in("id", ids);
@@ -626,7 +626,7 @@ export async function reclassificarCandidatura(candidaturaId: string, formData: 
 // para arquivar leads inativos"). Não apaga nada: só tira o lead do
 // pipeline e da lista de clientes (dá para ver e desarquivar depois). ──
 export async function arquivarCliente(clienteId: string, arquivar: boolean) {
-  const acesso = await garantirAdmin();
+  const acesso = await garantirAdmin({ deletar: true });
   const supabase = await createClient();
   const { error } = await supabase
     .from("clientes")

@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { obterAcesso } from "@/lib/crm/acesso";
+import { produtoVisivel } from "@/lib/crm/permissoes";
+
 import { execucaoIniciada } from "@/lib/crm/processo";
 import type { EstagioEntrega } from "@/lib/crm/types";
 import { ListaClientes, type ClienteLista } from "./ListaClientes";
@@ -49,7 +52,9 @@ export default async function ClientesPage() {
     for (const p of perfis ?? []) nomes.set(p.id, p.nome || p.email);
   }
 
-  const lista: ClienteLista[] = (clientes ?? []).map((c) => {
+  // Consultor (migração 030): só os produtos liberados para ele.
+  const permissoes = (await obterAcesso())?.permissoes ?? null;
+  const lista: ClienteLista[] = (clientes ?? []).filter((c) => produtoVisivel(permissoes, "agencia", c.produto_principal)).map((c) => {
     const iniciada = execucaoIniciada(c.estagio_entrega as EstagioEntrega, comExecucao.has(c.id));
     return {
       id: c.id,

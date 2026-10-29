@@ -12,6 +12,7 @@ import {
   unidadeDoHost,
   type PapelCrm,
 } from "./lib/crm/unidades";
+import { lerPermissoes } from "./lib/crm/permissoes";
 import { COOKIE_UTM, PARAMS_CAMPANHA, type DadosCampanha } from "./lib/crm/canal";
 
 // (No Next.js 16, "middleware.ts" foi renomeado para "proxy.ts".)
@@ -129,21 +130,24 @@ export async function proxy(request: NextRequest) {
   }
 
   // Papel do usuário (perfis.papel — migração 021). Sem papel = sem acesso.
-  const { data: perfil } = await supabase.from("perfis").select("papel").eq("id", user.id).maybeSingle();
+  // "*" para funcionar antes e depois da migração 030 (permissoes do consultor).
+  const { data: perfil } = await supabase.from("perfis").select("*").eq("id", user.id).maybeSingle();
   const papel: PapelCrm | null = isPapelCrm(perfil?.papel) ? perfil!.papel : null;
+  const crms = papel === "consultor" ? lerPermissoes(perfil?.permissoes).crms : [];
 
-  if (isLoginRoute) return redirecionar(inicioDoPapel(papel, unidadeHost));
+  if (isLoginRoute) return redirecionar(inicioDoPapel(papel, unidadeHost, crms));
 
-  if (!rotaPermitida(papel, pathname)) return redirecionar(inicioDoPapel(papel, unidadeHost));
+  if (!rotaPermitida(papel, pathname, crms)) return redirecionar(inicioDoPapel(papel, unidadeHost, crms));
+  const equipe = papel === "admin" || papel === "consultor";
 
   // Em cada domínio de CRM, /crm abre o início daquela unidade.
-  if (unidadeHost && papel === "admin" && (pathname === "/crm" || pathname === "/crm/") && unidadeHost !== "agencia") {
-    return redirecionar(inicioDoPapel(papel, unidadeHost));
+  if (unidadeHost && equipe && (pathname === "/crm" || pathname === "/crm/") && unidadeHost !== "agencia") {
+    return redirecionar(inicioDoPapel(papel, unidadeHost, crms));
   }
 
   // alpinea.io/crm (domínio principal): admin escolhe entre o CRM da
   // agência e o de empregos (Wilson, 21/out/2026).
-  if (!unidadeHost && papel === "admin" && (pathname === "/crm" || pathname === "/crm/") && !searchParams.has("ficar")) {
+  if (!unidadeHost && equipe && (pathname === "/crm" || pathname === "/crm/") && !searchParams.has("ficar")) {
     return redirecionar("/crm/unidades");
   }
 
@@ -155,7 +159,7 @@ export async function proxy(request: NextRequest) {
     // outro domínio — a página quebra ("This page couldn't load"). Nesses
     // casos fica no início da própria unidade.
     const navegacaoInterna = request.headers.has("rsc") || request.headers.has("next-action") || request.headers.has("next-router-prefetch");
-    if (navegacaoInterna) return redirecionar(inicioDoPapel(papel, unidadeHost));
+    if (navegacaoInterna) return redirecionar(inicioDoPapel(papel, unidadeHost, crms));
     return redirecionar(pathname, HOST_UNIDADE[unidadeRota]);
   }
 

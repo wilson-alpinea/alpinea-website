@@ -239,7 +239,7 @@ export async function cancelarParcela(clienteId: string, pagamentoId: string, mo
 }
 
 export async function excluirParcela(clienteId: string, pagamentoId: string, motivo: string): Promise<Resultado> {
-  const acesso = await garantirAdmin();
+  const acesso = await garantirAdmin({ deletar: true });
   const motivoLimpo = textoCurto(motivo);
   if (!motivoLimpo) return { ok: false, erro: "Informe o motivo da exclusão." };
   const supabase = await createClient();

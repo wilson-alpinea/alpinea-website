@@ -23,7 +23,7 @@ Font.registerHyphenationCallback((w) => [w]);
 const BORDA = "#7a7a7a";
 const CINZA = "#f2f2f2";
 const AZUL = "#1f3c88";
-const s = StyleSheet.create({
+export const s = StyleSheet.create({
   page: { paddingTop: 24, paddingBottom: 30, paddingHorizontal: 26, fontFamily: "NotoJP", fontSize: 7.4, color: "#111" },
   topo: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   titulo: { fontSize: 15, fontWeight: 700 },
@@ -44,15 +44,15 @@ const s = StyleSheet.create({
   rodape: { position: "absolute", bottom: 12, left: 26, right: 26, fontSize: 6, color: "#888", textAlign: "center" },
 });
 
-type V = ValoresModelo;
+export type V = ValoresModelo;
 
 // <J> = <Text> (mantido como ponto único para ajustes de texto).
-function J(props: ComponentProps<typeof Text>) {
+export function J(props: ComponentProps<typeof Text>) {
   return <Text {...props} />;
 }
 const tem = (v: V, k: string) => Boolean((v[k] ?? "").trim());
 
-function Caixa({ marcado, rotulo }: { marcado: boolean; rotulo: string }) {
+export function Caixa({ marcado, rotulo }: { marcado: boolean; rotulo: string }) {
   return (
     <View style={s.opcao}>
       <View style={[s.caixa, marcado ? { backgroundColor: AZUL, borderColor: AZUL } : {}]} />
@@ -60,20 +60,20 @@ function Caixa({ marcado, rotulo }: { marcado: boolean; rotulo: string }) {
     </View>
   );
 }
-const Opcoes = ({ v, itens }: { v: V; itens: [string, string][] }) => (
+export const Opcoes = ({ v, itens }: { v: V; itens: [string, string][] }) => (
   <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
     {itens.map(([k, r]) => (
       <Caixa key={k} marcado={tem(v, k)} rotulo={r} />
     ))}
   </View>
 );
-const SimNao = ({ v, sim, nao }: { v: V; sim: string; nao: string }) => <Opcoes v={v} itens={[[sim, "Simはい"], [nao, "Nãoいいえ"]]} />;
+export const SimNao = ({ v, sim, nao }: { v: V; sim: string; nao: string }) => <Opcoes v={v} itens={[[sim, "Simはい"], [nao, "Nãoいいえ"]]} />;
 
 type Estilo = Exclude<ComponentProps<typeof View>["style"], undefined | unknown[]>;
-function Cel({ w, children, cab, ultima, style }: { w: string | number; children?: ReactNode; cab?: boolean; ultima?: boolean; style?: Estilo }) {
+export function Cel({ w, children, cab, ultima, style }: { w: string | number; children?: ReactNode; cab?: boolean; ultima?: boolean; style?: Estilo }) {
   return <View style={[s.cel, cab ? s.cab : {}, ultima ? { borderRightWidth: 0 } : {}, { width: w }, style ?? {}]}>{children}</View>;
 }
-const Campo = ({ rotulo, valor }: { rotulo: string; valor?: string }) => (
+export const Campo = ({ rotulo, valor }: { rotulo: string; valor?: string }) => (
   <>
     <J style={s.rot}>{rotulo}</J>
     <J style={s.val}>{valor || " "}</J>

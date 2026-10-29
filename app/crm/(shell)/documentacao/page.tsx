@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { exigirAdmin } from "@/lib/crm/acesso";
+import { produtoVisivel } from "@/lib/crm/permissoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { ListaDocumentacao, type LinhaDoc } from "./ListaDocumentacao";
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function DocumentacaoCrmPage() {
-  await exigirAdmin();
+  const acesso = await exigirAdmin();
   const { data, error } = await createAdminClient()
     .from("documentacao_processos")
     .select("id, created_at, updated_at, servico, etapa, nome, email, telefone, resumo, campos, valor_referencia_brl, valor_final, valor_total, ficha_enviada_em, contrato_aceito_em, motivo_saida")
@@ -41,7 +42,7 @@ export default async function DocumentacaoCrmPage() {
         </div>
       </div>
       <Suspense>
-        <ListaDocumentacao processos={(data ?? []) as LinhaDoc[]} erro={!!error} />
+        <ListaDocumentacao processos={((data ?? []) as LinhaDoc[]).filter((p) => produtoVisivel(acesso.permissoes, "documentacao", p.servico))} erro={!!error} />
       </Suspense>
     </div>
   );

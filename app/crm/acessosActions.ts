@@ -3,7 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { garantirAdmin } from "@/lib/crm/acesso";
+import { garantirSomenteAdmin as garantirAdmin } from "@/lib/crm/acesso";
 import { SLUG_PARCEIRO, isPapelCrm } from "@/lib/crm/unidades";
 
 // Gestão de acessos do CRM (Wilson, 21/out/2026): parceiros da agência,

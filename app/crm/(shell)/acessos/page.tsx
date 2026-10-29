@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { exigirAdmin } from "@/lib/crm/acesso";
+import { exigirSomenteAdmin as exigirAdmin } from "@/lib/crm/acesso";
 import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
 import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso } from "./AcessosPagina";
 

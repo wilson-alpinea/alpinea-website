@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { garantirAdmin } from "@/lib/crm/acesso";
+import { garantirEquipe as garantirAdmin } from "@/lib/crm/acesso";
 import { carregarNotificacoes, carregarNotificacoesUnidade, cookieNotificacoes } from "@/lib/crm/notificacoes";
 import { createClient } from "@/lib/supabase/server";
 import { Notificacoes } from "./Notificacoes";

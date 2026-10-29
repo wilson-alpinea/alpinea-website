@@ -46,7 +46,10 @@ export default async function CrmShellLayout({
   const nomeExibicao = acesso.nome;
   const h = (await headers()).get("x-crm-unidade");
   const unidade = isUnidadeCrm(h) ? h : "agencia";
-  const NAV = NAV_UNIDADE[unidade];
+  // Consultor (migração 030): sem "Acessos" e só os CRMs liberados no menu.
+  const consultor = acesso.papel === "consultor";
+  const NAV = consultor ? NAV_UNIDADE[unidade].filter((i) => i.href !== "/crm/acessos") : NAV_UNIDADE[unidade];
+  const crmsVisiveis = consultor ? UNIDADES_CRM.filter((u) => acesso.permissoes?.crms.includes(u)) : UNIDADES_CRM;
   const rotuloUnidade = UNIDADE_LABEL[unidade];
 
   return (
@@ -76,6 +79,7 @@ export default async function CrmShellLayout({
           <div className="flex shrink-0 items-center gap-4">
             <span className="hidden text-[13px] text-white/35 xl:inline">
               {nomeExibicao}
+              {acesso.cargo ? ` · ${acesso.cargo}` : ""}
             </span>
             <form action={logout}>
               <button
@@ -88,7 +92,7 @@ export default async function CrmShellLayout({
             {/* Trocar de CRM: menu de três barras (Wilson, 29/out/2026), no
                 lugar dos botões coloridos por unidade. */}
             <MenuCrm
-              opcoes={UNIDADES_CRM.map((u) => ({
+              opcoes={crmsVisiveis.map((u) => ({
                 chave: u,
                 nome: UNIDADE_CURTO[u],
                 href: urlUnidade(u),

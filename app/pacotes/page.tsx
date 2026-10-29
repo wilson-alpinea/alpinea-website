@@ -865,7 +865,7 @@ export default async function PacotesJapaoPage({
                     ))}
                   </div>
                   <p
-                    className={`${display.className} flex-1 text-[17px] font-medium italic leading-[1.45] text-white/80`}
+                    className="flex-1 text-[15px] font-normal leading-7 text-white/85"
                   >
                     &ldquo;{review.text}&rdquo;
                   </p>

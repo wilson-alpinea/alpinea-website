@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import JSZip from "jszip";
 import sharp from "sharp";
 import { createClient } from "@/lib/supabase/server";
-import { obterAcesso } from "@/lib/crm/acesso";
+import { ehEquipe, obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ContextoFicha } from "@/app/lib/fichasParceiros";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
@@ -11,6 +11,7 @@ import { MODELOS_ORIGINAIS } from "@/lib/empregos/valoresModelos";
 import { createElement, type ReactElement } from "react";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import { ListaVerificacaoPdf } from "@/lib/empregos/listaVerificacaoPdf";
+import { AvcorpPdf } from "@/lib/empregos/avcorpPdf";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export const dynamic = "force-dynamic";
 // Só equipe logada no CRM.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   // Só a equipe (admin) — parceiros/empreiteiras usam o portal próprio.
-  if ((await obterAcesso())?.papel !== "admin") {
+  if (!ehEquipe(await obterAcesso())) {
     return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
   }
   const supabase = await createClient();
@@ -34,8 +35,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const pedido = request.nextUrl.searchParams.get("modelo") ?? "";
   // Lista de Verificação também em PDF (Wilson, 29/out/2026: o Word "estoura"
   // no Google Docs do parceiro). Mesmos valores do Word, layout próprio.
-  const emPdf = pedido === "lista-verificacao-pdf";
-  const modelos = pedido === "todos" ? MODELOS_ORIGINAIS : MODELOS_ORIGINAIS.filter((m) => m.id === (emPdf ? "lista-verificacao" : pedido));
+  // + AVCORP/Avance em PDF (Wilson, 29/out/2026).
+  const emPdf = pedido === "lista-verificacao-pdf" || pedido === "avcorp-pdf";
+  const modeloPdf = pedido === "avcorp-pdf" ? "avcorp" : "lista-verificacao";
+  const modelos = pedido === "todos" ? MODELOS_ORIGINAIS : MODELOS_ORIGINAIS.filter((m) => m.id === (emPdf ? modeloPdf : pedido));
   if (!modelos.length) return NextResponse.json({ error: "Modelo inválido." }, { status: 400 });
 
   const { data: c } = await supabase.from("candidaturas_vagas").select("*").eq("id", id).maybeSingle();
@@ -52,11 +55,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (emPdf) {
     const nomeCandidato = `${c.nome ?? ""} ${c.sobrenome ?? ""}`.trim();
     const pdf = await renderToBuffer(
-      createElement(ListaVerificacaoPdf, { v: modelos[0].valores(x), candidato: nomeCandidato }) as unknown as ReactElement<DocumentProps>,
+      createElement(modeloPdf === "avcorp" ? AvcorpPdf : ListaVerificacaoPdf, { v: modelos[0].valores(x), candidato: nomeCandidato }) as unknown as ReactElement<DocumentProps>,
     );
     const slugPdf = nomeCandidato.normalize("NFD").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "");
     return new NextResponse(new Uint8Array(pdf), {
-      headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="LISTA-DE-VERIFICACAO_${slugPdf}.pdf"`, "Cache-Control": "no-store" },
+      headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="${modelos[0].saida}_${slugPdf}.pdf"`, "Cache-Control": "no-store" },
     });
   }
 

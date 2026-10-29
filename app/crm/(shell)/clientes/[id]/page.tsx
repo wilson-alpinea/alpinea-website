@@ -2,6 +2,9 @@ import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { obterAcesso } from "@/lib/crm/acesso";
+import { produtoVisivel } from "@/lib/crm/permissoes";
+
 import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR, DESTAQUE_INTERACAO } from "@/lib/crm/interacoes";
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "@/lib/supabase/documentosJrPass";
@@ -67,6 +70,7 @@ export default async function ClienteDetalhePage({
 
   if (error) console.error("Erro ao carregar cliente:", error);
   if (!cliente) notFound();
+  if (!produtoVisivel((await obterAcesso())?.permissoes ?? null, "agencia", cliente.produto_principal)) notFound();
 
   const { data: interacoes } = await supabase
     .from("interacoes")

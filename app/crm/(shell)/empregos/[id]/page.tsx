@@ -438,6 +438,7 @@ export default async function CandidatoPage({
                     {m.nome} ({m.arquivo.endsWith(".docx") ? "Word" : "Excel"})
                   </option>
                 ))}
+                <option value="avcorp-pdf">AVCORP / Rainichisha — Curriculum Vitae (PDF)</option>
                 <option value="lista-verificacao-pdf">Lista de Verificação (来日者 確認事項) (PDF)</option>
                 <option value="todos">Todas as 4 fichas (.zip)</option>
               </select>

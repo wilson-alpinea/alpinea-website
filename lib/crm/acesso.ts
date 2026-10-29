@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isPapelCrm, type PapelCrm } from "./unidades";
+import { headers } from "next/headers";
+import { isPapelCrm, isUnidadeCrm, type PapelCrm, type UnidadeCrm } from "./unidades";
+import { lerPermissoes, type Permissoes } from "./permissoes";
 
 // Quem está logado no CRM e o que pode ver (Wilson, 21/out/2026).
 // O papel vem de perfis.papel (migração 021). Quem não tem papel não
@@ -14,6 +16,9 @@ export type Acesso = {
   nome: string;
   papel: PapelCrm | null;
   parceiro: ParceiroAcesso | null;
+  /** Só para consultor (migração 030); null para os demais papéis. */
+  permissoes: Permissoes | null;
+  cargo: string | null;
 };
 
 export async function obterAcesso(): Promise<Acesso | null> {
@@ -27,7 +32,7 @@ export async function obterAcesso(): Promise<Acesso | null> {
   const admin = createAdminClient();
   const { data: perfil } = await admin
     .from("perfis")
-    .select("nome, email, papel, parceiro_id")
+    .select("*")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -48,21 +53,66 @@ export async function obterAcesso(): Promise<Acesso | null> {
     nome: perfil?.nome || user.email || "",
     papel,
     parceiro,
+    permissoes: papel === "consultor" ? lerPermissoes(perfil?.permissoes) : null,
+    cargo: (perfil?.cargo as string | null) ?? null,
   };
 }
 
-/** Para páginas, layouts e route handlers da equipe. */
+/** Admin ou consultor — a equipe interna. */
+export const ehEquipe = (a: Acesso | null | undefined) => a?.papel === "admin" || a?.papel === "consultor";
+
+async function unidadeAtual(): Promise<UnidadeCrm> {
+  const h = (await headers()).get("x-crm-unidade");
+  return isUnidadeCrm(h) ? h : "agencia";
+}
+
+/** Consultor pode abrir este CRM? (admin sempre pode) */
+export function podeCrm(a: Acesso, unidade: UnidadeCrm) {
+  return a.papel === "admin" || (a.papel === "consultor" && !!a.permissoes?.crms.includes(unidade));
+}
+
+/** Para páginas, layouts e route handlers da equipe. Consultor entra se o
+ * CRM da página (header x-crm-unidade, do proxy) estiver liberado para ele. */
 export async function exigirAdmin(): Promise<Acesso> {
+  const acesso = await obterAcesso();
+  if (!acesso) redirect("/crm/login");
+  if (acesso.papel === "admin") return acesso;
+  if (acesso.papel === "consultor" && podeCrm(acesso, await unidadeAtual())) return acesso;
+  redirect("/crm/sem-acesso");
+}
+
+/** Só administradores (ex.: Acessos). */
+export async function exigirSomenteAdmin(): Promise<Acesso> {
   const acesso = await obterAcesso();
   if (!acesso) redirect("/crm/login");
   if (acesso.papel !== "admin") redirect("/crm/sem-acesso");
   return acesso;
 }
 
-/** Para server actions: lança erro em vez de redirecionar. */
-export async function garantirAdmin(): Promise<Acesso> {
+/** Para server actions que ALTERAM dados: admin, ou consultor com "editar"
+ * (ou "deletar", quando `deletar`). Lança erro em vez de redirecionar. */
+export async function garantirAdmin(opcoes: { deletar?: boolean } = {}): Promise<Acesso> {
   const acesso = await obterAcesso();
-  if (!acesso || acesso.papel !== "admin") throw new Error("Acesso negado.");
+  if (acesso?.papel === "admin") return acesso;
+  if (acesso?.papel === "consultor" && acesso.permissoes) {
+    const ok = opcoes.deletar ? acesso.permissoes.deletar : acesso.permissoes.editar;
+    if (ok) return acesso;
+    throw new Error(opcoes.deletar ? "Seu acesso não permite excluir." : "Seu acesso é somente leitura.");
+  }
+  throw new Error("Acesso negado.");
+}
+
+/** Leitura da equipe (admin ou consultor), para actions que não alteram dados. */
+export async function garantirEquipe(): Promise<Acesso> {
+  const acesso = await obterAcesso();
+  if (!ehEquipe(acesso)) throw new Error("Acesso negado.");
+  return acesso!;
+}
+
+/** Só administradores, em server actions (Acessos). */
+export async function garantirSomenteAdmin(): Promise<Acesso> {
+  const acesso = await obterAcesso();
+  if (acesso?.papel !== "admin") throw new Error("Acesso negado.");
   return acesso;
 }
 

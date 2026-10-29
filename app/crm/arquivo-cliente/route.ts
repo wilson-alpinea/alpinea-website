@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { obterAcesso } from "@/lib/crm/acesso";
+import { ehEquipe, obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BUCKET_ARQUIVOS_CLIENTE, PREFIXO_STORAGE } from "@/lib/crm/arquivosStorage";
 
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 // Abre um arquivo enviado na ficha do cliente: confere que é admin, busca o
 // caminho pelo id do registro e redireciona para uma URL assinada de 60s.
 export async function GET(request: NextRequest) {
-  if ((await obterAcesso())?.papel !== "admin") {
+  if (!ehEquipe(await obterAcesso())) {
     return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
   }
   const id = request.nextUrl.searchParams.get("id") ?? "";

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { exigirAdmin } from "@/lib/crm/acesso";
+import { produtoVisivel } from "@/lib/crm/permissoes";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PagamentoDoc, ProcessoDoc } from "@/lib/crm/documentacao";
 import { DetalheDocumentacao } from "./DetalheDocumentacao";
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ProcessoDocPage({ params }: { params: Promise<{ id: string }> }) {
-  await exigirAdmin();
+  const acesso = await exigirAdmin();
   const { id } = await params;
   const valido = /^[0-9a-f-]{36}$/i.test(id);
   const { data, error } = valido ? await createAdminClient().from("documentacao_processos").select("*").eq("id", id).maybeSingle() : { data: null, error: null };
@@ -26,6 +27,9 @@ export default async function ProcessoDocPage({ params }: { params: Promise<{ id
         </Link>
       </div>
     );
+  }
+  if (!produtoVisivel(acesso.permissoes, "documentacao", data.servico)) {
+    return <div className="rounded-2xl border border-[#EAE2DB] bg-white p-8 text-center text-sm text-[#6B635D]">Seu acesso não inclui este serviço.</div>;
   }
   const processo = {
     ...data,

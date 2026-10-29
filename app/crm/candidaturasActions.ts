@@ -17,7 +17,7 @@ export type ResultadoExclusao =
   | { ok: false; erro: string };
 
 export async function excluirCandidaturas(ids: string[]): Promise<ResultadoExclusao> {
-  await garantirAdmin();
+  await garantirAdmin({ deletar: true });
   const validos = [...new Set((ids ?? []).filter((id) => typeof id === "string" && UUID.test(id)))];
   if (validos.length === 0) return { ok: false, erro: "Nenhuma candidatura válida selecionada." };
   if (validos.length > 500) return { ok: false, erro: "Selecione no máximo 500 candidaturas por vez." };

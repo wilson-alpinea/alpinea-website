@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { obterAcesso } from "@/lib/crm/acesso";
+import { ehEquipe, obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BUCKET_DOCUMENTOS_JRPASS, CAMINHO_DOCUMENTO_JRPASS_REGEX } from "@/lib/supabase/documentosJrPass";
 
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 // abaixo é uma segunda camada.
 export async function GET(request: NextRequest) {
   // Só a equipe (admin) — parceiros/empreiteiras usam o portal próprio.
-  if ((await obterAcesso())?.papel !== "admin") {
+  if (!ehEquipe(await obterAcesso())) {
     return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
   }
   const supabase = await createClient();
