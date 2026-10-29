@@ -24,9 +24,8 @@ import { cookies } from "next/headers";
 import { obterAcesso } from "@/lib/crm/acesso";
 import { COOKIE_NOTIFICACOES, carregarNotificacoes } from "@/lib/crm/notificacoes";
 import { PeriodoSelector } from "./components/PeriodoSelector";
-import { FiltroProdutos, type OpcaoProduto } from "./components/FiltroProdutos";
-import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
-import { PRODUTO_ICONS } from "./clientes/ProdutoIcons";
+import { FiltroProdutos } from "./components/FiltroProdutos";
+import { OPCOES_PRODUTO_AGENCIA } from "./components/opcoesProduto";
 import { calcularComissoes } from "@/lib/crm/comissoes";
 import { hojeCRM } from "@/lib/crm/financeiro";
 import {
@@ -59,11 +58,7 @@ export const dynamic = "force-dynamic";
 
 type Busca = { periodo?: string; dias?: string; de?: string; ate?: string; produto?: string };
 
-// Quadradinhos de produto no topo (Wilson, 29/out/2026). Ajisai Shopping fora (backlog).
-const OPCOES_PRODUTO: OpcaoProduto[] = [...PRODUTOS_PRINCIPAIS, ...PRODUTOS_SECUNDARIOS]
-  .filter((p) => p.valor !== "ajisai_shopping" && PRODUTO_ICONS[p.valor])
-  // Serviço Individual: o ícone de "serviços adicionais" é fino demais em 24 px.
-  .map((p) => ({ valor: p.valor, label: p.label, icone: p.valor === "servico_individual" ? "/images/icone-servico-concierge.png" : PRODUTO_ICONS[p.valor] }));
+const OPCOES_PRODUTO = OPCOES_PRODUTO_AGENCIA;
 
 const rotuloExecucao = (e: string) => {
   const l = ESTAGIO_ENTREGA_LABEL[e as keyof typeof ESTAGIO_ENTREGA_LABEL] ?? e;

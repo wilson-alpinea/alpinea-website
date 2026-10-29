@@ -15,6 +15,8 @@ import { CANAIS, rotuloOrigem } from "@/lib/crm/canal";
 import { ehRegistroTeste, ehSelfService } from "@/lib/crm/origem";
 import type { Estagio } from "@/lib/crm/types";
 import { deleteClientes } from "../../actions";
+import { FiltroProdutosUrl } from "../components/FiltroProdutosUrl";
+import { OPCOES_PRODUTO_AGENCIA } from "../components/opcoesProduto";
 
 // Lista de clientes (Wilson, 22/out/2026). Todo o estado (aba, busca,
 // filtros, ordenação, página) vive na URL: voltar da ficha do cliente
@@ -303,6 +305,9 @@ export function ListaClientes({ clientes }: { clientes: ClienteLista[] }) {
           + Novo cliente
         </Link>
       </div>
+
+      {/* Quadradinhos de produto, como na Visão geral (Wilson, 29/out/2026). */}
+      <FiltroProdutosUrl opcoes={OPCOES_PRODUTO_AGENCIA} />
 
       <div role="tablist" aria-label="Situação do cadastro" className="flex gap-1 border-b border-[#E6E9ED]">
         {[

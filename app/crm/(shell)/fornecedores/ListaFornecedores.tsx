@@ -8,6 +8,8 @@ import type { Fornecedor } from "@/lib/crm/types";
 import { deleteFornecedores } from "../../actions";
 import { Painel } from "../clientes/[id]/financeiro/ui";
 import { FornecedorForm } from "./FornecedorForm";
+import { FiltroProdutosUrl } from "../components/FiltroProdutosUrl";
+import { OPCOES_CATEGORIA_FORNECEDOR } from "../components/opcoesProduto";
 
 // Lista de fornecedores (redesenho 23/out/2026). Estado na URL; o endereço
 // é guardado para o "← Fornecedores" da ficha voltar com os filtros.
@@ -147,6 +149,9 @@ export function ListaFornecedores({ fornecedores, erro }: { fornecedores: Fornec
           + Novo fornecedor
         </button>
       </div>
+
+      {/* Quadradinhos por categoria, como na Visão geral (Wilson, 29/out/2026). */}
+      <FiltroProdutosUrl opcoes={OPCOES_CATEGORIA_FORNECEDOR} param="categoria" rotuloTodos="Todas as categorias" />
 
       {aviso && (
         <p role="status" className="flex items-center justify-between gap-3 rounded-xl border border-[#28665D]/20 bg-[#E6F2EF] px-4 py-2.5 text-sm text-[#1F4F48]">
