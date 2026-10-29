@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatBRL, formatJPY } from "../../hooks/useCambioUSD";
-import { CabecalhoAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, Pilulas, FormularioDocumentacao, VERDE, display } from "../componentes";
+import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, Pilulas, FormularioDocumentacao, VERDE, display } from "../componentes";
 import { PERGUNTAS_VISTO, PERGUNTAS_GARANTIDOR, TERMOS_VISTO_COE, COE_FAMILIA_JPY, COE_INDIVIDUAL_JPY, COE_MAX_PESSOAS_SITE, precoCOEJPY } from "../conteudo";
 import { Campo, classeInput } from "../../components/transporte/compartilhado";
 
@@ -224,6 +224,7 @@ export default function ElegibilidadePage() {
           <div className="mx-auto max-w-5xl px-5 py-10 text-center text-sm text-black/55 md:px-8">Responda o seu perfil no Passo 1 para ver o valor e fazer o cadastro.</div>
         </section>
       )}
+      <RodapeAjisai />
     </main>
   );
 }

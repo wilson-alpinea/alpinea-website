@@ -18,7 +18,8 @@ const pill =
 const campo =
   "w-full rounded-lg border border-[#D5DAE0] bg-white px-2.5 py-1.5 text-[#20252B] outline-none focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25";
 
-export function PeriodoSelector({ periodoAtivo, de, ate }: { periodoAtivo: string; de?: string; ate?: string }) {
+// `base`: página que recebe ?periodo= (Visão geral de cada CRM — Wilson, 29/out/2026).
+export function PeriodoSelector({ periodoAtivo, de, ate, base = "/crm" }: { periodoAtivo: string; de?: string; ate?: string; base?: string }) {
   const router = useRouter();
   const [pendente, iniciar] = useTransition();
   const [alvo, setAlvo] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export function PeriodoSelector({ periodoAtivo, de, ate }: { periodoAtivo: strin
   function ir(query: string, periodo: string) {
     setAlvo(periodo);
     setAberto(false);
-    iniciar(() => router.push(`/crm?${query}`, { scroll: false }));
+    iniciar(() => router.push(`${base}?${query}`, { scroll: false }));
   }
 
   function aplicar(e: React.FormEvent) {

@@ -22,12 +22,15 @@ const NAV_EMPREGOS = [
   { href: "/crm/acessos", label: "Acessos" },
 ];
 // CRM de Seguro Viagem (Wilson, 26/out/2026).
+// + Visão geral (Wilson, 29/out/2026), como a da Agência.
 const NAV_SEGURO = [
+  { href: "/crm/seguro/visao-geral", label: "Visão geral" },
   { href: "/crm/seguro", label: "Pedidos" },
   { href: "/crm/acessos", label: "Acessos" },
 ];
 // CRM de Documentação (Wilson, 29/out/2026).
 const NAV_DOCUMENTACAO = [
+  { href: "/crm/documentacao/visao-geral", label: "Visão geral" },
   { href: "/crm/documentacao", label: "Processos" },
   { href: "/crm/acessos", label: "Acessos" },
 ];

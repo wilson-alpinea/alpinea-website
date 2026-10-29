@@ -8,7 +8,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatBRL, formatJPY } from "../hooks/useCambioUSD";
-import { CabecalhoAjisai, display, Secao, ListaCheck, VERDE } from "./componentes";
+import { CabecalhoAjisai, RodapeAjisai, display, Secao, ListaCheck, VERDE } from "./componentes";
 import { CONSULADOS, COE_INDIVIDUAL_JPY, EXPERIENCIA, PRECO_PET_BRL } from "./conteudo";
 
 const menorVisto = Math.min(...CONSULADOS.map((c) => c.comCOE));
@@ -162,6 +162,7 @@ export default function DocumentacaoPage() {
           </p>
         </div>
       </section>
+      <RodapeAjisai />
     </main>
   );
 }

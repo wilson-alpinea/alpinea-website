@@ -7,9 +7,22 @@ import { useEffect, useId, useRef, useState } from "react";
 // Lista todos os produtos de /produtos. Fecha com Esc, clique fora ou ao
 // escolher um item.
 
-const GRUPOS: { titulo: string; itens: { href: string; nome: string; abrir?: string }[] }[] = [
+// Cada seção com a sua cor (Wilson, 29/out/2026: "são empresas diferentes"),
+// e Documentação no topo. Verde = mesmo VERDE de /documentacao.
+const GRUPOS: { titulo: string; cor: string; itens: { href: string; nome: string; abrir?: string }[] }[] = [
+  {
+    // Seção Documentação (Wilson, 29/out/2026).
+    titulo: "Documentação",
+    cor: "#0B3D30",
+    itens: [
+      { href: "/documentacao/visto", nome: "Visto específico" },
+      { href: "/documentacao/elegibilidade", nome: "Certificado de Elegibilidade" },
+      { href: "/documentacao/pet", nome: "Exportação de pet" },
+    ],
+  },
   {
     titulo: "Organize sua viagem",
+    cor: "#24476B",
     itens: [
       { href: "/produtos?abrir=roteiro", nome: "Roteiro Personalizado", abrir: "roteiro" },
       { href: "/pacotes", nome: "Pacote de Viagem" },
@@ -18,6 +31,7 @@ const GRUPOS: { titulo: string; itens: { href: string; nome: string; abrir?: str
   },
   {
     titulo: "Complete sua viagem",
+    cor: "#75608B",
     itens: [
       { href: "/produtos/passagens-aereas", nome: "Passagem Aérea" },
       { href: "/produtos/hoteis", nome: "Hotéis" },
@@ -30,15 +44,6 @@ const GRUPOS: { titulo: string; itens: { href: string; nome: string; abrir?: str
       { href: "/produtos/seguro-viagem", nome: "Seguro Viagem" },
       { href: "/produtos/ajisai-shopping", nome: "Ajisai Shopping" },
       { href: "/produtos/esim", nome: "eSIM" },
-    ],
-  },
-  {
-    // Seção Documentação (Wilson, 29/out/2026).
-    titulo: "Documentação",
-    itens: [
-      { href: "/documentacao/visto", nome: "Visto específico" },
-      { href: "/documentacao/elegibilidade", nome: "Certificado de Elegibilidade" },
-      { href: "/documentacao/pet", nome: "Exportação de pet" },
     ],
   },
 ];
@@ -95,7 +100,10 @@ export function MenuProdutos({ claro = false }: { claro?: boolean }) {
         >
           {GRUPOS.map((g) => (
             <div key={g.titulo} className="py-1">
-              <p className="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-[0.18em] text-black/45">{g.titulo}</p>
+              <p className="flex items-center gap-2 px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: g.cor }}>
+                <span aria-hidden="true" className="h-3 w-1 rounded-full" style={{ backgroundColor: g.cor }} />
+                {g.titulo}
+              </p>
               <ul>
                 {g.itens.map((i) => (
                   <li key={i.href}>
@@ -109,7 +117,8 @@ export function MenuProdutos({ claro = false }: { claro?: boolean }) {
                           window.dispatchEvent(new CustomEvent("alpinea:abrir-produto", { detail: i.abrir }));
                         }
                       }}
-                      className="block rounded-lg px-3 py-2 text-sm transition hover:bg-black/[0.05]">
+                      style={{ ["--cor" as string]: g.cor }}
+                      className="block rounded-lg px-3 py-2 text-sm transition hover:bg-black/[0.05] hover:text-[var(--cor)]">
                       {i.nome}
                     </a>
                   </li>

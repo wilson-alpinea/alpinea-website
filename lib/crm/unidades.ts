@@ -56,8 +56,9 @@ export function unidadeDaRota(pathname: string): UnidadeCrm | "compartilhada" {
 export const INICIO_UNIDADE: Record<UnidadeCrm, string> = {
   agencia: "/crm",
   empregos: "/crm/empregos",
-  seguro: "/crm/seguro",
-  documentacao: "/crm/documentacao",
+  // Seguro e Documentação abrem na Visão geral (Wilson, 29/out/2026).
+  seguro: "/crm/seguro/visao-geral",
+  documentacao: "/crm/documentacao/visao-geral",
 };
 
 // Página inicial de cada papel.

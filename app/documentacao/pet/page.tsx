@@ -6,7 +6,7 @@
 // consulta até o Wilson confirmar o preço atual (ver PRECO_PET_BRL).
 
 import Image from "next/image";
-import { CabecalhoAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, FormularioDocumentacao, VERDE, display } from "../componentes";
+import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, FormularioDocumentacao, VERDE, display } from "../componentes";
 import { formatBRL } from "../../hooks/useCambioUSD";
 import {
   TERMOS_PET, EXPERIENCIA, PALAVRAS_RACA_RESTRITA, PERGUNTAS_PET, PERGUNTAS_PET_TUTOR, PRECO_PET_BRL,
@@ -178,6 +178,7 @@ export default function PetPage() {
           <Termos clausulas={TERMOS_PET} />
         </div>
       </Secao>
+      <RodapeAjisai />
     </main>
   );
 }

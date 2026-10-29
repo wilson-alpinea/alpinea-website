@@ -8,7 +8,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { formatBRL } from "../../hooks/useCambioUSD";
-import { CabecalhoAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, Pilulas, FormularioDocumentacao, VERDE, display } from "../componentes";
+import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, Pilulas, FormularioDocumentacao, VERDE, display } from "../componentes";
 import { CONSULADOS, PRAZO_VISTO, PERGUNTAS_VISTO, TERMOS_VISTO_COE } from "../conteudo";
 import { Campo, classeInput } from "../../components/transporte/compartilhado";
 
@@ -213,6 +213,7 @@ export default function VistoPage() {
           </div>
         </section>
       )}
+      <RodapeAjisai />
     </main>
   );
 }

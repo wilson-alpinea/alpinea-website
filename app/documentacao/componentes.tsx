@@ -35,6 +35,26 @@ export function CabecalhoAjisai() {
   );
 }
 
+// Rodapé da Documentação (Wilson, 29/out/2026): mesmo layout do rodapé de
+// /empregos, em verde-escuro (VERDE) com logo e textos em branco.
+export function RodapeAjisai() {
+  return (
+    <footer className="px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20" style={{ background: VERDE }}>
+      <div className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-11 w-auto object-contain md:h-12" />
+        <p className="max-w-sm text-sm leading-relaxed text-white/75">
+          Visto, Certificado de Elegibilidade e exportação de pet para o Japão — com a Ajisai em cada etapa.
+        </p>
+        <p className="text-[11px] leading-relaxed text-white/45">
+          © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos Reservados — CNPJ:
+          43.544.605/0001-56
+        </p>
+      </div>
+    </footer>
+  );
+}
+
 // Hero compacto das subpáginas (o banner com foto fica só no hub).
 export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, alt = "" }: { kicker: string; titulo: string; subtitulo: string; voltar?: boolean; imagem?: string; alt?: string }) {
   return (
