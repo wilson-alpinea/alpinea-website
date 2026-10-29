@@ -8,7 +8,7 @@
 export type ServicoDoc = "visto" | "elegibilidade" | "pet";
 
 // ── Números de experiência (áudio do Wilson, 29/out/2026) ──
-export const EXPERIENCIA = { vistos: "+500", elegibilidades: "+150", pets: "+20" };
+export const EXPERIENCIA = { vistos: "+1.000", elegibilidades: "+300", pets: "+100" };
 
 // ── Visto específico — preço por pessoa, por consulado (já inclui a taxa consular) ──
 export type Consulado = { id: string; nome: string; comCOE: number; semCOE: number; dica?: string };

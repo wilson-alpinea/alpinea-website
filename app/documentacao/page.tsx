@@ -81,7 +81,7 @@ export default function DocumentacaoPage() {
             />
             <CardServico
               href="/documentacao/elegibilidade"
-              imagem="/images/documentacao-elegibilidade-coe.webp"
+              imagem="/images/documentacao-elegibilidade-selo.webp"
               alt="Exemplo de Certificate of Eligibility (在留資格認定証明書) emitido pela imigração japonesa"
               kicker="Com garantidor no Japão"
               titulo="Certificado de Elegibilidade"
