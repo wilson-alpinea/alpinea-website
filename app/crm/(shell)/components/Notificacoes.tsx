@@ -14,16 +14,16 @@ const fmt = (iso: string) =>
 // neste navegador (localStorage), como o cookie de "lidas".
 type Estado = { lidas: string[]; removidas: string[] };
 const VAZIO = "{}";
-const chave = (u: UnidadeNotificacao) => `crm_notificacoes_${u}`;
+const chave = (u: string) => `crm_notificacoes_${u}`;
 const ouvintes = new Set<() => void>();
-function ler(u: UnidadeNotificacao): string {
+function ler(u: string): string {
   try {
     return localStorage.getItem(chave(u)) ?? VAZIO;
   } catch {
     return VAZIO;
   }
 }
-function gravar(u: UnidadeNotificacao, e: Estado) {
+function gravar(u: string, e: Estado) {
   try {
     // Só ids recentes (as notificações cobrem 30 dias).
     localStorage.setItem(chave(u), JSON.stringify({ lidas: e.lidas.slice(-300), removidas: e.removidas.slice(-300) }));
@@ -63,26 +63,31 @@ export function Notificacoes({
   erro,
   unidade = "agencia",
   verTudo = { href: "/crm/atividade", rotulo: "Ver toda a atividade" },
+  variante,
 }: {
   lista: Notificacao[];
   naoLidas: number;
   erro?: boolean;
   unidade?: UnidadeNotificacao;
-  verTudo?: { href: string; rotulo: string };
+  verTudo?: { href: string; rotulo: string } | null;
+  /** Mesmo sino para alertas específicos (Pré-embarque, Upsell — Wilson, 29/out/2026). */
+  variante?: { chave: string; titulo: string; icone: string; vazio: string; subtitulo: string; cor: string };
 }) {
   const [aberto, setAberto] = useState(false);
   const [, iniciar] = useTransition();
-  const bruto = useSyncExternalStore(inscrever, () => ler(unidade), () => VAZIO);
+  const chaveLocal = variante?.chave ?? unidade;
+  const titulo = variante?.titulo ?? "Notificações";
+  const bruto = useSyncExternalStore(inscrever, () => ler(chaveLocal), () => VAZIO);
   const local = parse(bruto);
   const visiveis = lista.filter((n) => !local.removidas.includes(n.id));
   const ehNova = (n: Notificacao) => !n.lida && !local.lidas.includes(n.id);
   const qtdNovas = visiveis.filter(ehNova).length;
-  const marcarLida = (id: string) => gravar(unidade, { ...local, lidas: [...local.lidas.filter((x) => x !== id), id] });
-  const marcarNaoLida = (id: string) => gravar(unidade, { ...local, lidas: local.lidas.filter((x) => x !== id) });
-  const remover = (id: string) => gravar(unidade, { ...local, removidas: [...local.removidas, id] });
+  const marcarLida = (id: string) => gravar(chaveLocal, { ...local, lidas: [...local.lidas.filter((x) => x !== id), id] });
+  const marcarNaoLida = (id: string) => gravar(chaveLocal, { ...local, lidas: local.lidas.filter((x) => x !== id) });
+  const remover = (id: string) => gravar(chaveLocal, { ...local, removidas: [...local.removidas, id] });
   function marcarTodas() {
-    gravar(unidade, { ...local, lidas: [...local.lidas, ...visiveis.filter(ehNova).map((n) => n.id)] });
-    iniciar(() => marcarNotificacoesLidas(unidade));
+    gravar(chaveLocal, { ...local, lidas: [...local.lidas, ...visiveis.filter(ehNova).map((n) => n.id)] });
+    if (!variante) iniciar(() => marcarNotificacoesLidas(unidade));
   }
   const caixa = useRef<HTMLDivElement>(null);
 
@@ -113,28 +118,37 @@ export function Notificacoes({
         onClick={alternar}
         aria-expanded={aberto}
         aria-haspopup="dialog"
-        aria-label={tem ? `Notificações: ${qtdNovas} ${qtdNovas === 1 ? "nova" : "novas"}` : "Notificações: nenhuma nova"}
+        aria-label={tem ? `${titulo}: ${qtdNovas} ${qtdNovas === 1 ? "nova" : "novas"}` : `${titulo}: nenhuma nova`}
+        title={titulo}
         className="crm-livre relative flex h-[42px] w-[42px] items-center justify-center rounded-xl border border-[#D5DAE0] bg-white transition hover:border-[#24476B]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24476B]/30"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={tem ? "/images/icone-notificacao.png" : "/images/icone-notificacao-vazio.png"} alt="" aria-hidden="true" className="h-5 w-5" />
+        <img
+          src={variante ? variante.icone : tem ? "/images/icone-notificacao.png" : "/images/icone-notificacao-vazio.png"}
+          alt=""
+          aria-hidden="true"
+          className={variante ? `h-6 w-6 ${tem ? "" : "opacity-45"}` : "h-5 w-5"}
+        />
         {tem && (
-          <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#B42318] px-1 text-[11px] font-semibold leading-none text-white tabular-nums ring-2 ring-[#FAF9F6]">
+          <span style={variante ? { backgroundColor: variante.cor } : undefined} className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#B42318] px-1 text-[11px] font-semibold leading-none text-white tabular-nums ring-2 ring-[#FAF9F6]">
             {qtdNovas > 9 ? "9+" : qtdNovas}
           </span>
         )}
       </button>
 
       {aberto && (
-        <div role="dialog" aria-label="Notificações" className="absolute right-0 top-full z-40 mt-2 w-[min(92vw,380px)] overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.35)]">
+        <div role="dialog" aria-label={titulo} className="absolute right-0 top-full z-40 mt-2 w-[min(92vw,380px)] overflow-hidden rounded-2xl border border-black/[0.08] bg-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.35)]">
           <div className="flex items-center justify-between border-b border-[#EEF0F2] px-4 py-3">
-            <p className="text-base font-semibold text-[#20252B]">Notificações</p>
+            <div>
+              <p className="text-base font-semibold text-[#20252B]">{titulo}</p>
+              {variante && <p className="text-[12px] text-[#626B75]">{variante.subtitulo}</p>}
+            </div>
             {tem ? (
               <button type="button" onClick={marcarTodas} className="text-[13px] font-medium text-[#24476B] hover:underline">
                 Marcar todas como lidas
               </button>
             ) : (
-              <span className="text-[13px] text-[#626B75]">Últimos 30 dias</span>
+              <span className="text-[13px] text-[#626B75]">{variante ? "" : "Últimos 30 dias"}</span>
             )}
           </div>
           {erro ? (
@@ -142,7 +156,7 @@ export function Notificacoes({
               Não foi possível carregar as notificações.
             </p>
           ) : visiveis.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-[#626B75]">Nenhuma notificação por enquanto.</p>
+            <p className="px-4 py-8 text-center text-sm text-[#626B75]">{variante?.vazio ?? "Nenhuma notificação por enquanto."}</p>
           ) : (
             <ul className="max-h-[min(60vh,420px)] divide-y divide-[#EEF0F2] overflow-y-auto">
               {visiveis.map((n) => {
@@ -197,11 +211,13 @@ export function Notificacoes({
               })}
             </ul>
           )}
-          <div className="border-t border-[#EEF0F2] px-4 py-2.5 text-right">
-            <Link href={verTudo.href} onClick={() => setAberto(false)} className="text-sm font-medium text-[#24476B] hover:underline">
-              {verTudo.rotulo}
-            </Link>
-          </div>
+          {verTudo && (
+            <div className="border-t border-[#EEF0F2] px-4 py-2.5 text-right">
+              <Link href={verTudo.href} onClick={() => setAberto(false)} className="text-sm font-medium text-[#24476B] hover:underline">
+                {verTudo.rotulo}
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>

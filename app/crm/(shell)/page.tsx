@@ -23,6 +23,7 @@ import { Notificacoes } from "./components/Notificacoes";
 import { cookies } from "next/headers";
 import { obterAcesso } from "@/lib/crm/acesso";
 import { COOKIE_NOTIFICACOES, carregarNotificacoes } from "@/lib/crm/notificacoes";
+import { DIAS_PRE_EMBARQUE, DIAS_UPSELL, alertasAgencia } from "@/lib/crm/alertasAgencia";
 import { PeriodoSelector } from "./components/PeriodoSelector";
 import { FiltroProdutos } from "./components/FiltroProdutos";
 import { OPCOES_PRODUTO_AGENCIA } from "./components/opcoesProduto";
@@ -88,6 +89,10 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {/* Pré-embarque e Upsell, ao lado do sino (Wilson, 29/out/2026). */}
+          <Suspense fallback={null}>
+            <AlertasAgencia dados={dados} />
+          </Suspense>
           <Suspense fallback={<Notificacoes lista={[]} naoLidas={0} />}>
             <SinoNotificacoes />
           </Suspense>
@@ -216,6 +221,43 @@ async function Comissoes() {
 }
 
 // ── Notificações ─────────────────────────────────────────────────
+async function AlertasAgencia({ dados: p }: { dados: Promise<DadosPainel> }) {
+  const r = alertasAgencia(await p);
+  const erro = "erro" in r;
+  return (
+    <>
+      <Notificacoes
+        lista={erro ? [] : r.preEmbarque}
+        naoLidas={0}
+        erro={erro}
+        verTudo={null}
+        variante={{
+          chave: "agencia_pre_embarque",
+          titulo: "Protocolo Pré-embarque",
+          subtitulo: `Clientes que embarcam nos próximos ${DIAS_PRE_EMBARQUE} dias`,
+          icone: "/images/icone-crm-pre-embarque.png",
+          vazio: "Nenhum embarque nos próximos 7 dias.",
+          cor: "#24476B",
+        }}
+      />
+      <Notificacoes
+        lista={erro ? [] : r.upsell}
+        naoLidas={0}
+        erro={erro}
+        verTudo={null}
+        variante={{
+          chave: "agencia_upsell",
+          titulo: "Oportunidades de Upsell",
+          subtitulo: `${DIAS_UPSELL} dias após fechar (ou na metade do tempo até a viagem, se for menos)`,
+          icone: "/images/icone-crm-upsell.png",
+          vazio: "Nenhuma oportunidade de upsell agora.",
+          cor: "#28665D",
+        }}
+      />
+    </>
+  );
+}
+
 async function SinoNotificacoes() {
   const [supabase, acesso, jar] = await Promise.all([createClient(), obterAcesso(), cookies()]);
   const lidas = jar.get(COOKIE_NOTIFICACOES)?.value ?? null;
