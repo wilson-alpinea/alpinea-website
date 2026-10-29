@@ -4,6 +4,7 @@ import { createAdminClient } from "../../../../lib/supabase/admin";
 import { buscarPedido } from "../../../../lib/pagarme/client";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../../lib/email/templateCliente";
 import { processarPedidosEsimPagos } from "../../../../lib/simpremium/processarPedidosPagos";
+import { confirmarPagamentoDoc } from "../../../../lib/documentacao/pagamento";
 
 export const runtime = "nodejs";
 
@@ -198,6 +199,26 @@ export async function POST(req: Request) {
     .maybeSingle();
 
   if (erroBusca || !pagamento) {
+    // Documentação (Wilson, 29/out/2026): as parcelas do CRM de Documentação
+    // ficam em documentacao_pagamentos (migração 028) — mesmo link e mesmo
+    // webhook da Stone, CRM separado.
+    const { data: pagDoc } = await supabase
+      .from("documentacao_pagamentos")
+      .select("id, processo_id, parcela, valor_brl, status")
+      .eq("id", codigoInterno)
+      .maybeSingle();
+    if (pagDoc) {
+      if (pagDoc.status === "pago") return NextResponse.json({ received: true, jaProcessado: true }, { status: 200 });
+      try {
+        const resultado = await buscarPedido(pedidoIdGateway || codigoInterno);
+        const pago = resultado.status === "paid" || resultado.status === "paga";
+        await confirmarPagamentoDoc(supabase, pagDoc, { pago, statusGateway: resultado.status, pedidoIdGateway: pedidoIdGateway || null, forma: formaDoPedidoPagarme(resultado.raw) });
+        return NextResponse.json({ received: true, status: resultado.status }, { status: 200 });
+      } catch (err) {
+        console.error("Erro ao reconfirmar pedido de documentação na Pagar.me (webhook):", err);
+        return NextResponse.json({ error: "Não foi possível reconfirmar o pedido." }, { status: 502 });
+      }
+    }
     await alertarTimeSemCorrelacao(
       `Não achamos em 'pagamentos' nenhuma linha com id = ${codigoInterno}.`,
       body,

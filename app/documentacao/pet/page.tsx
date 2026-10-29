@@ -40,12 +40,10 @@ function GradeRacas({ titulo, racas }: { titulo: string; racas: RacaRestrita[] }
 function ListaRacas() {
   return (
     <div className="space-y-8">
-      <GradeRacas titulo="Cães — braquicefálicos e outras restrições" racas={RACAS_RESTRITAS_CAES} />
-      <GradeRacas titulo="Gatos — focinho achatado e outras restrições" racas={RACAS_RESTRITAS_GATOS} />
+      <GradeRacas titulo="Cães" racas={RACAS_RESTRITAS_CAES} />
+      <GradeRacas titulo="Gatos" racas={RACAS_RESTRITAS_GATOS} />
       <p className="text-xs leading-5 text-black/50">
-        Cruzamentos dessas raças também entram na restrição. As políticas variam entre companhias aéreas: algumas proíbem no porão, mas aceitam na
-        cabine se o animal for pequeno e couber sob o assento. Raças do tipo “pit bull”, Tosa, Dogo Argentino e similares também são proibidas por
-        diversas companhias e países.
+        Cruzamentos dessas raças também não são aceitos. Também não aceitamos raças do tipo “pit bull”, Tosa, Dogo Argentino e similares.
       </p>
     </div>
   );
@@ -125,13 +123,13 @@ export default function PetPage() {
         <p className="mt-4 text-xs leading-5 text-black/50">Taxas da companhia aérea para o transporte do pet e a caixa transportadora não estão inclusas.</p>
       </Secao>
 
-      <Secao kicker="Transporte aéreo" titulo="Raças geralmente não aceitas">
+      <Secao kicker="Transporte aéreo" titulo="Raças NÃO aceitas">
         <div className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-50/60 p-5 text-sm leading-6 text-black/70 md:p-6">
           <p className="font-medium text-black">Por que a raça importa tanto</p>
           <p className="mt-2">
             A cabine do avião é pressurizada como se estivesse a 2 ou 3 mil metros de altitude, por muitas horas. Raças de focinho curto (braquicefálicas)
             já têm vias respiratórias estreitas e respiram com dificuldade até ao nível do mar — no voo, o risco é alto. Por isso, as companhias aéreas não
-            embarcam essas raças para o Japão, mesmo com toda a documentação pronta. Confira a lista antes de contratar.
+            embarcam essas raças para o Japão, mesmo com toda a documentação pronta. Essas raças não são aceitas. Confira a lista antes de contratar.
           </p>
         </div>
         <ListaRacas />
@@ -154,15 +152,15 @@ export default function PetPage() {
           contexto={[["País de origem do passageiro e do pet", "Brasil (confirmado no cadastro)"]]}
           bloqueio={(r) =>
             r.p_racaRestrita === "Sim, está na lista"
-              ? "Infelizmente não conseguimos atender: as companhias aéreas não embarcam raças restritas para o Japão, mesmo com toda a documentação pronta."
+              ? "Infelizmente não conseguimos atender: as companhias aéreas não embarcam essas raças para o Japão, mesmo com toda a documentação pronta."
               : r.p_racaRestrita === "Não sei"
-                ? "Confira a lista de raças restritas na seção “Transporte aéreo” desta página antes de enviar. Se tiver dúvida sobre o cruzamento, fale com a equipe pelo WhatsApp."
+                ? "Confira a lista de raças NÃO aceitas na seção “Transporte aéreo” desta página antes de enviar. Se tiver dúvida sobre o cruzamento, fale com a equipe pelo WhatsApp."
                 : null
           }
           aviso={(r) =>
             racaRestrita(r.p_raca ?? "") && r.p_racaRestrita !== "Sim, está na lista" ? (
               <div className="rounded-2xl border border-amber-500/40 bg-amber-50 p-5 text-sm leading-6 text-amber-900">
-                A raça informada parece estar na lista de raças restritas. Confira a lista antes de enviar: raça restrita não pode ser contratada, e declarar a raça de forma incorreta tira o direito a qualquer reembolso.
+                A raça informada parece estar na lista de raças NÃO aceitas. Confira a lista antes de enviar: essas raças não podem ser contratadas, e declarar a raça de forma incorreta tira o direito a qualquer reembolso.
               </div>
             ) : null
           }
@@ -171,7 +169,7 @@ export default function PetPage() {
             {
               id: "racas",
               resumo: "Leu e aceitou as restrições de raças no transporte aéreo",
-              texto: "Li e aceito os termos de aceite de animais no transporte aéreo internacional e a lista de raças restritas, na seção “Transporte aéreo” acima.",
+              texto: "Li e aceito os termos de aceite de animais no transporte aéreo internacional e a lista de raças NÃO aceitas, na seção “Transporte aéreo” acima.",
             },
             { id: "termos", resumo: "Li e aceito os termos e condições do serviço (não reembolsável)", texto: "Li e aceito os termos e condições do serviço abaixo, incluindo que não há cancelamento com reembolso e que, se a raça for omitida ou declarada de forma incorreta, não há reembolso em nenhuma hipótese." },
           ]}

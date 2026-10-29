@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { ProcessoDoc } from "@/lib/crm/documentacao";
+import type { PagamentoDoc, ProcessoDoc } from "@/lib/crm/documentacao";
 import { DetalheDocumentacao } from "./DetalheDocumentacao";
 
 export const metadata: Metadata = {
@@ -34,5 +34,6 @@ export default async function ProcessoDocPage({ params }: { params: Promise<{ id
     aceites: Array.isArray(data.aceites) ? data.aceites : [],
     historico: Array.isArray(data.historico) ? data.historico : [],
   } as ProcessoDoc;
-  return <DetalheDocumentacao processo={processo} />;
+  const { data: pagamentos } = await createAdminClient().from("documentacao_pagamentos").select("id, created_at, parcela, valor_brl, valor_jpy, cotacao_brl_por_jpy, status, forma_pagamento, pago_em, gateway_pedido_id").eq("processo_id", id).order("created_at", { ascending: false });
+  return <DetalheDocumentacao processo={processo} pagamentos={(pagamentos ?? []) as PagamentoDoc[]} />;
 }

@@ -7,7 +7,7 @@
 import { useCallback, useState, useSyncExternalStore, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ETAPAS_DOC, FLUXO_DOC, SAIDAS_DOC, etapaDoc, servicoDoc, type EtapaDoc, type ProcessoDoc } from "@/lib/crm/documentacao";
+import { ETAPAS_DOC, FLUXO_DOC, SAIDAS_DOC, etapaDoc, servicoDoc, type EtapaDoc, type PagamentoDoc, type ProcessoDoc } from "@/lib/crm/documentacao";
 import { adicionarNotaDoc, mudarEtapaDoc, salvarDadosDoc } from "../../../documentacaoActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
 import { BadgeEtapaDoc, BadgeServicoDoc } from "../ListaDocumentacao";
@@ -36,7 +36,7 @@ const PROXIMA: Partial<Record<EtapaDoc, { etapa: EtapaDoc; rotulo: string; ajuda
   novo: { etapa: "em_analise", rotulo: "Iniciar análise", ajuda: "Confira as respostas do cadastro e os critérios eliminatórios." },
   em_analise: { etapa: "pre_aprovado", rotulo: "Pré-aprovar e liberar contrato", ajuda: "Informe o valor final antes. O contrato aparece no portal do cliente e ele recebe um e-mail. Se não atende, use “Mudar etapa”." },
   pre_aprovado: { etapa: "contrato_aceito", rotulo: "Marcar contrato aceito (manual)", ajuda: "Normalmente o cliente aceita sozinho no portal. Use só se o aceite foi feito fora do site." },
-  contrato_aceito: { etapa: "contratado", rotulo: "Confirmar pagamento", ajuda: "Confira o comprovante enviado no portal. Visto e pet: 100%. Elegibilidade: primeiros 50% (PTAX do dia)." },
+  contrato_aceito: { etapa: "contratado", rotulo: "Confirmar pagamento (manual)", ajuda: "O pagamento pela Stone avança sozinho. Use só se o cliente pagou por fora (ex.: transferência no Japão)." },
   contratado: { etapa: "documentacao", rotulo: "Lista de documentos enviada", ajuda: "Quando o cliente receber a lista do que reunir." },
   documentacao: { etapa: "protocolado", rotulo: "Marcar como protocolado", ajuda: "Entrada no consulado, na imigração ou, no pet, envio da sorologia/Import Permit." },
   protocolado: { etapa: "concluido", rotulo: "Concluir (entregue ao cliente)", ajuda: "Visto, certificado ou CVI entregues. Se as autoridades negarem, use “Mudar etapa”." },
@@ -67,7 +67,7 @@ function Linhas({ itens, larguraRotulo = "9rem" }: { itens: [string, React.React
   );
 }
 
-export function DetalheDocumentacao({ processo: p }: { processo: ProcessoDoc }) {
+export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo: ProcessoDoc; pagamentos?: PagamentoDoc[] }) {
   const router = useRouter();
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
   const [painel, setPainel] = useState<null | { tipo: "etapa"; para?: EtapaDoc } | { tipo: "dados" }>(null);
@@ -204,6 +204,26 @@ export function DetalheDocumentacao({ processo: p }: { processo: ProcessoDoc }) 
       </div>
 
       <PortalCliente p={p} />
+
+      <Card titulo="Pagamentos (Stone)" cor="#93703D">
+        {pagamentos.length === 0 ? (
+          <p className="text-sm text-[#6B635D]">Nenhum link de pagamento gerado ainda. O cliente paga pelo portal depois de aceitar o contrato.</p>
+        ) : (
+          <ul className="divide-y divide-[#F2ECE6] text-sm">
+            {pagamentos.map((g) => (
+              <li key={g.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                <span>
+                  Parcela {g.parcela} · <span className="tabular-nums">{brl(g.valor_brl)}</span>
+                  {g.valor_jpy ? <span className="text-[13px] text-[#6B635D]"> (¥{Number(g.valor_jpy).toLocaleString("ja-JP")} · PTAX {Number(g.cotacao_brl_por_jpy).toFixed(4)})</span> : null}
+                </span>
+                <span className={`text-[13px] font-medium ${g.status === "pago" ? "text-[#27675B]" : g.status === "cancelado" ? "text-[#76706A]" : "text-[#93703D]"}`}>
+                  {g.status === "pago" ? `Pago em ${dataHora(g.pago_em)}${g.forma_pagamento ? ` · ${g.forma_pagamento === "pix" ? "Pix" : "cartão"}` : ""}` : g.status === "cancelado" ? "Link substituído" : `Link gerado em ${dataHora(g.created_at)}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
 
       <Card titulo="Cadastro inicial (pré-análise)" cor="#42658A">
         <Linhas larguraRotulo="22rem" itens={p.respostas.map(([k, v]) => [k, v] as [string, React.ReactNode])} />
@@ -424,7 +444,7 @@ function PainelEtapa({ processo: p, para, onFechar, onSalvo }: { processo: Proce
               Motivo (opcional)
             </label>
             <input id="motivo" value={motivo} onChange={(e) => setMotivo(e.target.value)} maxLength={500} placeholder="Ex.: garantidor não é parente de 1º grau" className={CAMPO} />
-            <p className="mt-2 text-[13px] text-[#6B635D]">Lembrete: o serviço não é reembolsável. Única exceção — pet de raça restrita declarada corretamente, antes do início: 80%.</p>
+            <p className="mt-2 text-[13px] text-[#6B635D]">Lembrete: o serviço não é reembolsável. Única exceção — pet de raça não aceita declarada corretamente, antes do início: 80%.</p>
           </div>
         )}
         {erro && <p role="alert" className="rounded-lg bg-[#FDECEA] px-3 py-2 text-[13px] text-[#B42318]">{erro}</p>}
@@ -434,7 +454,8 @@ function PainelEtapa({ processo: p, para, onFechar, onSalvo }: { processo: Proce
 }
 
 function PainelDados({ processo: p, onFechar, onSalvo }: { processo: ProcessoDoc; onFechar: () => void; onSalvo: (t: string) => void }) {
-  const [valor, setValor] = useState(p.valor_final ?? "");
+  const [valor, setValor] = useState(p.valor_total != null ? String(p.valor_total).replace(".", ",") : "");
+  const [moeda, setMoeda] = useState<"BRL" | "JPY">(p.valor_moeda ?? (p.servico === "elegibilidade" ? "JPY" : "BRL"));
   const [email, setEmail] = useState(p.email ?? "");
   const [telefone, setTelefone] = useState(p.telefone ?? "");
   const [erro, setErro] = useState<string | null>(null);
@@ -455,7 +476,7 @@ function PainelDados({ processo: p, onFechar, onSalvo }: { processo: ProcessoDoc
             disabled={pendente}
             onClick={() =>
               iniciar(async () => {
-                const r = await salvarDadosDoc(p.id, { valor_final: valor, email, telefone });
+                const r = await salvarDadosDoc(p.id, { valor_total: valor, valor_moeda: moeda, email, telefone });
                 if (r.ok) {
                   onSalvo(r.mensagem);
                   onFechar();
@@ -472,9 +493,22 @@ function PainelDados({ processo: p, onFechar, onSalvo }: { processo: ProcessoDoc
       <div className="space-y-4">
         <div>
           <label htmlFor="valor" className={LABEL}>
-            Valor final fechado
+            Valor final fechado (total do processo)
           </label>
-          <input id="valor" value={valor} onChange={(e) => setValor(e.target.value)} maxLength={80} placeholder="Ex.: ¥149.000 ou R$ 1.980,00" className={CAMPO} />
+          <div className="flex gap-2">
+            <select aria-label="Moeda" value={moeda} onChange={(e) => setMoeda(e.target.value === "JPY" ? "JPY" : "BRL")} className={`${CAMPO} w-28`} disabled={Boolean(p.contrato_aceito_em)}>
+              <option value="BRL">R$</option>
+              <option value="JPY">¥</option>
+            </select>
+            <input id="valor" value={valor} inputMode="decimal" onChange={(e) => setValor(e.target.value)} maxLength={20} placeholder={moeda === "JPY" ? "149000" : "1980,00"} className={CAMPO} disabled={Boolean(p.contrato_aceito_em)} />
+          </div>
+          <p className="mt-1.5 text-[13px] text-[#6B635D]">
+            {p.contrato_aceito_em
+              ? "Contrato já aceito com este valor — não pode mais ser alterado."
+              : moeda === "JPY"
+                ? "Em ienes: a Stone cobra em reais pela PTAX do dia de cada pagamento" + (p.servico === "elegibilidade" ? ", em 2 parcelas de 50%." : ".")
+                : "Em reais: cobrado de uma vez pela Stone (cartão ou Pix)."}
+          </p>
         </div>
         <div>
           <label htmlFor="em" className={LABEL}>

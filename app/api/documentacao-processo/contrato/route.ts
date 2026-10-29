@@ -63,8 +63,8 @@ export async function POST(req: Request) {
       const email = {
         nome: sig.nome,
         titulo: `Contrato aceito — ${nomeServico}`,
-        intro: "Recebemos o seu aceite eletrônico. A cópia integral do contrato está abaixo. O próximo passo é o pagamento: envie o comprovante pelo seu link de acesso.",
-        etapas: [{ titulo: "Cadastro" }, { titulo: "Ficha e documentos" }, { titulo: "Análise da equipe" }, { titulo: "Contrato" }, { titulo: "Pagamento", texto: `Envie o comprovante em ${link}` }, { titulo: "Processo em andamento" }],
+        intro: "Recebemos o seu aceite eletrônico. A cópia integral do contrato está abaixo. O próximo passo é o pagamento pela Stone (cartão ou Pix), no seu link de acesso.",
+        etapas: [{ titulo: "Cadastro" }, { titulo: "Ficha e documentos" }, { titulo: "Análise da equipe" }, { titulo: "Contrato" }, { titulo: "Pagamento", texto: `Pague em ${link}` }, { titulo: "Processo em andamento" }],
         etapaAtual: 4,
         status: "Aguardando o pagamento",
         resumo: [["Valor", p.valor_final], ["Aceito em", data], ["Código de integridade", hash]] as [string, string][],
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
     await enviarEmailDoc({
       para: EMAIL_EQUIPE_DOC,
       assunto: `[DOCUMENTAÇÃO] Contrato aceito — ${nomeServico} — ${sig.nome}`,
-      texto: `${sig.nome} (CPF ${sig.cpf}) aceitou o contrato em ${data}.\nValor: ${p.valor_final}\nIP: ${ip ?? "—"}\nSHA-256: ${hash}\n\nPróximo passo: comprovante de pagamento.\nCRM: https://documentos.alpinea.io/crm/documentacao/${p.id}`,
+      texto: `${sig.nome} (CPF ${sig.cpf}) aceitou o contrato em ${data}.\nValor: ${p.valor_final}\nIP: ${ip ?? "—"}\nSHA-256: ${hash}\n\nPróximo passo: pagamento pela Stone no portal (confirma sozinho pelo webhook).\nCRM: https://documentos.alpinea.io/crm/documentacao/${p.id}`,
     });
     return NextResponse.json({ sucesso: true });
   } catch (e) {

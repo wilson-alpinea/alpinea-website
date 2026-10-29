@@ -106,7 +106,7 @@ export const PERGUNTAS_PET: Pergunta[] = [
   { id: "p_tipo", rotulo: "Tipo de pet", tipo: "opcoes", opcoes: ["Cachorro", "Gato"], ajuda: "Só aceitamos cães e gatos." },
   { id: "p_raca", rotulo: "Raça", tipo: "texto", placeholder: "Ex.: Shiba, SRD, Maine Coon", ajuda: "Informe a raça real do pet — inclusive em cruzamentos." },
   // Eliminatória (Wilson, 29/out/2026): raça restrita não segue para a contratação.
-  { id: "p_racaRestrita", rotulo: "A raça do seu pet (ou do cruzamento) está na lista de raças restritas desta página?", tipo: "opcoes", opcoes: ["Não, não está na lista", "Sim, está na lista", "Não sei"] },
+  { id: "p_racaRestrita", rotulo: "A raça do seu pet (ou do cruzamento) está na lista de raças NÃO aceitas desta página?", tipo: "opcoes", opcoes: ["Não, não está na lista", "Sim, está na lista", "Não sei"] },
   { id: "p_idade", rotulo: "Idade ou data de nascimento do pet", tipo: "texto" },
   { id: "p_porte", rotulo: "Porte", tipo: "opcoes", opcoes: ["Pequeno", "Médio", "Grande"] },
   { id: "p_altura", rotulo: "Altura", tipo: "numero", min: 1, max: 150, sufixo: "cm" },
@@ -143,15 +143,15 @@ export const RACAS_RESTRITAS_CAES: RacaRestrita[] = [
   { nome: "Bullmastiff", foto: "cao-bullmastiff.webp" },
   { nome: "Cane Corso", foto: "cao-cane-corso.webp" },
   { nome: "Dogue de Bordeaux", foto: "cao-dogue-de-bordeaux.webp" },
-  { nome: "American Staffordshire Terrier", foto: "cao-american-staffordshire.webp", nota: "em diversas companhias e países" },
-  { nome: "Staffordshire Bull Terrier", foto: "cao-staffordshire-bull-terrier.webp", nota: "em diversas companhias e países" },
+  { nome: "American Staffordshire Terrier", foto: "cao-american-staffordshire.webp" },
+  { nome: "Staffordshire Bull Terrier", foto: "cao-staffordshire-bull-terrier.webp" },
 ];
 export const RACAS_RESTRITAS_GATOS: RacaRestrita[] = [
   { nome: "Persa", foto: "gato-persa.webp" },
   { nome: "Himalaio", foto: "gato-himalaio.webp" },
   { nome: "Exotic Shorthair", foto: "gato-exotic-shorthair.webp" },
   { nome: "Burmês", foto: "gato-burmes.webp" },
-  { nome: "Scottish Fold", foto: "gato-scottish-fold.webp", nota: "em algumas companhias" },
+  { nome: "Scottish Fold", foto: "gato-scottish-fold.webp" },
 ];
 // Palavras para avisar no formulário (não bloqueia — a confirmação é da cia aérea).
 export const PALAVRAS_RACA_RESTRITA = [
@@ -163,7 +163,7 @@ export const PALAVRAS_RACA_RESTRITA = [
 export const TERMOS_RACAS = [
   ["Aceite exclusivo de raças permitidas", "Serão aceitos apenas cães e gatos de raças (ou cruzamentos) que sejam permitidos pelas companhias aéreas, regulamentações de transporte aéreo internacional (incluindo IATA) e normas dos países de origem, trânsito e destino. O aceite está condicionado à confirmação prévia da companhia aérea e à apresentação de documentação sanitária válida."],
   ["Responsabilidade do tutor", "O tutor é o único responsável por verificar, antes da reserva e do embarque, se a raça do animal é aceita pela companhia aérea escolhida e pelas autoridades dos países envolvidos. Raças não permitidas serão recusadas no check-in ou no embarque, sem direito a reembolso de taxas de transporte ou compensação por prejuízos decorrentes da recusa."],
-  ["Raças e características restritas ou proibidas", "Não serão aceitos animais pertencentes a raças braquicefálicas (de focinho curto) ou classificadas como restritas/proibidas pela maioria das companhias aéreas internacionais devido a riscos respiratórios, de termorregulação ou de segurança no porão de carga. Também se incluem raças consideradas de risco em determinadas rotas ou países."],
+  ["Raças NÃO aceitas", "Não são aceitos animais pertencentes a raças braquicefálicas (de focinho curto) ou classificadas como proibidas pela maioria das companhias aéreas internacionais devido a riscos respiratórios, de termorregulação ou de segurança no porão de carga. Também se incluem raças consideradas de risco em determinadas rotas ou países."],
   ["Documentação e condições de saúde", "É obrigatória a apresentação de certificado de saúde veterinário internacional, vacinação antirrábica válida, microchip (quando exigido) e demais documentos solicitados. Animais com problemas respiratórios, cardíacos ou outras condições de saúde que possam agravar-se durante o voo serão recusados."],
   ["Disposições finais", "Estas condições não substituem as regras específicas de cada companhia aérea nem a legislação dos países de destino. O não cumprimento implicará na recusa do transporte do animal. O tutor assume total responsabilidade por qualquer incidente decorrente do transporte de raça não autorizada."],
 ] as const;
@@ -196,11 +196,11 @@ export const TERMOS_VISTO_COE: [string, string][] = [
 
 export const TERMOS_PET: [string, string][] = [
   ["Escopo", "Documentação de exportação de cães e gatos do Brasil para o Japão. Não inclui passagem aérea, taxas da companhia aérea para o transporte do animal nem caixa transportadora. Não atendemos outros animais nem a rota Japão → Brasil."],
-  ["Raças", "O tutor declara a raça real do animal, inclusive em cruzamentos, e é responsável por confirmar a aceitação pela companhia aérea. Raças braquicefálicas ou restritas não são aceitas para contratação, porque as companhias aéreas recusam o embarque mesmo com a documentação pronta."],
+  ["Raças", "O tutor declara a raça real do animal, inclusive em cruzamentos, e é responsável por confirmar a aceitação pela companhia aérea. Raças braquicefálicas e as demais raças da lista de raças NÃO aceitas não são aceitas para contratação, porque as companhias aéreas recusam o embarque mesmo com a documentação pronta."],
   ["Saúde do animal", "O tutor é responsável pelo estado de saúde do animal. Os resultados de exames, como a sorologia, não dependem da Ajisai. Animais com problemas respiratórios, cardíacos ou outras condições que possam se agravar no voo podem ser recusados."],
   ["Sem garantia de aprovação", "A liberação depende da quarentena animal do Japão e das autoridades sanitárias brasileiras. Pets que não cumprirem os 180 dias após a sorologia ficam em quarentena no Japão pelo tempo que faltar."],
   ["Pagamento, cancelamento e reembolso", "Pagamento de 100% na contratação. Não há cancelamento com reembolso em nenhum momento, inclusive por desistência: os maiores custos — vacinas, exames e sorologia com envio ao laboratório nos EUA — acontecem logo no início do processo."],
-  ["Única exceção: raça restrita declarada", "Se, antes do início da prestação do serviço, a Ajisai identificar que a raça corretamente declarada pelo tutor é restrita, o contrato é desfeito e 80% do valor pago é devolvido; 20% ficam retidos para cobrir custos administrativos, tributários e operacionais do desfazimento."],
+  ["Única exceção: raça não aceita declarada corretamente", "Se, antes do início da prestação do serviço, a Ajisai identificar que a raça corretamente declarada pelo tutor está na lista de raças NÃO aceitas, o contrato é desfeito e 80% do valor pago é devolvido; 20% ficam retidos para cobrir custos administrativos, tributários e operacionais do desfazimento."],
   ["Declaração falsa ou omissão", "Se a raça for omitida ou declarada de forma incorreta (por exemplo, informada como sem raça definida), não há reembolso em nenhuma hipótese, e o tutor assume integralmente as consequências, incluindo a recusa de embarque pelas companhias aéreas."],
   ["Prazos", "O processo leva em média 9 meses e os prazos são estimados, pois dependem de clínicas, laboratório, companhias aéreas e órgãos oficiais."],
 ];

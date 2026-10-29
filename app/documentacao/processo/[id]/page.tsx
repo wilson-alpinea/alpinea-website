@@ -3,6 +3,9 @@ import Link from "next/link";
 import { carregarProcessoPublico, pessoasDoProcesso } from "@/lib/documentacao/processoPublico";
 import { parseFichaDoc, passoAtual, signatarioFicha, textoContrato, type DocumentoEnviado } from "../../processo";
 import { PortalProcesso } from "./PortalProcesso";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { pagarmeConfigurado } from "@/lib/pagarme/client";
+import { numeroParcelas, parcelaDevida } from "@/lib/documentacao/pagamento";
 
 // Portal do processo de Documentação (Wilson, 29/out/2026) — acesso só pelo
 // link com token enviado no fim do cadastro, como as etapas de /empregos.
@@ -12,9 +15,9 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-export default async function PortalPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ t?: string }> }) {
+export default async function PortalPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ t?: string; pagamento?: string }> }) {
   const { id } = await params;
-  const { t } = await searchParams;
+  const { t, pagamento } = await searchParams;
   const p = await carregarProcessoPublico(id, t);
   if (!p || !t) {
     return (
@@ -39,6 +42,9 @@ export default async function PortalPage({ params, searchParams }: { params: Pro
       ? textoContrato({ servico: p.servico, nome: sig.nome, cpf: sig.cpf, valorFinal: p.valor_final, pessoas: ficha.pessoas.map((x) => x.nome).filter(Boolean), resumo: p.resumo ?? "", data: "(data e hora do aceite)" })
       : null;
   const contratoAceito = (p.contrato ?? null) as { texto: { titulo: string; clausulas: string[] }; hash: string; aceito_em: string } | null;
+  const { data: parcelas } = await createAdminClient().from("documentacao_pagamentos").select("parcela, status, valor_brl, pago_em").eq("processo_id", p.id);
+  const pagas = (parcelas ?? []).filter((x) => x.status === "pago");
+  const devida = parcelaDevida({ id: p.id, servico: p.servico, etapa: p.etapa, valor_total: (p.valor_total as number | null) ?? null, valor_moeda: (p.valor_moeda as string | null) ?? "BRL" }, pagas.map((x) => x.parcela as number));
   const docs = ((Array.isArray(p.documentos) ? p.documentos : []) as DocumentoEnviado[]).map((d) => ({ id: d.id, tipo: d.tipo, nome: d.nome, tamanho: d.tamanho, enviado_em: d.enviado_em }));
 
   return (
@@ -56,6 +62,14 @@ export default async function PortalPage({ params, searchParams }: { params: Pro
       contratoPrevia={contratoPrevia}
       contratoAceito={contratoAceito}
       motivoSaida={p.motivo_saida}
+      pagamento={{
+        devida,
+        totalParcelas: numeroParcelas(p.servico),
+        pagas: pagas.map((x) => ({ parcela: x.parcela as number, valorBRL: Number(x.valor_brl), pagoEm: x.pago_em as string | null })),
+        online: pagarmeConfigurado(),
+        moeda: ((p.valor_moeda as string | null) ?? "BRL") === "JPY" ? "JPY" : "BRL",
+        voltouDoCheckout: pagamento === "concluido",
+      }}
     />
   );
 }

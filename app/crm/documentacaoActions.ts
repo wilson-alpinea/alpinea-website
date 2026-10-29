@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { garantirAdmin } from "@/lib/crm/acesso";
 import { SAIDAS_DOC, etapaDoc, isEtapaDoc, servicoDoc, type EventoDoc } from "@/lib/crm/documentacao";
 import { enviarEmailDoc, URL_SITE } from "@/lib/documentacao/processoPublico";
-import { urlPortal } from "@/app/documentacao/processo";
+import { textoValorFinal, urlPortal } from "@/app/documentacao/processo";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "@/lib/email/templateCliente";
 
 // Ações do CRM de Documentação (Wilson, 29/out/2026). Mesmo padrão do CRM de
@@ -18,7 +18,7 @@ const TABELA = "documentacao_processos";
 
 async function carregar(id: string) {
   const admin = createAdminClient();
-  const { data, error } = await admin.from(TABELA).select("id, etapa, historico, pago_em, protocolado_em, concluido_em, valor_final, email, telefone, nome, servico, acesso_token, ficha_enviada_em, liberado_contrato_em").eq("id", id).maybeSingle();
+  const { data, error } = await admin.from(TABELA).select("id, etapa, historico, pago_em, protocolado_em, concluido_em, valor_final, valor_total, valor_moeda, email, telefone, nome, servico, acesso_token, ficha_enviada_em, liberado_contrato_em, contrato_aceito_em").eq("id", id).maybeSingle();
   return { admin, processo: data, error };
 }
 
@@ -37,7 +37,7 @@ export async function mudarEtapaDoc(id: string, etapa: string, motivo?: string):
   // Pré-aprovar libera o contrato no portal: precisa da ficha e do valor final.
   if (etapa === "pre_aprovado") {
     if (!processo.ficha_enviada_em) return { ok: false, erro: "O cliente ainda não enviou a ficha completa e os documentos." };
-    if (!processo.valor_final) return { ok: false, erro: "Informe o valor final antes de pré-aprovar — ele vai no contrato." };
+    if (!(Number(processo.valor_total) > 0)) return { ok: false, erro: "Informe o valor final antes de pré-aprovar — ele vai no contrato e no pagamento da Stone." };
   }
 
   const agora = new Date().toISOString();
@@ -84,18 +84,24 @@ export async function mudarEtapaDoc(id: string, etapa: string, motivo?: string):
   return { ok: true, mensagem: `Etapa alterada para “${etapaDoc(etapa).label}”.${etapa === "pre_aprovado" ? " O cliente recebeu o contrato por e-mail." : ""}` };
 }
 
-export async function salvarDadosDoc(id: string, dados: { valor_final: string; email: string; telefone: string }): Promise<ResultadoDoc> {
+export async function salvarDadosDoc(id: string, dados: { valor_total: string; valor_moeda: string; email: string; telefone: string }): Promise<ResultadoDoc> {
   const acesso = await garantirAdmin();
   if (!UUID.test(id)) return { ok: false, erro: "Processo inválido." };
-  const valor = dados.valor_final.trim().slice(0, 80);
+  const moeda = dados.valor_moeda === "JPY" ? "JPY" : "BRL";
+  const bruto = dados.valor_total.trim();
+  const numero = bruto ? Number(bruto.replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", ".")) : null;
+  if (numero !== null && !(numero > 0)) return { ok: false, erro: "Valor inválido." };
   const email = dados.email.trim().slice(0, 160);
   const telefone = dados.telefone.trim().slice(0, 30);
   if (email && !/^\S+@\S+\.\S+$/.test(email)) return { ok: false, erro: "E-mail inválido." };
   const { admin, processo, error } = await carregar(id);
   if (error || !processo) return { ok: false, erro: "Processo não encontrado." };
 
+  const valor = numero !== null ? textoValorFinal(numero, moeda, processo.servico) : "";
+  // Depois do aceite, o valor faz parte do contrato assinado — não muda mais.
+  if (processo.contrato_aceito_em && (processo.valor_final ?? "") !== valor) return { ok: false, erro: "O contrato já foi aceito com este valor — ele não pode mais ser alterado." };
   const mudou: string[] = [];
-  if ((processo.valor_final ?? "") !== valor) mudou.push("valor final");
+  if ((processo.valor_final ?? "") !== valor || (processo.valor_moeda ?? "BRL") !== moeda) mudou.push("valor final");
   if ((processo.email ?? "") !== email) mudou.push("e-mail");
   if ((processo.telefone ?? "") !== telefone) mudou.push("telefone");
   if (mudou.length === 0) return { ok: true, mensagem: "Nada mudou." };
@@ -104,7 +110,7 @@ export async function salvarDadosDoc(id: string, dados: { valor_final: string; e
   const evento: EventoDoc = { em: agora, por: acesso.nome || acesso.email, tipo: "edicao", texto: `Alterou ${mudou.join(", ")}.` };
   const { error: e } = await admin
     .from(TABELA)
-    .update({ valor_final: valor || null, email: email || null, telefone: telefone || null, updated_at: agora, historico: [...((processo.historico as EventoDoc[]) ?? []), evento] })
+    .update({ valor_final: valor || null, valor_total: numero, valor_moeda: moeda, email: email || null, telefone: telefone || null, updated_at: agora, historico: [...((processo.historico as EventoDoc[]) ?? []), evento] })
     .eq("id", id);
   if (e) {
     console.error("Erro ao salvar dados (documentação):", e);

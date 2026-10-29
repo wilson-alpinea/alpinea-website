@@ -72,7 +72,12 @@ export type ProcessoDoc = {
   contrato: { texto: { titulo: string; clausulas: string[] }; hash: string; nome: string; cpf: string; ip: string | null; user_agent: string | null; aceito_em: string; versao: string } | null;
   contrato_aceito_em: string | null;
   liberado_contrato_em: string | null;
+  // Valor em número (migração 028) e parcelas pagas pela Stone
+  valor_total: number | null;
+  valor_moeda: "BRL" | "JPY";
 };
+
+export type PagamentoDoc = { id: string; created_at: string; parcela: number; valor_brl: number; valor_jpy: number | null; cotacao_brl_por_jpy: number | null; status: "pendente" | "pago" | "cancelado"; forma_pagamento: string | null; pago_em: string | null; gateway_pedido_id: string | null };
 
 /** Resumo de uma linha para a lista, a partir das respostas do cadastro. */
 export function resumoDoCadastro(servico: ServicoDocCrm, c: Record<string, string>, extra: Record<string, string> = {}): string {

@@ -12,7 +12,7 @@ import { formatarCpf } from "../../../lib/fichaCadastral";
 import { WHATSAPP_NUMBER } from "../../../produtos/page";
 import type { ServicoDoc } from "../../conteudo";
 import {
-  DADOS_PAGAMENTO_DOC, DOC_COMPROVANTE, PASSOS_PORTAL, TAMANHO_MAX_ARQUIVO, documentosServico, errosFicha, estruturaFicha,
+  DOC_COMPROVANTE, PASSOS_PORTAL, TAMANHO_MAX_ARQUIVO, documentosServico, errosFicha, estruturaFicha,
   type CampoFicha, type FichaDoc, type PassoPortal,
 } from "../../processo";
 
@@ -25,6 +25,58 @@ const ETAPA_ANDAMENTO: Record<string, string> = {
   documentacao: "Estamos reunindo e conferindo a documentação. Se precisarmos de algo, avisamos pelo WhatsApp.",
   protocolado: "Pedido protocolado. Agora o prazo depende do órgão responsável — avisamos assim que houver resposta.",
 };
+
+type InfoPagamento = {
+  devida: number | null;
+  totalParcelas: number;
+  pagas: { parcela: number; valorBRL: number; pagoEm: string | null }[];
+  online: boolean;
+  moeda: "BRL" | "JPY";
+  voltouDoCheckout: boolean;
+};
+
+const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+// Botão de pagamento pela Stone — mesmo checkout hospedado de /produtos
+// (cartão parcelado ou Pix). O valor é calculado no servidor na hora.
+function PagarStone({ id, token, info, zap }: { id: string; token: string; info: InfoPagamento; zap: string }) {
+  const [abrindo, setAbrindo] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  if (!info.devida) return null;
+  const rotuloParcela = info.totalParcelas > 1 ? ` — parcela ${info.devida} de ${info.totalParcelas} (50%)` : "";
+  async function pagar() {
+    setErro(null);
+    setAbrindo(true);
+    const r = await fetch("/api/documentacao-processo/pagamento", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, token }) }).catch(() => null);
+    const d = await r?.json().catch(() => ({}));
+    if (!r?.ok || !d?.checkoutUrl) {
+      setErro(d?.error || "Não foi possível abrir o pagamento agora. Tente novamente.");
+      setAbrindo(false);
+      return;
+    }
+    window.location.href = d.checkoutUrl;
+  }
+  if (!info.online) {
+    return (
+      <div className="text-sm leading-6 text-black/65">
+        O pagamento online está indisponível agora. <a href={zap} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: VERDE }}>Fale com a equipe pelo WhatsApp</a>.
+      </div>
+    );
+  }
+  return (
+    <div>
+      <p className="text-sm leading-6 text-black/65">
+        Pagamento seguro pela Stone{rotuloParcela}: cartão de crédito (com parcelamento) ou Pix.
+        {info.moeda === "JPY" && " O valor em reais é calculado pela PTAX do dia, no momento em que você abre o pagamento."}
+      </p>
+      <button type="button" onClick={() => void pagar()} disabled={abrindo} className="mt-4 flex min-h-[52px] w-full max-w-md items-center justify-center rounded-full px-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white disabled:opacity-50" style={{ background: VERDE }}>
+        {abrindo ? "Abrindo a Stone…" : "Pagar agora"}
+      </button>
+      {erro && <p role="alert" className="mt-3 text-xs text-red-600">{erro}</p>}
+      <p className="mt-3 text-xs text-black/45">Os dados do cartão são digitados na página da Stone, nunca no nosso site. A confirmação chega aqui e por e-mail automaticamente.</p>
+    </div>
+  );
+}
 
 function Bloco({ titulo, children, sub }: { titulo: string; sub?: string; children: React.ReactNode }) {
   return (
@@ -315,12 +367,13 @@ export function PortalProcesso(props: {
   id: string; token: string; servico: ServicoDoc; nome: string; etapa: string; passo: PassoPortal | "encerrado"; pessoas: number;
   fichaInicial: FichaDoc; documentosIniciais: DocPublico[]; valorFinal: string | null; contratoPrevia: Contrato | null;
   contratoAceito: { texto: Contrato; hash: string; aceito_em: string } | null; motivoSaida: string | null;
+  pagamento: InfoPagamento;
 }) {
   const { id, token, servico, passo } = props;
   const [docs, setDocs] = useState<DocPublico[]>(props.documentosIniciais);
   const recarregar = () => window.location.reload();
   const tiposDocs = documentosServico(servico);
-  const comprovante = [{ id: DOC_COMPROVANTE, rotulo: "Comprovante de pagamento", obrigatorio: true }];
+  void DOC_COMPROVANTE;
   const zap = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Olá! Sou ${props.nome} e tenho uma dúvida sobre meu processo de ${NOME_SERVICO[servico]}.`)}`;
 
   return (
@@ -359,36 +412,38 @@ export function PortalProcesso(props: {
           )}
 
           {passo === "pagamento" && (
-            <>
-              <Bloco titulo="Pagamento" sub={servico === "elegibilidade" ? "Primeira parcela: 50% do valor, convertido pela PTAX do dia do pagamento." : "Pagamento de 100% do valor."}>
-                {props.valorFinal && <p className={`${display.className} text-2xl`}>{props.valorFinal}</p>}
-                {DADOS_PAGAMENTO_DOC.pix ? (
-                  <div className="mt-4 space-y-1 rounded-xl bg-[#F6F7F5] p-4 text-sm">
-                    <p>Pix: <strong className="font-medium">{DADOS_PAGAMENTO_DOC.pix}</strong></p>
-                    <p className="text-xs text-black/55">Favorecido: {DADOS_PAGAMENTO_DOC.favorecido}</p>
-                    {DADOS_PAGAMENTO_DOC.ted && <p className="text-xs text-black/55">TED: {DADOS_PAGAMENTO_DOC.ted}</p>}
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm leading-6 text-black/65">A equipe envia os dados de pagamento e o valor em reais do dia pelo WhatsApp.</p>
-                )}
-                <a href={zap} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-[44px] items-center rounded-full border px-5 text-xs font-semibold uppercase tracking-[0.15em]" style={{ borderColor: VERDE, color: VERDE }}>
-                  Falar no WhatsApp
-                </a>
-              </Bloco>
-              <Bloco titulo="Enviar comprovante" sub="Depois de pagar, envie o comprovante aqui. A equipe confirma e o processo começa.">
-                <Documentos id={id} token={token} servico={servico} docs={docs} setDocs={setDocs} tipos={comprovante} podeRemover={false} />
-              </Bloco>
-            </>
+            <Bloco titulo="Pagamento">
+              {props.valorFinal && <p className={`${display.className} mb-4 text-2xl`}>{props.valorFinal}</p>}
+              {props.pagamento.voltouDoCheckout && props.pagamento.pagas.length === 0 ? (
+                <p className="rounded-xl bg-[#F6F7F5] p-4 text-sm leading-6 text-black/70">
+                  Recebemos você de volta da Stone. Assim que o pagamento for confirmado (no Pix, em segundos; no cartão, em alguns minutos), esta página e o seu e-mail são atualizados.
+                  <button type="button" onClick={recarregar} className="ml-1 underline" style={{ color: VERDE }}>Atualizar</button>
+                </p>
+              ) : (
+                <PagarStone id={id} token={token} info={props.pagamento} zap={zap} />
+              )}
+            </Bloco>
           )}
 
           {passo === "andamento" && (
             <>
               <Bloco titulo="Processo em andamento">
                 <p className="text-sm leading-6 text-black/70">{ETAPA_ANDAMENTO[props.etapa] ?? "Seu processo está em andamento."}</p>
-                {servico === "elegibilidade" && <p className="mt-3 text-xs leading-5 text-black/50">Lembrete: a segunda parcela (50%) é paga antes da entrada na imigração. Quando pagar, envie o comprovante abaixo.</p>}
+                {props.pagamento.pagas.length > 0 && (
+                  <ul className="mt-3 space-y-1 text-xs text-black/55">
+                    {props.pagamento.pagas.map((g) => (
+                      <li key={g.parcela}>✓ {props.pagamento.totalParcelas > 1 ? `Parcela ${g.parcela}` : "Pagamento"} de {brl(g.valorBRL)} confirmado</li>
+                    ))}
+                  </ul>
+                )}
               </Bloco>
-              <Bloco titulo="Enviar documentos ou comprovantes">
-                <Documentos id={id} token={token} servico={servico} docs={docs} setDocs={setDocs} tipos={[...comprovante, ...tiposDocs]} podeRemover={false} />
+              {props.pagamento.devida && (
+                <Bloco titulo="Segunda parcela" sub="Os 50% restantes são pagos antes da entrada do pedido na imigração.">
+                  <PagarStone id={id} token={token} info={props.pagamento} zap={zap} />
+                </Bloco>
+              )}
+              <Bloco titulo="Enviar mais documentos">
+                <Documentos id={id} token={token} servico={servico} docs={docs} setDocs={setDocs} tipos={tiposDocs} podeRemover={false} />
               </Bloco>
             </>
           )}

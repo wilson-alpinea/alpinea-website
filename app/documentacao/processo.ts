@@ -204,9 +204,9 @@ const OBJETO: Record<ServicoDoc, string> = {
 };
 
 const PAGAMENTO: Record<ServicoDoc, string> = {
-  visto: "100% (cem por cento) do valor na contratação, por Pix ou TED.",
-  elegibilidade: "50% (cinquenta por cento) antes do início do serviço e 50% (cinquenta por cento) antes da entrada do pedido na imigração, em reais convertidos pela PTAX do dia de cada pagamento, por Pix ou TED no Brasil ou transferência no Japão.",
-  pet: "100% (cem por cento) do valor na contratação, por Pix ou TED.",
+  visto: "100% (cem por cento) do valor na contratação, por cartão de crédito ou Pix, pelo link de pagamento da Stone no portal do processo.",
+  elegibilidade: "50% (cinquenta por cento) antes do início do serviço e 50% (cinquenta por cento) antes da entrada do pedido na imigração, em reais convertidos pela PTAX do dia de cada pagamento, por cartão de crédito ou Pix, pelo link de pagamento da Stone no portal do processo.",
+  pet: "100% (cem por cento) do valor na contratação, por cartão de crédito ou Pix, pelo link de pagamento da Stone no portal do processo.",
 };
 
 export type DadosContrato = { servico: ServicoDoc; nome: string; cpf: string; valorFinal: string; pessoas: string[]; resumo: string; data: string };
@@ -250,11 +250,11 @@ export function passoAtual(p: { etapa: string; ficha_enviada_em: string | null; 
   return "analise";
 }
 
-// Dados de pagamento mostrados no portal depois do aceite do contrato.
-// PREENCHER (Wilson): chave Pix e conta para TED. Enquanto estiver vazio, o
-// portal pede os dados à equipe pelo WhatsApp.
-export const DADOS_PAGAMENTO_DOC: { pix: string | null; favorecido: string; ted: string | null } = {
-  pix: null,
-  favorecido: CONTRATADA_DOC.razaoSocial,
-  ted: null,
-};
+/** Texto do valor final usado no contrato e no portal. */
+export function textoValorFinal(total: number, moeda: "BRL" | "JPY", servico: ServicoDoc): string {
+  if (moeda === "JPY") {
+    const ienes = `¥${Math.round(total).toLocaleString("ja-JP")}`;
+    return servico === "elegibilidade" ? `${ienes}, pagos em reais pela PTAX do dia de cada parcela (2 × 50%)` : `${ienes}, pagos em reais pela PTAX do dia do pagamento`;
+  }
+  return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
