@@ -14,7 +14,7 @@
 // (ficha, arquivo, contrato, pagamento). Se a pessoa fechar a página, segue
 // pelo link do portal que recebeu por e-mail.
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { CampoPergunta, Pilulas, VERDE, display } from "./componentes";
 import { Campo, classeInput, mascararWhatsapp } from "../components/transporte/compartilhado";
@@ -71,6 +71,7 @@ const ACEITES = [
 type Ptax = { brlPorJPY: number; data: string | null; fallback: boolean };
 type Sessao = { id: string; token: string; nome: string };
 
+const semAssinatura = () => () => {};
 const botao = "flex min-h-[52px] items-center justify-center rounded-full px-7 text-[11px] font-semibold uppercase tracking-[0.2em] transition disabled:opacity-50";
 
 export function SolicitacaoOnline({ servico }: { servico: Servico }) {
@@ -107,13 +108,27 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
 
   // ── Processo criado no CRM ──
   const [sessao, setSessao] = useState<Sessao | null>(null);
-  const [anterior, setAnterior] = useState<Sessao | null>(null);
-  useEffect(() => {
+  // Solicitação começada antes neste aparelho (link do portal guardado).
+  const [descartada, setDescartada] = useState(false);
+  const bruto = useSyncExternalStore(
+    semAssinatura,
+    () => {
+      try {
+        return window.localStorage.getItem(chave);
+      } catch {
+        return null;
+      }
+    },
+    () => null,
+  );
+  const anterior = useMemo<Sessao | null>(() => {
+    if (!bruto || descartada) return null;
     try {
-      const s = window.localStorage.getItem(chave);
-      if (s) setAnterior(JSON.parse(s));
-    } catch {}
-  }, [chave]);
+      return JSON.parse(bruto) as Sessao;
+    } catch {
+      return null;
+    }
+  }, [bruto, descartada]);
 
   // ── Ficha ──
   const est = useMemo(() => estruturaFicha(servico), [servico]);
@@ -238,7 +253,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
     } catch {}
     window.gtag?.("event", "generate_lead", { form_name: `documentacao_${servico}_online`, contact_channel: "site" });
     // Ficha já começa com o titular e o nome do responsável.
-    setFicha({ pessoas: Array.from({ length: pessoas }, (_, i) => (i === 0 ? { relacao: "Titular", nome } : {})), dados: {} });
+    setFicha({ pessoas: Array.from({ length: pessoas }, (_, i): Record<string, string> => (i === 0 ? { relacao: "Titular", nome } : {})), dados: {} });
     setAssNome(nome);
     return true;
   }
@@ -298,7 +313,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
           <span className="text-black/75">Você já começou uma solicitação{anterior.nome ? ` em nome de ${anterior.nome.split(" ")[0]}` : ""}. Continue de onde parou:</span>
           <span className="flex gap-2">
             <a href={urlPortal(anterior.id, anterior.token)} className="rounded-full px-4 py-2 text-xs font-semibold text-white" style={{ background: VERDE }}>Continuar</a>
-            <button type="button" onClick={() => { try { window.localStorage.removeItem(chave); } catch {} setAnterior(null); }} className="rounded-full border border-black/15 px-4 py-2 text-xs text-black/60">Começar nova</button>
+            <button type="button" onClick={() => { try { window.localStorage.removeItem(chave); } catch {} setDescartada(true); }} className="rounded-full border border-black/15 px-4 py-2 text-xs text-black/60">Começar nova</button>
           </span>
         </div>
       )}

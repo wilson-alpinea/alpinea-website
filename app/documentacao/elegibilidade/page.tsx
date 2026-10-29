@@ -5,50 +5,27 @@
 // referência em reais pela PTAX do dia ("pode usar PTAX para o câmbio em
 // real ... para o check out em reais"). Pagamento 50% + 50%.
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { formatBRL, formatJPY } from "../../hooks/useCambioUSD";
-import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, Pilulas, FormularioDocumentacao, VERDE, display } from "../componentes";
-import { PERGUNTAS_VISTO, PERGUNTAS_GARANTIDOR, TERMOS_VISTO_COE, COE_FAMILIA_JPY, COE_INDIVIDUAL_JPY, COE_MAX_PESSOAS_SITE, precoCOEJPY } from "../conteudo";
-import { Campo, classeInput } from "../../components/transporte/compartilhado";
+import { formatJPY } from "../../hooks/useCambioUSD";
+import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, VERDE } from "../componentes";
+import { TERMOS_VISTO_COE, COE_FAMILIA_JPY, COE_INDIVIDUAL_JPY } from "../conteudo";
+import { SolicitacaoOnline } from "../SolicitacaoOnline";
 
-type Ptax = { brlPorJPY: number; data: string | null; fallback: boolean };
-
-const PERFIS = [
-  "Sou nissei (filho de japonês)",
-  "Sou sansei (neto de japonês)",
-  "Sou cônjuge de nissei ou sansei",
-  "Sou filho(a) dependente, até 18 anos",
-  "Nenhuma das opções",
-] as const;
-const PERFIL_FORA = "Nenhuma das opções";
+// Solicitação 100% online (Wilson, 29/out/2026): passos numerados como a
+// candidatura de /empregos, 50% pela Stone na contratação e registro no CRM
+// de Documentação — ver SolicitacaoOnline.tsx. Banner com a foto do
+// certificado e degradê verde-escuro.
 
 export default function ElegibilidadePage() {
-  const [perfil, setPerfil] = useState("");
-  const [pessoas, setPessoas] = useState(1);
-  const [ptax, setPtax] = useState<Ptax | null>(null);
-
-  useEffect(() => {
-    fetch("/api/cambio-iene-ptax")
-      .then((r) => r.json())
-      .then((d: Ptax) => setPtax(d))
-      .catch(() => setPtax(null));
-  }, []);
-
-  const liberado = perfil !== "" && perfil !== PERFIL_FORA;
-  const individual = perfil.includes("cônjuge") ? "conjuge" : "descendente";
-  const totalJPY = precoCOEJPY(pessoas, individual);
-  const totalBRL = totalJPY && ptax ? Math.round(totalJPY * ptax.brlPorJPY * 100) / 100 : null;
-
   return (
     <main className="min-h-screen overflow-x-clip bg-white text-black">
       <CabecalhoAjisai />
       <HeroServico
         kicker="Documentação · Elegibilidade"
         titulo="Certificado de Elegibilidade"
-        subtitulo="O documento emitido pela imigração do Japão que libera o visto específico em cerca de 2 semanas. Cuidamos do processo no Japão, com advogado de imigração e atendimento em português."
-        imagem="/images/documentacao-elegibilidade.webp"
-        alt="Consultora preenchendo o formulário do certificado com a cliente"
+        subtitulo="O documento emitido pela imigração do Japão que libera o visto específico em cerca de 2 semanas. Cuidamos do processo no Japão, com advogado de imigração e atendimento em português. Solicitação e pagamento 100% online."
+        fundo="/images/documentacao-elegibilidade-banner.webp"
+        cta={{ href: "#solicitar", rotulo: "Solicitar online" }}
       />
 
       <Secao kicker="O que é" titulo="Um garantidor no Japão, oficializado pela imigração">
@@ -72,63 +49,25 @@ export default function ElegibilidadePage() {
         </div>
       </Secao>
 
-      <Secao kicker="Passo 1" titulo="Este serviço é para você?" cinza>
-        <p className="text-sm leading-6 text-black/65">O certificado é a etapa do visto específico — exclusivo para descendentes até a 3ª geração, cônjuges e dependentes.</p>
-        <div className="mt-5">
-          <Pilulas opcoes={[...PERFIS]} valor={perfil} onChange={setPerfil} nome="Perfil do solicitante" />
+      <Secao kicker="Valores" titulo="Valor final do pacote" cinza id="valor">
+        <p className="text-sm leading-6 text-black/65">
+          O certificado é a etapa do visto específico — exclusivo para descendentes até a 3ª geração, cônjuges e dependentes. Valor fechado, em ienes, cobrado em
+          reais pela PTAX do dia de cada pagamento: 50% na contratação e 50% antes da entrada na imigração.
+        </p>
+        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {[
+            ["1 descendente", COE_INDIVIDUAL_JPY.descendente],
+            ["1 cônjuge", COE_INDIVIDUAL_JPY.conjuge],
+            ...Object.entries(COE_FAMILIA_JPY).map(([n, v]) => [`${n} pessoas`, v] as [string, number]),
+          ].map(([rotulo, valor]) => (
+            <div key={rotulo as string} className="rounded-xl border border-black/10 bg-white p-3 text-center">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-black/45">{rotulo}</p>
+              <p className="mt-1 text-sm font-medium text-black">{formatJPY(valor as number)}</p>
+            </div>
+          ))}
         </div>
-        {perfil === PERFIL_FORA && (
-          <div className="mt-5 rounded-2xl border border-black/10 bg-white p-5 text-sm leading-6 text-black/70">
-            Hoje trabalhamos só com o visto específico e o certificado ligado a ele, por isso não conseguimos ajudar com o seu caso. Se a sua situação
-            familiar é diferente, fale com a gente pelo WhatsApp antes de desistir.
-          </div>
-        )}
+        <p className="mt-3 text-xs leading-5 text-black/50">Para 6 pessoas ou mais, o valor é sob consulta.</p>
       </Secao>
-
-      {liberado && (
-        <Secao kicker="Passo 2" titulo="Valor final do pacote" id="valor">
-          <div className="grid gap-5 rounded-2xl border border-black/10 p-5 md:grid-cols-2 md:p-7">
-            <Campo rotulo="Quantas pessoas vão pedir o certificado?" ajuda="Família no mesmo processo tem desconto.">
-              <select value={pessoas} onChange={(e) => setPessoas(Number(e.target.value))} className={classeInput(false)}>
-                {Array.from({ length: COE_MAX_PESSOAS_SITE + 1 }, (_, i) => i + 1).map((n) => (
-                  <option key={n} value={n}>{n > COE_MAX_PESSOAS_SITE ? `${COE_MAX_PESSOAS_SITE + 1} ou mais` : `${n} ${n === 1 ? "pessoa" : "pessoas"}`}</option>
-                ))}
-              </select>
-            </Campo>
-          </div>
-
-          <div className="mt-5 rounded-2xl p-6 text-white md:p-8" style={{ background: VERDE }}>
-            {totalJPY ? (
-              <>
-                <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Total para {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}</p>
-                <p className={`${display.className} mt-2 text-4xl`}>{formatJPY(totalJPY)}</p>
-                <p className="mt-2 text-sm text-white/75">
-                  {totalBRL ? `≈ ${formatBRL(totalBRL)} pela PTAX ${ptax?.data ? `de ${ptax.data}` : "do dia"}` : "Carregando a cotação…"}
-                  {ptax?.fallback && " (estimativa — cotação do Banco Central indisponível agora)"}
-                </p>
-                <p className="mt-3 text-xs leading-5 text-white/60">
-                  O valor em reais é calculado pela PTAX do dia de cada pagamento. 50% antes de iniciar o serviço e 50% antes da entrada na imigração, por Pix ou TED no Brasil ou transferência no Japão.
-                </p>
-              </>
-            ) : (
-              <p className="text-sm text-white/80">Para {COE_MAX_PESSOAS_SITE + 1} pessoas ou mais, o valor é sob consulta — faça o cadastro e a equipe envia a proposta.</p>
-            )}
-          </div>
-
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {[
-              ["1 descendente", COE_INDIVIDUAL_JPY.descendente],
-              ["1 cônjuge", COE_INDIVIDUAL_JPY.conjuge],
-              ...Object.entries(COE_FAMILIA_JPY).map(([n, v]) => [`${n} pessoas`, v] as [string, number]),
-            ].map(([rotulo, valor]) => (
-              <div key={rotulo as string} className="rounded-xl border border-black/10 p-3 text-center">
-                <p className="text-[10px] uppercase tracking-[0.15em] text-black/45">{rotulo}</p>
-                <p className="mt-1 text-sm font-medium text-black">{formatJPY(valor as number)}</p>
-              </div>
-            ))}
-          </div>
-        </Secao>
-      )}
 
       <Secao kicker="O que está incluso" titulo="Do Brasil à imigração do Japão — e de volta" cinza>
         <ListaCheck
@@ -148,8 +87,8 @@ export default function ElegibilidadePage() {
       <Secao kicker="Como funciona" titulo="Etapas até o certificado no Brasil">
         <Etapas
           itens={[
-            { titulo: "Cadastro e análise", texto: "Avaliamos o seu caso e o do garantidor." },
-            { titulo: "Contratação", texto: "Primeiros 50% do valor." },
+            { titulo: "Solicitação online", texto: "Cadastro, garantidor, ficha e documentos, aqui no site." },
+            { titulo: "Contrato e pagamento", texto: "Aceite eletrônico e primeiros 50% pela Stone." },
             { titulo: "Lista de documentos", texto: "Para você e para o garantidor." },
             { titulo: "Documentos no Japão", texto: "Conferência e traduções." },
             { titulo: "Entrada na imigração", texto: "Segundos 50% antes do protocolo." },
@@ -194,36 +133,9 @@ export default function ElegibilidadePage() {
         </div>
       </Secao>
 
-      {liberado ? (
-        <Secao kicker="Passo 3" titulo="Cadastro do certificado" cinza id="cadastro">
-          <p className="mb-6 text-sm leading-6 text-black/60">
-            Todas as perguntas são obrigatórias — incluindo as do garantidor. Se não souber alguma resposta, confirme com ele antes de enviar.
-          </p>
-          <FormularioDocumentacao
-            servico="elegibilidade"
-            grupos={[
-              { titulo: "Sobre o solicitante", perguntas: PERGUNTAS_VISTO },
-              { titulo: "Sobre o garantidor no Japão", perguntas: PERGUNTAS_GARANTIDOR },
-            ]}
-            respostasIniciais={{ qtd: String(pessoas) }}
-            valorReferenciaBRL={totalBRL}
-            camposExtras={{ perfil, valorJPY: totalJPY ? String(totalJPY) : "" }}
-            contexto={[
-              ["Perfil informado no filtro", perfil],
-              ["Pessoas (simulação)", String(pessoas)],
-              ["Valor mostrado", totalJPY ? `${formatJPY(totalJPY)}${totalBRL ? ` ≈ ${formatBRL(totalBRL)} (PTAX ${ptax?.data ?? "estimada"})` : ""}` : "Sob consulta"],
-            ]}
-            aceites={[
-              { id: "termos", resumo: "Li e aceito os termos e condições do serviço", texto: "Li e aceito os termos e condições do serviço (seção “Quanto tempo leva”)." },
-              { id: "garantia", resumo: "Ciente: pagamento e documentos não garantem aprovação; serviço não reembolsável", texto: "Entendo que o pagamento, o envio dos documentos e a pré-aprovação do cadastro não garantem a emissão do certificado — a decisão é da imigração do Japão — e que o serviço não é reembolsável, inclusive em caso de negativa." },
-            ]}
-          />
-        </Secao>
-      ) : (
-        <section className="bg-[#F6F7F5]">
-          <div className="mx-auto max-w-5xl px-5 py-10 text-center text-sm text-black/55 md:px-8">Responda o seu perfil no Passo 1 para ver o valor e fazer o cadastro.</div>
-        </section>
-      )}
+      <Secao kicker="Solicitação 100% online" titulo="Solicite o seu certificado" cinza id="solicitar">
+        <SolicitacaoOnline servico="elegibilidade" />
+      </Secao>
       <RodapeAjisai />
     </main>
   );
