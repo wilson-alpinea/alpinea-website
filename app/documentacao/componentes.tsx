@@ -60,7 +60,9 @@ export function RodapeAjisai() {
 // com degradê verde-escuro por cima para dar leitura aos textos. `cta`:
 // botão que leva à solicitação online na própria página.
 export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, alt = "", fundo, cta }: { kicker: string; titulo: string; subtitulo: string; voltar?: boolean; imagem?: string; alt?: string; fundo?: string; cta?: { href: string; rotulo: string } }) {
-  const comFoto = Boolean(imagem) && !fundo;
+  // Com `fundo` E `imagem` (Wilson, 29/out/2026): composição — foto do
+  // documento escurecida em verde no fundo e a foto quadrada à direita.
+  const comFoto = Boolean(imagem);
   return (
     <section className="relative isolate overflow-hidden pt-[72px] text-white md:pt-[84px]" style={{ background: `linear-gradient(160deg, #06261E 0%, ${VERDE} 60%, #12503F 100%)` }}>
       {fundo && (
@@ -71,7 +73,7 @@ export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, 
         </>
       )}
       <div className={`mx-auto max-w-5xl px-5 pb-12 pt-10 md:px-8 md:pb-20 md:pt-16 ${comFoto ? "md:grid md:grid-cols-[1.25fr_1fr] md:items-center md:gap-10" : ""}`}>
-        <div className={fundo ? "max-w-2xl" : ""}>
+        <div className={fundo && !imagem ? "max-w-2xl" : ""}>
         {voltar && (
           <Link href="/documentacao" className="mb-6 inline-flex min-h-[44px] items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70 transition hover:text-white">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>

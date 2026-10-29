@@ -25,6 +25,7 @@ import { CONSULADOS, PALAVRAS_RACA_RESTRITA, PERGUNTAS_GARANTIDOR, PERGUNTAS_PET
 import { documentosServico, errosFicha, estruturaFicha, urlPortal, type FichaDoc } from "./processo";
 import { Bloco, CampoDinamico, Documentos, PagarStone, type Contrato, type DocPublico } from "./processo/[id]/PortalProcesso";
 import { MAX_PESSOAS_ONLINE, precoOnline } from "@/lib/documentacao/precoOnline";
+import { InfoEtapa } from "./InfoSolicitacao";
 
 type Servico = "visto" | "elegibilidade" | "pet";
 type PassoId = "perfil" | "valor" | "dados" | "garantidor" | "solicitantes" | "titular" | "documentos" | "contrato" | "pagamento" | "pet" | "analise";
@@ -84,7 +85,7 @@ const racaRestrita = (raca: string) => {
 };
 
 const ACEITES = [
-  { id: "termos", resumo: "Li e aceito os termos e condições do serviço", texto: "Li e aceito os termos e condições do serviço (seção “Quanto tempo leva”)." },
+  { id: "termos", resumo: "Li e aceito os termos e condições do serviço", texto: "Li e aceito os termos e condições do serviço (acima, nesta etapa)." },
   { id: "garantia", resumo: "Ciente: pagamento e documentos não garantem aprovação; serviço não reembolsável", texto: "Entendo que o pagamento e o envio dos documentos não garantem a aprovação — a decisão é das autoridades japonesas — e que o serviço não é reembolsável, inclusive em caso de negativa." },
 ];
 
@@ -377,7 +378,8 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
         <h3 className={`${display.className} text-2xl font-medium text-black`}>{passo.titulo}</h3>
         <p className="mt-1 text-sm leading-6 text-black/55">{passo.descricao}</p>
 
-        <div className="mt-6">
+        <div className="mt-6 space-y-6">
+          <InfoEtapa servico={servico} passo={passo.id} />
           {passo.id === "perfil" && (
             <>
               <Pilulas opcoes={PERFIS} valor={perfil} onChange={setPerfil} nome="Perfil do solicitante" />
@@ -387,7 +389,6 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                   <a href={zap} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: VERDE }}>Fale com a equipe</a> se a sua situação familiar for diferente.
                 </div>
               )}
-              <p className="mt-5 text-xs leading-5 text-black/50">Atendemos nisseis, sanseis, cônjuges e filhos dependentes até 18 anos. Não emitimos visto de estudante, trabalho ou de outras categorias.</p>
             </>
           )}
 
@@ -482,7 +483,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                 ))}
               </div>
               <p className="text-xs leading-5 text-black/55">
-                Confira a <a href="#racas" className="underline" style={{ color: VERDE }}>lista de raças NÃO aceitas</a> pelas companhias aéreas antes de seguir. Para mais de um pet, faça uma solicitação por animal.
+                Confira a lista de raças NÃO aceitas (acima) antes de seguir. Para mais de um pet, faça uma solicitação por animal.
               </p>
               {racaRestrita(respostas.p_raca ?? "") && respostas.p_racaRestrita !== "Sim, está na lista" && (
                 <div className="rounded-2xl border border-amber-500/40 bg-amber-50 p-5 text-sm leading-6 text-amber-900">
@@ -578,7 +579,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                   Entendo que o pagamento e o envio dos documentos não garantem a aprovação, que a decisão é das autoridades e que o serviço não é reembolsável.
                 </label>
               </div>
-              <p className="text-xs leading-5 text-black/45">O aceite fica registrado com data, hora, IP e código de integridade do texto, e uma cópia vai para o seu e-mail.</p>
+              <p className="text-xs leading-5 text-black/45">Os termos acima também estão neste contrato. O aceite fica registrado com data, hora, IP e código de integridade do texto, e uma cópia vai para o seu e-mail.</p>
             </div>
           )}
 
