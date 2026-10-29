@@ -134,3 +134,28 @@ export async function adicionarNotaDoc(id: string, texto: string): Promise<Resul
   revalidar(id);
   return { ok: true, mensagem: "Nota registrada." };
 }
+
+// Despachante do processo (Wilson, 29/out/2026) — quem recebe acesso, no
+// portal /crm/despachante, só a este cadastro (sem financeiro). Migração 029.
+export async function atribuirDespachanteDoc(id: string, despachanteId: string | null): Promise<ResultadoDoc> {
+  const acesso = await garantirAdmin();
+  if (!UUID.test(id)) return { ok: false, erro: "Processo inválido." };
+  const { admin, processo, error } = await carregar(id);
+  if (error || !processo) return { ok: false, erro: "Processo não encontrado." };
+  let nomeDespachante = "nenhum";
+  if (despachanteId) {
+    if (!UUID.test(despachanteId)) return { ok: false, erro: "Despachante inválido." };
+    const { data: perfil } = await admin.from("perfis").select("id, nome, email, papel").eq("id", despachanteId).maybeSingle();
+    if (!perfil || perfil.papel !== "despachante") return { ok: false, erro: "Esse usuário não tem o perfil de despachante (Acessos)." };
+    nomeDespachante = perfil.nome || perfil.email;
+  }
+  const agora = new Date().toISOString();
+  const evento: EventoDoc = { em: agora, por: acesso.nome || acesso.email, tipo: "edicao", texto: `Despachante: ${nomeDespachante}.` };
+  const { error: e } = await admin
+    .from(TABELA)
+    .update({ despachante_id: despachanteId, updated_at: agora, historico: [...((processo.historico as EventoDoc[]) ?? []), evento] })
+    .eq("id", id);
+  if (e) return { ok: false, erro: "Não foi possível salvar. A migração 029 (despachante) já rodou no Supabase?" };
+  revalidar(id);
+  return { ok: true, mensagem: despachanteId ? `Processo atribuído a ${nomeDespachante}.` : "Despachante removido." };
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { urlUnidade } from "@/lib/crm/unidades";
 import { PortalShell } from "../PortalShell";
+import { SinoUnidade } from "../(shell)/components/SinoUnidade";
 
 // alpinea.io/crm — escolha do CRM (Wilson, 21/out/2026; + Seguro Viagem 26/out): "ao acessar o
 // domínio /crm, precisa ter uma opção pra entrar no CRM da agência ou da
@@ -82,9 +83,13 @@ export default async function EscolherCrmPage() {
           {UNIDADES.map((u) => (
             <section
               key={u.unidade}
-              className="flex flex-col rounded-2xl border border-t-[3px] border-black/[0.06] p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(0,0,0,0.05),0_22px_40px_-22px_rgba(0,0,0,0.25)] md:p-8"
+              className="relative flex flex-col rounded-2xl border border-t-[3px] border-black/[0.06] p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(0,0,0,0.05),0_22px_40px_-22px_rgba(0,0,0,0.25)] md:p-8"
               style={{ backgroundColor: u.fundo, borderTopColor: u.cor }}
             >
+              {/* Sino com as notificações recentes de cada CRM (Wilson, 29/out/2026). */}
+              <div className="absolute right-5 top-5 z-10 md:right-6 md:top-6">
+                <SinoUnidade unidade={u.unidade} />
+              </div>
               <span className="flex h-16 w-16 items-center justify-center rounded-2xl" style={{ backgroundColor: u.tonal }}>
                 {u.icone ? (
                   // eslint-disable-next-line @next/next/no-img-element

@@ -58,7 +58,7 @@ export const PROVINCIAS_JAPAO = [
 
 export const PERGUNTAS_VISTO: Pergunta[] = [
   { id: "qtd", rotulo: "Quantidade de solicitantes do visto", tipo: "numero", min: 1, max: 15, sufixo: "pessoa(s)" },
-  { id: "ascendencia", rotulo: "Ascendência do solicitante titular", tipo: "opcoes", opcoes: ["Nissei", "Sansei", "Sem ascendência (cônjuge)"] },
+  { id: "ascendencia", rotulo: "Ascendência do solicitante titular", tipo: "opcoes", opcoes: ["Nissei", "Sansei", "Sem ascendência (cônjuge)", "Dependente menor de idade"] },
   { id: "cidade", rotulo: "Cidade onde o solicitante e os dependentes residem", tipo: "texto" },
   { id: "uf", rotulo: "Estado", tipo: "lista", opcoes: UFS },
   { id: "idadeDependentes", rotulo: "Idade dos dependentes", tipo: "texto", placeholder: "Ex.: 8 e 12 anos — ou “não se aplica”" },

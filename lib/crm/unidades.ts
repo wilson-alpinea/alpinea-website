@@ -13,15 +13,17 @@ export const UNIDADE_CURTO: Record<UnidadeCrm, string> = { agencia: "Agência", 
 /** Cor principal de cada CRM (botões de troca, cards de escolha). */
 export const UNIDADE_COR: Record<UnidadeCrm, string> = { agencia: "#24476B", empregos: "#27675B", seguro: "#75608B", documentacao: "#8A5A3C" };
 export const isUnidadeCrm = (v: unknown): v is UnidadeCrm => v === "agencia" || v === "empregos" || v === "seguro" || v === "documentacao";
-export type PapelCrm = "admin" | "parceiro_agencia" | "empreiteira";
+// + despachante (Wilson, 29/out/2026): vê só os processos de Documentação atribuídos a ele, sem financeiro.
+export type PapelCrm = "admin" | "parceiro_agencia" | "empreiteira" | "despachante";
 
 export const isPapelCrm = (v: unknown): v is PapelCrm =>
-  v === "admin" || v === "parceiro_agencia" || v === "empreiteira";
+  v === "admin" || v === "parceiro_agencia" || v === "empreiteira" || v === "despachante";
 
 export const PAPEL_LABEL: Record<PapelCrm, string> = {
   admin: "Admin (equipe)",
   parceiro_agencia: "Parceiro da agência",
   empreiteira: "Empreiteira",
+  despachante: "Despachante",
 };
 
 // Domínios de cada CRM. Podem ser trocados por variável de ambiente sem
@@ -50,6 +52,7 @@ export function unidadeDaRota(pathname: string): UnidadeCrm | "compartilhada" {
   if (pathname === "/crm/empreiteira" || pathname.startsWith("/crm/empreiteira/")) return "empregos";
   if (pathname === "/crm/seguro" || pathname.startsWith("/crm/seguro/")) return "seguro";
   if (pathname === "/crm/documentacao" || pathname.startsWith("/crm/documentacao/")) return "documentacao";
+  if (pathname === "/crm/despachante" || pathname.startsWith("/crm/despachante/")) return "documentacao";
   return "agencia";
 }
 
@@ -65,6 +68,7 @@ export const INICIO_UNIDADE: Record<UnidadeCrm, string> = {
 export function inicioDoPapel(papel: PapelCrm | null, unidade: UnidadeCrm | null): string {
   if (papel === "parceiro_agencia") return "/crm/parceiro";
   if (papel === "empreiteira") return "/crm/empreiteira";
+  if (papel === "despachante") return "/crm/despachante";
   // Admin no domínio principal (alpinea.io/crm) escolhe qual CRM abrir.
   if (papel === "admin") return unidade ? INICIO_UNIDADE[unidade] : "/crm/unidades";
   return "/crm/sem-acesso";
@@ -77,6 +81,7 @@ export function rotaPermitida(papel: PapelCrm | null, pathname: string): boolean
   const dentro = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
   if (papel === "parceiro_agencia") return dentro("/crm/parceiro");
   if (papel === "empreiteira") return dentro("/crm/empreiteira");
+  if (papel === "despachante") return dentro("/crm/despachante");
   return false;
 }
 

@@ -33,10 +33,11 @@ const PESSOA_DOC: CampoFicha[] = [
   { id: "estadoCivil", rotulo: "Estado civil", tipo: "opcoes", opcoes: ["Solteiro(a)", "Casado(a)", "União estável", "Divorciado(a)", "Viúvo(a)"] },
   { id: "cpf", rotulo: "CPF", tipo: "cpf" },
   { id: "rg", rotulo: "RG (número e órgão emissor)", tipo: "texto", placeholder: "Ex.: 12.345.678-9 SSP/SP" },
-  { id: "passaporte", rotulo: "Número do passaporte", tipo: "texto" },
-  { id: "passaporteValidade", rotulo: "Validade do passaporte", tipo: "data" },
-  { id: "pai", rotulo: "Nome completo do pai", tipo: "texto" },
-  { id: "mae", rotulo: "Nome completo da mãe", tipo: "texto" },
+  // Opcionais (Wilson, 29/out/2026): passaporte, validade, pai e mãe.
+  { id: "passaporte", rotulo: "Número do passaporte", tipo: "texto", opcional: true, ajuda: "Deixe em branco se não souber informar." },
+  { id: "passaporteValidade", rotulo: "Validade do passaporte", tipo: "data", opcional: true, ajuda: "Deixe em branco se não souber informar." },
+  { id: "pai", rotulo: "Nome completo do pai", tipo: "texto", opcional: true, ajuda: "Deixe em branco se não souber informar." },
+  { id: "mae", rotulo: "Nome completo da mãe", tipo: "texto", opcional: true, ajuda: "Deixe em branco se não souber informar." },
   { id: "profissao", rotulo: "Profissão", tipo: "texto" },
 ];
 

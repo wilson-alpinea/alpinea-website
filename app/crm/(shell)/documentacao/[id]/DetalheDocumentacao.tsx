@@ -9,7 +9,7 @@ import { useCallback, useState, useSyncExternalStore, useTransition } from "reac
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ETAPAS_DOC, FLUXO_DOC, GRUPOS_FLUXO, QUEM_PENDENCIA, SAIDAS_DOC, etapaDoc, pendenciaDoc, servicoDoc, type EtapaDoc, type PagamentoDoc, type ProcessoDoc } from "@/lib/crm/documentacao";
-import { adicionarNotaDoc, mudarEtapaDoc, salvarDadosDoc } from "../../../documentacaoActions";
+import { adicionarNotaDoc, atribuirDespachanteDoc, mudarEtapaDoc, salvarDadosDoc } from "../../../documentacaoActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
 import { AZUL, BadgeEtapaDoc, detalhePedido } from "../ListaDocumentacao";
 import { DOC_COMPROVANTE, MAX_PESSOAS_FICHA, documentosServico, linhasFichaDoc, parseFichaDoc, urlPortal } from "@/app/documentacao/processo";
@@ -70,7 +70,43 @@ function Linhas({ itens, larguraRotulo = "9rem" }: { itens: [string, React.React
 
 const BOTAO_LINK = "rounded-lg px-2.5 py-1 text-[13px] font-medium hover:bg-[#24476B]/10";
 
-export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo: ProcessoDoc; pagamentos?: PagamentoDoc[] }) {
+// Campo "Despachante" (Wilson, 29/out/2026): o escolhido vê só este
+// processo no portal /crm/despachante, sem valores nem pagamentos.
+function SeletorDespachante({ processoId, atual, despachantes, onSalvo }: { processoId: string; atual: string | null; despachantes: { id: string; nome: string }[]; onSalvo: (t: string) => void }) {
+  const [valor, setValor] = useState(atual ?? "");
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  if (!despachantes.length) return <span className="text-[#9A918A]">Nenhum despachante cadastrado (crie em Acessos)</span>;
+  return (
+    <span className="flex flex-wrap items-center gap-2">
+      <select
+        value={valor}
+        disabled={salvando}
+        onChange={async (e) => {
+          const novo = e.target.value;
+          setValor(novo);
+          setSalvando(true);
+          setErro(null);
+          const r = await atribuirDespachanteDoc(processoId, novo || null);
+          setSalvando(false);
+          if (r.ok) onSalvo(r.mensagem);
+          else {
+            setErro(r.erro);
+            setValor(atual ?? "");
+          }
+        }}
+        className="h-9 rounded-lg border border-[#EAE2DB] bg-white px-2 text-sm text-[#25211E]"
+      >
+        <option value="">Sem despachante</option>
+        {despachantes.map((d) => <option key={d.id} value={d.id}>{d.nome}</option>)}
+      </select>
+      {salvando && <span className="text-[12px] text-[#9A918A]">Salvando…</span>}
+      {erro && <span className="text-[12px] text-[#B42318]">{erro}</span>}
+    </span>
+  );
+}
+
+export function DetalheDocumentacao({ processo: p, pagamentos = [], despachantes = [] }: { processo: ProcessoDoc; pagamentos?: PagamentoDoc[]; despachantes?: { id: string; nome: string }[] }) {
   const router = useRouter();
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null);
   const [painel, setPainel] = useState<null | { tipo: "etapa"; para?: EtapaDoc } | { tipo: "dados" }>(null);
@@ -186,7 +222,7 @@ export function DetalheDocumentacao({ processo: p, pagamentos = [] }: { processo
               itens={[
                 ["E-mail", p.email ? <a key="e" href={`mailto:${p.email}`} className="hover:underline" style={{ color: AZUL }}>{p.email}</a> : "Não informado"],
                 ["WhatsApp", p.telefone ? <a key="t" href={`https://wa.me/${p.telefone.replace(/\D/g, "")}`} target="_blank" rel="noopener" className="tabular-nums hover:underline" style={{ color: AZUL }}>{p.telefone} ↗</a> : "Não informado"],
-                ["Responsável", <span key="r" className="text-[#9A918A]">Não definido</span>],
+                ["Despachante", <SeletorDespachante key="d" processoId={p.id} atual={(p as ProcessoDoc & { despachante_id?: string | null }).despachante_id ?? null} despachantes={despachantes} onSalvo={concluido} />],
                 ["Origem", [p.canal, p.canal_detalhe].filter(Boolean).join(" · ") || "Não informada"],
               ]}
             />

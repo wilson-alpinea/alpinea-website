@@ -76,3 +76,11 @@ export async function exigirParceiro(tipo: "agencia" | "empreiteira"): Promise<A
   }
   return acesso as Acesso & { parceiro: ParceiroAcesso };
 }
+
+/** Portal do despachante (Documentação) — Wilson, 29/out/2026. */
+export async function exigirDespachante(): Promise<Acesso> {
+  const acesso = await obterAcesso();
+  if (!acesso) redirect("/crm/login");
+  if (acesso.papel !== "despachante") redirect("/crm/sem-acesso");
+  return acesso;
+}

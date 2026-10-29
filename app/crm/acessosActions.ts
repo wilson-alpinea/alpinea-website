@@ -112,7 +112,7 @@ export async function alternarParceiroAtivo(parceiroId: string, ativo: boolean):
 function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<string, string>) {
   const papel = papelBruto === "sem_acesso" ? null : isPapelCrm(papelBruto) ? papelBruto : undefined;
   if (papel === undefined) return { erro: "Escolha o perfil de acesso.", campo: "papel" } as const;
-  if (papel === "admin" || papel === null) return { papel, parceiroId: null } as const;
+  if (papel === "admin" || papel === "despachante" || papel === null) return { papel, parceiroId: null } as const;
   const esperado = papel === "parceiro_agencia" ? "agencia" : "empreiteira";
   if (!UUID.test(parceiroBruto) || tipos.get(parceiroBruto) !== esperado) {
     return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro da agência." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;

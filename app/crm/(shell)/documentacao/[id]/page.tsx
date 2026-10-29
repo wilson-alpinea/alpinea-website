@@ -35,5 +35,13 @@ export default async function ProcessoDocPage({ params }: { params: Promise<{ id
     historico: Array.isArray(data.historico) ? data.historico : [],
   } as ProcessoDoc;
   const { data: pagamentos } = await createAdminClient().from("documentacao_pagamentos").select("id, created_at, parcela, valor_brl, valor_jpy, cotacao_brl_por_jpy, status, forma_pagamento, pago_em, gateway_pedido_id").eq("processo_id", id).order("created_at", { ascending: false });
-  return <DetalheDocumentacao processo={processo} pagamentos={(pagamentos ?? []) as PagamentoDoc[]} />;
+  // Despachantes cadastrados em Acessos (migração 029).
+  const { data: despachantes } = await createAdminClient().from("perfis").select("id, nome, email").eq("papel", "despachante").order("nome");
+  return (
+    <DetalheDocumentacao
+      processo={processo}
+      pagamentos={(pagamentos ?? []) as PagamentoDoc[]}
+      despachantes={(despachantes ?? []).map((d) => ({ id: d.id as string, nome: (d.nome as string) || (d.email as string) }))}
+    />
+  );
 }

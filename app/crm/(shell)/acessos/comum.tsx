@@ -4,12 +4,13 @@ import { useState, type ReactNode } from "react";
 
 // Peças compartilhadas da página Acessos (23/out/2026).
 
-export type Papel = "admin" | "parceiro_agencia" | "empreiteira" | null;
+export type Papel = "admin" | "parceiro_agencia" | "empreiteira" | "despachante" | null;
 
 export const PERFIS: { valor: Exclude<Papel, null> | "sem_acesso"; label: string; descricao: string }[] = [
   { valor: "admin", label: "Administrador", descricao: "Equipe Alpinea: vê e edita tudo nos dois CRMs, inclusive esta página de acessos." },
   { valor: "parceiro_agencia", label: "Parceiro da agência", descricao: "Vê somente os leads da própria empresa (pelo link de indicação ou atribuídos na ficha do cliente). Somente leitura." },
   { valor: "empreiteira", label: "Empreiteira", descricao: "Vê somente os candidatos das vagas vinculadas à própria empresa. Somente leitura." },
+  { valor: "despachante", label: "Despachante (Documentação)", descricao: "Vê somente os processos de Documentação atribuídos a ele na ficha do processo: dados do cadastro, ficha e documentos. Não vê valores, pagamentos nem contrato." },
   { valor: "sem_acesso", label: "Sem acesso", descricao: "A conta existe, mas não entra no CRM até receber um perfil." },
 ];
 export const rotuloPerfil = (p: Papel) => PERFIS.find((x) => x.valor === (p ?? "sem_acesso"))?.label ?? "Sem acesso";
