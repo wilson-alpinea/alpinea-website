@@ -257,7 +257,7 @@ export function passoAtual(p: { etapa: string; ficha_enviada_em: string | null; 
 export function textoValorFinal(total: number, moeda: "BRL" | "JPY", servico: ServicoDoc): string {
   if (moeda === "JPY") {
     const ienes = `¥${Math.round(total).toLocaleString("ja-JP")}`;
-    return servico === "elegibilidade" ? `${ienes}, pagos em reais pela PTAX do dia de cada parcela (2 × 50%)` : `${ienes}, pagos em reais pela PTAX do dia do pagamento`;
+    return servico === "elegibilidade" ? `${ienes}, pagos em reais pela cotação do dia de cada parcela (2 × 50%)` : `${ienes}, pagos em reais pela cotação do dia do pagamento`;
   }
   return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }

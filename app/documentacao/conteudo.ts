@@ -66,7 +66,7 @@ export const PROVINCIAS_JAPAO = [
 
 export const PERGUNTAS_VISTO: Pergunta[] = [
   { id: "qtd", rotulo: "Quantidade de solicitantes do visto", tipo: "numero", min: 1, max: 15, sufixo: "pessoa(s)" },
-  { id: "ascendencia", rotulo: "Ascendência do solicitante titular", tipo: "opcoes", opcoes: ["Nissei", "Sansei", "Sem ascendência (cônjuge)", "Dependente menor de idade"] },
+  { id: "ascendencia", rotulo: "Ascendência do solicitante titular", tipo: "opcoes", opcoes: ["Nissei", "Sansei", "Sem ascendência (cônjuge)", "Dependente menor de idade", "Cônjuge de residente permanente", "Filho(a) de residente permanente"] },
   { id: "cidade", rotulo: "Cidade onde o solicitante e os dependentes residem", tipo: "texto" },
   { id: "uf", rotulo: "Estado", tipo: "lista", opcoes: UFS },
   { id: "idadeDependentes", rotulo: "Idade dos dependentes", tipo: "texto", placeholder: "Ex.: 8 e 12 anos — ou “não se aplica”" },
@@ -196,7 +196,7 @@ export const TERMOS_VISTO_COE: [string, string][] = [
   ["Natureza do serviço", "A Ajisai presta assessoria e intermediação na preparação e no protocolo da documentação. A Ajisai não tem nenhuma relação com o consulado, a embaixada ou a imigração do Japão, nem poder de decisão sobre os processos."],
   ["Sem garantia de aprovação", "O pagamento, o envio de documentos e a pré-aprovação no cadastro não garantem a emissão do visto nem do Certificado de Elegibilidade. A análise é feita exclusivamente pelas autoridades japonesas, de acordo com os seus critérios. O visto emitido também não garante a entrada no Japão, que é homologada pela imigração no aeroporto de chegada."],
   ["Pré-análise do cadastro", "A avaliação do caso é feita com base nas respostas informadas no cadastro. Informações incompletas ou incorretas são responsabilidade do cliente. A Ajisai pode recusar casos que não atendam aos critérios mínimos, antes de qualquer pagamento."],
-  ["Pagamento e reembolso", "O valor é final, sem cobrança por item. Visto: 100% na contratação. Certificado de Elegibilidade: 50% antes do início e 50% antes da entrada na imigração, em reais pela PTAX do dia do pagamento. Não há cancelamento com reembolso em nenhum momento: os serviços não são reembolsáveis, inclusive em caso de negativa, aprovação parcial, desistência ou pedido de documentos adicionais pelas autoridades."],
+  ["Pagamento e reembolso", "O valor é final, sem cobrança por item. Visto: 100% na contratação. Certificado de Elegibilidade: 50% antes do início e 50% antes da entrada na imigração, em reais pela cotação do dia do pagamento. Não há cancelamento com reembolso em nenhum momento: os serviços não são reembolsáveis, inclusive em caso de negativa, aprovação parcial, desistência ou pedido de documentos adicionais pelas autoridades."],
   ["Prazos", "Os prazos são estimados e dependem de órgãos públicos e privados no Brasil e no Japão (consulado, imigração, correios, Receita Federal), que a Ajisai não controla."],
   ["Documentos", "O cliente e o garantidor são responsáveis pela veracidade, validade e envio dos documentos solicitados. O envio por Sedex dentro do Brasil não está incluso."],
   ["Validade das condições", "As condições e valores apresentados valem por 30 dias e podem ser revistos pela Ajisai até a quitação integral do serviço. Aprovações anteriores de visto ou de categoria não garantem a mesma aprovação agora."],

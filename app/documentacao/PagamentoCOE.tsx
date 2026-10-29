@@ -52,7 +52,7 @@ export function PagamentoCOE({ id, token, totalJPY, info, zap }: { id: string; t
         <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-black/70">Como você quer pagar?</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {[
-            { v: "reais" as const, t: "Em reais", d: "Cartão de crédito ou Pix, pela Stone, na hora. O valor em reais é calculado pela PTAX do dia." },
+            { v: "reais" as const, t: "Em reais", d: "Cartão de crédito ou Pix, pela Stone, na hora. O valor em reais é calculado pela cotação do dia." },
             { v: "ienes" as const, t: "Em ienes", d: "Depósito na conta da Ajisai Japan, no Japão, em até 2 dias." },
           ].map((o) => (
             <button

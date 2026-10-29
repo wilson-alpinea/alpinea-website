@@ -68,7 +68,7 @@ export function PagarStone({ id, token, info, zap }: { id: string; token: string
     <div>
       <p className="text-sm leading-6 text-black/65">
         Pagamento seguro pela Stone{rotuloParcela}: cartão de crédito (com parcelamento) ou Pix.
-        {info.moeda === "JPY" && " O valor em reais é calculado pela PTAX do dia, no momento em que você abre o pagamento."}
+        {info.moeda === "JPY" && " O valor em reais é calculado pela cotação do dia, no momento em que você abre o pagamento."}
       </p>
       <button type="button" onClick={() => void pagar()} disabled={abrindo} className="mt-4 flex min-h-[52px] w-full max-w-md items-center justify-center rounded-full px-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white disabled:opacity-50" style={{ background: VERDE }}>
         {abrindo ? "Abrindo a Stone…" : "Pagar agora"}

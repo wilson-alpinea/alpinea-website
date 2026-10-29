@@ -100,7 +100,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
     if (passo === "perfil")
       return (
         <Painel titulo="Quem pode pedir">
-          <ListaCheck itens={["Nisseis e sanseis — descendentes de japoneses até a 3ª geração", "Cônjuges de nisseis e sanseis", "Filhos dependentes legais, até 18 anos"]} />
+          <ListaCheck itens={["Nisseis e sanseis — descendentes de japoneses até a 3ª geração", "Cônjuges de nisseis e sanseis", "Filhos dependentes legais, até 18 anos", "Cônjuges e filhos de residentes permanentes no Japão — não precisa ter ascendência japonesa"]} />
           <p className="mt-3 text-xs leading-5 text-black/55">
             Não emitimos visto de estudante, trabalho, religioso ou de outras categorias. Para turismo de curta duração, brasileiros estão isentos de visto até 2029.
             Yonsei (4ª geração) ou outra situação familiar? Alguns casos passam pelo Certificado de Elegibilidade.
@@ -161,33 +161,22 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
       return (
         <Painel titulo="O que é o Certificado de Elegibilidade">
           <p className="text-sm leading-6 text-black/70">
-            O COE é pedido na imigração do Japão — não no consulado. Um parente ou responsável que mora no Japão, o garantidor, vai patrocinar o solicitante, ou seja, é o responsável pelas questões financeiras e migratórias dele perante a imigração. Com o certificado em mãos no Brasil, o consulado emite o visto específico em cerca de 2 semanas.
+            <strong className="font-semibold text-black">O Certificado de Elegibilidade (COE) não é o visto.</strong> O COE é pedido na imigração do Japão — não no consulado. Um parente ou responsável que mora no Japão, o garantidor, vai patrocinar o solicitante, ou seja, é o responsável pelas questões financeiras e migratórias dele perante a imigração. Com o certificado em mãos no Brasil, você pode solicitar o visto específico no consulado, que sai em cerca de 2 semanas.
+          </p>
+          <p className="mt-3 rounded-xl border border-[#B42318]/25 bg-white px-4 py-3 text-sm leading-6 text-black/75">
+            <strong className="font-semibold text-[#B42318]">O visto específico não está incluso neste serviço.</strong> Ele é um segundo pedido, feito no
+            consulado depois que o COE é emitido — e pode ser contratado com a Ajisai à parte.
           </p>
           <p className="mt-4 text-sm font-medium text-black">Normalmente precisa do certificado quem:</p>
           <ListaCheck
             className="mt-2"
-            itens={["Mora fora da região do Consulado de São Paulo (SP, MS e Triângulo Mineiro)", "Não tem contrato de trabalho no Japão", "Vai como cônjuge ou como filho dependente"]}
+            itens={["Mora fora da região do Consulado de São Paulo (SP, MS e Triângulo Mineiro)", "Não tem contrato de trabalho no Japão", "Vai como cônjuge ou como filho dependente", "É cônjuge ou filho(a) de residente permanente no Japão"]}
           />
         </Painel>
       );
     if (passo === "valor")
       return (
         <div className="space-y-4">
-          <Painel titulo="Tabela do pacote" recolhivel>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {[
-                ["1 descendente", COE_INDIVIDUAL_JPY.descendente],
-                ["1 cônjuge", COE_INDIVIDUAL_JPY.conjuge],
-                ...Object.entries(COE_FAMILIA_JPY).map(([n, v]) => [`${n} pessoas`, v] as [string, number]),
-              ].map(([rotulo, valor]) => (
-                <div key={rotulo as string} className="rounded-xl border border-black/10 bg-white p-3 text-center">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-black/45">{rotulo}</p>
-                  <p className="mt-1 text-sm font-medium text-black">{formatJPY(valor as number)}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-3 text-xs leading-5 text-black/50">Valor fechado em ienes, cobrado em reais pela PTAX do dia de cada pagamento: 50% na contratação e 50% antes da entrada na imigração.</p>
-          </Painel>
           <Painel titulo="O que está incluso" recolhivel>
             <ListaCheck
               itens={[
@@ -199,7 +188,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
                 "Atendimento da equipe Ajisai em todas as etapas",
               ]}
             />
-            <NaoIncluso className="mt-4" itens={["Traduções simples (não juramentadas): R$ 90 por documento", "Elaboração de declarações: R$ 90 por declaração", "Apostila de Haia (apostilamento em cartório), quando exigida", "Valor da postagem dos documentos dentro do Brasil (Correios/Sedex)"]} />
+            <NaoIncluso className="mt-4" itens={["Traduções simples (não juramentadas): R$ 90 por documento", "Elaboração de declarações: R$ 90 por declaração", "Apostila de Haia (apostilamento em cartório), quando exigida", "Valor da postagem dos documentos dentro do Brasil (Correios/Sedex)", "O visto específico — pedido à parte no consulado, depois de o COE ser emitido"]} />
           </Painel>
         </div>
       );

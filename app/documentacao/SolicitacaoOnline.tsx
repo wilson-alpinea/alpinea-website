@@ -36,6 +36,9 @@ const PERFIS = [
   "Sou sansei (neto de japonês)",
   "Sou cônjuge de nissei ou sansei",
   "Sou filho(a) dependente, até 18 anos",
+  // Wilson, 29/out/2026: não precisa ter ascendência japonesa.
+  "Sou cônjuge de residente permanente",
+  "Sou filho(a) de residente permanente",
   "Nenhuma das opções",
 ];
 const PERFIL_FORA = "Nenhuma das opções";
@@ -54,7 +57,7 @@ const PASSOS: Record<Servico, { id: PassoId; titulo: string; descricao: string }
   ],
   elegibilidade: [
     { id: "perfil", titulo: "Perfil", descricao: "Confirme que o certificado é para você." },
-    { id: "valor", titulo: "Pessoas e valor", descricao: "Valor final do pacote, em ienes, cobrado em reais pela PTAX." },
+    { id: "valor", titulo: "Pessoas e valor", descricao: "Valor final do pacote, em ienes e em reais." },
     { id: "dados", titulo: "Seus dados e cadastro", descricao: "Contato do responsável e as perguntas do caso." },
     { id: "garantidor", titulo: "Garantidor no Japão", descricao: "Se não souber alguma resposta, confirme com ele antes de seguir." },
     { id: "solicitantes", titulo: "Solicitantes", descricao: "Dados de cada pessoa, como estão no passaporte." },
@@ -430,6 +433,9 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                   <>
                     <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Valor final para {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}</p>
                     <p className="mt-2 text-4xl font-semibold tabular-nums tracking-tight">{textoPreco}</p>
+                    {preco.moeda === "JPY" && brlAprox ? (
+                      <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-white/90">≈ {formatBRL(brlAprox)}</p>
+                    ) : null}
                     {preco.moeda === "BRL" ? (
                       <p className="mt-2 text-sm text-white/75">
                         {formatBRL(preco.porPessoa!)} por pessoa · taxa consular inclusa · 100% na contratação · prazo no consulado de {temCOE === "Sim" ? PRAZO_VISTO.comCOE : PRAZO_VISTO.semCOE}
@@ -442,7 +448,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                       </p>
                     ) : (
                       <p className="mt-2 text-sm text-white/75">
-                        {brlAprox ? `≈ ${formatBRL(brlAprox)} pela PTAX ${ptax?.data ? `de ${ptax.data}` : "do dia"}` : "Carregando a cotação…"} · 50% agora e 50% antes da entrada na imigração
+                        {brlAprox ? "Valor em reais pela cotação de hoje" : "Carregando o valor em reais…"} · 50% agora e 50% antes da entrada na imigração
                       </p>
                     )}
                   </>
