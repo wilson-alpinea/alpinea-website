@@ -442,16 +442,16 @@ export default function ProdutosPage() {
                 cta="Calcular meu transfer"
                 className="lg:col-span-2"
               />
-              {/* Serviços adicionais virou página própria no template do
-                  Transporte Privado — pedido do Wilson, 30/set/2026. */}
+              {/* Reserva de restaurantes virou card próprio — era o único item
+                  de "Serviços adicionais" (Wilson, 29/out/2026). */}
               <ProductSelectorCard
-                href="/produtos/servicos-adicionais"
-                icon="/images/produtos/servicos-adicionais.png"
-                iconWidth={1254}
-                iconHeight={1254}
-                title="Serviços adicionais"
-                description="Reserva de restaurantes e outros detalhes para completar sua viagem."
-                cta="Ver serviços"
+                href="/produtos/reserva-restaurantes"
+                icon="/images/icone-servico-reserva-restaurante.png"
+                iconWidth={320}
+                iconHeight={320}
+                title="Reserva de restaurantes"
+                description="Diga o restaurante e nós fazemos a reserva — inclusive nos que não aceitam reserva direta de estrangeiros."
+                cta="Pedir reserva"
                 className="lg:col-span-2"
               />
               {/* Pedido do Wilson, 16/set/2026: "JR Pass, Cambio e Seguro
@@ -522,16 +522,9 @@ export default function ProdutosPage() {
                   diária/valor fixo). */}
               {/* Ajisai Shopping virou página própria no template do
                   Transporte Privado — pedido do Wilson, 30/set/2026. */}
-              <ProductSelectorCard
-                href="/produtos/ajisai-shopping"
-                icon="/images/icone-servico-ajisai-shopping.png"
-                iconWidth={1254}
-                iconHeight={1254}
-                title="Ajisai Shopping"
-                description="Acompanhamento pessoal em compras durante a viagem no Japão, com negociação, tradução e apoio logístico nas lojas."
-                cta="Ver Ajisai Shopping"
-                className="lg:col-span-2"
-              />
+              {/* Ajisai Shopping removido da vitrine por enquanto (Wilson,
+                  29/out/2026) — fica no backlog; a página
+                  /produtos/ajisai-shopping continua no código, sem link. */}
               {/* Pedido do Wilson, 26/out/2026: "criar um card na pagina
                   /produtos somente para eSIM, removendo de serviços
                   adicionais" — primeiro passo da automação da compra de
@@ -1271,6 +1264,7 @@ function ProductSelectorCard({
               title === "Câmbio" ||
               title === "Seguro Viagem" ||
               title === "Ajisai Shopping" ||
+              title === "Reserva de restaurantes" ||
               title === "eSIM"
               ? "right-6 top-5 h-14 w-14 opacity-80 md:right-8 md:top-7"
               : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${

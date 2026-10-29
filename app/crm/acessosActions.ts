@@ -1,6 +1,6 @@
 "use server";
 
-import { acoesDoNivel, lerPermissoes } from "@/lib/crm/permissoes";
+import { PERMISSOES_VAZIAS, acoesDoNivel, lerPermissoes, lerProdutosParceiro } from "@/lib/crm/permissoes";
 
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
@@ -44,7 +44,7 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   const nome = String(formData.get("nome") || "").trim().slice(0, 120);
   const tipo = String(formData.get("tipo") || "");
   if (nome.length < 2) return { ok: false, mensagem: "Informe o nome da empresa.", campo: "nome" };
-  if (tipo !== "agencia" && tipo !== "empreiteira") return { ok: false, mensagem: "Escolha o tipo.", campo: "tipo" };
+  if (tipo !== "agencia" && tipo !== "empreiteira" && tipo !== "afiliado") return { ok: false, mensagem: "Escolha o tipo.", campo: "tipo" };
   // Código personalizado: valida como está (sem "consertar" em silêncio).
   // Código automático: vem do nome e ganha um sufixo se já existir.
   const slugInformado = String(formData.get("slug") || "").trim().toLowerCase();
@@ -61,13 +61,13 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   }
   const rem = remuneracaoDoForm(formData);
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
-  const { error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem });
+  const { error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem, produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null });
   if (error) {
     console.error("Erro ao criar parceiro:", error);
-    return { ok: false, mensagem: "Não foi possível salvar." };
+    return { ok: false, mensagem: "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
   }
   revalidar();
-  return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : "Empreiteira"} "${nome}" cadastrado${tipo === "agencia" ? ` · código ${slug}` : ""}.` };
+  return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : tipo === "afiliado" ? "Afiliado" : "Empreiteira"} "${nome}" cadastrado${tipo !== "empreiteira" ? ` · código ${slug}` : ""}.` };
 }
 
 // Editar empresa: nome e (em opções avançadas) o código do link. O tipo não
@@ -84,9 +84,10 @@ export async function editarParceiro(_: ResultadoAcesso | null, formData: FormDa
   if (!atual) return { ok: false, mensagem: "Empresa não encontrada." };
   const rem = remuneracaoDoForm(formData);
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
-  const update: Record<string, string | number | null> = { nome, ...rem };
+  const update: Record<string, unknown> = { nome, ...rem };
+  if (atual.tipo !== "empreiteira") update.produtos = produtosParceiroDoForm(formData);
   const slugNovo = String(formData.get("slug") || "").trim().toLowerCase();
-  if (atual.tipo === "agencia" && slugNovo && slugNovo !== atual.slug) {
+  if (atual.tipo !== "empreiteira" && slugNovo && slugNovo !== atual.slug) {
     if (!SLUG_PARCEIRO.test(slugNovo)) {
       return { ok: false, mensagem: "Use só letras minúsculas, números e hífen (sem acentos ou espaços), até 40 caracteres.", campo: "slug" };
     }
@@ -97,7 +98,7 @@ export async function editarParceiro(_: ResultadoAcesso | null, formData: FormDa
   const { error } = await admin.from("parceiros").update(update).eq("id", id);
   if (error) {
     console.error("Erro ao editar parceiro:", error);
-    return { ok: false, mensagem: "Não foi possível salvar." };
+    return { ok: false, mensagem: "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
   }
   revalidar();
   return { ok: true, mensagem: "Empresa atualizada." };
@@ -120,8 +121,10 @@ function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<stri
   if (papel === undefined) return { erro: "Escolha o perfil de acesso.", campo: "papel" } as const;
   if (papel === "admin" || papel === "despachante" || papel === "consultor" || papel === null) return { papel, parceiroId: null } as const;
   const esperado = papel === "parceiro_agencia" ? "agencia" : "empreiteira";
-  if (!UUID.test(parceiroBruto) || tipos.get(parceiroBruto) !== esperado) {
-    return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro da agência." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;
+  const tipoEmpresa = tipos.get(parceiroBruto);
+  const confere = tipoEmpresa === esperado || (esperado === "agencia" && tipoEmpresa === "afiliado");
+  if (!UUID.test(parceiroBruto) || !confere) {
+    return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro ou afiliado." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;
   }
   return { papel, parceiroId: parceiroBruto } as const;
 }
@@ -131,7 +134,10 @@ function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<stri
 function remuneracaoDoForm(formData: FormData): { remuneracao_tipo: string | null; remuneracao_valor: number | null } | { erro: string } {
   const tipo = String(formData.get("remuneracao_tipo") ?? "");
   if (tipo !== "percentual" && tipo !== "fixo") return { remuneracao_tipo: null, remuneracao_valor: null };
-  const valor = Number(String(formData.get("remuneracao_valor") ?? "").replace(/\./g, "").replace(",", "."));
+  // Aceita "50", "50%", "10,5", "R$ 1.500,00" (Wilson digitou "50%" e não salvava).
+  let texto = String(formData.get("remuneracao_valor") ?? "").replace(/[^\d.,]/g, "");
+  if (texto.includes(",")) texto = texto.replace(/\./g, "").replace(",", ".");
+  const valor = Number(texto);
   if (!Number.isFinite(valor) || valor <= 0) return { erro: "Informe o valor da remuneração." };
   if (tipo === "percentual" && valor > 100) return { erro: "O percentual vai de 0 a 100." };
   return { remuneracao_tipo: tipo, remuneracao_valor: Math.round(valor * 100) / 100 };
@@ -148,6 +154,17 @@ function permissoesDoForm(formData: FormData) {
   const permissoes = lerPermissoes({ crms, produtos, ...acoesDoNivel(String(formData.get("nivel") ?? "ver")) });
   const cargo = String(formData.get("cargo") ?? "").trim().slice(0, 80) || null;
   return { permissoes, cargo };
+}
+
+// Produtos liberados ao parceiro/afiliado (Wilson, 29/out/2026). Vazio = todos.
+function produtosParceiroDoForm(formData: FormData): string[] | null {
+  const lista = lerProdutosParceiro(formData.getAll("produtos_parceiro"));
+  return lista.length ? lista : null;
+}
+
+function permissoesParceiroDoForm(formData: FormData) {
+  const lista = produtosParceiroDoForm(formData);
+  return { permissoes: { ...PERMISSOES_VAZIAS, crms: ["agencia"], produtos: lista ? { agencia: lista } : {} } };
 }
 
 async function tiposParceiros() {
@@ -192,6 +209,7 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
         papel: v.papel,
         parceiro_id: v.parceiroId,
         ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}),
+        ...(v.papel === "parceiro_agencia" ? permissoesParceiroDoForm(formData) : {}),
         ...(v.papel && v.papel !== "admin" ? remU : {}),
       },
       { onConflict: "id" },
@@ -213,7 +231,7 @@ export async function alterarAcessoUsuario(_: ResultadoAcesso | null, formData: 
   if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
   const remU = remuneracaoDoForm(formData);
   if ("erro" in remU) return { ok: false, mensagem: remU.erro, campo: "remuneracao_valor" };
-  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}), ...(v.papel && v.papel !== "admin" ? remU : {}) };
+  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}), ...(v.papel === "parceiro_agencia" ? permissoesParceiroDoForm(formData) : {}), ...(v.papel && v.papel !== "admin" ? remU : {}) };
   const nome = String(formData.get("nome") ?? "").trim().slice(0, 120);
   if (nome) update.nome = nome;
   const { error } = await createAdminClient().from("perfis").update(update).eq("id", userId);

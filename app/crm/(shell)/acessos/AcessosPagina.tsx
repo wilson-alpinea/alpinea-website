@@ -13,9 +13,9 @@ import { BotaoPrimario, CAMPO_FILTRO, CabecalhoSecao, Copiar, Icones, MenuAcoes,
 // na URL (voltar de uma edição mantém tudo). A tela só reorganiza: as
 // permissões continuam sendo checadas no servidor.
 
-export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null; remuneracao?: Remuneracao };
+export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null; remuneracao?: Remuneracao; produtos?: string[] };
 export type Remuneracao = { tipo: "percentual" | "fixo" | null; valor: number | null };
-export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira"; ativo: boolean; remuneracao?: Remuneracao };
+export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean; remuneracao?: Remuneracao; produtos?: string[] };
 export type VagaAcesso = { id: string; titulo: string; codigo: string; empresa: string; local: string };
 
 type Situacao = "ativo" | "sem_acesso" | "bloqueado";
@@ -29,7 +29,7 @@ type PainelAberto =
   | { tipo: "novo_usuario" }
   | { tipo: "editar_usuario"; usuario: UsuarioAcesso }
   | { tipo: "senha"; usuario: UsuarioAcesso }
-  | { tipo: "nova_empresa"; tipoEmpresa: "agencia" | "empreiteira" }
+  | { tipo: "nova_empresa"; tipoEmpresa: "agencia" | "empreiteira" | "afiliado" }
   | { tipo: "editar_empresa"; empresa: EmpresaAcesso }
   | { tipo: "situacao_empresa"; empresa: EmpresaAcesso }
   | null;
@@ -297,8 +297,8 @@ export function AcessosPagina({
             tema="empresas"
             icone={Icones.empresas}
             titulo="Empresas parceiras"
-            descricao="Gerencie parceiros da agência e empreiteiras."
-            acao={<BotaoPrimario cor={TEMA.empresas.cor} onClick={() => setPainel({ tipo: "nova_empresa", tipoEmpresa: eTipo === "empreiteira" ? "empreiteira" : "agencia" })}>+ Nova empresa</BotaoPrimario>}
+            descricao="Gerencie parceiros da agência, afiliados parceiros e empreiteiras."
+            acao={<BotaoPrimario cor={TEMA.empresas.cor} onClick={() => setPainel({ tipo: "nova_empresa", tipoEmpresa: eTipo === "empreiteira" ? "empreiteira" : eTipo === "afiliado" ? "afiliado" : "agencia" })}>+ Nova empresa</BotaoPrimario>}
           />
           <section className={`rounded-2xl border border-black/[0.06] bg-white p-6 ${SOMBRA}`} aria-label="Lista de empresas">
             {erros.empresas ? (
@@ -323,6 +323,7 @@ export function AcessosPagina({
                     {[
                       { id: "", label: "Todas" },
                       { id: "agencia", label: "Parceiros da agência" },
+                      { id: "afiliado", label: "Afiliados parceiros" },
                       { id: "empreiteira", label: "Empreiteiras" },
                     ].map((f) => (
                       <button
@@ -366,12 +367,12 @@ export function AcessosPagina({
                         <li key={e.id} className="grid grid-cols-1 gap-2 py-3 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.1fr)_minmax(0,1.3fr)_6rem_7rem_3rem] md:items-center md:gap-3 md:border-b md:border-[#EEF0F2] md:px-4">
                           <span className="font-semibold text-[#20252B]">{e.nome}</span>
                           <span>
-                            <span className="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[13px] font-medium" style={e.tipo === "agencia" ? { color: "#665582", backgroundColor: "#F0EBF7" } : { color: "#28665D", backgroundColor: "#E6F2EF" }}>
-                              {e.tipo === "agencia" ? "Parceiro da agência" : "Empreiteira"}
+                            <span className="inline-flex whitespace-nowrap rounded-full px-2.5 py-0.5 text-[13px] font-medium" style={e.tipo === "agencia" ? { color: "#665582", backgroundColor: "#F0EBF7" } : e.tipo === "afiliado" ? { color: "#946200", backgroundColor: "#FFF4DB" } : { color: "#28665D", backgroundColor: "#E6F2EF" }}>
+                              {e.tipo === "agencia" ? "Parceiro da agência" : e.tipo === "afiliado" ? "Afiliado parceiro" : "Empreiteira"}
                             </span>
                           </span>
                           <span className="flex min-w-0 items-center gap-2">
-                            {e.tipo === "agencia" ? (
+                            {e.tipo !== "empreiteira" ? (
                               <>
                                 <code className="truncate text-[13px] text-[#626B75]" title={linkIndicacao(e.slug)}>
                                   ?parceiro={e.slug}

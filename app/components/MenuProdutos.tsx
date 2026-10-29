@@ -38,11 +38,11 @@ const GRUPOS: { titulo: string; cor: string; itens: { href: string; nome: string
       { href: "/produtos/guia-turistico", nome: "Guia Turístico" },
       { href: "/produtos/transporte-privado", nome: "Transporte Privado" },
       { href: "/produtos/transfer-aeroporto", nome: "Transfer Aeroporto" },
-      { href: "/produtos/servicos-adicionais", nome: "Serviços adicionais" },
+      { href: "/produtos/reserva-restaurantes", nome: "Reserva de restaurantes" },
       { href: "/produtos/jrpass", nome: "JR Pass" },
       { href: "/produtos/cambio", nome: "Câmbio" },
       { href: "/produtos/seguro-viagem", nome: "Seguro Viagem" },
-      { href: "/produtos/ajisai-shopping", nome: "Ajisai Shopping" },
+      // Ajisai Shopping fora do ar por enquanto (Wilson, 29/out/2026) — backlog.
       { href: "/produtos/esim", nome: "eSIM" },
     ],
   },

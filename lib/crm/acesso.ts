@@ -9,7 +9,7 @@ import { lerPermissoes, type Permissoes } from "./permissoes";
 // O papel vem de perfis.papel (migração 021). Quem não tem papel não
 // acessa nada.
 
-export type ParceiroAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira"; ativo: boolean };
+export type ParceiroAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean };
 export type Acesso = {
   userId: string;
   email: string;
@@ -122,7 +122,9 @@ export async function exigirParceiro(tipo: "agencia" | "empreiteira"): Promise<A
   const acesso = await obterAcesso();
   if (!acesso) redirect("/crm/login");
   const papelEsperado = tipo === "agencia" ? "parceiro_agencia" : "empreiteira";
-  if (acesso.papel !== papelEsperado || !acesso.parceiro || acesso.parceiro.tipo !== tipo || !acesso.parceiro.ativo) {
+  // Afiliado parceiro (migração 031) usa o mesmo portal do parceiro da agência.
+  const tipoOk = acesso.parceiro?.tipo === tipo || (tipo === "agencia" && acesso.parceiro?.tipo === "afiliado");
+  if (acesso.papel !== papelEsperado || !acesso.parceiro || !tipoOk || !acesso.parceiro.ativo) {
     redirect("/crm/sem-acesso");
   }
   return acesso as Acesso & { parceiro: ParceiroAcesso };

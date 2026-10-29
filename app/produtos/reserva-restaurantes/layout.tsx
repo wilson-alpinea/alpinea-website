@@ -3,13 +3,13 @@ import type { Metadata } from "next";
 // page.tsx é "use client" e não pode exportar `metadata` — mesmo padrão das
 // outras páginas de produto. Imagem de compartilhamento = foto do topo.
 const DESCRICAO =
-  "Reserva de restaurantes e outros serviços no Japão — escolha os serviços, veja o valor na hora e envie seu pedido.";
+  "Reserva de restaurantes no Japão — diga o restaurante e nós fazemos a reserva, inclusive nos que não aceitam reserva direta de estrangeiros.";
 
 export const metadata: Metadata = {
-  title: "Ajisai | Serviços Adicionais",
+  title: "Ajisai | Reserva de restaurantes",
   description: DESCRICAO,
   openGraph: {
-    title: "Ajisai | Serviços Adicionais",
+    title: "Ajisai | Reserva de restaurantes",
     description: DESCRICAO,
     siteName: "Ajisai",
     images: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         url: "/images/produtos/servicos-adicionais-header.jpg",
         width: 2069,
         height: 760,
-        alt: "Serviços Adicionais — Ajisai",
+        alt: "Reserva de restaurantes — Ajisai",
       },
     ],
     locale: "pt_BR",
@@ -25,12 +25,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ajisai | Serviços Adicionais",
+    title: "Ajisai | Reserva de restaurantes",
     description: DESCRICAO,
     images: ["/images/produtos/servicos-adicionais-header.jpg"],
   },
 };
 
-export default function ServicosAdicionaisLayout({ children }: { children: React.ReactNode }) {
+export default function ReservaRestaurantesLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

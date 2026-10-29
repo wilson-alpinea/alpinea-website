@@ -134,6 +134,24 @@ function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes |
   );
 }
 
+// Produtos que o parceiro/afiliado pode ver (Wilson, 29/out/2026). Nenhum marcado = todos.
+function ProdutosParceiro({ inicial, ajuda }: { inicial?: string[]; ajuda: string }) {
+  return (
+    <div className="rounded-xl border border-[#E6E9ED] bg-[#F7F9FB] p-4">
+      <p className="text-sm font-semibold text-[#20252B]">Produtos que pode ver</p>
+      <p className="text-[13px] text-[#626B75]">{ajuda}</p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        {PRODUTOS_POR_CRM.agencia!.map((p) => (
+          <label key={p.valor} className="flex items-center gap-2 text-sm text-[#20252B]">
+            <input type="checkbox" name="produtos_parceiro" value={p.valor} defaultChecked={inicial?.includes(p.valor)} className="h-4 w-4 shrink-0 accent-[#24476B]" />
+            {p.label}
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Usuário: novo / editar acesso ────────────────────────────────
 export function PainelUsuario({
   usuario,
@@ -148,7 +166,8 @@ export function PainelUsuario({
   const [estado, acao, pendente] = useActionState(editando ? alterarAcessoUsuario : criarUsuario, null);
   const [papel, setPapel] = useState<string>(usuario ? usuario.papel ?? "sem_acesso" : "parceiro_agencia");
   const tipo = papel === "parceiro_agencia" ? "agencia" : papel === "empreiteira" ? "empreiteira" : null;
-  const opcoes = empresas.filter((e) => e.tipo === tipo);
+  // Parceiro da agência e afiliado parceiro usam o mesmo perfil (portal de leads).
+  const opcoes = empresas.filter((e) => e.tipo === tipo || (tipo === "agencia" && e.tipo === "afiliado"));
   const descricao = PERFIS.find((p) => p.valor === papel)?.descricao;
   const formId = editando ? "form-editar-usuario" : "form-novo-usuario";
 
@@ -252,12 +271,10 @@ export function PainelUsuario({
             {descricao && <p className="mt-1.5 text-[13px] text-[#626B75]">{descricao}</p>}
             <ErroDoCampo estado={estado} campo="papel" />
           </div>
-          {papel !== "admin" && papel !== "sem_acesso" && <CamposRemuneracao inicial={usuario?.remuneracao} estado={estado} />}
-          {papel === "consultor" && <PermissoesConsultor inicial={usuario?.permissoes ?? null} cargo={usuario?.cargo ?? ""} estado={estado} />}
           {tipo && (
             <div>
               <label className={LABEL} htmlFor="u-empresa">
-                {tipo === "agencia" ? "Parceiro da agência" : "Empreiteira"}
+                {tipo === "agencia" ? "Parceiro da agência ou afiliado" : "Empreiteira"}
               </label>
               {opcoes.length === 0 ? (
                 <p className="rounded-xl border border-[#946200]/20 bg-[#FFF4DB] px-3 py-2 text-sm text-[#6F4A00]">
@@ -286,6 +303,15 @@ export function PainelUsuario({
               <ErroDoCampo estado={estado} campo="parceiro_id" />
             </div>
           )}
+          {tipo === "agencia" && (
+            <ProdutosParceiro
+              key={usuario?.id ?? "novo"}
+              inicial={usuario?.produtos}
+              ajuda="Nenhum marcado = todos os produtos liberados para a empresa. Os leads de outros produtos não aparecem no portal."
+            />
+          )}
+          {papel === "consultor" && <PermissoesConsultor inicial={usuario?.permissoes ?? null} cargo={usuario?.cargo ?? ""} estado={estado} />}
+          {papel !== "admin" && papel !== "sem_acesso" && <CamposRemuneracao inicial={usuario?.remuneracao} estado={estado} />}
         </fieldset>
         <p className="text-[13px] text-[#626B75]">Usuários sem perfil atribuído permanecem sem acesso até serem liberados aqui.</p>
       </form>
@@ -352,14 +378,15 @@ export function PainelEmpresa({
   onFechar,
 }: {
   empresa?: EmpresaAcesso;
-  tipoInicial?: "agencia" | "empreiteira";
+  tipoInicial?: "agencia" | "empreiteira" | "afiliado";
   slugsEmUso: string[];
   onFechar: () => void;
 }) {
   const editando = !!empresa;
   const [estado, acao, pendente] = useActionState(editando ? editarParceiro : criarParceiro, null);
   const [nome, setNome] = useState(empresa?.nome ?? "");
-  const [tipo, setTipo] = useState<"agencia" | "empreiteira">(empresa?.tipo ?? tipoInicial);
+  const [tipo, setTipo] = useState<"agencia" | "empreiteira" | "afiliado">(empresa?.tipo ?? tipoInicial);
+  const comLink = tipo !== "empreiteira";
   const [avancado, setAvancado] = useState(false);
   const [slugManual, setSlugManual] = useState(editando ? empresa!.slug : "");
   // Ao criar, o código acompanha o nome até ser personalizado. Ao editar, nunca muda sozinho.
@@ -387,7 +414,7 @@ export function PainelEmpresa({
           <button type="button" className={BOTAO_SECUNDARIO} onClick={onFechar} disabled={pendente}>
             Cancelar
           </button>
-          <button type="submit" form={formId} className={BOTAO_PRIMARIO} disabled={pendente || (tipo === "agencia" && (editando || avancado) && (slugInvalido || slugDuplicado))}>
+          <button type="submit" form={formId} className={BOTAO_PRIMARIO} disabled={pendente || (comLink && (editando || avancado) && (slugInvalido || slugDuplicado))}>
             {pendente && <Spinner />}
             {editando ? "Salvar alterações" : "Cadastrar empresa"}
           </button>
@@ -410,7 +437,7 @@ export function PainelEmpresa({
           {editando ? (
             <>
               <input type="hidden" name="tipo" value={tipo} />
-              <p className="text-sm text-[#20252B]">{tipo === "agencia" ? "Parceiro da agência" : "Empreiteira"}</p>
+              <p className="text-sm text-[#20252B]">{tipo === "agencia" ? "Parceiro da agência" : tipo === "afiliado" ? "Afiliado parceiro" : "Empreiteira"}</p>
               <p className="text-[13px] text-[#626B75]">O tipo não muda depois do cadastro, porque os usuários vinculados dependem dele.</p>
             </>
           ) : (
@@ -418,6 +445,7 @@ export function PainelEmpresa({
               {(
                 [
                   { v: "agencia", t: "Parceiro da agência", d: "Gera leads pelo link de indicação." },
+                  { v: "afiliado", t: "Afiliado parceiro", d: "Indica clientes pelo link e recebe comissão." },
                   { v: "empreiteira", t: "Empreiteira", d: "Vê candidatos das vagas vinculadas." },
                 ] as const
               ).map((o) => (
@@ -436,7 +464,14 @@ export function PainelEmpresa({
 
         <CamposRemuneracao inicial={empresa?.remuneracao} estado={estado} />
 
-        {tipo === "agencia" ? (
+        {comLink && (
+          <ProdutosParceiro
+            inicial={empresa?.produtos}
+            ajuda="Nenhum marcado = todos. Vale para todos os usuários da empresa; cada usuário pode ser restringido ainda mais."
+          />
+        )}
+
+        {comLink ? (
           <div className="space-y-3 rounded-xl border border-[#E6E9ED] p-4">
             <div>
               <p className={LABEL}>Link de indicação</p>
@@ -501,7 +536,7 @@ export function PainelEmpresa({
         )}
         {/* Empreiteira nova: o servidor ainda precisa de um código interno único. */}
         {!editando && tipo === "empreiteira" && <input type="hidden" name="slug" value="" />}
-        {!editando && tipo === "agencia" && !avancado && <input type="hidden" name="slug" value="" />}
+        {!editando && comLink && !avancado && <input type="hidden" name="slug" value="" />}
       </form>
     </Painel>
   );
@@ -562,7 +597,7 @@ export function ConfirmarSituacaoEmpresa({
                 ? `1 usuário vinculado ${desativar ? "perde" : "volta a ter"} o acesso ao CRM.`
                 : `${usuariosVinculados} usuários vinculados ${desativar ? "perdem" : "voltam a ter"} o acesso ao CRM.`}
             </li>
-            {empresa.tipo === "agencia" ? (
+            {empresa.tipo !== "empreiteira" ? (
               <li>{desativar ? "O link de indicação deixa de atribuir novos leads (inclusive de quem já tinha o código salvo no navegador)." : "O link de indicação volta a atribuir novos leads."}</li>
             ) : (
               <li>
@@ -571,7 +606,7 @@ export function ConfirmarSituacaoEmpresa({
             )}
             <li>Nada é apagado: leads, candidatos, usuários e vínculos continuam registrados.</li>
           </ul>
-          <p className="text-[13px] text-[#626B75]">Perfil atual dos usuários: {rotuloPerfil(empresa.tipo === "agencia" ? "parceiro_agencia" : "empreiteira")}.</p>
+          <p className="text-[13px] text-[#626B75]">Perfil atual dos usuários: {rotuloPerfil(empresa.tipo === "empreiteira" ? "empreiteira" : "parceiro_agencia")}.</p>
         </div>
       )}
     </Painel>

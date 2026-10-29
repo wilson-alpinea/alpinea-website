@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { exigirSomenteAdmin as exigirAdmin } from "@/lib/crm/acesso";
-import { lerPermissoes } from "@/lib/crm/permissoes";
+import { lerPermissoes, lerProdutosParceiro } from "@/lib/crm/permissoes";
 import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
 import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso, type Remuneracao } from "./AcessosPagina";
 
@@ -40,7 +40,7 @@ export default async function AcessosPage() {
     tipo: x.remuneracao_tipo === "percentual" || x.remuneracao_tipo === "fixo" ? x.remuneracao_tipo : null,
     valor: x.remuneracao_valor == null ? null : Number(x.remuneracao_valor),
   });
-  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p) }));
+  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p), produtos: lerProdutosParceiro(p.produtos) }));
   const usuarios: UsuarioAcesso[] = (rPerfis.data ?? []).map((u) => ({
     id: u.id,
     nome: u.nome ?? null,
@@ -48,6 +48,7 @@ export default async function AcessosPage() {
     papel: u.papel ?? null,
     parceiroId: u.parceiro_id ?? null,
     permissoes: u.papel === "consultor" ? lerPermissoes(u.permissoes) : null,
+    produtos: u.papel === "parceiro_agencia" ? lerPermissoes(u.permissoes).produtos.agencia ?? [] : [],
     cargo: (u.cargo as string | null) ?? null,
     remuneracao: remun(u),
   }));

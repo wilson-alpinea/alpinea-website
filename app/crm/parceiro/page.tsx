@@ -5,6 +5,7 @@ import { ESTAGIOS, ESTAGIO_COR } from "@/lib/crm/estagios";
 import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
 import type { Estagio } from "@/lib/crm/types";
 import { PortalShell } from "../PortalShell";
+import { lerPermissoes, lerProdutosParceiro, produtosLiberadosParceiro } from "@/lib/crm/permissoes";
 
 // Portal do parceiro da agência (Wilson, 21/out/2026): vê SOMENTE os leads
 // gerados por ele, sem editar. Leitura com service role, filtrando pelo
@@ -33,14 +34,21 @@ const data = (iso: string | null) => (iso ? new Date(iso.length === 10 ? `${iso}
 
 export default async function PortalParceiroPage() {
   const acesso = await exigirParceiro("agencia");
-  const { data: brutos, error } = await createAdminClient()
+  const admin = createAdminClient();
+  // Produtos liberados: empresa × usuário (Acessos). Vazio = todos.
+  const [{ data: emp }, { data: perfil }] = await Promise.all([
+    admin.from("parceiros").select("*").eq("id", acesso.parceiro.id).maybeSingle(),
+    admin.from("perfis").select("*").eq("id", acesso.userId).maybeSingle(),
+  ]);
+  const liberados = produtosLiberadosParceiro(lerProdutosParceiro(emp?.produtos), lerPermissoes(perfil?.permissoes).produtos.agencia ?? []);
+  const { data: brutos, error } = await admin
     .from("clientes")
     .select("id, nome, estagio, produto_principal, valor_proposta, data_viagem, created_at, arquivado_em")
     .eq("parceiro_id", acesso.parceiro.id)
     .order("created_at", { ascending: false })
     .limit(2000);
   if (error) console.error("Erro ao carregar leads do parceiro:", error);
-  const leads = ((brutos ?? []) as LeadParceiro[]).filter((l) => !/^\s*\[TESTE\]/i.test(l.nome));
+  const leads = ((brutos ?? []) as LeadParceiro[]).filter((l) => !/^\s*\[TESTE\]/i.test(l.nome) && (!liberados || (!!l.produto_principal && liberados.includes(l.produto_principal))));
 
   const ativos = leads.filter((l) => !l.arquivado_em);
   const ganhos = leads.filter((l) => l.estagio === "fechado_ganho").length;

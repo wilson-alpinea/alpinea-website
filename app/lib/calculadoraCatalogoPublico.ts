@@ -60,7 +60,7 @@ export const SERVICOS_PUBLICOS: { key: ServicoKey; nome: string; icone: string; 
   { key: "reservaRestaurante", nome: "Reserva de Restaurante", icone: "/images/icone-servico-reserva-restaurante.png" },
   { key: "experienciaSobMedida", nome: "Experiência Sob Medida", icone: "/images/icone-servico-experiencia-sob-medida.png" },
   { key: "concierge", nome: "Concierge Dedicado", icone: "/images/icone-servico-concierge.png" },
-  { key: "ajisaiShopping", nome: "Ajisai Shopping", icone: "/images/icone-servico-ajisai-shopping.png", sobConsulta: true },
+  // Ajisai Shopping fora da vitrine por enquanto (Wilson, 29/out/2026) — backlog.
 ];
 
 // Seguro viagem por faixa etária (mesma tabela da Calculadora Reversa).

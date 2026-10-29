@@ -38,6 +38,20 @@ export const PRODUTOS_POR_CRM: Partial<Record<UnidadeCrm, { valor: string; label
   ],
 };
 
+/** Produtos liberados a um parceiro/afiliado (empresa ou usuário). Vazio = todos. */
+export function lerProdutosParceiro(v: unknown): string[] {
+  const validos = PRODUTOS_POR_CRM.agencia!.map((p) => p.valor);
+  return Array.isArray(v) ? v.map(String).filter((x) => validos.includes(x)) : [];
+}
+
+/** Interseção empresa × usuário (lista vazia = sem restrição naquele nível). */
+export function produtosLiberadosParceiro(empresa: string[], usuario: string[]): string[] | null {
+  if (!empresa.length && !usuario.length) return null;
+  if (!empresa.length) return usuario;
+  if (!usuario.length) return empresa;
+  return empresa.filter((p) => usuario.includes(p));
+}
+
 export const PERMISSOES_VAZIAS: Permissoes = { crms: [], produtos: {}, cadastrar: false, editar: false, deletar: false };
 
 export function lerPermissoes(v: unknown): Permissoes {

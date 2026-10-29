@@ -8,7 +8,7 @@ export type Papel = "admin" | "parceiro_agencia" | "empreiteira" | "despachante"
 
 export const PERFIS: { valor: Exclude<Papel, null> | "sem_acesso"; label: string; descricao: string }[] = [
   { valor: "admin", label: "Administrador", descricao: "Equipe Alpinea: vê e edita tudo nos dois CRMs, inclusive esta página de acessos." },
-  { valor: "parceiro_agencia", label: "Parceiro da agência", descricao: "Vê somente os leads da própria empresa (pelo link de indicação ou atribuídos na ficha do cliente). Somente leitura." },
+  { valor: "parceiro_agencia", label: "Parceiro da agência / Afiliado", descricao: "Vê somente os leads da própria empresa — parceiro da agência ou afiliado parceiro (pelo link de indicação ou atribuídos na ficha do cliente). Somente leitura." },
   { valor: "empreiteira", label: "Empreiteira", descricao: "Vê somente os candidatos das vagas vinculadas à própria empresa. Somente leitura." },
   { valor: "consultor", label: "Consultor", descricao: "Vê somente os registros dele mesmo (clientes, candidatos, pedidos ou processos atribuídos a ele), nos CRMs e produtos escolhidos abaixo, com as ações liberadas (ver, editar, deletar). Não vê painéis, financeiro geral nem Acessos." },
   { valor: "despachante", label: "Despachante (Documentação)", descricao: "Vê somente os processos de Documentação atribuídos a ele na ficha do processo: dados do cadastro, ficha e documentos. Não vê valores, pagamentos nem contrato." },
