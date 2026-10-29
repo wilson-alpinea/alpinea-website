@@ -62,6 +62,7 @@ export default async function PortalPage({ params, searchParams }: { params: Pro
       contratoPrevia={contratoPrevia}
       contratoAceito={contratoAceito}
       motivoSaida={p.motivo_saida}
+      valorTotalJPY={((p.valor_moeda as string | null) ?? "BRL") === "JPY" ? Number(p.valor_total) || null : null}
       pagamento={{
         devida,
         totalParcelas: numeroParcelas(p.servico),

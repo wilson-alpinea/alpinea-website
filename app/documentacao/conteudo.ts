@@ -106,7 +106,7 @@ export const PERGUNTAS_PET: Pergunta[] = [
   { id: "p_tipo", rotulo: "Tipo de pet", tipo: "opcoes", opcoes: ["Cachorro", "Gato"], ajuda: "Só aceitamos cães e gatos." },
   { id: "p_raca", rotulo: "Raça", tipo: "texto", placeholder: "Ex.: Shiba, SRD, Maine Coon", ajuda: "Informe a raça real do pet — inclusive em cruzamentos." },
   // Eliminatória (Wilson, 29/out/2026): raça restrita não segue para a contratação.
-  { id: "p_racaRestrita", rotulo: "A raça do seu pet (ou do cruzamento) está na lista de raças NÃO aceitas desta página?", tipo: "opcoes", opcoes: ["Não, não está na lista", "Sim, está na lista", "Não sei"] },
+  { id: "p_racaRestrita", rotulo: "A raça do seu pet (ou do cruzamento) está na lista de raças NÃO aceitas desta página?", tipo: "opcoes", opcoes: ["Não, não está na lista", "Sim, está na lista"] }, // sem "Não sei" (Wilson, 29/out/2026: a lista com fotos está na mesma etapa)
   { id: "p_idade", rotulo: "Idade ou data de nascimento do pet", tipo: "texto" },
   { id: "p_porte", rotulo: "Porte", tipo: "opcoes", opcoes: ["Pequeno", "Médio", "Grande"] },
   { id: "p_altura", rotulo: "Altura", tipo: "numero", min: 1, max: 150, sufixo: "cm" },

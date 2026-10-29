@@ -18,7 +18,16 @@ import {
 type Servico = "visto" | "elegibilidade" | "pet";
 
 /** Painel de informação dentro de uma etapa (aberto ou recolhível). */
-export function Painel({ titulo, children, recolhivel = false, aberto = false }: { titulo: string; children: ReactNode; recolhivel?: boolean; aberto?: boolean }) {
+export function Painel({ titulo, children, recolhivel = false, aberto = false, alerta = false }: { titulo: string; children: ReactNode; recolhivel?: boolean; aberto?: boolean; alerta?: boolean }) {
+  // Faixa vermelha com letras brancas no título (Wilson, 29/out/2026: raças não aceitas).
+  if (alerta) {
+    return (
+      <section className="overflow-hidden rounded-2xl border border-[#B42318]/30 bg-[#F6F7F5]">
+        <p className="bg-[#B42318] px-5 py-3 text-sm font-semibold text-white">{titulo}</p>
+        <div className="p-5">{children}</div>
+      </section>
+    );
+  }
   if (recolhivel) {
     return (
       <details open={aberto} className="group rounded-2xl border border-black/10 bg-[#F6F7F5] p-5">
@@ -256,7 +265,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
           </p>
         </Painel>
         {/* Sempre aberta (Wilson, 29/out/2026: "tem que ser um item obrigatório") — a declaração fica logo abaixo, no formulário. */}
-        <Painel titulo="Raças NÃO aceitas no transporte aéreo — confira antes de seguir">
+        <Painel titulo="Raças NÃO aceitas no transporte aéreo — confira antes de seguir" alerta>
           <RacasNaoAceitas />
         </Painel>
       </div>

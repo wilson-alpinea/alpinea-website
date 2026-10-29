@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CabecalhoAjisai, Pilulas, VERDE, display } from "../../componentes";
 import { Campo, classeInput, mascararWhatsapp } from "../../../components/transporte/compartilhado";
 import { formatarCpf } from "../../../lib/fichaCadastral";
+import { PagamentoCOE } from "../../PagamentoCOE";
 import { WHATSAPP_NUMBER } from "../../../produtos/page";
 import type { ServicoDoc } from "../../conteudo";
 import {
@@ -368,6 +369,7 @@ export function PortalProcesso(props: {
   fichaInicial: FichaDoc; documentosIniciais: DocPublico[]; valorFinal: string | null; contratoPrevia: Contrato | null;
   contratoAceito: { texto: Contrato; hash: string; aceito_em: string } | null; motivoSaida: string | null;
   pagamento: InfoPagamento;
+  valorTotalJPY?: number | null;
 }) {
   const { id, token, servico, passo } = props;
   const [docs, setDocs] = useState<DocPublico[]>(props.documentosIniciais);
@@ -413,12 +415,14 @@ export function PortalProcesso(props: {
 
           {passo === "pagamento" && (
             <Bloco titulo="Pagamento">
-              {props.valorFinal && <p className={`${display.className} mb-4 text-2xl`}>{props.valorFinal}</p>}
+              {props.valorFinal && servico !== "elegibilidade" && <p className={`${display.className} mb-4 text-2xl`}>{props.valorFinal}</p>}
               {props.pagamento.voltouDoCheckout && props.pagamento.pagas.length === 0 ? (
                 <p className="rounded-xl bg-[#F6F7F5] p-4 text-sm leading-6 text-black/70">
                   Recebemos você de volta da Stone. Assim que o pagamento for confirmado (no Pix, em segundos; no cartão, em alguns minutos), esta página e o seu e-mail são atualizados.
                   <button type="button" onClick={recarregar} className="ml-1 underline" style={{ color: VERDE }}>Atualizar</button>
                 </p>
+              ) : servico === "elegibilidade" && props.pagamento.devida === 1 ? (
+                <PagamentoCOE id={id} token={token} totalJPY={props.valorTotalJPY ?? null} info={props.pagamento} zap={zap} />
               ) : (
                 <PagarStone id={id} token={token} info={props.pagamento} zap={zap} />
               )}

@@ -26,6 +26,7 @@ import { documentosServico, errosFicha, estruturaFicha, urlPortal, type FichaDoc
 import { Bloco, CampoDinamico, Documentos, PagarStone, type Contrato, type DocPublico } from "./processo/[id]/PortalProcesso";
 import { MAX_PESSOAS_ONLINE, precoOnline } from "@/lib/documentacao/precoOnline";
 import { InfoEtapa } from "./InfoSolicitacao";
+import { PagamentoCOE } from "./PagamentoCOE";
 
 type Servico = "visto" | "elegibilidade" | "pet";
 type PassoId = "perfil" | "valor" | "dados" | "garantidor" | "solicitantes" | "titular" | "documentos" | "contrato" | "pagamento" | "pet" | "analise";
@@ -60,7 +61,7 @@ const PASSOS: Record<Servico, { id: PassoId; titulo: string; descricao: string }
     { id: "titular", titulo: "Ascendência e garantidor", descricao: "Endereço, ascendente japonês e dados completos do garantidor." },
     { id: "documentos", titulo: "Documentos", descricao: "Envie foto ou PDF de cada documento. Celular serve." },
     { id: "contrato", titulo: "Contrato", descricao: "Leia e aceite eletronicamente com nome e CPF." },
-    { id: "pagamento", titulo: "Pagamento", descricao: "50% agora pela Stone; os outros 50% antes da entrada na imigração." },
+    { id: "pagamento", titulo: "Pagamento", descricao: "1ª parcela (50%) em reais pela Stone ou em ienes por depósito no Japão." },
   ],
   // Pet (Wilson, 29/out/2026: "etapa 1 como se já estivesse preenchendo"):
   // valor ainda sob consulta, então termina em análise da equipe; contrato e
@@ -212,7 +213,6 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
       case "pet": {
         const r = PERGUNTAS_PET.filter((p) => erroPergunta(p)).map((p) => p.rotulo);
         if (respostas.p_racaRestrita === "Sim, está na lista") r.push("Raça NÃO aceita pelas companhias aéreas — não conseguimos atender.");
-        if (respostas.p_racaRestrita === "Não sei") r.push("Confira a lista de raças NÃO aceitas antes de continuar.");
         if (!aceitos.racaDeclarada) r.push("Declaração de que a raça do pet não está na lista de raças NÃO aceitas");
         return r;
       }
@@ -576,7 +576,14 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
             <div className="space-y-5">
               <div className="rounded-2xl p-6 text-white" style={{ background: VERDE }}>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Valor final</p>
-                <p className={`${display.className} mt-2 text-3xl`}>{contrato.valorFinal}</p>
+                {servico === "elegibilidade" && preco?.moeda === "JPY" ? (
+                  <>
+                    <p className={`${display.className} mt-2 text-3xl`}>{formatJPY(preco.total)}</p>
+                    <p className="mt-1 text-sm text-white/75">Em 2 parcelas de {formatJPY(preco.total / 2)} — a 1ª agora, a 2ª antes da entrada na imigração. Você escolhe pagar em reais ou em ienes no próximo passo.</p>
+                  </>
+                ) : (
+                  <p className={`${display.className} mt-2 text-3xl`}>{contrato.valorFinal}</p>
+                )}
               </div>
               <div className="max-h-[420px] space-y-3 overflow-y-auto rounded-xl bg-[#F6F7F5] p-4 text-xs leading-5 text-black/70">
                 <p className="font-semibold text-black">{contrato.texto.titulo}</p>
@@ -606,13 +613,25 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
 
           {passo.id === "pagamento" && sessao && (
             <div className="space-y-4">
+              {servico === "elegibilidade" ? (
+                <PagamentoCOE
+                  id={sessao.id}
+                  token={sessao.token}
+                  totalJPY={preco?.moeda === "JPY" ? preco.total : null}
+                  zap={zap}
+                  info={{ devida: 1, totalParcelas: 2, pagas: [], online: true, moeda: "JPY", voltouDoCheckout: false }}
+                />
+              ) : (
+              <>
               {contrato && <p className={`${display.className} text-2xl`}>{contrato.valorFinal}</p>}
               <PagarStone
                 id={sessao.id}
                 token={sessao.token}
                 zap={zap}
-                info={{ devida: 1, totalParcelas: servico === "elegibilidade" ? 2 : 1, pagas: [], online: true, moeda: preco?.moeda ?? "BRL", voltouDoCheckout: false }}
+                info={{ devida: 1, totalParcelas: 1, pagas: [], online: true, moeda: preco?.moeda ?? "BRL", voltouDoCheckout: false }}
               />
+              </>
+              )}
               <p className="text-xs leading-5 text-black/50">
                 Contrato aceito e registrado no seu processo. Se preferir pagar depois, use o link de acesso que enviamos para {email || "o seu e-mail"}:{" "}
                 <Link href={urlPortal(sessao.id, sessao.token)} className="underline" style={{ color: VERDE }}>abrir meu processo</Link>.

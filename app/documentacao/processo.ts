@@ -62,8 +62,9 @@ const TUTOR_PET: CampoFicha[] = [
   { id: "nome", rotulo: "Nome completo do tutor (como no passaporte)", tipo: "texto" },
   { id: "cpf", rotulo: "CPF", tipo: "cpf" },
   { id: "rg", rotulo: "RG (número e órgão emissor)", tipo: "texto" },
-  { id: "passaporte", rotulo: "Número do passaporte", tipo: "texto" },
-  { id: "passaporteValidade", rotulo: "Validade do passaporte", tipo: "data" },
+  // Passaporte e validade opcionais no pet (Wilson, 29/out/2026).
+  { id: "passaporte", rotulo: "Número do passaporte", tipo: "texto", opcional: true, ajuda: "Deixe em branco se não souber informar." },
+  { id: "passaporteValidade", rotulo: "Validade do passaporte", tipo: "data", opcional: true, ajuda: "Deixe em branco se não souber informar." },
   { id: "aeroporto", rotulo: "Aeroporto de chegada no Japão", tipo: "opcoes", opcoes: ["Narita (Tóquio)", "Haneda (Tóquio)", "Kansai (Osaka)", "Chubu (Nagoya)", "Outro / ainda não sei"] },
   { id: "dataViagem", rotulo: "Data prevista da viagem (aproximada)", tipo: "data" },
   { id: "enderecoJapao", rotulo: "Endereço no Japão (se já tiver)", tipo: "textarea", opcional: true },
@@ -161,10 +162,11 @@ export type TipoDocumento = { id: string; rotulo: string; ajuda?: string; obriga
 export function documentosServico(servico: ServicoDoc): TipoDocumento[] {
   if (servico === "pet") {
     return [
-      { id: "passaporte_tutor", rotulo: "Passaporte do tutor (página da foto)", obrigatorio: true },
+      // Wilson, 29/out/2026: "só para não complicar muito na hora de fazer o cadastro".
+      { id: "passaporte_tutor", rotulo: "Passaporte do tutor (página da foto, se já tiver)", obrigatorio: false },
       { id: "rg_cpf_tutor", rotulo: "RG e CPF do tutor (ou CNH)", obrigatorio: true },
-      { id: "vacinacao", rotulo: "Carteira de vacinação do pet", ajuda: "Todas as páginas com vacinas registradas.", obrigatorio: true },
-      { id: "fotos_pet", rotulo: "Fotos do pet — de frente e de perfil", ajuda: "Usamos para confirmar a raça antes da contratação.", obrigatorio: true },
+      { id: "vacinacao", rotulo: "Carteira de vacinação do pet", ajuda: "Todas as páginas com vacinas registradas. Pode enviar depois.", obrigatorio: false },
+      { id: "fotos_pet", rotulo: "Fotos do pet", ajuda: "Usamos para confirmar a raça antes da contratação.", obrigatorio: true },
       { id: "sorologia", rotulo: "Laudo de sorologia (se já tiver)", obrigatorio: false },
       { id: "microchip", rotulo: "Comprovante do microchip (se já tiver)", obrigatorio: false },
     ];
