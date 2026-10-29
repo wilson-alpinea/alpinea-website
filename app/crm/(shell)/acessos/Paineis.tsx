@@ -11,8 +11,8 @@ import {
   type ResultadoAcesso,
 } from "../../acessosActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, CAMPO, LABEL, Painel, Spinner } from "../clientes/[id]/financeiro/ui";
-import type { EmpresaAcesso, UsuarioAcesso } from "./AcessosPagina";
-import { PRODUTOS_POR_CRM, type Permissoes } from "@/lib/crm/permissoes";
+import type { EmpresaAcesso, Remuneracao, UsuarioAcesso } from "./AcessosPagina";
+import { NIVEIS_ACAO, PRODUTOS_POR_CRM, nivelDe, type Permissoes } from "@/lib/crm/permissoes";
 import { UNIDADES_CRM, UNIDADE_LABEL, type UnidadeCrm } from "@/lib/crm/unidades";
 import { Copiar, ERRO_CAMPO, Mensagem, PERFIS, rotuloPerfil } from "./comum";
 
@@ -39,11 +39,47 @@ function ErroDoCampo({ estado, campo }: { estado: ResultadoAcesso | null; campo:
 }
 const erroGeral = (estado: ResultadoAcesso | null) => (estado && !estado.ok && !estado.campo ? estado.mensagem : null);
 
+// ── Remuneração do parceiro (Wilson, 29/out/2026) — só admin vê Acessos ──
+function CamposRemuneracao({ inicial, estado }: { inicial?: Remuneracao; estado: ResultadoAcesso | null }) {
+  const [tipo, setTipo] = useState<string>(inicial?.tipo ?? "");
+  return (
+    <div className="space-y-3 rounded-xl border border-[#E6E9ED] bg-[#FFFBF2] p-4">
+      <p className="text-sm font-semibold text-[#20252B]">
+        Remuneração do parceiro <span className="text-[12px] font-normal text-[#8A929B]">· visível só para administradores</span>
+      </p>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {[
+          { v: "", t: "Não definida" },
+          { v: "percentual", t: "% da receita líquida" },
+          { v: "fixo", t: "Valor fixo por venda" },
+        ].map((o) => (
+          <label key={o.v || "nenhuma"} className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${tipo === o.v ? "border-[#24476B] bg-white" : "border-[#D5DAE0] bg-white/60"}`}>
+            <input type="radio" name="remuneracao_tipo" value={o.v} checked={tipo === o.v} onChange={() => setTipo(o.v)} className="h-4 w-4 accent-[#24476B]" />
+            {o.t}
+          </label>
+        ))}
+      </div>
+      {tipo && (
+        <div>
+          <label className={LABEL} htmlFor="rem-valor">{tipo === "percentual" ? "Percentual (%)" : "Valor por venda (R$)"}</label>
+          <input
+            id="rem-valor"
+            name="remuneracao_valor"
+            inputMode="decimal"
+            defaultValue={inicial?.valor != null ? String(inicial.valor).replace(".", ",") : ""}
+            placeholder={tipo === "percentual" ? "Ex.: 10" : "Ex.: 150,00"}
+            className={CAMPO}
+          />
+          <ErroDoCampo estado={estado} campo="remuneracao_valor" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Consultor: níveis 2 a 5 (Wilson, 29/out/2026) ─────────────────
 function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes | null; cargo: string; estado: ResultadoAcesso | null }) {
   const [crms, setCrms] = useState<UnidadeCrm[]>(inicial?.crms ?? []);
-  const [deletar, setDeletar] = useState(inicial?.deletar ?? false);
-  const [editar, setEditar] = useState(inicial?.editar ?? false);
   const caixa = "h-4 w-4 shrink-0 accent-[#24476B]";
   return (
     <div className="space-y-5 rounded-xl border border-[#E6E9ED] bg-[#F7F9FB] p-4">
@@ -85,19 +121,13 @@ function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes |
         </div>
       ))}
       <div>
-        <p className={LABEL}>O que pode fazer</p>
-        <div className="mt-1 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#20252B]">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked disabled className={caixa} /> Ver
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="editar" checked={editar || deletar} onChange={(e) => setEditar(e.target.checked)} disabled={deletar} className={caixa} /> Editar
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="deletar" checked={deletar} onChange={(e) => setDeletar(e.target.checked)} className={caixa} /> Deletar
-          </label>
-        </div>
-        {deletar && <input type="hidden" name="editar" value="on" />}
+        <label className={LABEL} htmlFor="u-nivel">Nível de acesso</label>
+        <select id="u-nivel" name="nivel" defaultValue={inicial ? nivelDe(inicial) : "ver"} className={CAMPO}>
+          {NIVEIS_ACAO.map((n) => (
+            <option key={n.valor} value={n.valor}>{n.label}</option>
+          ))}
+        </select>
+        <p className="mt-1.5 text-[13px] text-[#626B75]">“Somente cadastrar” cria clientes, notas e arquivos novos, mas não altera nem exclui o que já existe.</p>
       </div>
       <p className="text-[13px] text-[#626B75]">O consultor vê somente os registros dele mesmo — os que ele criou ou que forem atribuídos a ele.</p>
     </div>
@@ -222,6 +252,7 @@ export function PainelUsuario({
             {descricao && <p className="mt-1.5 text-[13px] text-[#626B75]">{descricao}</p>}
             <ErroDoCampo estado={estado} campo="papel" />
           </div>
+          {papel !== "admin" && papel !== "sem_acesso" && <CamposRemuneracao inicial={usuario?.remuneracao} estado={estado} />}
           {papel === "consultor" && <PermissoesConsultor inicial={usuario?.permissoes ?? null} cargo={usuario?.cargo ?? ""} estado={estado} />}
           {tipo && (
             <div>
@@ -402,6 +433,8 @@ export function PainelEmpresa({
           )}
           <ErroDoCampo estado={estado} campo="tipo" />
         </fieldset>
+
+        <CamposRemuneracao inicial={empresa?.remuneracao} estado={estado} />
 
         {tipo === "agencia" ? (
           <div className="space-y-3 rounded-xl border border-[#E6E9ED] p-4">

@@ -24,6 +24,8 @@ import { cookies } from "next/headers";
 import { obterAcesso } from "@/lib/crm/acesso";
 import { COOKIE_NOTIFICACOES, carregarNotificacoes } from "@/lib/crm/notificacoes";
 import { PeriodoSelector } from "./components/PeriodoSelector";
+import { calcularComissoes } from "@/lib/crm/comissoes";
+import { hojeCRM } from "@/lib/crm/financeiro";
 import {
   Badge,
   Card,
@@ -124,6 +126,11 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
         </Suspense>
       </div>
 
+      {/* Comissões a distribuir (Wilson, 29/out/2026) — pagas até o 10º dia útil do mês seguinte. */}
+      <Suspense fallback={<Esqueleto altura="h-56" />}>
+        <Comissoes />
+      </Suspense>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Suspense fallback={<Esqueleto altura="h-72" />}>
           <Recebimentos dados={dados} />
@@ -134,6 +141,68 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
       </div>
 
     </div>
+  );
+}
+
+// ── Comissões a distribuir ───────────────────────────────────────
+async function Comissoes() {
+  const hoje = hojeCRM();
+  const mesAtual = hoje.slice(0, 7);
+  const [a, m] = mesAtual.split("-").map(Number);
+  const mesAnterior = new Date(Date.UTC(a, m - 2, 1)).toISOString().slice(0, 7);
+  const r = await calcularComissoes([mesAnterior, mesAtual]);
+  return (
+    <Card
+      titulo="Comissões a distribuir"
+      subtitulo="Remuneração dos parceiros e consultores (cadastrada em Acessos). Pagas até o 10º dia útil do mês seguinte."
+      cor="#946200"
+      fundo="#FFFCF5"
+      acao={<LinkAcao href="/crm/acessos">Regras em Acessos</LinkAcao>}
+    >
+      {"erro" in r ? (
+        <FalhaCarregar oque="as comissões" />
+      ) : (
+        <div className="grid gap-5 lg:grid-cols-2">
+          {r.map((mes, i) => {
+            const vencido = i === 0 && mes.prazo < hoje;
+            return (
+              <div key={mes.mes} className="rounded-xl bg-white p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="text-sm font-semibold text-[#20252B]">
+                    {i === 0 ? "A pagar" : "Acumulando"} — vendas de {mes.rotuloMes}
+                  </p>
+                  <p className={`text-[13px] ${vencido ? "font-medium text-[#B42318]" : "text-[#626B75]"}`}>Pagar até {dataCurta(mes.prazo)}</p>
+                </div>
+                <p className="mt-1 text-[26px] font-semibold tabular-nums text-[#946200]">{brl(mes.totalC)}</p>
+                {mes.beneficiarios.length === 0 ? (
+                  <p className="mt-2 text-[13px] text-[#626B75]">Nenhuma comissão neste mês.</p>
+                ) : (
+                  <ul className="mt-2 divide-y divide-[#EEF0F2] text-sm">
+                    {mes.beneficiarios.map((b) => (
+                      <li key={b.chave} className="flex items-start justify-between gap-3 py-2">
+                        <span className="min-w-0">
+                          <span className="block font-medium text-[#20252B]">{b.nome}</span>
+                          <span className="block text-[13px] text-[#626B75]">
+                            {b.tipo === "empresa" ? "Empresa parceira" : "Usuário"} ·{" "}
+                            {b.regra === "percentual"
+                              ? `${b.valorRegra.toLocaleString("pt-BR")}% sobre ${brl(Math.max(0, b.recebidoC))} recebidos`
+                              : `${b.vendas} ${b.vendas === 1 ? "venda" : "vendas"} × ${brl(Math.round(b.valorRegra * 100))}`}
+                          </span>
+                        </span>
+                        <span className="shrink-0 font-semibold tabular-nums text-[#20252B]">{brl(b.comissaoC)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <p className="mt-3 text-[13px] text-[#626B75]">
+        Percentual calculado sobre o valor recebido no mês (o CRM ainda não guarda o custo de cada venda). Valor fixo: por venda fechada (Fechado — Ganho) no mês. Dias úteis sem contar feriados.
+      </p>
+    </Card>
   );
 }
 

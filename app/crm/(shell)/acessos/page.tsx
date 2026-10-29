@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { exigirSomenteAdmin as exigirAdmin } from "@/lib/crm/acesso";
 import { lerPermissoes } from "@/lib/crm/permissoes";
 import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
-import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso } from "./AcessosPagina";
+import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso, type Remuneracao } from "./AcessosPagina";
 
 // Acessos e permissões (Wilson, 21/out/2026; redesenho 23/out/2026).
 // Só admin abre esta página (exigirAdmin) e todas as ações revalidam a
@@ -25,7 +25,7 @@ export default async function AcessosPage() {
   const supabase = await createClient();
 
   const [rParceiros, rPerfis, rVinculos] = await Promise.all([
-    supabase.from("parceiros").select("id, nome, slug, tipo, ativo, created_at").order("nome"),
+    supabase.from("parceiros").select("*").order("nome"), // "*": remuneração (migração 030)
     supabase.from("perfis").select("*").order("created_at"), // "*": permissoes/cargo (migração 030)
     supabase.from("vagas_empreiteira").select("vaga_id, parceiro_id"),
   ]);
@@ -36,7 +36,11 @@ export default async function AcessosPage() {
   };
   if (rParceiros.error || rPerfis.error || rVinculos.error) console.error("Erro ao carregar Acessos:", rParceiros.error ?? rPerfis.error ?? rVinculos.error);
 
-  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo }));
+  const remun = (x: { remuneracao_tipo?: string | null; remuneracao_valor?: number | string | null }): Remuneracao => ({
+    tipo: x.remuneracao_tipo === "percentual" || x.remuneracao_tipo === "fixo" ? x.remuneracao_tipo : null,
+    valor: x.remuneracao_valor == null ? null : Number(x.remuneracao_valor),
+  });
+  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p) }));
   const usuarios: UsuarioAcesso[] = (rPerfis.data ?? []).map((u) => ({
     id: u.id,
     nome: u.nome ?? null,
@@ -45,6 +49,7 @@ export default async function AcessosPage() {
     parceiroId: u.parceiro_id ?? null,
     permissoes: u.papel === "consultor" ? lerPermissoes(u.permissoes) : null,
     cargo: (u.cargo as string | null) ?? null,
+    remuneracao: remun(u),
   }));
   const vinculos: Record<string, string> = Object.fromEntries((rVinculos.data ?? []).map((v) => [v.vaga_id, v.parceiro_id]));
   const vagas: VagaAcesso[] = VAGAS.map((v) => ({ id: v.id, titulo: v.titulo, codigo: v.codigo, empresa: v.empresa, local: localVaga(v) }));

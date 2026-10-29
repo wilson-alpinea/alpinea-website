@@ -13,8 +13,9 @@ import { BotaoPrimario, CAMPO_FILTRO, CabecalhoSecao, Copiar, Icones, MenuAcoes,
 // na URL (voltar de uma edição mantém tudo). A tela só reorganiza: as
 // permissões continuam sendo checadas no servidor.
 
-export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null };
-export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira"; ativo: boolean };
+export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null; remuneracao?: Remuneracao };
+export type Remuneracao = { tipo: "percentual" | "fixo" | null; valor: number | null };
+export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira"; ativo: boolean; remuneracao?: Remuneracao };
 export type VagaAcesso = { id: string; titulo: string; codigo: string; empresa: string; local: string };
 
 type Situacao = "ativo" | "sem_acesso" | "bloqueado";

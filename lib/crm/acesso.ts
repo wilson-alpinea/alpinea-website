@@ -91,13 +91,14 @@ export async function exigirSomenteAdmin(): Promise<Acesso> {
 
 /** Para server actions que ALTERAM dados: admin, ou consultor com "editar"
  * (ou "deletar", quando `deletar`). Lança erro em vez de redirecionar. */
-export async function garantirAdmin(opcoes: { deletar?: boolean } = {}): Promise<Acesso> {
+export async function garantirAdmin(opcoes: { deletar?: boolean; cadastrar?: boolean } = {}): Promise<Acesso> {
   const acesso = await obterAcesso();
   if (acesso?.papel === "admin") return acesso;
   if (acesso?.papel === "consultor" && acesso.permissoes) {
-    const ok = opcoes.deletar ? acesso.permissoes.deletar : acesso.permissoes.editar;
+    const p = acesso.permissoes;
+    const ok = opcoes.deletar ? p.deletar : opcoes.cadastrar ? p.cadastrar : p.editar;
     if (ok) return acesso;
-    throw new Error(opcoes.deletar ? "Seu acesso não permite excluir." : "Seu acesso é somente leitura.");
+    throw new Error(opcoes.deletar ? "Seu acesso não permite excluir." : opcoes.cadastrar ? "Seu acesso é somente leitura." : p.cadastrar ? "Seu acesso permite só cadastrar, sem editar." : "Seu acesso é somente leitura.");
   }
   throw new Error("Acesso negado.");
 }

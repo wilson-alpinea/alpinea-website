@@ -137,7 +137,7 @@ async function registrarMudancaEstagioEntrega(
 }
 
 export async function createCliente(formData: FormData) {
-  await garantirAdmin();
+  await garantirAdmin({ cadastrar: true });
   const nome = String(formData.get("nome") || "").trim();
   if (!nome) {
     redirect("/crm/clientes/novo?erro=1");
@@ -283,7 +283,7 @@ export async function moveEstagioEntrega(clienteId: string, formData: FormData) 
 }
 
 export async function addInteracao(clienteId: string, formData: FormData) {
-  await garantirAdmin();
+  await garantirAdmin({ cadastrar: true });
   const conteudo = String(formData.get("conteudo") || "").trim();
   if (!conteudo) {
     redirect(`/crm/clientes/${clienteId}?erro=2`);
@@ -353,7 +353,7 @@ function normalizarUrl(valor: string) {
 }
 
 export async function addArquivo(clienteId: string, formData: FormData) {
-  await garantirAdmin();
+  await garantirAdmin({ cadastrar: true });
   const labelBruto = String(formData.get("label") || "").trim();
   const urlBruta = String(formData.get("url") || "").trim();
   const tipoBruto = String(formData.get("tipo") || "roteiro_draft");

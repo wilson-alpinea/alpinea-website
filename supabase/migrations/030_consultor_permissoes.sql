@@ -39,3 +39,13 @@ alter table public.candidaturas_vagas add column if not exists responsavel_id uu
 create index if not exists seguro_pedidos_responsavel_idx on public.seguro_pedidos (responsavel_id);
 create index if not exists documentacao_processos_responsavel_idx on public.documentacao_processos (responsavel_id);
 create index if not exists candidaturas_vagas_responsavel_idx on public.candidaturas_vagas (responsavel_id);
+
+-- Remuneração do parceiro (Wilson, 29/out/2026): percentual da receita
+-- líquida ou valor fixo por venda — na empresa parceira e no usuário.
+-- Só aparece em Acessos (tela exclusiva dos administradores).
+alter table public.parceiros
+  add column if not exists remuneracao_tipo text check (remuneracao_tipo is null or remuneracao_tipo in ('percentual', 'fixo')),
+  add column if not exists remuneracao_valor numeric(12, 2);
+alter table public.perfis
+  add column if not exists remuneracao_tipo text check (remuneracao_tipo is null or remuneracao_tipo in ('percentual', 'fixo')),
+  add column if not exists remuneracao_valor numeric(12, 2);

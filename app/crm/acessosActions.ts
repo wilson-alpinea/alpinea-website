@@ -1,6 +1,6 @@
 "use server";
 
-import { lerPermissoes } from "@/lib/crm/permissoes";
+import { acoesDoNivel, lerPermissoes } from "@/lib/crm/permissoes";
 
 import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
@@ -59,7 +59,9 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
     if (slugInformado) return { ok: false, mensagem: "Esse código já está em uso por outra empresa.", campo: "slug" };
     slug = `${slug.slice(0, 34)}-${randomBytes(2).toString("hex")}`;
   }
-  const { error } = await admin.from("parceiros").insert({ nome, tipo, slug });
+  const rem = remuneracaoDoForm(formData);
+  if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
+  const { error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem });
   if (error) {
     console.error("Erro ao criar parceiro:", error);
     return { ok: false, mensagem: "Não foi possível salvar." };
@@ -80,7 +82,9 @@ export async function editarParceiro(_: ResultadoAcesso | null, formData: FormDa
   const admin = createAdminClient();
   const { data: atual } = await admin.from("parceiros").select("id, slug, tipo").eq("id", id).maybeSingle();
   if (!atual) return { ok: false, mensagem: "Empresa não encontrada." };
-  const update: Record<string, string> = { nome };
+  const rem = remuneracaoDoForm(formData);
+  if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
+  const update: Record<string, string | number | null> = { nome, ...rem };
   const slugNovo = String(formData.get("slug") || "").trim().toLowerCase();
   if (atual.tipo === "agencia" && slugNovo && slugNovo !== atual.slug) {
     if (!SLUG_PARCEIRO.test(slugNovo)) {
@@ -122,6 +126,17 @@ function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<stri
   return { papel, parceiroId: parceiroBruto } as const;
 }
 
+// Remuneração do parceiro (migração 030): percentual da receita líquida ou
+// valor fixo por venda. Vazio = não definida.
+function remuneracaoDoForm(formData: FormData): { remuneracao_tipo: string | null; remuneracao_valor: number | null } | { erro: string } {
+  const tipo = String(formData.get("remuneracao_tipo") ?? "");
+  if (tipo !== "percentual" && tipo !== "fixo") return { remuneracao_tipo: null, remuneracao_valor: null };
+  const valor = Number(String(formData.get("remuneracao_valor") ?? "").replace(/\./g, "").replace(",", "."));
+  if (!Number.isFinite(valor) || valor <= 0) return { erro: "Informe o valor da remuneração." };
+  if (tipo === "percentual" && valor > 100) return { erro: "O percentual vai de 0 a 100." };
+  return { remuneracao_tipo: tipo, remuneracao_valor: Math.round(valor * 100) / 100 };
+}
+
 // Consultor (migração 030): nível 2 CRMs, nível 3 produtos, nível 4 ações, nível 5 cargo.
 function permissoesDoForm(formData: FormData) {
   const crms = formData.getAll("crms").map(String).filter(isUnidadeCrm);
@@ -130,7 +145,7 @@ function permissoesDoForm(formData: FormData) {
     const lista = formData.getAll(`prod_${u}`).map(String);
     if (lista.length) produtos[u] = lista;
   }
-  const permissoes = lerPermissoes({ crms, produtos, editar: formData.get("editar") === "on", deletar: formData.get("deletar") === "on" });
+  const permissoes = lerPermissoes({ crms, produtos, ...acoesDoNivel(String(formData.get("nivel") ?? "ver")) });
   const cargo = String(formData.get("cargo") ?? "").trim().slice(0, 80) || null;
   return { permissoes, cargo };
 }
@@ -148,6 +163,8 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
   const v = validarPapel(String(formData.get("papel") || ""), String(formData.get("parceiro_id") || ""), await tiposParceiros());
   if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
   if (v.papel === "consultor" && permissoesDoForm(formData).permissoes.crms.length === 0) return { ok: false, mensagem: "Escolha pelo menos um CRM.", campo: "crms" };
+  const remU = remuneracaoDoForm(formData);
+  if ("erro" in remU) return { ok: false, mensagem: remU.erro, campo: "remuneracao_valor" };
 
   const admin = createAdminClient();
   const senha = gerarSenha();
@@ -175,6 +192,7 @@ export async function criarUsuario(_: ResultadoAcesso | null, formData: FormData
         papel: v.papel,
         parceiro_id: v.parceiroId,
         ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}),
+        ...(v.papel && v.papel !== "admin" ? remU : {}),
       },
       { onConflict: "id" },
     );
@@ -193,7 +211,9 @@ export async function alterarAcessoUsuario(_: ResultadoAcesso | null, formData: 
   if (userId === acesso.userId) return { ok: false, mensagem: "Você não pode alterar o seu próprio acesso." };
   const v = validarPapel(String(formData.get("papel") || ""), String(formData.get("parceiro_id") || ""), await tiposParceiros());
   if ("erro" in v) return { ok: false, mensagem: v.erro!, campo: v.campo };
-  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}) };
+  const remU = remuneracaoDoForm(formData);
+  if ("erro" in remU) return { ok: false, mensagem: remU.erro, campo: "remuneracao_valor" };
+  const update: Record<string, unknown> = { papel: v.papel, parceiro_id: v.parceiroId, ...(v.papel === "consultor" ? permissoesDoForm(formData) : {}), ...(v.papel && v.papel !== "admin" ? remU : {}) };
   const nome = String(formData.get("nome") ?? "").trim().slice(0, 120);
   if (nome) update.nome = nome;
   const { error } = await createAdminClient().from("perfis").update(update).eq("id", userId);
