@@ -32,6 +32,15 @@ const GRUPOS: { titulo: string; itens: { href: string; nome: string; abrir?: str
       { href: "/produtos/esim", nome: "eSIM" },
     ],
   },
+  {
+    // Seção Documentação (Wilson, 29/out/2026).
+    titulo: "Documentação",
+    itens: [
+      { href: "/documentacao/visto", nome: "Visto específico" },
+      { href: "/documentacao/elegibilidade", nome: "Certificado de Elegibilidade" },
+      { href: "/documentacao/pet", nome: "Exportação de pet" },
+    ],
+  },
 ];
 
 export function MenuProdutos({ claro = false }: { claro?: boolean }) {

@@ -151,6 +151,24 @@
 .crm-ui [data-unidade="seguro"] :is(.accent-\[\#24476B\], .accent-\[\#1C3A5E\]) { accent-color: #75608b; }
 .crm-ui [data-unidade="seguro"] :is(input, select, textarea):focus { border-color: #75608b; }
 
+/*
+ * Tema do CRM de Documentação (Wilson, 29/out/2026) — bronze #8A5A3C.
+ */
+.crm-ui [data-unidade="documentacao"].crm-pagina,
+.crm-ui [data-unidade="documentacao"] .bg-\[\#FAF9F6\] {
+  background-color: #faf8f6;
+}
+.crm-ui [data-unidade="documentacao"] .text-\[\#20252B\] { color: #25211e; }
+.crm-ui [data-unidade="documentacao"] .text-\[\#626B75\] { color: #6b635d; }
+.crm-ui [data-unidade="documentacao"] :is(.border-\[\#E4E7EB\], .border-\[\#E6E9ED\], .border-\[\#D5DAE0\]) { border-color: #eae2db; }
+.crm-ui [data-unidade="documentacao"] :is(.bg-\[\#24476B\], .bg-\[\#1C3A5E\]) { background-color: #8a5a3c; }
+.crm-ui [data-unidade="documentacao"] :is(.hover\:bg-\[\#2C5480\], .hover\:bg-\[\#254a73\], .hover\:bg-\[\#1C3A5E\]\/90):hover { background-color: #744a30; }
+.crm-ui [data-unidade="documentacao"] :is(.text-\[\#24476B\], .text-\[\#1C3A5E\]) { color: #8a5a3c; }
+.crm-ui [data-unidade="documentacao"] :is(.border-\[\#24476B\], .border-\[\#1C3A5E\]) { border-color: #8a5a3c; }
+.crm-ui [data-unidade="documentacao"] :is(.bg-\[\#EAF1F8\], .bg-\[\#F2F6FC\]) { background-color: #f8f3ef; }
+.crm-ui [data-unidade="documentacao"] :is(.accent-\[\#24476B\], .accent-\[\#1C3A5E\]) { accent-color: #8a5a3c; }
+.crm-ui [data-unidade="documentacao"] :is(input, select, textarea):focus { border-color: #8a5a3c; }
+
 /* Cursor de clique em tudo que é clicável nos dois CRMs (Wilson, 23/out/2026).
    O Tailwind v4 deixa botões com cursor padrão; em @layer base para que
    utilitários como cursor-wait / cursor-not-allowed continuem valendo. */

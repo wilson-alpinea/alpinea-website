@@ -54,6 +54,19 @@ const UNIDADES = [
     corHover: "#63507A",
     tonal: "#E9E2F1",
   },
+  {
+    // Quarto CRM (Wilson, 29/out/2026).
+    unidade: "documentacao" as const,
+    titulo: "Documentação",
+    descricao: "Acompanhe vistos, certificados de elegibilidade e exportação de pets.",
+    botao: "Acessar documentação",
+    aqui: "/crm/documentacao",
+    icone: null,
+    fundo: "#F8F3EF",
+    cor: "#8A5A3C",
+    corHover: "#744A30",
+    tonal: "#EFE3DA",
+  },
 ];
 
 export default async function EscolherCrmPage() {
@@ -65,7 +78,7 @@ export default async function EscolherCrmPage() {
         <h1 className="text-[#20252B]">Escolha sua área de trabalho</h1>
         <p className="mt-1 text-[15px] text-[#626B75]">Acesse a unidade que deseja gerenciar.</p>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
           {UNIDADES.map((u) => (
             <section
               key={u.unidade}
@@ -76,6 +89,12 @@ export default async function EscolherCrmPage() {
                 {u.icone ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={u.icone} alt="" aria-hidden="true" className="h-12 w-12" />
+                ) : u.unidade === "documentacao" ? (
+                  // Documento com selo, no mesmo estilo do escudo do seguro.
+                  <svg viewBox="0 0 48 48" className="h-11 w-11" fill="none" aria-hidden="true">
+                    <path d="M13 6h15l9 9v25a2 2 0 0 1-2 2H13a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" fill="#fff" stroke={u.cor} strokeWidth={3} strokeLinejoin="round" />
+                    <path d="M28 6v9h9M17 22h14M17 28h14M17 34h8" stroke={u.cor} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 ) : (
                   // Escudo (seguro) desenhado no próprio estilo dos outros ícones.
                   <svg viewBox="0 0 48 48" className="h-11 w-11" fill="none" aria-hidden="true">

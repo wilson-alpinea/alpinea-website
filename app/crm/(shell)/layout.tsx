@@ -2,7 +2,7 @@ import Link from "next/link";
 import { NavCrm } from "./NavCrm";
 import { headers } from "next/headers";
 import { exigirAdmin } from "@/lib/crm/acesso";
-import { INICIO_UNIDADE, UNIDADES_CRM, UNIDADE_COR, UNIDADE_LABEL, isUnidadeCrm, urlUnidade } from "@/lib/crm/unidades";
+import { INICIO_UNIDADE, UNIDADES_CRM, UNIDADE_COR, UNIDADE_CURTO, UNIDADE_LABEL, isUnidadeCrm, urlUnidade } from "@/lib/crm/unidades";
 import { logout } from "../actions";
 
 // Dois CRMs (Wilson, 21/out/2026): agência de viagens e empregos, cada um
@@ -25,7 +25,12 @@ const NAV_SEGURO = [
   { href: "/crm/seguro", label: "Pedidos" },
   { href: "/crm/acessos", label: "Acessos" },
 ];
-const NAV_UNIDADE = { agencia: NAV_AGENCIA, empregos: NAV_EMPREGOS, seguro: NAV_SEGURO };
+// CRM de Documentação (Wilson, 29/out/2026).
+const NAV_DOCUMENTACAO = [
+  { href: "/crm/documentacao", label: "Processos" },
+  { href: "/crm/acessos", label: "Acessos" },
+];
+const NAV_UNIDADE = { agencia: NAV_AGENCIA, empregos: NAV_EMPREGOS, seguro: NAV_SEGURO, documentacao: NAV_DOCUMENTACAO };
 
 export default async function CrmShellLayout({
   children,
@@ -79,7 +84,7 @@ export default async function CrmShellLayout({
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M7 7h11l-3-3M17 17H6l3 3" />
                 </svg>
-                CRM {u === "seguro" ? "Seguro" : UNIDADE_LABEL[u]}
+                CRM {UNIDADE_CURTO[u]}
               </a>
             ))}
             <span className="hidden text-[13px] text-white/35 xl:inline">
