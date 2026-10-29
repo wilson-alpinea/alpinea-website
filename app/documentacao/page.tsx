@@ -92,8 +92,8 @@ export default function DocumentacaoPage() {
             />
             <CardServico
               href="/documentacao/pet"
-              imagem="/images/documentacao-pet-icone.webp"
-              alt="Ícone de caixa de transporte com um cachorro"
+              imagem="/images/documentacao-pet.webp"
+              alt="Tutora com um cavalier king charles ao lado da caixa de transporte no aeroporto"
               kicker="Cães e gatos"
               titulo="Exportação de pet"
               texto="Microchip, vacinas, sorologia, Import Permit e certificado veterinário internacional — o processo completo, com clínicas parceiras em São Paulo."
@@ -134,7 +134,7 @@ export default function DocumentacaoPage() {
           {[
             [EXPERIENCIA.vistos, "vistos emitidos", "/images/icone-documentacao-visto.png"],
             [EXPERIENCIA.elegibilidades, "certificados de elegibilidade", "/images/icone-documentacao-elegibilidade.png"],
-            [EXPERIENCIA.pets, "pets levados ao Japão", "/images/icone-documentacao-pet.png"],
+            [EXPERIENCIA.pets, "pets levados ao Japão", "/images/icone-documentacao-pet-caixa.png"],
           ].map(([n, t, icone]) => (
             <div key={t} className="rounded-2xl border border-black/10 bg-white p-4 text-center md:p-6">
               <Image src={icone} alt="" width={256} height={256} className="mx-auto mb-3 h-12 w-12 object-contain md:h-16 md:w-16" />
