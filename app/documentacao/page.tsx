@@ -82,7 +82,7 @@ export default function DocumentacaoPage() {
             <CardServico
               href="/documentacao/elegibilidade"
               imagem="/images/documentacao-elegibilidade-selo.webp"
-              alt="Exemplo de Certificate of Eligibility (在留資格認定証明書) emitido pela imigração japonesa"
+              alt="Detalhe do Certificado de Elegibilidade com o selo dourado do Ministério da Justiça do Japão"
               kicker="Com garantidor no Japão"
               titulo="Certificado de Elegibilidade"
               texto="O COE é emitido pela imigração no Japão — não é o visto. Com ele em mãos, o visto específico sai em cerca de 2 semanas (pedido à parte). Traduções inclusas."
