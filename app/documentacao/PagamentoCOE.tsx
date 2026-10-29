@@ -42,7 +42,7 @@ export function PagamentoCOE({ id, token, totalJPY, info, zap }: { id: string; t
     <div className="space-y-5">
       <div className="rounded-2xl p-5 text-white" style={{ background: VERDE }}>
         <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Agora: 1ª parcela (50%)</p>
-        <p className={`${display.className} mt-1 text-3xl`}>{parcela ? iene(parcela) : "50% do valor"}</p>
+        <p className="mt-1 text-3xl font-semibold tabular-nums tracking-tight">{parcela ? iene(parcela) : "50% do valor"}</p>
         <p className="mt-1 text-sm text-white/75">
           {totalJPY ? `de ${iene(totalJPY)} no total. ` : ""}Os outros 50% são pagos antes da entrada do pedido na imigração.
         </p>

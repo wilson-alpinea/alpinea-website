@@ -38,7 +38,7 @@ const GRUPOS: { titulo: string; cor: string; itens: { href: string; nome: string
       { href: "/produtos/guia-turistico", nome: "Guia Turístico" },
       { href: "/produtos/transporte-privado", nome: "Transporte Privado" },
       { href: "/produtos/transfer-aeroporto", nome: "Transfer Aeroporto" },
-      { href: "/produtos/reserva-restaurantes", nome: "Reserva de restaurantes" },
+      // Reserva de restaurantes fora do ar por enquanto (Wilson, 29/out/2026).
       { href: "/produtos/jrpass", nome: "JR Pass" },
       { href: "/produtos/cambio", nome: "Câmbio" },
       { href: "/produtos/seguro-viagem", nome: "Seguro Viagem" },

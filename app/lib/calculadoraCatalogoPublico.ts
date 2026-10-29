@@ -55,9 +55,8 @@ export type ServicoKey =
 export const SERVICOS_PUBLICOS: { key: ServicoKey; nome: string; icone: string; sobConsulta?: boolean }[] = [
   { key: "malasIntermunicipal", nome: "Transporte de Malas Inter-Municipal", icone: "/images/icone-servico-malas-intermunicipal.png" },
   { key: "cambioBrasil", nome: "Câmbio no Brasil", icone: "/images/icone-servico-cambio-brasil.png" },
-  { key: "restaurantesHighEnd", nome: "Reserva de Restaurantes High-End", icone: "/images/icone-servico-restaurantes-highend.png" },
+  // Reservas de restaurante fora da vitrine por enquanto (Wilson, 29/out/2026).
   { key: "transferOnibus", nome: "Transfer de Ônibus (Limousine Bus)", icone: "/images/icone-servico-transfer-onibus.png" },
-  { key: "reservaRestaurante", nome: "Reserva de Restaurante", icone: "/images/icone-servico-reserva-restaurante.png" },
   { key: "experienciaSobMedida", nome: "Experiência Sob Medida", icone: "/images/icone-servico-experiencia-sob-medida.png" },
   { key: "concierge", nome: "Concierge Dedicado", icone: "/images/icone-servico-concierge.png" },
   // Ajisai Shopping fora da vitrine por enquanto (Wilson, 29/out/2026) — backlog.

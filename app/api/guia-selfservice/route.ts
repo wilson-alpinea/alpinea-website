@@ -2,12 +2,17 @@ import { NextResponse } from "next/server";
 import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
+import { criarCheckoutParaCliente } from "../../../lib/pagarme/checkoutPedido";
+import { buscarCotacaoUSD } from "../../lib/cotacaoUSDServidor";
+import { CIDADES_GUIA, ROTEIRO_PRECO_BASE_BRL, calcularPrecoGuia } from "../../lib/precoGuia";
 
 export const runtime = "nodejs";
 
 // Pedido de Guia Turístico em /produtos/guia-turistico — pedido do Wilson,
-// 30/set/2026: página no mesmo template do Transporte Privado, checkout
-// manual (sem Stone). O lead cai no CRM com a tag SELF-SERVICE e a equipe
+// 30/set/2026: página no mesmo template do Transporte Privado.
+// + Pagamento online pela Stone (Wilson, 29/out/2026): o total é
+// RECALCULADO aqui (tipo de guia, pessoas, cidades dos dias, roteiro e
+// cotação PTAX do dólar) — o valor enviado pela página só vai para o log. O lead cai no CRM com a tag SELF-SERVICE e a equipe
 // confirma o guia e o pagamento pelo WhatsApp.
 
 function escapeHtml(value: unknown) {
@@ -75,18 +80,31 @@ export async function POST(req: Request) {
     const dataPartida = texto(body.dataPartida, 20);
     const adultos = inteiro(body.adultos);
     const criancas = inteiro(body.criancas);
-    const tipoGuia = texto(body.tipoGuia, 60);
-    const diariaUSD = Number(body.diariaUSD) || 0;
-    const guiasPorDia = inteiro(body.guiasPorDia) || 1;
+    const tipoChave = body.tipoChave === "estrangeiro" ? "estrangeiro" : body.tipoChave === "brasileiro" ? "brasileiro" : null;
+    if (!tipoChave) return NextResponse.json({ error: "Escolha o tipo de guia." }, { status: 400 });
+    const tipoGuia = tipoChave === "brasileiro" ? "Guia brasileiro" : "Guia estrangeiro";
     const dias: { data?: unknown; cidade?: unknown }[] = Array.isArray(body.dias) ? body.dias.slice(0, 60) : [];
     if (dias.length === 0) {
       return NextResponse.json({ error: "Escolha ao menos um dia com guia." }, { status: 400 });
     }
+    if (adultos < 1) return NextResponse.json({ error: "Informe ao menos 1 adulto." }, { status: 400 });
+    const cidades = dias.map((d) => texto(d.cidade, 40));
+    if (cidades.some((c) => !CIDADES_GUIA.includes(c))) {
+      return NextResponse.json({ error: "Cidade inválida em um dos dias. Recarregue a página e tente de novo." }, { status: 400 });
+    }
     const temRoteiro = Boolean(body.temRoteiro);
-    const guiaUSD = Number(body.guiaUSD) || 0;
-    const roteiroUSD = Number(body.roteiroUSD) || 0;
-    const totalUSD = Number(body.totalUSD) || 0;
-    const totalBRL = Number(body.totalBRL) || null;
+    const preco = calcularPrecoGuia({ tipo: tipoChave, pessoas: adultos + criancas, cidadesDosDias: cidades });
+    const { diariaUSD, guiasPorDia, guiaUSD } = preco;
+    const cotacao = await buscarCotacaoUSD();
+    const roteiroBRL = temRoteiro ? 0 : ROTEIRO_PRECO_BASE_BRL;
+    const roteiroUSD = Math.round(roteiroBRL / cotacao.cotacao);
+    const totalBRL = Math.round((guiaUSD * cotacao.cotacao + roteiroBRL) * 100) / 100;
+    const totalUSD = Math.round(guiaUSD + roteiroBRL / cotacao.cotacao);
+    const totalEnviado = Number(body.totalBRL) || 0;
+    if (totalEnviado && Math.abs(totalEnviado - totalBRL) > Math.max(5, totalBRL * 0.02)) {
+      console.warn(`Valor divergente no Guia (cliente R$ ${totalEnviado} × servidor R$ ${totalBRL}) — usando o do servidor.`);
+    }
+    const pagarOnline = body.pagarOnline === true;
     const observacoesCliente = texto(body.observacoes, 2000);
     const termosAceitos = Boolean(body.termosAceitos);
     const avisos: string[] = Array.isArray(body.avisos)
@@ -101,9 +119,10 @@ export async function POST(req: Request) {
       ["Guia (US$)", `US$ ${guiaUSD.toLocaleString("pt-BR")}`],
       ["Roteiro Personalizado", temRoteiro ? "Cliente diz que já contratou" : `Incluído — US$ ${roteiroUSD.toLocaleString("pt-BR")}`],
       ["Total estimado (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
-      ["Total estimado (BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
+      ["Total (BRL, calculado no servidor)", `R$ ${totalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`],
+      ["Cotação do dólar", `R$ ${cotacao.cotacao.toFixed(4)}${cotacao.fallback ? " (ESTIMATIVA — PTAX indisponível, conferir)" : ""}`],
       ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
-      ["Forma de pagamento", "A combinar pelo WhatsApp (checkout manual)"],
+      ["Forma de pagamento", pagarOnline ? "Online pela Stone (Pix ou cartão)" : "A combinar pelo WhatsApp"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
@@ -167,9 +186,23 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (guia-selfservice):", erroInteracao);
     }
 
+    let checkoutUrl: string | null = null;
+    if (pagarOnline && totalBRL > 0) {
+      checkoutUrl = await criarCheckoutParaCliente({
+        supabase,
+        clienteId: cliente.id,
+        valorBRL: totalBRL,
+        itemNome: "Guia Turístico no Japão — Ajisai",
+        itemDescricao: `${tipoGuia}, ${dias.length} dia(s), ${dataChegada} a ${dataPartida}`,
+        observacoes: `Guia Turístico — ${tipoGuia}, ${dias.length} dia(s)`,
+        urlSucesso: `${new URL(req.url).origin}/produtos/guia-turistico?pagamento=concluido`,
+        rotuloLog: "guia-selfservice",
+      });
+    }
+
     await notificarPorEmail({ nome, email, resumoTexto, resumoHtml });
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no pedido de Guia Turístico:", error);
     return NextResponse.json(

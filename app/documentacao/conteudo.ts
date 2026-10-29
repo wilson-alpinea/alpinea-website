@@ -12,7 +12,9 @@ export const EXPERIENCIA = { vistos: "+500", elegibilidades: "+150", pets: "+20"
 
 // ── Visto específico — preço por pessoa, por consulado (já inclui a taxa consular) ──
 export type Consulado = { id: string; nome: string; comCOE: number; semCOE: number; dica?: string };
-export const CONSULADOS: Consulado[] = [
+// +R$ 200 por pessoa em todos os serviços de documentação (Wilson, 29/out/2026).
+export const ADICIONAL_DOC_BRL_PESSOA = 200;
+const TABELA_CONSULADOS: Consulado[] = [
   { id: "sao-paulo", nome: "São Paulo", comCOE: 790, semCOE: 1590, dica: "SP, MS e Triângulo Mineiro" },
   { id: "rio-de-janeiro", nome: "Rio de Janeiro", comCOE: 990, semCOE: 1790 },
   { id: "curitiba", nome: "Curitiba", comCOE: 990, semCOE: 1790 },
@@ -21,11 +23,17 @@ export const CONSULADOS: Consulado[] = [
   { id: "belem", nome: "Belém", comCOE: 1290, semCOE: 2090 },
   { id: "recife", nome: "Recife", comCOE: 1390, semCOE: 2190 },
 ];
+export const CONSULADOS: Consulado[] = TABELA_CONSULADOS.map((c) => ({ ...c, comCOE: c.comCOE + ADICIONAL_DOC_BRL_PESSOA, semCOE: c.semCOE + ADICIONAL_DOC_BRL_PESSOA }));
 export const PRAZO_VISTO = { comCOE: "cerca de 2 semanas", semCOE: "cerca de 3 meses" };
 
 // ── Certificado de Elegibilidade — valor final do pacote, em ienes ──
-export const COE_INDIVIDUAL_JPY = { descendente: 79000, conjuge: 89000 };
-export const COE_FAMILIA_JPY: Record<number, number> = { 2: 149000, 3: 199000, 4: 229000, 5: 259000 };
+// O COE é cobrado em ienes: os R$ 200 por pessoa entram como ¥5.500 por
+// pessoa (≈ R$ 200 com o iene a ~¥27,5/R$; ajuste se a referência mudar).
+export const ADICIONAL_DOC_JPY_PESSOA = 5500;
+export const COE_INDIVIDUAL_JPY = { descendente: 79000 + ADICIONAL_DOC_JPY_PESSOA, conjuge: 89000 + ADICIONAL_DOC_JPY_PESSOA };
+export const COE_FAMILIA_JPY: Record<number, number> = Object.fromEntries(
+  Object.entries({ 2: 149000, 3: 199000, 4: 229000, 5: 259000 }).map(([n, v]) => [Number(n), v + ADICIONAL_DOC_JPY_PESSOA * Number(n)]),
+);
 export const COE_MAX_PESSOAS_SITE = 5; // acima disso, sob consulta
 
 export function precoCOEJPY(pessoas: number, perfilIndividual: "descendente" | "conjuge"): number | null {

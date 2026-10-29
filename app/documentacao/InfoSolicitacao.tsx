@@ -8,7 +8,7 @@
 
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Etapas, ListaCheck, Prazos, Termos, VERDE, display } from "./componentes";
+import { Etapas, ListaCheck, NaoIncluso, Prazos, Termos, VERDE, display } from "./componentes";
 import { formatBRL, formatJPY } from "../hooks/useCambioUSD";
 import {
   COE_FAMILIA_JPY, COE_INDIVIDUAL_JPY, EXPERIENCIA, PRECO_PET_BRL, RACAS_RESTRITAS_CAES, RACAS_RESTRITAS_GATOS,
@@ -114,14 +114,14 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
             <ListaCheck
               itens={[
                 "Lista de documentos e orientação para reunir cada um",
-                "Traduções oficiais e elaboração de declarações",
                 "Preparo do processo antes da entrada no consulado",
                 "Entrada presencial no consulado por um profissional autorizado — você não precisa ir nem enfrentar fila",
-                "Acompanhamento dos pedidos do consulado, traduzidos para você",
+                "Acompanhamento dos pedidos do consulado",
                 "Atendimento da equipe Ajisai em português em todas as etapas",
                 "Envio do passaporte com o visto para o seu endereço",
               ]}
             />
+            <NaoIncluso className="mt-4" itens={["Traduções simples (não juramentadas): R$ 90 por documento", "Elaboração de declarações: R$ 90 por declaração", "Apostila de Haia (apostilamento em cartório), quando exigida", "Valor da postagem dos documentos até a Ajisai (Correios/Sedex)"]} />
           </Painel>
         </div>
       );
@@ -132,7 +132,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
             <Etapas
               itens={[
                 { titulo: "Conferência", texto: "Revisamos tudo e pedimos o que faltar." },
-                { titulo: "Traduções", texto: "Traduções oficiais e declarações." },
+                { titulo: "Preparo", texto: "Montamos o processo. Traduções (R$ 90 cada) e declarações (R$ 90 cada), se necessárias, à parte." },
                 { titulo: "Entrada no consulado", texto: "Nosso profissional protocola o pedido." },
                 { titulo: "Visto em casa", texto: "Acompanhamos a emissão e enviamos o passaporte." },
               ]}
@@ -161,8 +161,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
       return (
         <Painel titulo="O que é o Certificado de Elegibilidade">
           <p className="text-sm leading-6 text-black/70">
-            O COE é pedido na imigração do Japão — não no consulado. Um parente ou responsável que mora no Japão, o garantidor, declara que vai responder
-            pelo solicitante perante a imigração. Com o certificado em mãos no Brasil, o consulado emite o visto específico em cerca de 2 semanas.
+            O COE é pedido na imigração do Japão — não no consulado. Um parente ou responsável que mora no Japão, o garantidor, vai patrocinar o solicitante, ou seja, é o responsável pelas questões financeiras e migratórias dele perante a imigração. Com o certificado em mãos no Brasil, o consulado emite o visto específico em cerca de 2 semanas.
           </p>
           <p className="mt-4 text-sm font-medium text-black">Normalmente precisa do certificado quem:</p>
           <ListaCheck
@@ -193,15 +192,14 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
             <ListaCheck
               itens={[
                 "Orientação dos documentos para você e para o garantidor no Japão",
-                "Traduções oficiais e elaboração de declarações",
                 "Advogado de imigração cadastrado para dar entrada presencial — o garantidor não precisa faltar no trabalho",
-                "Acompanhamento das solicitações da imigração, traduzidas para o português",
+                "Acompanhamento das solicitações da imigração",
                 "Busca e emissão do koseki tohon no Japão",
                 "Postagem expressa Japão ⇄ Brasil (DHL ou UPS) pelo malote da Ajisai",
                 "Atendimento da equipe Ajisai em todas as etapas",
               ]}
             />
-            <p className="mt-3 text-xs text-black/45">Não inclui o envio por Sedex dentro do Brasil.</p>
+            <NaoIncluso className="mt-4" itens={["Traduções simples (não juramentadas): R$ 90 por documento", "Elaboração de declarações: R$ 90 por declaração", "Apostila de Haia (apostilamento em cartório), quando exigida", "Valor da postagem dos documentos dentro do Brasil (Correios/Sedex)"]} />
           </Painel>
         </div>
       );
@@ -211,7 +209,7 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
           <Painel titulo="Como funciona, depois do pagamento" recolhivel>
             <Etapas
               itens={[
-                { titulo: "Documentos no Japão", texto: "Conferência e traduções, para você e o garantidor." },
+                { titulo: "Documentos no Japão", texto: "Conferência dos documentos, para você e o garantidor." },
                 { titulo: "Entrada na imigração", texto: "Segundos 50% antes do protocolo." },
                 { titulo: "Emissão do certificado", texto: "Acompanhamento até a decisão." },
                 { titulo: "Envio para o Brasil", texto: "Pronto para pedir o visto específico." },

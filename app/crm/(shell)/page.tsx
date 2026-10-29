@@ -62,7 +62,8 @@ type Busca = { periodo?: string; dias?: string; de?: string; ate?: string; produ
 // Quadradinhos de produto no topo (Wilson, 29/out/2026). Ajisai Shopping fora (backlog).
 const OPCOES_PRODUTO: OpcaoProduto[] = [...PRODUTOS_PRINCIPAIS, ...PRODUTOS_SECUNDARIOS]
   .filter((p) => p.valor !== "ajisai_shopping" && PRODUTO_ICONS[p.valor])
-  .map((p) => ({ valor: p.valor, label: p.label, icone: PRODUTO_ICONS[p.valor] }));
+  // Serviço Individual: o ícone de "serviços adicionais" é fino demais em 24 px.
+  .map((p) => ({ valor: p.valor, label: p.label, icone: p.valor === "servico_individual" ? "/images/icone-servico-concierge.png" : PRODUTO_ICONS[p.valor] }));
 
 const rotuloExecucao = (e: string) => {
   const l = ESTAGIO_ENTREGA_LABEL[e as keyof typeof ESTAGIO_ENTREGA_LABEL] ?? e;

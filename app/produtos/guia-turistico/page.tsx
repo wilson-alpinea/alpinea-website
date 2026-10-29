@@ -5,8 +5,8 @@
 // Wilson, 30/set/2026: "hero de guia turistico, pagina de guia turistico
 // deve ser atualizada também"). Substitui a antiga /guia-turistico (tela
 // preta com botão de WhatsApp), que agora redireciona para cá. Checkout
-// manual: o envio registra o pedido no CRM (/api/guia-selfservice) e a
-// equipe confirma o guia e o pagamento pelo WhatsApp.
+// O envio registra o pedido no CRM (/api/guia-selfservice) e abre o
+// pagamento da Stone (desde 29/out/2026; antes era checkout manual).
 //
 // 5 etapas: 1 Viagem (período + pessoas) → 2 Guia (brasileiro ou
 // estrangeiro) → 3 Dias (quais dias e em que cidade) → 4 Dados →
@@ -28,6 +28,7 @@ import {
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
   GORJETA_GUIA_USD_PAX_DIA,
+  ADICIONAL_GUIA_MONTE_FUJI_USD,
   AVISO_DESLOCAMENTO_GUIA,
   ROTEIRO_PRECO_BASE,
 } from "../../components/CustomPackageCard";
@@ -46,6 +47,8 @@ import {
   IconeSeta,
 } from "../../components/transporte/compartilhado";
 import { EscopoServico, type VideoExplicativo } from "../../components/EscopoServico";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 const ETAPAS = ["Viagem", "Guia", "Dias", "Dados", "Revisão"] as const;
 type Etapa = 1 | 2 | 3 | 4 | 5;
@@ -70,7 +73,8 @@ const GUIAS: { key: TipoGuia; nome: string; perfil: string; diariaUSD: number }[
 ];
 
 // Só as cidades atendidas pelo fornecedor (Wilson, 29/out/2026).
-const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", "Fujikawaguchiko (Monte Fuji)"];
+const MONTE_FUJI = "Fujikawaguchiko (Monte Fuji)";
+const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", MONTE_FUJI];
 
 // Escopo do guia — Wilson, 06/out/2026: "deixar claro o que está sendo
 // contratado e escopo de funções / guia não é motorista particular, guia não
@@ -168,8 +172,8 @@ function TextoTermosGuia() {
       </p>
       <p className="mt-3 font-medium text-black/80">Disponibilidade e confirmação</p>
       <p className="mt-1">
-        Os valores desta página são estimativas. O guia é confirmado conforme a disponibilidade para as datas e cidades
-        escolhidas, e a reserva só é feita depois da sua aprovação e da confirmação do pagamento.
+        O guia é confirmado conforme a disponibilidade para as datas e cidades escolhidas. Se não houver guia disponível,
+        devolvemos o valor pago integralmente.
       </p>
       <p className="mt-3 font-medium text-black/80">Cancelamento e alterações</p>
       <p className="mt-1">
@@ -178,8 +182,8 @@ function TextoTermosGuia() {
       </p>
       <p className="mt-3 font-medium text-black/80">Pagamento</p>
       <p className="mt-1">
-        Nenhum valor é cobrado nesta página. Forma de pagamento e parcelamento são combinados com a nossa equipe pelo
-        WhatsApp; valores em dólar são convertidos pela cotação do dia da confirmação.
+        Pagamento online e seguro pela Stone (Pix ou cartão), em reais, com os valores em dólar convertidos pela cotação
+        PTAX do dia do pedido.
       </p>
     </>
   );
@@ -215,6 +219,7 @@ export default function GuiaTuristicoPage() {
   const [resumoAbertoMobile, setResumoAbertoMobile] = useState(false);
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
 
   const stepperRef = useRef<HTMLDivElement | null>(null);
 
@@ -238,7 +243,11 @@ export default function GuiaTuristicoPage() {
   const diariaUSD = guia?.diariaUSD ?? 0;
   const gorjetaDiaUSD = GORJETA_GUIA_USD_PAX_DIA * pessoas;
   const guiaDiaUSD = diariaUSD * guiasPorDia + gorjetaDiaUSD;
-  const guiaUSD = guiaDiaUSD * diasEscolhidos.length;
+  // Monte Fuji: +US$100 por guia em cada dia lá (Wilson, 29/out/2026).
+  const adicionalFujiDiaUSD = ADICIONAL_GUIA_MONTE_FUJI_USD * guiasPorDia;
+  const diasFuji = diasEscolhidos.filter((d) => diasGuia[d] === MONTE_FUJI).length;
+  const precoDoDia = (d: string) => guiaDiaUSD + (diasGuia[d] === MONTE_FUJI ? adicionalFujiDiaUSD : 0);
+  const guiaUSD = guiaDiaUSD * diasEscolhidos.length + adicionalFujiDiaUSD * diasFuji;
   const roteiroUSD = diasEscolhidos.length > 0 && !temRoteiro ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
   const totalUSD = guiaUSD + roteiroUSD;
   const totalBRL = totalUSD * cambioCotacao;
@@ -247,6 +256,7 @@ export default function GuiaTuristicoPage() {
   if (diasEscolhidos.some((d) => d === dataChegada || d === dataPartida)) {
     avisos.push("Guia no dia de chegada ou de partida — o tempo útil depende do horário do voo; combinamos pelo WhatsApp.");
   }
+  if (diasFuji > 0) avisos.push(`Monte Fuji: + ${formatUSD(ADICIONAL_GUIA_MONTE_FUJI_USD)} por guia em cada dia em Fujikawaguchiko (já incluído no total).`);
   if (guiasPorDia > 1) avisos.push(`Grupo de ${pessoas} pessoas: ${guiasPorDia} guias por dia (1 a cada ${GUIA_TAMANHO_GRUPO}).`);
   if (new Set(diasEscolhidos.map((d) => diasGuia[d])).size > 1) avisos.push(AVISO_DESLOCAMENTO_GUIA);
 
@@ -326,7 +336,7 @@ export default function GuiaTuristicoPage() {
           : etapa === 4
             ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados para continuar" }
             : {
-                rotulo: status === "enviando" ? "Enviando…" : "Solicitar guia",
+                rotulo: status === "enviando" ? "Enviando…" : "Ir para o pagamento",
                 ativo: podeEnviar && status !== "enviando",
                 falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
               };
@@ -364,6 +374,8 @@ export default function GuiaTuristicoPage() {
     if (!podeEnviar || status === "enviando") return;
     setStatus("enviando");
     setErro("");
+    // Pagamento Stone em nova aba, aberta no clique (Wilson, 29/out/2026).
+    const janelaPagamento = abrirAbaPagamento();
     try {
       const resposta = await fetch("/api/guia-selfservice", {
         method: "POST",
@@ -374,6 +386,8 @@ export default function GuiaTuristicoPage() {
           adultos,
           criancas,
           tipoGuia: guia?.nome ?? "",
+          tipoChave: tipoGuia,
+          pagarOnline: true,
           diariaUSD,
           guiasPorDia,
           dias: diasEscolhidos.map((d) => ({ data: d, cidade: diasGuia[d] })),
@@ -393,13 +407,24 @@ export default function GuiaTuristicoPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
       }
+      if (dadosResposta?.checkoutUrl) {
+        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
+          setLinkPagamento(dadosResposta.checkoutUrl);
+          setStatus("enviado");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        return;
+      }
+      fecharAba(janelaPagamento);
       setStatus("enviado");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -519,9 +544,11 @@ export default function GuiaTuristicoPage() {
             <IconeCheck className="h-6 w-6" />
           </span>
           <h1 className={`${display.className} mt-5 text-2xl font-medium text-black md:text-3xl`}>Recebemos seu pedido</h1>
+          {linkPagamento && <BlocoPagamentoNovaAba url={linkPagamento} />}
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/70">
-            Nossa equipe confirma a disponibilidade do guia e combina os detalhes com você pelo WhatsApp — em geral no mesmo dia
-            útil.
+            {linkPagamento
+              ? "Conclua o pagamento na aba da Stone. Depois da confirmação, nossa equipe confirma o guia e os pontos de encontro com você pelo WhatsApp."
+              : "Não conseguimos abrir o pagamento online agora. Nossa equipe envia o link de pagamento e confirma o guia com você pelo WhatsApp — em geral no mesmo dia útil."}
           </p>
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
@@ -557,6 +584,9 @@ export default function GuiaTuristicoPage() {
                 </h1>
               </div>
             </section>
+          </div>
+          <div className="mx-auto max-w-6xl px-5 md:px-8">
+            <AvisoPagamentoConcluido />
           </div>
 
           <div ref={stepperRef} aria-hidden="true" />
@@ -694,7 +724,7 @@ export default function GuiaTuristicoPage() {
                     Escolha o guia
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">
-                    Diária por guia, para até {GUIA_TAMANHO_GRUPO} pessoas, + gorjeta de {formatUSD(GORJETA_GUIA_USD_PAX_DIA)} por pessoa/dia.
+                    Diária por guia, para até {GUIA_TAMANHO_GRUPO} pessoas, + gorjeta de {formatUSD(GORJETA_GUIA_USD_PAX_DIA)} por pessoa/dia. Dias no Monte Fuji: + {formatUSD(ADICIONAL_GUIA_MONTE_FUJI_USD)} por guia.
                     {guiasPorDia > 1 && ` O seu grupo precisa de ${guiasPorDia} guias por dia.`}
                   </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -761,7 +791,7 @@ export default function GuiaTuristicoPage() {
                             </span>
                           </label>
                           {ativo && (
-                            <span className="relative block w-36 shrink-0">
+                            <span className="relative block w-44 shrink-0 sm:w-56">
                               <select
                                 aria-label={`Cidade em ${formatarDataCurta(d)}`}
                                 value={diasGuia[d]}
@@ -777,7 +807,7 @@ export default function GuiaTuristicoPage() {
                           )}
                           {ativo && guia && (
                             <span className={`${inter.className} hidden w-20 shrink-0 text-right text-sm tabular-nums text-black/70 sm:block`}>
-                              {formatUSD(guiaDiaUSD)}
+                              {formatUSD(precoDoDia(d))}
                             </span>
                           )}
                         </li>
@@ -964,7 +994,7 @@ export default function GuiaTuristicoPage() {
                   </label>
                   {tentouEnviar && !termosAceitos && <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar o guia.</p>}
                   <p className="mt-4 text-xs leading-5 text-black/50">
-                    Nenhum valor é cobrado agora. Nossa equipe confirma o guia e combina a forma de pagamento com você pelo WhatsApp.
+                    Ao continuar, o pagamento abre em uma nova aba, pela Stone (Pix ou cartão). Se não houver guia disponível nas suas datas, devolvemos o valor integralmente.
                   </p>
                   {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
                 </section>

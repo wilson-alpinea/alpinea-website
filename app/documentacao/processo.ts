@@ -12,7 +12,7 @@ import { TERMOS_PET, TERMOS_VISTO_COE, TERMOS_RACAS } from "./conteudo";
 
 export const urlPortal = (id: string, token: string) => `/documentacao/processo/${id}?t=${token}`;
 export const MAX_PESSOAS_FICHA = 15;
-export const VERSAO_CONTRATO_DOC = "contrato-documentacao-v1-2026-10-29";
+export const VERSAO_CONTRATO_DOC = "contrato-documentacao-v2-2026-10-29"; // v2: traduções e declarações à parte (R$ 90 cada)
 
 // ── Ficha completa ──
 export type CampoFicha = {
@@ -201,8 +201,8 @@ export const CONTRATADA_DOC = {
 } as const;
 
 const OBJETO: Record<ServicoDoc, string> = {
-  visto: "assessoria na preparação da documentação e no protocolo do pedido de visto específico (descendentes de japoneses até a 3ª geração, cônjuges e dependentes legais) junto à representação consular do Japão no Brasil, incluindo traduções, declarações, entrada presencial por profissional autorizado e envio do passaporte ao endereço do CONTRATANTE",
-  elegibilidade: "assessoria na preparação da documentação e no protocolo do pedido de Certificado de Elegibilidade junto à imigração do Japão, incluindo traduções, declarações, advogado de imigração cadastrado, busca do koseki tohon e postagem expressa Japão ⇄ Brasil",
+  visto: "assessoria na preparação da documentação e no protocolo do pedido de visto específico (descendentes de japoneses até a 3ª geração, cônjuges e dependentes legais) junto à representação consular do Japão no Brasil, incluindo entrada presencial por profissional autorizado e envio do passaporte ao endereço do CONTRATANTE. NÃO estão incluídas as traduções simples (não juramentadas) nem a elaboração de declarações, cobradas à parte a R$ 90,00 (noventa reais) por documento traduzido e R$ 90,00 (noventa reais) por declaração, nem o apostilamento (Apostila de Haia) de documentos, quando exigido, nem o valor da postagem dos documentos dentro do Brasil",
+  elegibilidade: "assessoria na preparação da documentação e no protocolo do pedido de Certificado de Elegibilidade junto à imigração do Japão, incluindo advogado de imigração cadastrado, busca do koseki tohon e postagem expressa Japão ⇄ Brasil. NÃO estão incluídas as traduções simples (não juramentadas) nem a elaboração de declarações, cobradas à parte a R$ 90,00 (noventa reais) por documento traduzido e R$ 90,00 (noventa reais) por declaração, nem o apostilamento (Apostila de Haia) de documentos, quando exigido, nem o valor da postagem dos documentos dentro do Brasil",
   pet: "assessoria na documentação de exportação de cão ou gato do Brasil para o Japão, incluindo microchip, vacinação antirrábica, sorologia com envio ao laboratório credenciado, Import Permit junto à quarentena animal do Japão e Certificado Veterinário Internacional",
 };
 

@@ -328,7 +328,7 @@ function Aceite({ id, token, contrato, valorFinal, onAceito }: { id: string; tok
     <div className="space-y-5">
       <div className="rounded-2xl p-6 text-white" style={{ background: VERDE }}>
         <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Valor final aprovado pela equipe</p>
-        <p className={`${display.className} mt-2 text-3xl`}>{valorFinal}</p>
+        <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight">{valorFinal}</p>
       </div>
       <Bloco titulo={contrato.titulo}>
         <div className="max-h-[420px] space-y-3 overflow-y-auto rounded-xl bg-[#F6F7F5] p-4 text-xs leading-5 text-black/70">
@@ -415,7 +415,7 @@ export function PortalProcesso(props: {
 
           {passo === "pagamento" && (
             <Bloco titulo="Pagamento">
-              {props.valorFinal && servico !== "elegibilidade" && <p className={`${display.className} mb-4 text-2xl`}>{props.valorFinal}</p>}
+              {props.valorFinal && servico !== "elegibilidade" && <p className="mb-4 text-2xl font-semibold tabular-nums tracking-tight">{props.valorFinal}</p>}
               {props.pagamento.voltouDoCheckout && props.pagamento.pagas.length === 0 ? (
                 <p className="rounded-xl bg-[#F6F7F5] p-4 text-sm leading-6 text-black/70">
                   Recebemos você de volta da Stone. Assim que o pagamento for confirmado (no Pix, em segundos; no cartão, em alguns minutos), esta página e o seu e-mail são atualizados.

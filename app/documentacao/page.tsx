@@ -13,7 +13,7 @@ import { CONSULADOS, COE_INDIVIDUAL_JPY, EXPERIENCIA, PRECO_PET_BRL } from "./co
 
 const menorVisto = Math.min(...CONSULADOS.map((c) => c.comCOE));
 
-function CardServico({ href, imagem, alt, kicker, titulo, texto, preco, cta, separado = false }: { href: string; imagem: string; alt: string; kicker: string; titulo: string; texto: string; preco: string; cta: string; separado?: boolean }) {
+function CardServico({ href, imagem, alt, kicker, titulo, texto, preco, cta, separado = false }: { href: string; imagem: string; alt: string; kicker: string; titulo: string; texto: string; preco?: string; cta: string; separado?: boolean }) {
   return (
     <Link
       href={href}
@@ -24,7 +24,7 @@ function CardServico({ href, imagem, alt, kicker, titulo, texto, preco, cta, sep
       <p className="text-[10px] uppercase tracking-[0.22em] text-black/45">{kicker}</p>
       <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-[1.7rem]`}>{titulo}</h3>
       <p className="mt-3 flex-1 text-sm font-light leading-6 text-black/60">{texto}</p>
-      <p className="mt-5 text-sm text-black/55">{preco}</p>
+      {preco && <p className="mt-5 text-sm text-black/55">{preco}</p>}
       <span className="mt-4 inline-flex w-fit items-center rounded-full px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white transition group-hover:opacity-90" style={{ background: VERDE }}>
         {cta}
       </span>
@@ -77,7 +77,6 @@ export default function DocumentacaoPage() {
               kicker="Nisseis, sanseis e família"
               titulo="Visto específico"
               texto="Preparamos o processo e damos entrada no consulado japonês por você. Valor final por pessoa, com a taxa consular inclusa."
-              preco={`A partir de ${formatBRL(menorVisto)} por pessoa`}
               cta="Ver visto"
             />
             <CardServico
@@ -86,8 +85,7 @@ export default function DocumentacaoPage() {
               alt="Exemplo de Certificate of Eligibility (在留資格認定証明書) emitido pela imigração japonesa"
               kicker="Com garantidor no Japão"
               titulo="Certificado de Elegibilidade"
-              texto="O COE é emitido pela imigração no Japão e encurta o visto para cerca de 2 semanas. Advogado de imigração e tradução inclusos."
-              preco={`A partir de ${formatJPY(COE_INDIVIDUAL_JPY.descendente)} por pessoa`}
+              texto="O COE é emitido pela imigração no Japão e encurta o visto para cerca de 2 semanas. Advogado de imigração incluso."
               cta="Ver elegibilidade"
             />
             <CardServico
@@ -97,7 +95,6 @@ export default function DocumentacaoPage() {
               kicker="Cães e gatos"
               titulo="Exportação de pet"
               texto="Microchip, vacinas, sorologia, Import Permit e certificado veterinário internacional — o processo completo, com clínicas parceiras em São Paulo."
-              preco={PRECO_PET_BRL ? `Pacote completo: ${formatBRL(PRECO_PET_BRL)}` : "Valor sob consulta"}
               cta="Ver exportação de pet"
               separado
             />
@@ -147,9 +144,9 @@ export default function DocumentacaoPage() {
           className="mt-8"
           itens={[
             "Você fala com a equipe Ajisai em português, não com o despachante ou o consulado.",
-            "Traduções oficiais e declarações preparadas por quem conhece o que a imigração aceita.",
+            "Documentos conferidos por quem conhece o que a imigração aceita.",
             "Equipe no Brasil e no Japão — inclusive para conversar com o garantidor em japonês.",
-            "Valor final informado antes de começar. Sem cobrança por item.",
+            "Valor do pacote informado antes de começar. Traduções simples e declarações, quando necessárias, custam R$ 90 cada; Apostila de Haia à parte.",
           ]}
         />
       </Secao>

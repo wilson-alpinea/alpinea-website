@@ -1,4 +1,9 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
+// Fora do ar por enquanto (Wilson, 29/out/2026: "remover serviço de reserva de
+// restaurantes por hora"). Para religar: true aqui + card em /produtos e item no MenuProdutos.
+const RESERVA_RESTAURANTES_ATIVA = false;
 
 // page.tsx é "use client" e não pode exportar `metadata` — mesmo padrão das
 // outras páginas de produto. Imagem de compartilhamento = foto do topo.
@@ -32,5 +37,6 @@ export const metadata: Metadata = {
 };
 
 export default function ReservaRestaurantesLayout({ children }: { children: React.ReactNode }) {
+  if (!RESERVA_RESTAURANTES_ATIVA) redirect("/produtos");
   return children;
 }

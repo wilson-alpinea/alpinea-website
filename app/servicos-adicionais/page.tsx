@@ -6,5 +6,5 @@ import { redirect } from "next/navigation";
 // Links antigos continuam funcionando por este redirecionamento. A versão
 // anterior está no histórico do git.
 export default function ServicosAdicionaisAntigo() {
-  redirect("/produtos/reserva-restaurantes");
+  redirect("/produtos");
 }

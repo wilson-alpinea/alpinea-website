@@ -136,6 +136,26 @@ export function ListaCheck({ itens, className = "" }: { itens: ReactNode[]; clas
   );
 }
 
+// Itens cobrados à parte (Wilson, 29/out/2026: "traduções oficiais e
+// elaboração é cobrado à parte, deixar separado como NÃO ESTÁ INCLUSO").
+export function NaoIncluso({ itens, className = "" }: { itens: ReactNode[]; className?: string }) {
+  return (
+    <div className={`rounded-xl border border-[#B42318]/25 bg-white p-4 ${className}`}>
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B42318]">Não está incluso — cobrado à parte</p>
+      <ul className="mt-3 space-y-2">
+        {itens.map((item, i) => (
+          <li key={i} className="flex gap-3 text-sm leading-6 text-black/75">
+            <svg viewBox="0 0 20 20" className="mt-1 h-4 w-4 shrink-0 text-[#B42318]" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+              <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
+            </svg>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function Etapas({ itens }: { itens: { titulo: string; texto?: string }[] }) {
   return (
     <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

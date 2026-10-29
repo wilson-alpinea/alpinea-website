@@ -429,10 +429,16 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                 {preco ? (
                   <>
                     <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Valor final para {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}</p>
-                    <p className={`${display.className} mt-2 text-4xl`}>{textoPreco}</p>
+                    <p className="mt-2 text-4xl font-semibold tabular-nums tracking-tight">{textoPreco}</p>
                     {preco.moeda === "BRL" ? (
                       <p className="mt-2 text-sm text-white/75">
                         {formatBRL(preco.porPessoa!)} por pessoa · taxa consular inclusa · 100% na contratação · prazo no consulado de {temCOE === "Sim" ? PRAZO_VISTO.comCOE : PRAZO_VISTO.semCOE}
+                      </p>
+                    ) : null}
+                    {preco.moeda === "BRL" ? (
+                      <p className="mt-3 border-t border-white/15 pt-3 text-xs leading-5 text-white/65">
+                        <strong className="font-semibold text-white/85">Taxa consular:</strong> é a taxa que o Consulado-Geral do Japão cobra
+                        para emitir o visto. Ela já está dentro deste valor — você não paga nada à parte no consulado.
                       </p>
                     ) : (
                       <p className="mt-2 text-sm text-white/75">
@@ -578,11 +584,11 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                 <p className="text-[10px] uppercase tracking-[0.22em] text-white/60">Valor final</p>
                 {servico === "elegibilidade" && preco?.moeda === "JPY" ? (
                   <>
-                    <p className={`${display.className} mt-2 text-3xl`}>{formatJPY(preco.total)}</p>
+                    <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight">{formatJPY(preco.total)}</p>
                     <p className="mt-1 text-sm text-white/75">Em 2 parcelas de {formatJPY(preco.total / 2)} — a 1ª agora, a 2ª antes da entrada na imigração. Você escolhe pagar em reais ou em ienes no próximo passo.</p>
                   </>
                 ) : (
-                  <p className={`${display.className} mt-2 text-3xl`}>{contrato.valorFinal}</p>
+                  <p className="mt-2 text-3xl font-semibold tabular-nums tracking-tight">{contrato.valorFinal}</p>
                 )}
               </div>
               <div className="max-h-[420px] space-y-3 overflow-y-auto rounded-xl bg-[#F6F7F5] p-4 text-xs leading-5 text-black/70">
@@ -623,7 +629,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                 />
               ) : (
               <>
-              {contrato && <p className={`${display.className} text-2xl`}>{contrato.valorFinal}</p>}
+              {contrato && <p className="text-2xl font-semibold tabular-nums tracking-tight">{contrato.valorFinal}</p>}
               <PagarStone
                 id={sessao.id}
                 token={sessao.token}

@@ -442,18 +442,10 @@ export default function ProdutosPage() {
                 cta="Calcular meu transfer"
                 className="lg:col-span-2"
               />
-              {/* Reserva de restaurantes virou card próprio — era o único item
-                  de "Serviços adicionais" (Wilson, 29/out/2026). */}
-              <ProductSelectorCard
-                href="/produtos/reserva-restaurantes"
-                icon="/images/icone-servico-reserva-restaurante.png"
-                iconWidth={320}
-                iconHeight={320}
-                title="Reserva de restaurantes"
-                description="Diga o restaurante e nós fazemos a reserva — inclusive nos que não aceitam reserva direta de estrangeiros."
-                cta="Pedir reserva"
-                className="lg:col-span-2"
-              />
+              {/* Reserva de restaurantes fora da vitrine por enquanto (Wilson,
+                  29/out/2026: "remover serviço de reserva de restaurantes por
+                  hora") — a página /produtos/reserva-restaurantes fica no
+                  código, desligada em RESERVA_RESTAURANTES_ATIVA. */}
               {/* Pedido do Wilson, 16/set/2026: "JR Pass, Cambio e Seguro
                   Viagem retirar do serviços avulsos, devem virar cards
                   principais como esses listados na imagem, seguir mesmo

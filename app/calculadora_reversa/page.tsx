@@ -30,6 +30,7 @@ import {
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
   GORJETA_GUIA_USD_PAX_DIA,
+  ADICIONAL_GUIA_MONTE_FUJI_USD,
   AVISO_DESLOCAMENTO_GUIA,
   DIARIA_SEGURO_VIAGEM,
   JR_PASS_DIAS_OPCOES,
@@ -1704,6 +1705,9 @@ export default function CalculadoraReversaPage() {
   // Default SEM GUIA — pedido do Wilson, 25/set/2026: "colocar default
   // SEM GUIA". Antes começava já reservando o guia pra viagem inteira.
   const [guiaDias, setGuiaDias] = useState(0);
+  // Dias de guia no Monte Fuji: +US$100 por guia/dia (Wilson, 29/out/2026).
+  const [guiaDiasFujiBruto, setGuiaDiasFuji] = useState(0);
+  const guiaDiasFuji = Math.min(guiaDiasFujiBruto, guiaDias);
   // Tipo de guia — pedido do Wilson, 16/set/2026: "deixar duas opções de
   // guia, guia brasileiro e guia estrangeiro (Português limitado ou
   // Inglês)".
@@ -2319,9 +2323,10 @@ export default function CalculadoraReversaPage() {
     // "motorista", mesmo preço já usado em /produtos no card "Transporte
     // Privado" — TransportePrivadoCalculator.tsx).
     const diariaGuiaUSD = guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD;
+    const guiasPorDia = Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO));
     const precoGuia = Math.round(
-      (diariaGuiaUSD * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) + GORJETA_GUIA_USD_PAX_DIA * pessoas) *
-        guiaDias *
+      ((diariaGuiaUSD * guiasPorDia + GORJETA_GUIA_USD_PAX_DIA * pessoas) * guiaDias +
+        ADICIONAL_GUIA_MONTE_FUJI_USD * guiasPorDia * guiaDiasFuji) *
         cambioCotacao,
     );
     if (guiaDias > 0) {
@@ -2338,6 +2343,7 @@ export default function CalculadoraReversaPage() {
           `US$ ${diariaGuiaUSD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
           `Gorjeta do guia: US$ ${GORJETA_GUIA_USD_PAX_DIA} por pessoa/dia (incluída)`,
           `${guiaDias} de ${dias} dia${dias === 1 ? "" : "s"} da viagem`,
+          ...(guiaDiasFuji > 0 ? [`Monte Fuji (Fujikawaguchiko): ${guiaDiasFuji} dia${guiaDiasFuji === 1 ? "" : "s"} · + US$ ${ADICIONAL_GUIA_MONTE_FUJI_USD} por guia/dia`] : []),
           AVISO_DESLOCAMENTO_GUIA,
         ],
         precoBRL: precoGuia,
@@ -2687,6 +2693,7 @@ export default function CalculadoraReversaPage() {
     extensoesSelecionadas,
     extensaoCategoriaHotel,
     guiaDias,
+    guiaDiasFuji,
     guiaTipo,
     selecaoMotorista,
     cambioIene,
@@ -4242,6 +4249,19 @@ export default function CalculadoraReversaPage() {
               US$ {guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD}/dia a cada{" "}
               {GUIA_TAMANHO_GRUPO} pessoas + gorjeta US$ {GORJETA_GUIA_USD_PAX_DIA}/pessoa/dia
             </span>
+            {guiaDias > 0 && (
+              <div className="mt-3 max-w-xs">
+                <NumberStepper
+                  label="Desses, quantos dias no Monte Fuji"
+                  value={guiaDiasFuji}
+                  onChange={setGuiaDiasFuji}
+                  min={0}
+                  max={guiaDias}
+                  formatValue={(v) => (v === 0 ? "Nenhum" : `${v} de ${guiaDias} dia${guiaDias === 1 ? "" : "s"}`)}
+                />
+                <span className="mt-1 block text-[11px] text-black/60">+ US$ {ADICIONAL_GUIA_MONTE_FUJI_USD} por guia, por dia em Fujikawaguchiko.</span>
+              </div>
+            )}
             {guiaDias > 0 && (
               <span className="mt-1 block text-[11px] text-black/50">{AVISO_DESLOCAMENTO_GUIA}</span>
             )}

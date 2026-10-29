@@ -379,7 +379,8 @@ export { comMargemEImposto };
 // Personalizado) quanto pelo catálogo de rotas/veículos em
 // app/lib/motoristaPrivadoRotas.ts (calculadora de Transporte Privado em
 // /produtos, calculadora reversa e self-service).
-const MULTIPLICADOR_MOTORISTA_PRIVADO = 1.4;
+// Atualizado 29/out/2026 (Wilson): "transporte privado ajustar margem para a partir de 45%" (antes 40%).
+const MULTIPLICADOR_MOTORISTA_PRIVADO = 1.45;
 export function comMargemMotoristaPrivado(custo: number) {
   return Math.round(custo * MULTIPLICADOR_MOTORISTA_PRIVADO);
 }
@@ -827,12 +828,20 @@ export const DIARIA_TRANSPORTE = comMargemEImposto(1000);
 // espanhol a ¥40.000/dia em Tóquio, Osaka, Kyoto, Nara, Fuji, Hakone etc.
 // Agora passa por comMargemEImposto (custo ÷ ¥150/US$ × 1,495 ≈ US$399).
 // Antes: US$350 fixo (valor final).
-export const CUSTO_GUIA_JPY_DIA = 40000;
-export const DIARIA_GUIA_ESTRANGEIRO_USD = comMargemEImposto(CUSTO_GUIA_JPY_DIA / JPY_POR_USD_REFERENCIA);
-export const GUIA_TAMANHO_GRUPO = 4;
+// Valores do guia moram em app/lib/precoGuia.ts desde 29/out/2026 (a API
+// recalcula o total antes do pagamento Stone) — re-exportados aqui.
+export {
+  CUSTO_GUIA_JPY_DIA,
+  DIARIA_GUIA_ESTRANGEIRO_USD,
+  GUIA_TAMANHO_GRUPO,
+  GORJETA_GUIA_USD_PAX_DIA,
+  ADICIONAL_GUIA_MONTE_FUJI_USD,
+  CUSTO_GUIA_BRASILEIRO_USD_DIA,
+  DIARIA_GUIA_USD,
+} from "../lib/precoGuia";
+import { DIARIA_GUIA_USD, GUIA_TAMANHO_GRUPO, GORJETA_GUIA_USD_PAX_DIA } from "../lib/precoGuia";
 // Gorjeta do guia — exigida pelo fornecedor (US$7 por pessoa, por dia de
 // guia). Repassada ao cliente sem margem, somada ao preço do guia.
-export const GORJETA_GUIA_USD_PAX_DIA = 7;
 // Hospedagem e Shinkansen do guia quando ele acompanha o grupo entre
 // cidades — cobrados à parte conforme o itinerário (só aviso, fora do total).
 export const AVISO_DESLOCAMENTO_GUIA =
@@ -844,9 +853,7 @@ export const AVISO_DESLOCAMENTO_GUIA =
 // Atualizado 29/out/2026 (Wilson): "valor base é 500 dólares, com nossa
 // margem deve ir pra 700 USD/dia" — custo próprio do guia brasileiro
 // (US$500/dia) × 1,4, independente do guia estrangeiro.
-export const CUSTO_GUIA_BRASILEIRO_USD_DIA = 500;
-const MULTIPLICADOR_GUIA_BRASILEIRO = 1.4;
-export const DIARIA_GUIA_USD = Math.round(CUSTO_GUIA_BRASILEIRO_USD_DIA * MULTIPLICADOR_GUIA_BRASILEIRO);
+// (definido em app/lib/precoGuia.ts)
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
 // não por diária do roteiro; preço não escala com ctx.dias. Custo do
 // fornecedor atualizado 25/set/2026 (Century Travel - Tour Operator,
