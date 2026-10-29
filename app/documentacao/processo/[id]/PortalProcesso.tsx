@@ -16,8 +16,8 @@ import {
   type CampoFicha, type FichaDoc, type PassoPortal,
 } from "../../processo";
 
-type DocPublico = { id: string; tipo: string; nome: string; tamanho: number; enviado_em: string };
-type Contrato = { titulo: string; clausulas: string[] };
+export type DocPublico = { id: string; tipo: string; nome: string; tamanho: number; enviado_em: string };
+export type Contrato = { titulo: string; clausulas: string[] };
 
 const NOME_SERVICO: Record<ServicoDoc, string> = { visto: "Visto específico", elegibilidade: "Certificado de Elegibilidade", pet: "Exportação de pet" };
 const ETAPA_ANDAMENTO: Record<string, string> = {
@@ -26,7 +26,7 @@ const ETAPA_ANDAMENTO: Record<string, string> = {
   protocolado: "Pedido protocolado. Agora o prazo depende do órgão responsável — avisamos assim que houver resposta.",
 };
 
-type InfoPagamento = {
+export type InfoPagamento = {
   devida: number | null;
   totalParcelas: number;
   pagas: { parcela: number; valorBRL: number; pagoEm: string | null }[];
@@ -39,7 +39,7 @@ const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", curren
 
 // Botão de pagamento pela Stone — mesmo checkout hospedado de /produtos
 // (cartão parcelado ou Pix). O valor é calculado no servidor na hora.
-function PagarStone({ id, token, info, zap }: { id: string; token: string; info: InfoPagamento; zap: string }) {
+export function PagarStone({ id, token, info, zap }: { id: string; token: string; info: InfoPagamento; zap: string }) {
   const [abrindo, setAbrindo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   if (!info.devida) return null;
@@ -78,7 +78,7 @@ function PagarStone({ id, token, info, zap }: { id: string; token: string; info:
   );
 }
 
-function Bloco({ titulo, children, sub }: { titulo: string; sub?: string; children: React.ReactNode }) {
+export function Bloco({ titulo, children, sub }: { titulo: string; sub?: string; children: React.ReactNode }) {
   return (
     <section className="rounded-2xl border border-black/10 bg-white p-5 md:p-7">
       <p className="text-[10px] uppercase tracking-[0.22em] text-black/45">{titulo}</p>
@@ -108,7 +108,7 @@ function LinhaDoTempo({ passo }: { passo: PassoPortal | "encerrado" }) {
   );
 }
 
-function CampoDinamico({ c, valor, onChange, erro }: { c: CampoFicha; valor: string; onChange: (v: string) => void; erro?: string | null }) {
+export function CampoDinamico({ c, valor, onChange, erro }: { c: CampoFicha; valor: string; onChange: (v: string) => void; erro?: string | null }) {
   const rotulo = c.opcional ? `${c.rotulo} (opcional)` : c.rotulo;
   if (c.tipo === "opcoes") {
     return (
@@ -142,7 +142,7 @@ function CampoDinamico({ c, valor, onChange, erro }: { c: CampoFicha; valor: str
   );
 }
 
-function Documentos({
+export function Documentos({
   id, token, servico, docs, setDocs, tipos, podeRemover,
 }: {
   id: string; token: string; servico: ServicoDoc; docs: DocPublico[]; setDocs: (d: DocPublico[]) => void;

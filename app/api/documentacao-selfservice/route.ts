@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { isServicoDoc, resumoDoCadastro, servicoDoc } from "../../../lib/crm/documentacao";
-import { urlPortal } from "../../documentacao/processo";
+import { textoValorFinal, urlPortal } from "../../documentacao/processo";
+import { precoOnline } from "../../../lib/documentacao/precoOnline";
 import { URL_SITE } from "../../../lib/documentacao/processoPublico";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 
@@ -89,6 +90,14 @@ export async function POST(req: Request) {
     const termosVersao = texto(body.termosVersao, 80) || null;
     const agora = new Date();
 
+    // Solicitação 100% online (Wilson, 29/out/2026): visto e COE têm tabela
+    // fechada — o servidor calcula o valor final e o processo segue sozinho
+    // até o contrato e o pagamento pela Stone, sem esperar a equipe.
+    const online = body.online === true && servico !== "pet";
+    const preco = online ? precoOnline(servico, campos) : null;
+    if (online && !preco) return NextResponse.json({ error: "Não foi possível calcular o valor deste pedido. Revise o consulado e o número de pessoas." }, { status: 400 });
+    if (preco) campos.autoatendimento = "sim";
+
     const resumo = resumoDoCadastro(servico, campos, { consulado: campos.consulado ?? "" }) || null;
 
     const titulo = `Novo cadastro — ${nomeServico} (Documentação)`;
@@ -125,12 +134,13 @@ export async function POST(req: Request) {
         respostas,
         campos,
         valor_referencia_brl: valorReferenciaBRL,
+        ...(preco ? { valor_total: preco.total, valor_moeda: preco.moeda, valor_final: textoValorFinal(preco.total, preco.moeda, servico) } : {}),
         termos_versao: termosVersao,
         termos_aceitos_em: agora.toISOString(),
         aceites,
         checkout_ip: ip,
         checkout_user_agent: navegador,
-        historico: [{ em: agora.toISOString(), por: "site", tipo: "nota", texto: `Cadastro enviado pelo site (${nomeServico}).` }],
+        historico: [{ em: agora.toISOString(), por: "site", tipo: "nota", texto: preco ? `Solicitação online iniciada pelo site (${nomeServico}) — valor pela tabela: ${textoValorFinal(preco.total, preco.moeda, servico)} (${preco.detalhe}).` : `Cadastro enviado pelo site (${nomeServico}).` }],
       })
       .select("id, acesso_token")
       .single();
@@ -151,14 +161,24 @@ export async function POST(req: Request) {
       const emailCliente: EmailClienteParams = {
         nome,
         titulo: `Recebemos seu cadastro — ${nomeServico}`,
-        intro: "O próximo passo é a ficha completa e o envio dos documentos, tudo online. Guarde este e-mail: o link abaixo é o seu acesso ao processo.",
-        etapas: [
-          { titulo: "Cadastro", texto: "Recebido." },
-          { titulo: "Ficha e documentos", texto: `Preencha e envie em ${URL_SITE}${portalUrl}` },
-          { titulo: "Análise da equipe", texto: "Confirmamos seu caso e o valor final." },
-          { titulo: "Contrato e pagamento", texto: "Aceite online e envio do comprovante." },
-          { titulo: "Processo em andamento", texto: "Acompanhe cada etapa pelo mesmo link." },
-        ],
+        intro: preco
+          ? "Sua solicitação online foi iniciada. Se fechar a página antes de terminar, continue pelo link abaixo: ficha, documentos, contrato e pagamento pela Stone, tudo online."
+          : "O próximo passo é a ficha completa e o envio dos documentos, tudo online. Guarde este e-mail: o link abaixo é o seu acesso ao processo.",
+        etapas: preco
+          ? [
+              { titulo: "Cadastro", texto: "Recebido." },
+              { titulo: "Ficha e documentos", texto: `Continue em ${URL_SITE}${portalUrl}` },
+              { titulo: "Contrato", texto: `Aceite eletrônico — valor ${textoValorFinal(preco.total, preco.moeda, servico)}.` },
+              { titulo: "Pagamento", texto: "Cartão ou Pix pela Stone." },
+              { titulo: "Processo em andamento", texto: "Acompanhe cada etapa pelo mesmo link." },
+            ]
+          : [
+              { titulo: "Cadastro", texto: "Recebido." },
+              { titulo: "Ficha e documentos", texto: `Preencha e envie em ${URL_SITE}${portalUrl}` },
+              { titulo: "Análise da equipe", texto: "Confirmamos seu caso e o valor final." },
+              { titulo: "Contrato e pagamento", texto: "Aceite online e envio do comprovante." },
+              { titulo: "Processo em andamento", texto: "Acompanhe cada etapa pelo mesmo link." },
+            ],
         etapaAtual: 1,
         status: "Aguardando a ficha completa e os documentos",
         extras: [`Seu link de acesso: ${URL_SITE}${portalUrl}`, "Não compartilhe este link: ele dá acesso aos dados do seu processo."],
@@ -179,7 +199,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ success: true, id: processo.id, portalUrl }, { status: 200 });
+    return NextResponse.json({ success: true, id: processo.id, token: token ?? null, portalUrl, online: !!preco }, { status: 200 });
   } catch (error) {
     console.error("Erro no cadastro de Documentação:", error);
     return NextResponse.json({ error: "Erro interno do servidor. Fale com a Ajisai pelo WhatsApp." }, { status: 500 });

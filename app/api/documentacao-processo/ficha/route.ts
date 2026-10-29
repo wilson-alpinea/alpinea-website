@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarProcessoPublico, enviarEmailDoc, EMAIL_EQUIPE_DOC, pessoasDoProcesso } from "@/lib/documentacao/processoPublico";
-import { documentosFaltando, errosFicha, linhasFichaDoc, parseFichaDoc, passoAtual, type DocumentoEnviado } from "@/app/documentacao/processo";
+import { documentosFaltando, errosFicha, linhasFichaDoc, parseFichaDoc, passoAtual, signatarioFicha, textoContrato, type DocumentoEnviado } from "@/app/documentacao/processo";
 import { servicoDoc } from "@/lib/crm/documentacao";
 
 export const runtime = "nodejs";
@@ -41,7 +41,15 @@ export async function POST(req: Request) {
       updated_at: agora,
       historico: [...historico, { em: agora, por: "cliente (portal)", tipo: "nota", texto: `Ficha completa enviada com ${docs.length} documento(s).` }],
     };
-    if (p.etapa === "novo") update.etapa = "em_analise";
+    // Solicitação 100% online (Wilson, 29/out/2026): valor já fechado pela
+    // tabela no cadastro → pré-aprovação automática e contrato liberado na
+    // hora. Os demais casos continuam passando pela análise da equipe.
+    const auto = p.campos?.autoatendimento === "sim" && Number(p.valor_total) > 0 && !!p.valor_final && ["novo", "em_analise"].includes(p.etapa);
+    if (auto) {
+      update.etapa = "pre_aprovado";
+      update.liberado_contrato_em = agora;
+      update.historico = [...(update.historico as unknown[]), { em: agora, por: "site (automático)", tipo: "etapa", de: p.etapa, para: "pre_aprovado", texto: "Solicitação online: contrato liberado automaticamente pela tabela de valores." }];
+    } else if (p.etapa === "novo") update.etapa = "em_analise";
     const { error } = await supabase.from("documentacao_processos").update(update).eq("id", p.id);
     if (error) return NextResponse.json({ error: "Não foi possível enviar a ficha agora. Tente novamente." }, { status: 500 });
 
@@ -57,6 +65,13 @@ export async function POST(req: Request) {
     ].join("\n");
     await enviarEmailDoc({ para: EMAIL_EQUIPE_DOC, assunto: `[DOCUMENTAÇÃO] Ficha completa — ${nome} — ${p.nome}`, texto, replyTo: p.email ?? undefined });
 
+    if (auto) {
+      const sig = signatarioFicha(p.servico, ficha);
+      const contrato = sig
+        ? textoContrato({ servico: p.servico, nome: sig.nome, cpf: sig.cpf, valorFinal: p.valor_final!, pessoas: ficha.pessoas.map((x) => x.nome).filter(Boolean), resumo: p.resumo ?? "", data: "(data e hora do aceite)" })
+        : null;
+      return NextResponse.json({ sucesso: true, contratoLiberado: true, contrato, valorFinal: p.valor_final });
+    }
     return NextResponse.json({ sucesso: true });
   } catch (e) {
     console.error("Erro na ficha (documentacao):", e);

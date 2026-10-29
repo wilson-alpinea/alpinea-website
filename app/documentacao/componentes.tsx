@@ -56,23 +56,39 @@ export function RodapeAjisai() {
 }
 
 // Hero compacto das subpáginas (o banner com foto fica só no hub).
-export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, alt = "" }: { kicker: string; titulo: string; subtitulo: string; voltar?: boolean; imagem?: string; alt?: string }) {
+// `fundo` (Wilson, 29/out/2026): foto do documento como fundo do banner,
+// com degradê verde-escuro por cima para dar leitura aos textos. `cta`:
+// botão que leva à solicitação online na própria página.
+export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, alt = "", fundo, cta }: { kicker: string; titulo: string; subtitulo: string; voltar?: boolean; imagem?: string; alt?: string; fundo?: string; cta?: { href: string; rotulo: string } }) {
+  const comFoto = Boolean(imagem) && !fundo;
   return (
-    <section className="relative overflow-hidden pt-[72px] text-white md:pt-[84px]" style={{ background: `linear-gradient(160deg, #06261E 0%, ${VERDE} 60%, #12503F 100%)` }}>
-      <div className={`mx-auto max-w-5xl px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14 ${imagem ? "md:grid md:grid-cols-[1.25fr_1fr] md:items-center md:gap-10" : ""}`}>
-        <div>
+    <section className="relative isolate overflow-hidden pt-[72px] text-white md:pt-[84px]" style={{ background: `linear-gradient(160deg, #06261E 0%, ${VERDE} 60%, #12503F 100%)` }}>
+      {fundo && (
+        <>
+          <Image src={fundo} alt="" fill priority sizes="100vw" className="-z-20 object-cover object-center" />
+          <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(90deg, #06261E 0%, rgba(11,61,48,0.94) 38%, rgba(11,61,48,0.72) 68%, rgba(11,61,48,0.45) 100%)` }} />
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1/3" style={{ background: "linear-gradient(0deg, rgba(6,38,30,0.65), transparent)" }} />
+        </>
+      )}
+      <div className={`mx-auto max-w-5xl px-5 pb-12 pt-10 md:px-8 md:pb-20 md:pt-16 ${comFoto ? "md:grid md:grid-cols-[1.25fr_1fr] md:items-center md:gap-10" : ""}`}>
+        <div className={fundo ? "max-w-2xl" : ""}>
         {voltar && (
-          <Link href="/documentacao" className="mb-6 inline-flex min-h-[44px] items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/60 transition hover:text-white">
+          <Link href="/documentacao" className="mb-6 inline-flex min-h-[44px] items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70 transition hover:text-white">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
             Documentação
           </Link>
         )}
-        <p className="text-[11px] uppercase tracking-[0.25em] text-white/60">{kicker}</p>
-        <h1 className={`${display.className} mt-3 text-[clamp(2rem,6vw,3.4rem)] font-normal leading-[1.08]`}>{titulo}</h1>
-        <p className="mt-5 max-w-2xl text-sm font-light leading-7 text-white/75 md:text-base">{subtitulo}</p>
+        <p className="text-[11px] uppercase tracking-[0.25em] text-white/70">{kicker}</p>
+        <h1 className={`${display.className} mt-3 text-[clamp(2rem,6vw,3.4rem)] font-normal leading-[1.08] [text-shadow:0_2px_18px_rgba(0,0,0,0.35)]`}>{titulo}</h1>
+        <p className="mt-5 max-w-2xl text-sm font-light leading-7 text-white/85 md:text-base">{subtitulo}</p>
+        {cta && (
+          <a href={cta.href} className="mt-8 inline-flex min-h-[48px] items-center rounded-full bg-white px-7 text-[11px] font-semibold uppercase tracking-[0.2em] transition hover:-translate-y-0.5" style={{ color: VERDE }}>
+            {cta.rotulo}
+          </a>
+        )}
         </div>
-        {imagem && (
-          <Image src={imagem} alt={alt} width={1254} height={1254} priority sizes="(min-width: 768px) 400px, 100vw" className="mt-8 block aspect-square h-auto w-full rounded-2xl object-cover md:mt-0" />
+        {comFoto && (
+          <Image src={imagem!} alt={alt} width={1254} height={1254} priority sizes="(min-width: 768px) 400px, 100vw" className="mt-8 block aspect-square h-auto w-full rounded-2xl object-cover md:mt-0" />
         )}
       </div>
     </section>
@@ -197,7 +213,7 @@ export function Pilulas({ opcoes, valor, onChange, nome }: { opcoes: string[]; v
   );
 }
 
-function CampoPergunta({ p, valor, onChange, erro }: { p: Pergunta; valor: string; onChange: (v: string) => void; erro: string | null }) {
+export function CampoPergunta({ p, valor, onChange, erro }: { p: Pergunta; valor: string; onChange: (v: string) => void; erro: string | null }) {
   const temErro = Boolean(erro);
   if (p.tipo === "opcoes") {
     return (
