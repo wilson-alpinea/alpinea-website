@@ -780,7 +780,7 @@ function suriemu(x: ContextoFicha): ValoresModelo {
 
 export const MODELOS_ORIGINAIS = [
   { id: "avcorp", nome: "AVCORP / Rainichisha — Curriculum Vitae", arquivo: "avcorp.docx", saida: "AVCORP-rainichisha", valores: avcorp },
-  { id: "lista-verificacao", nome: "Lista de Verificação (来日者 確認事項)", arquivo: "lista-verificacao.docx", saida: "LISTA-DE-VERIFICACAO", valores: lista },
+  { id: "lista-verificacao", nome: "Lista de Verificação (来日者 確認事項)", arquivo: "lista-verificacao.docx", saida: "LISTA-DE-VERIFICACAO", valores: lista, paisagem: true },
   { id: "fujiarte", nome: "FUJIARTE — Ficha Cadastral e Enquete", arquivo: "fujiarte.xlsx", saida: "FUJIARTE-Ficha-Cadastral", valores: fujiarte, foto: { largura: 379, altura: 435 } },
   { id: "suriemu", nome: "Suri-Emu — Ficha de Cadastro Digital", arquivo: "suriemu.xlsx", saida: "SURIEMU-Ficha-de-Cadastro", valores: suriemu },
 ] as const;

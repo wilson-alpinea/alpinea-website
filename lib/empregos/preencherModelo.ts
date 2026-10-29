@@ -24,7 +24,7 @@ const XML_COM_TEXTO = /^(word\/(document|header\d*|footer\d*)\.xml|xl\/sharedStr
 export async function preencherModelo(
   arquivo: string,
   valores: ValoresModelo,
-  opcoes: { fotoJpeg?: Buffer | null } = {},
+  opcoes: { fotoJpeg?: Buffer | null; paisagem?: boolean } = {},
 ): Promise<{ buffer: Buffer; faltando: string[] }> {
   const zip = await JSZip.loadAsync(await readFile(path.join(PASTA_MODELOS, arquivo)));
   const faltando = new Set<string>();
@@ -39,6 +39,15 @@ export async function preencherModelo(
       if (!valores[`cb:${chave}`]) return bloco;
       return bloco.replace(/w14:checked w14:val="0"/, 'w14:checked w14:val="1"').replace(/<w:t>☐<\/w:t>/, "<w:t>☒</w:t>");
     });
+
+    // Página em paisagem (Wilson, 29/out/2026: no Google Docs a Lista de
+    // Verificação cortava à direita em retrato). Troca largura/altura do A4.
+    if (opcoes.paisagem && nome === "word/document.xml") {
+      xml = xml.replace(/<w:pgSz w:w="(\d+)" w:h="(\d+)"([^>]*)\/>/g, (_m, w: string, h: string, resto: string) => {
+        const [maior, menor] = Number(w) >= Number(h) ? [w, h] : [h, w];
+        return `<w:pgSz w:w="${maior}" w:h="${menor}" w:orient="landscape"${resto.replace(/\s*w:orient="[^"]*"/, "")}/>`;
+      });
+    }
 
     // Texto: {{chave}} → valor (vazio quando não houver dado).
     xml = xml.replace(/\{\{([A-Za-z0-9_]+)\}\}/g, (_, chave: string) => {

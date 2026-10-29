@@ -82,7 +82,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const gerados = await Promise.all(
     modelos.map(async (m) => {
       // Linhas de listas sem item (2º emprego, 3º filho…) saem em branco.
-      const { buffer } = await preencherModelo(m.arquivo, m.valores(x), { fotoJpeg: foto });
+      const { buffer } = await preencherModelo(m.arquivo, m.valores(x), { fotoJpeg: foto, paisagem: "paisagem" in m && m.paisagem });
       return { nome: `${m.saida}_${slug}.${m.arquivo.split(".").pop()}`, buffer };
     }),
   );
