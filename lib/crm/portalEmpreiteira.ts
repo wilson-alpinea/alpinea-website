@@ -162,7 +162,7 @@ async function arquivosDaCandidatura(c: Bruto & { curriculo_path: string | null;
     if (!a.name.startsWith(`${c.id}__`)) continue;
     const partes = a.name.split("__");
     const tipo = partes.length >= 4 ? TIPOS_DOCUMENTO_CANDIDATO.find((t) => t.key === partes[2]) : undefined;
-    const nome = (tipo ? partes.slice(3) : partes.slice(2)).join("__") || a.name;
+    const nome = ((tipo ? partes.slice(3) : partes.slice(2)).join("__") || a.name).replace(/_/g, " ");
     lista.push({ chave: `anexo-${i}`, label: tipo ? `${tipo.label} — ${nome}` : nome, bucket: "curriculos-candidatos", path: `${PASTA_ANEXOS_EQUIPE}/${a.name}` });
   }
   return lista;

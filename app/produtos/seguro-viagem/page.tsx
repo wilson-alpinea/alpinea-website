@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { inter, mascararWhatsapp, Campo, classeInput } from "../../components/transporte/compartilhado";
 import { formatBRL } from "../../hooks/useCambioUSD";
 import { display, WHATSAPP_NUMBER, hojeISO, formatarDataBR } from "../page";
@@ -52,6 +53,9 @@ const classeData =
   "block min-h-[46px] w-full min-w-0 appearance-none rounded-lg border border-black/15 bg-white px-3 py-2.5 text-left text-sm text-black focus:border-[#2f80c9] focus:outline-none";
 
 export default function SeguroViagemPage() {
+  // /produtos/seguro-viagem/direto = mesma página, canal de venda direta
+  // (margem própria, calculada no servidor — ver margemSeguroViagemParceiro).
+  const canalDireto = (usePathname() ?? "").endsWith("/direto");
   const [partida, setPartida] = useState("");
   const [retorno, setRetorno] = useState("");
   const [travelling, setTravelling] = useState<"0" | "1">("0");
@@ -118,7 +122,7 @@ export default function SeguroViagemPage() {
       const r = await fetch("/api/seguro-viagem/cotacao", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ partida, retorno, travelling, nascimentos: viajantes.map((v) => v.nascimento) }),
+        body: JSON.stringify({ partida, retorno, travelling, nascimentos: viajantes.map((v) => v.nascimento), canal: canalDireto ? "direto" : "site" }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !Array.isArray(d.niveis)) {

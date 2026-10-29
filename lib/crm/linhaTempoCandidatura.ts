@@ -60,7 +60,7 @@ export function linhaTempoCandidatura(
   ];
   const andamento = lerAndamentoManual(c.andamento_manual);
   const respostas = (c.respostas ?? {}) as Record<string, unknown>;
-  const etapasPosteriores: EtapaManualId[] = ["empreiteira", "entrevistaFinal", ...(respostas.reEntry === "sim" ? [] : (["documentacao"] as const)), "embarque", "inicio"];
+  const etapasPosteriores: EtapaManualId[] = ["empreiteira", "entrevistaFinal", ...(respostas.reEntry === "sim" ? [] : (["documentacao"] as const)), "embarque", "inicio", "posVenda"];
   return [
     ...linhaTempoAuto,
     ...etapasPosteriores.map((eid) => ({ id: eid, label: ETAPAS_MANUAIS.find((e) => e.id === eid)!.label, quando: null as string | null, ok: false })),

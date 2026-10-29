@@ -79,6 +79,7 @@ const ACEITES_PET = [
   { id: "racas", resumo: "Leu e aceitou as restrições de raças no transporte aéreo", texto: "Li e aceito os termos de aceite de animais no transporte aéreo internacional e a lista de raças NÃO aceitas desta página." },
   { id: "termos", resumo: "Li e aceito os termos e condições do serviço (não reembolsável)", texto: "Li e aceito os termos e condições do serviço, incluindo que não há cancelamento com reembolso e que, se a raça for omitida ou declarada de forma incorreta, não há reembolso em nenhuma hipótese." },
 ];
+const DECLARACAO_RACA = "Declarou que a raça do pet (inclusive cruzamento) não está na lista de raças NÃO aceitas";
 const racaRestrita = (raca: string) => {
   const r = raca.toLowerCase();
   return r.length >= 3 && PALAVRAS_RACA_RESTRITA.some((p) => r.includes(p));
@@ -212,6 +213,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
         const r = PERGUNTAS_PET.filter((p) => erroPergunta(p)).map((p) => p.rotulo);
         if (respostas.p_racaRestrita === "Sim, está na lista") r.push("Raça NÃO aceita pelas companhias aéreas — não conseguimos atender.");
         if (respostas.p_racaRestrita === "Não sei") r.push("Confira a lista de raças NÃO aceitas antes de continuar.");
+        if (!aceitos.racaDeclarada) r.push("Declaração de que a raça do pet não está na lista de raças NÃO aceitas");
         return r;
       }
       case "garantidor":
@@ -253,7 +255,12 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
     ];
     const grupos = servico === "elegibilidade" ? [...perguntasDados, ...PERGUNTAS_GARANTIDOR] : servico === "pet" ? [...PERGUNTAS_PET, ...perguntasDados] : perguntasDados;
     const ctx: [string, string][] = servico === "pet" ? [["Solicitação", "Online pelo site"], ["País de origem do passageiro e do pet", "Brasil (confirmado no cadastro)"]] : contexto;
-    const linhas: [string, string][] = [...ctx, ...grupos.map((p) => [p.rotulo, respostas[p.id] ?? ""] as [string, string]), ...aceitesServico.map((a) => [a.resumo, "Aceito"] as [string, string])];
+    const linhas: [string, string][] = [
+      ...ctx,
+      ...grupos.map((p) => [p.rotulo, respostas[p.id] ?? ""] as [string, string]),
+      ...(servico === "pet" ? ([[DECLARACAO_RACA, "Aceito"]] as [string, string][]) : []),
+      ...aceitesServico.map((a) => [a.resumo, "Aceito"] as [string, string]),
+    ];
     const r = await fetch("/api/documentacao-selfservice", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -267,7 +274,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
         campos: servico === "pet" ? { ...respostas } : { ...respostas, perfil, qtd: String(pessoas), consuladoId, consulado: consulado?.nome ?? "", temCOE },
         valorReferenciaBRL: preco?.moeda === "BRL" ? preco.total : brlAprox,
         termosVersao: VERSAO_TERMOS_DOC,
-        aceites: aceitesServico.map((a) => a.resumo),
+        aceites: [...(servico === "pet" ? [DECLARACAO_RACA] : []), ...aceitesServico.map((a) => a.resumo)],
       }),
     }).catch(() => null);
     const d = await r?.json().catch(() => ({}));
@@ -482,8 +489,22 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                   <CampoPergunta key={p.id} p={p} valor={respostas[p.id] ?? ""} erro={mostrar(erroPergunta(p))} onChange={(v) => setRespostas((r) => ({ ...r, [p.id]: v }))} />
                 ))}
               </div>
-              <p className="text-xs leading-5 text-black/55">
-                Confira a lista de raças NÃO aceitas (acima) antes de seguir. Para mais de um pet, faça uma solicitação por animal.
+              <label
+                className={`flex cursor-pointer gap-3 rounded-2xl border p-4 text-sm leading-6 ${tentou && !aceitos.racaDeclarada ? "border-red-300 bg-red-50 text-red-800" : "border-black/10 bg-white text-black/80"}`}
+              >
+                <input
+                  type="checkbox"
+                  checked={Boolean(aceitos.racaDeclarada)}
+                  onChange={(e) => setAceitos((s) => ({ ...s, racaDeclarada: e.target.checked }))}
+                  className="mt-1 h-4 w-4 shrink-0 accent-[#0B3D30]"
+                />
+                <span>
+                  <strong className="font-semibold text-black">Obrigatório:</strong> conferi a lista de raças NÃO aceitas acima e declaro que a raça do meu pet —
+                  inclusive em caso de cruzamento — <strong className="font-semibold">não está na lista</strong>. Estou ciente de que, se a raça for omitida ou
+                  declarada de forma incorreta, não há reembolso em nenhuma hipótese.
+                </span>
+              </label>
+              <p className="text-xs leading-5 text-black/55"> Para mais de um pet, faça uma solicitação por animal.
               </p>
               {racaRestrita(respostas.p_raca ?? "") && respostas.p_racaRestrita !== "Sim, está na lista" && (
                 <div className="rounded-2xl border border-amber-500/40 bg-amber-50 p-5 text-sm leading-6 text-amber-900">

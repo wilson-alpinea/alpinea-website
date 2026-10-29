@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   // Modelos Word/Excel das fichas das empreiteiras, lidos do disco pela rota
   // que preenche o arquivo original (Wilson, 15/out/2026).
   outputFileTracingIncludes: {
-    "/crm/empregos/[id]/ficha-original": ["./lib/empregos/modelos/**"],
+    "/crm/empregos/[id]/ficha-original": ["./lib/empregos/modelos/**", "./lib/empregos/fontes/**"],
   },
 };
 

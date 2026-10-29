@@ -58,6 +58,7 @@ export async function POST(req: Request) {
       partida,
       retorno,
       emViagem: travelling === "1",
+      canal: body.canal === "direto" ? "direto" : "site",
     });
     if (niveis.length === 0) {
       return NextResponse.json({ error: "Não encontramos planos para esse grupo. Fale com a nossa equipe pelo WhatsApp." }, { status: 404 });

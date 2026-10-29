@@ -49,9 +49,18 @@ export async function POST(request: NextRequest) {
   if (arquivos.length === 0) return voltar("Escolha um arquivo para anexar.");
   if (arquivos.some((a) => a.size > LIMITE)) return voltar("Cada arquivo pode ter até 4 MB.");
 
+  // "Outros" com nome livre (Wilson, 29/out/2026: "campo aberto de nome de
+  // arquivo"). O nome digitado vira o nome do arquivo no storage (sem
+  // migração): "Comprovante de residência" → Comprovante_de_residencia.pdf;
+  // vários arquivos de uma vez ganham _1, _2…
+  const nomeLivre = String(form.get("nomeDocumento") ?? "").trim().slice(0, 60);
+  if (tipo === "outros" && nomeLivre.length < 2) return voltar("Em “Outros”, digite o nome do documento.");
+
   const admin = createAdminClient();
-  for (const a of arquivos) {
-    const caminho = `${PASTA_ANEXOS_EQUIPE}/${id}__${Date.now()}__${tipo}__${nomeSeguro(a.name)}`;
+  for (const [i, a] of arquivos.entries()) {
+    const ext = (a.name.match(/\.[A-Za-z0-9]{1,6}$/)?.[0] ?? "").toLowerCase();
+    const nomeArquivo = tipo === "outros" ? nomeSeguro(`${nomeLivre}${arquivos.length > 1 ? `_${i + 1}` : ""}${ext}`) : nomeSeguro(a.name);
+    const caminho = `${PASTA_ANEXOS_EQUIPE}/${id}__${Date.now()}__${tipo}__${nomeArquivo}`;
     const { error } = await admin.storage
       .from("curriculos-candidatos")
       .upload(caminho, Buffer.from(await a.arrayBuffer()), { contentType: a.type || "application/octet-stream" });

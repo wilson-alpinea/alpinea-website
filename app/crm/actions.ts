@@ -556,7 +556,11 @@ export async function registrarAndamentoCandidatura(candidaturaId: string, formD
     if (!isEtapaManual(etapa)) voltar("Etapa inválida.");
     else andamento.etapas[etapa] = { em: agora, por, ...(texto ? { comentario: texto } : {}) };
   }
-  if (texto) andamento.comentarios.push({ em: agora, por, texto, ...(etapa && isEtapaManual(etapa) ? { etapa } : {}) });
+  // Anotação atribuída a uma etapa (Wilson, 29/out/2026) — ao avançar, vai
+  // para a etapa marcada; só comentando, para a etapa escolhida em "etapaNota".
+  const etapaNota = String(formData.get("etapaNota") ?? "");
+  const etapaDoComentario = etapa && isEtapaManual(etapa) ? etapa : isEtapaManual(etapaNota) ? etapaNota : null;
+  if (texto) andamento.comentarios.push({ em: agora, por, texto, ...(etapaDoComentario ? { etapa: etapaDoComentario } : {}) });
 
   const { error } = await supabase
     .from("candidaturas_vagas")

@@ -15,6 +15,13 @@
 // ⚠️ MARGEM_80_ANOS é um ponto de partida — ajustar com o Wilson.
 
 export const MARGEM_ATE_60_ANOS = 50;
+// Canal de venda direta (Wilson, 29/out/2026: "o site COMPETITIVO, padrão
+// ... mas o canal direto [WhatsApp] vai com a margem turbo" — "cria uma
+// depois com 300% de margem para ver como fica"). Link
+// /produtos/seguro-viagem/direto: margem fixa, sem o limite do preço de
+// balcão do fornecedor (o mercado chega a 300%–400%).
+export type CanalSeguro = "site" | "direto";
+export const MARGEM_CANAL_DIRETO = 300;
 export const MARGEM_80_ANOS = 100;
 export const IDADE_MAXIMA_ONLINE = 80;
 
@@ -32,7 +39,8 @@ export function margemDoGrupo(idades: number[]): number {
 
 /** Margem final do plano: a do grupo, limitada para o preço não passar do
  * balcão do fornecedor e, se configurado, ao teto da agência. */
-export function margemDoPlano(params: { idades: number[]; custo: number; balcao: number; teto?: number | null }): number {
+export function margemDoPlano(params: { idades: number[]; custo: number; balcao: number; teto?: number | null; canal?: CanalSeguro }): number {
+  if (params.canal === "direto") return MARGEM_CANAL_DIRETO;
   let m = margemDoGrupo(params.idades);
   if (params.custo > 0 && params.balcao > params.custo) {
     m = Math.min(m, Math.floor(((params.balcao / params.custo - 1) * 100) * 10) / 10);

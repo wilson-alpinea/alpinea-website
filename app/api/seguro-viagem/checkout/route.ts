@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     }
 
     const idades = dados.nasc.map((n) => idadeNaData(n, dados.partida) ?? 0);
-    const margem = margemDoPlano({ idades, custo: dados.custo, balcao: dados.balcao, teto: tetoAgencia() });
+    const margem = margemDoPlano({ idades, custo: dados.custo, balcao: dados.balcao, teto: tetoAgencia(), canal: dados.k === "direto" ? "direto" : "site" });
     const valorEstimado = comMargem(dados.custo, margem);
 
     let checkout: { url: string; aviso: string | null };
@@ -117,8 +117,9 @@ export async function POST(req: Request) {
       const agora = new Date().toISOString();
       const { error } = await supabase.from("seguro_pedidos").insert({
         parceiro_id: atribuicao.parceiro_id,
-        canal: atribuicao.canal,
-        canal_detalhe: atribuicao.canal_detalhe,
+        // Link de venda direta → canal WhatsApp (Wilson, 29/out/2026).
+        canal: dados.k === "direto" ? "whatsapp" : atribuicao.canal,
+        canal_detalhe: dados.k === "direto" ? "Venda direta (link /seguro-viagem/direto)" : atribuicao.canal_detalhe,
         utm: atribuicao.utm,
         etapa: "link_enviado",
         nome,

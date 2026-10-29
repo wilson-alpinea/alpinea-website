@@ -278,7 +278,8 @@ export function InfoEtapa({ servico, passo }: { servico: Servico; passo: string 
             Não atendemos aves, répteis ou outros animais, nem a documentação para trazer um pet do Japão ao Brasil. {EXPERIENCIA.pets} pets já levados ao Japão.
           </p>
         </Painel>
-        <Painel titulo="Raças NÃO aceitas no transporte aéreo — confira antes de seguir" recolhivel>
+        {/* Sempre aberta (Wilson, 29/out/2026: "tem que ser um item obrigatório") — a declaração fica logo abaixo, no formulário. */}
+        <Painel titulo="Raças NÃO aceitas no transporte aéreo — confira antes de seguir">
           <RacasNaoAceitas />
         </Painel>
       </div>

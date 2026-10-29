@@ -59,6 +59,7 @@ export type DadosToken = {
   partida: string;
   retorno: string;
   exp: number;
+  k?: "direto"; // canal de venda direta (link /produtos/seguro-viagem/direto)
 };
 
 function segredo() {
@@ -99,6 +100,7 @@ export function montarNiveis(params: {
   partida: string;
   retorno: string;
   emViagem: boolean;
+  canal?: "site" | "direto";
 }): PlanoNivel[] {
   const maisVelho = Math.max(...params.idades);
   const maisNovo = Math.min(...params.idades);
@@ -121,7 +123,7 @@ export function montarNiveis(params: {
       .sort((x, y) => x.preco_em_pix_agencia - y.preco_em_pix_agencia);
     const p = naFaixa[0];
     if (!p) continue;
-    const margem = margemDoPlano({ idades: params.idades, custo: p.preco_em_reais_agencia, balcao: p.preco_em_reais, teto });
+    const margem = margemDoPlano({ idades: params.idades, custo: p.preco_em_reais_agencia, balcao: p.preco_em_reais, teto, canal: params.canal });
     resultado.push({
       nivel: nivel.id,
       token: assinar({
@@ -135,6 +137,7 @@ export function montarNiveis(params: {
         partida: params.partida,
         retorno: params.retorno,
         exp,
+        ...(params.canal === "direto" ? { k: "direto" as const } : {}),
       }),
       nome: p.nome_plano,
       seguradora: p.seguradora_nome,

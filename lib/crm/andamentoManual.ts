@@ -3,7 +3,7 @@
 // candidato manualmente e deixar comentários"). Fica em
 // candidaturas_vagas.andamento_manual (jsonb — migração 020).
 
-export type EtapaManualId = "ficha" | "proposta" | "preEntrevista" | "empreiteira" | "entrevistaFinal" | "documentacao" | "embarque" | "inicio";
+export type EtapaManualId = "ficha" | "proposta" | "preEntrevista" | "empreiteira" | "entrevistaFinal" | "documentacao" | "embarque" | "inicio" | "posVenda";
 
 export const ETAPAS_MANUAIS: { id: EtapaManualId; label: string }[] = [
   { id: "ficha", label: "Etapa 2 — ficha cadastral + foto" },
@@ -15,6 +15,10 @@ export const ETAPAS_MANUAIS: { id: EtapaManualId; label: string }[] = [
   { id: "documentacao", label: "Documentação concluída (COE + visto)" },
   { id: "embarque", label: "Embarcou para o Japão" },
   { id: "inicio", label: "Início das atividades / acompanhamento final" },
+  // Pós-venda (Wilson, 29/out/2026: "depois que embarca entra em uma fila de
+  // pós-vendas, que a gente faz um acompanhamento"). Do embarque até esta
+  // marca o candidato aparece como "Pós-venda — em acompanhamento".
+  { id: "posVenda", label: "Pós-venda concluído (acompanhamento encerrado)" },
 ];
 
 export type MarcaEtapa = { em: string; por: string; comentario?: string };

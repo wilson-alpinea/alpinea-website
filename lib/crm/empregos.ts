@@ -200,7 +200,9 @@ export function progressoCandidatura(
 ): ProgressoCandidatura {
   // Etapas marcadas à mão no CRM (migração 020) — a mais avançada vence.
   const manual = lerAndamentoManual(c.andamento_manual).etapas;
-  const posterior = (["inicio", "embarque", "documentacao", "entrevistaFinal", "empreiteira", "preEntrevista"] as const).find((k) => manual[k]);
+  // Fila de pós-venda: do embarque até o acompanhamento ser encerrado.
+  if (manual.embarque && !manual.posVenda) return { etapa: 5, label: "Pós-venda — em acompanhamento", cor: "#75608B" };
+  const posterior = (["posVenda", "inicio", "embarque", "documentacao", "entrevistaFinal", "empreiteira", "preEntrevista"] as const).find((k) => manual[k]);
   if (posterior) return { etapa: 5, label: ETAPAS_MANUAIS.find((e) => e.id === posterior)!.label, cor: "#2f7a52" };
   if (!fichaLiberada(c) && !manual.ficha) return { etapa: 1, label: "Etapa 1 — em análise", cor: "#8a8a8a" };
   const proxima = proximaEtapa({

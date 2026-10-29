@@ -78,7 +78,7 @@ export default async function CandidatoPage({
     const temTipo = partes.length >= 4 && TIPOS_DOCUMENTO_CANDIDATO.some((t) => t.key === partes[2]);
     documentos.push({
       tipo: temTipo ? partes[2] : "outros",
-      nome: (temTipo ? partes.slice(3) : partes.slice(2)).join("__") || a.name,
+      nome: ((temTipo ? partes.slice(3) : partes.slice(2)).join("__") || a.name).replace(/_/g, " "),
       href: urlArquivoCandidato("curriculos-candidatos", `${PASTA_ANEXOS_EQUIPE}/${a.name}`),
     });
   }
@@ -363,6 +363,17 @@ export default async function CandidatoPage({
                   </option>
                 ))}
               </select>
+              <label className="block text-[13px] text-[#626B75]" htmlFor="etapa-nota">
+                Anotação referente à etapa <span className="text-[#8A929B]">(quando só comentar)</span>
+              </label>
+              <select id="etapa-nota" name="etapaNota" defaultValue={andamento.etapas.embarque && !andamento.etapas.posVenda ? "posVenda" : ""} className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]">
+                <option value="">Sem etapa (anotação geral)</option>
+                {ETAPAS_MANUAIS.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.id === "posVenda" ? "Pós-venda (acompanhamento após o embarque)" : e.label}
+                  </option>
+                ))}
+              </select>
               <textarea
                 name="comentario"
                 rows={3}
@@ -383,7 +394,7 @@ export default async function CandidatoPage({
                       <p className="whitespace-pre-wrap text-[#20252B]">{cm.texto}</p>
                       <p className="mt-0.5 text-[13px] text-[#626B75]">
                         {dataCurta(cm.em)} · {cm.por}
-                        {cm.etapa ? ` · ${ETAPAS_MANUAIS.find((x) => x.id === cm.etapa)?.label ?? ""}` : ""}
+                        {cm.etapa ? ` · ${cm.etapa === "posVenda" ? "Pós-venda" : (ETAPAS_MANUAIS.find((x) => x.id === cm.etapa)?.label ?? "")}` : ""}
                       </p>
                     </li>
                   ))}
@@ -427,6 +438,7 @@ export default async function CandidatoPage({
                     {m.nome} ({m.arquivo.endsWith(".docx") ? "Word" : "Excel"})
                   </option>
                 ))}
+                <option value="lista-verificacao-pdf">Lista de Verificação (来日者 確認事項) (PDF)</option>
                 <option value="todos">Todas as 4 fichas (.zip)</option>
               </select>
               <button type="submit" className="w-full rounded-xl bg-[#1C3A5E] px-3 py-2 text-sm font-medium text-white">
@@ -614,6 +626,16 @@ export default async function CandidatoPage({
                   </option>
                 ))}
               </select>
+              <label className="mt-2 block text-[13px] text-[#626B75]" htmlFor="nome-doc">
+                Nome do documento <span className="text-[#8A929B]">(obrigatório em “Outros”)</span>
+              </label>
+              <input
+                id="nome-doc"
+                name="nomeDocumento"
+                maxLength={60}
+                placeholder="Ex.: Comprovante de residência"
+                className="mt-1 w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
+              />
               <input
                 type="file"
                 name="arquivo"

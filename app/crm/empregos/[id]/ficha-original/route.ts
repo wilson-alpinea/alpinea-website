@@ -8,6 +8,9 @@ import type { ContextoFicha } from "@/app/lib/fichasParceiros";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
 import { preencherModelo } from "@/lib/empregos/preencherModelo";
 import { MODELOS_ORIGINAIS } from "@/lib/empregos/valoresModelos";
+import { createElement, type ReactElement } from "react";
+import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
+import { ListaVerificacaoPdf } from "@/lib/empregos/listaVerificacaoPdf";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,7 +32,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const { id } = await params;
   const pedido = request.nextUrl.searchParams.get("modelo") ?? "";
-  const modelos = pedido === "todos" ? MODELOS_ORIGINAIS : MODELOS_ORIGINAIS.filter((m) => m.id === pedido);
+  // Lista de Verificação também em PDF (Wilson, 29/out/2026: o Word "estoura"
+  // no Google Docs do parceiro). Mesmos valores do Word, layout próprio.
+  const emPdf = pedido === "lista-verificacao-pdf";
+  const modelos = pedido === "todos" ? MODELOS_ORIGINAIS : MODELOS_ORIGINAIS.filter((m) => m.id === (emPdf ? "lista-verificacao" : pedido));
   if (!modelos.length) return NextResponse.json({ error: "Modelo inválido." }, { status: 400 });
 
   const { data: c } = await supabase.from("candidaturas_vagas").select("*").eq("id", id).maybeSingle();
@@ -42,6 +48,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     p: (r.perfil ?? null) as PerfilCandidato | null,
     f: c.ficha,
   };
+
+  if (emPdf) {
+    const nomeCandidato = `${c.nome ?? ""} ${c.sobrenome ?? ""}`.trim();
+    const pdf = await renderToBuffer(
+      createElement(ListaVerificacaoPdf, { v: modelos[0].valores(x), candidato: nomeCandidato }) as unknown as ReactElement<DocumentProps>,
+    );
+    const slugPdf = nomeCandidato.normalize("NFD").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return new NextResponse(new Uint8Array(pdf), {
+      headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="LISTA-DE-VERIFICACAO_${slugPdf}.pdf"`, "Cache-Control": "no-store" },
+    });
+  }
 
   // Foto (só a ficha da Fujiarte tem o quadro da foto).
   let foto: Buffer | null = null;
