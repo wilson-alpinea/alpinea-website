@@ -15,7 +15,7 @@ import { BotaoPrimario, CAMPO_FILTRO, CabecalhoSecao, Copiar, Icones, MenuAcoes,
 
 export type UsuarioAcesso = { id: string; nome: string | null; email: string; papel: Papel; parceiroId: string | null; permissoes?: Permissoes | null; cargo?: string | null; remuneracao?: Remuneracao; produtos?: string[] };
 export type Remuneracao = { tipo: "percentual" | "fixo" | null; valor: number | null };
-export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean; remuneracao?: Remuneracao; produtos?: string[] };
+export type EmpresaAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean; remuneracao?: Remuneracao; produtos?: string[]; logoUrl?: string | null };
 export type VagaAcesso = { id: string; titulo: string; codigo: string; empresa: string; local: string };
 
 type Situacao = "ativo" | "sem_acesso" | "bloqueado";

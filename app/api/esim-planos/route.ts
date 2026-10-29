@@ -17,13 +17,12 @@ export async function GET() {
   // (variáveis da Simpremium), faturado (crédito faturado não liberado),
   // sem_planos (nenhum ilimitado do Japão no catálogo) ou erro (API fora).
   try {
-    // Sem faturado liberado não há como pagar a Simpremium (não usamos
-    // saldo pré-pago) — a página mostra "indisponível" e o WhatsApp.
+    // 29/out/2026 (Wilson: "plano segue sem poder selecionar no eSIM"): o
+    // faturado da Simpremium não libera mais a vitrine. Os planos aparecem
+    // sempre; sem faturado, a venda segue e o time emite o eSIM à mão
+    // (aviso por e-mail na compra e o pedido fica "Erro — verificar" no CRM).
     const faturado = await faturadoDisponivel();
-    if (!faturado.ok) {
-      console.error("[esim] venda desligada:", faturado.motivo);
-      return NextResponse.json({ disponivel: false, planos: [], motivo: "faturado" }, { status: 200 });
-    }
+    if (!faturado.ok) console.error("[esim] faturado indisponível — emissão manual:", faturado.motivo);
     const ofertas = await buscarOfertasEsim();
     return NextResponse.json({
       disponivel: ofertas.planos.length > 0,

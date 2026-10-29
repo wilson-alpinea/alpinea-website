@@ -100,22 +100,20 @@ export async function POST(req: Request) {
       console.error(`Valor divergente no eSIM (navegador R$ ${valorNavegador} × servidor R$ ${totalBRL}) — usando o do servidor.`);
     }
 
-    // Faturado precisa aceitar o NET do pedido inteiro ANTES de cobrar o
-    // cliente — sem isso o cliente pagaria e o eSIM não sairia.
+    // Faturado da Simpremium: antes bloqueava a venda. Desde 29/out/2026
+    // (Wilson) a venda segue mesmo sem faturado — o time recebe o aviso e
+    // emite o eSIM manualmente no portal depois do pagamento (a emissão
+    // automática falha e o pedido aparece como "Erro — verificar" no CRM).
     const faturado = await faturadoDisponivel(faixa.netUsd * quantidade);
     if (!faturado.ok) {
-      console.error("[esim] pedido recusado antes do pagamento:", faturado.motivo);
+      console.error("[esim] faturado indisponível — venda segue com emissão manual:", faturado.motivo);
       await enviarEmailResend({
         to: ["wilson@alpinea.io", "financeiro@ajisaiwork.com.br"],
-        subject: "[eSIM] Venda bloqueada — faturado da Simpremium indisponível",
-        text: `Um cliente tentou comprar eSIM e a venda foi bloqueada antes do pagamento.\n\nMotivo: ${faturado.motivo}\nCliente: ${nome} — ${email} — ${whatsapp}`,
-        html: `<p>Um cliente tentou comprar eSIM e a venda foi bloqueada antes do pagamento.</p><p><strong>Motivo:</strong> ${escapeHtml(faturado.motivo)}<br/><strong>Cliente:</strong> ${escapeHtml(nome)} — ${escapeHtml(email)} — ${escapeHtml(whatsapp)}</p>`,
-        rotuloLog: "esim-faturado-bloqueado",
+        subject: "[eSIM] Venda com emissão MANUAL — faturado da Simpremium indisponível",
+        text: `Um cliente está comprando eSIM e o faturado da Simpremium está indisponível. Depois do pagamento, emita o eSIM manualmente no portal.\n\nMotivo: ${faturado.motivo}\nCliente: ${nome} — ${email} — ${whatsapp}`,
+        html: `<p>Um cliente está comprando eSIM e o faturado da Simpremium está indisponível. <strong>Depois do pagamento, emita o eSIM manualmente no portal.</strong></p><p><strong>Motivo:</strong> ${escapeHtml(faturado.motivo)}<br/><strong>Cliente:</strong> ${escapeHtml(nome)} — ${escapeHtml(email)} — ${escapeHtml(whatsapp)}</p>`,
+        rotuloLog: "esim-faturado-manual",
       });
-      return NextResponse.json(
-        { error: "A compra online de eSIM está indisponível no momento. Fale com a nossa equipe pelo WhatsApp." },
-        { status: 503 },
-      );
     }
 
     const nomes = Array.from({ length: quantidade }, (_, i) => nomesAparelhos[i] || (i === 0 ? nome : `${nome} (eSIM ${i + 1})`));

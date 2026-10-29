@@ -73,12 +73,13 @@ export function FiltroProdutos({
             scroll={false}
             aria-current={sel ? "true" : undefined}
             aria-label={sel ? `${o.label} (selecionado — clique para ver todos)` : `Mostrar só ${o.label}`}
-            className={`${quadrado} ${sel ? "border-2 bg-[var(--hover)]" : "border-transparent bg-[var(--leve)] hover:border-[var(--cor)]/40 hover:bg-[var(--hover)]"}`}
-            style={sel ? { borderColor: cor, boxShadow: `0 0 0 3px ${cor}22` } : undefined}
+            className={`${quadrado} ${sel ? "border-transparent" : "border-transparent bg-[var(--leve)] hover:border-[var(--cor)]/40 hover:bg-[var(--hover)]"}`}
+            // Selecionado: fundo na cor do CRM e ícone branco (Wilson, 29/out/2026).
+            style={sel ? { backgroundColor: cor, boxShadow: `0 0 0 3px ${cor}33` } : undefined}
           >
             {/* Ícones do repositório em preto (brightness-0), como no site. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={o.icone} alt="" aria-hidden="true" className={`${preencher ? "h-[52%] w-[52%]" : "h-10 w-10"} object-contain transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none ${o.opaco ? "mix-blend-multiply" : "brightness-0"}`} />
+            <img src={o.icone} alt="" aria-hidden="true" className={`${preencher ? "h-[52%] w-[52%]" : "h-10 w-10"} object-contain transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none ${sel ? (o.opaco ? "invert mix-blend-screen" : "brightness-0 invert") : o.opaco ? "mix-blend-multiply" : "brightness-0"}`} />
             {/* Nome do serviço ao passar o mouse (Wilson, 29/out/2026). */}
             <span
               aria-hidden="true"

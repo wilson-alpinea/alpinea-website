@@ -4,7 +4,8 @@ import { logout } from "./actions";
 // menu da equipe.
 
 // `crm`: selo com o CRM em que a pessoa está (Wilson, 29/out/2026).
-export function PortalShell({ titulo, empresa, usuario, crm, children }: { titulo: string; empresa: string; usuario: string; crm?: { nome: string; cor: string }; children: React.ReactNode }) {
+// `logo`: logo da empresa parceira, ao lado do da Alpinea (Wilson, 29/out/2026).
+export function PortalShell({ titulo, empresa, usuario, crm, logo, children }: { titulo: string; empresa: string; usuario: string; crm?: { nome: string; cor: string }; logo?: string | null; children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#20252B]">
       <header className="border-b border-white/10 bg-black">
@@ -12,6 +13,15 @@ export function PortalShell({ titulo, empresa, usuario, crm, children }: { titul
           <div className="flex min-w-0 items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/images/ajisai-group-white-crop.png" alt="Alpinea — Empresa do Grupo Ajisai" className="h-10 w-auto sm:h-12" />
+            {logo && (
+              <>
+                <span className="text-lg text-white/30" aria-hidden="true">×</span>
+                <span className="flex h-12 items-center rounded-lg bg-white px-3 py-1.5 sm:h-14">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={logo} alt={`Logo ${empresa}`} className="max-h-full max-w-[9rem] object-contain" />
+                </span>
+              </>
+            )}
             <span className="hidden h-8 w-px bg-white/15 sm:block" />
             <div className="min-w-0">
               <p className="flex flex-wrap items-center gap-2 text-2xl font-semibold leading-[1.1] text-white">

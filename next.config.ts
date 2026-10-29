@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   },
   // Modelos Word/Excel das fichas das empreiteiras, lidos do disco pela rota
   // que preenche o arquivo original (Wilson, 15/out/2026).
+  // Upload do logo do parceiro pela server action de Acessos (até 2 MB).
+  experimental: {
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   outputFileTracingIncludes: {
     "/crm/empregos/[id]/ficha-original": ["./lib/empregos/modelos/**", "./lib/empregos/fontes/**"],
   },

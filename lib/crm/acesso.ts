@@ -9,7 +9,7 @@ import { lerPermissoes, type Permissoes } from "./permissoes";
 // O papel vem de perfis.papel (migração 021). Quem não tem papel não
 // acessa nada.
 
-export type ParceiroAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean };
+export type ParceiroAcesso = { id: string; nome: string; slug: string; tipo: "agencia" | "empreiteira" | "afiliado"; ativo: boolean; logo_url?: string | null };
 export type Acesso = {
   userId: string;
   email: string;
@@ -41,7 +41,7 @@ export async function obterAcesso(): Promise<Acesso | null> {
   if (perfil?.parceiro_id) {
     const { data } = await admin
       .from("parceiros")
-      .select("id, nome, slug, tipo, ativo")
+      .select("*") // inclui logo_url (migração 032) sem quebrar antes dela
       .eq("id", perfil.parceiro_id)
       .maybeSingle();
     if (data) parceiro = data as ParceiroAcesso;

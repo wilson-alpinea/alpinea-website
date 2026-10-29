@@ -61,11 +61,17 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   }
   const rem = remuneracaoDoForm(formData);
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
-  const { error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem, produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null });
-  if (error) {
+  const { data: criado, error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem, produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null }).select("id").single();
+  if (error || !criado) {
     console.error("Erro ao criar parceiro:", error);
     return { ok: false, mensagem: "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
   }
+  const logo = await salvarLogoParceiro(criado.id, formData);
+  if (logo && "erro" in logo) {
+    revalidar();
+    return { ok: false, mensagem: `Empresa cadastrada, mas o logo não foi salvo: ${logo.erro} Envie de novo em “Editar”.`, campo: "logo" };
+  }
+  if (logo) await admin.from("parceiros").update({ logo_url: logo.url }).eq("id", criado.id);
   revalidar();
   return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : tipo === "afiliado" ? "Afiliado" : "Empreiteira"} "${nome}" cadastrado${tipo !== "empreiteira" ? ` · código ${slug}` : ""}.` };
 }
@@ -86,6 +92,9 @@ export async function editarParceiro(_: ResultadoAcesso | null, formData: FormDa
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
   const update: Record<string, unknown> = { nome, ...rem };
   if (atual.tipo !== "empreiteira") update.produtos = produtosParceiroDoForm(formData);
+  const logo = await salvarLogoParceiro(id, formData);
+  if (logo && "erro" in logo) return { ok: false, mensagem: logo.erro, campo: "logo" };
+  if (logo) update.logo_url = logo.url;
   const slugNovo = String(formData.get("slug") || "").trim().toLowerCase();
   if (atual.tipo !== "empreiteira" && slugNovo && slugNovo !== atual.slug) {
     if (!SLUG_PARCEIRO.test(slugNovo)) {
@@ -154,6 +163,26 @@ function permissoesDoForm(formData: FormData) {
   const permissoes = lerPermissoes({ crms, produtos, ...acoesDoNivel(String(formData.get("nivel") ?? "ver")) });
   const cargo = String(formData.get("cargo") ?? "").trim().slice(0, 80) || null;
   return { permissoes, cargo };
+}
+
+// Logo do parceiro (Wilson, 29/out/2026) — migração 032, bucket público
+// logos-parceiros. PNG, JPG ou WebP até 2 MB (sem SVG: pode carregar script).
+const TIPOS_LOGO: Record<string, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
+async function salvarLogoParceiro(parceiroId: string, formData: FormData): Promise<{ url: string | null } | { erro: string } | null> {
+  if (formData.get("remover_logo") === "1") return { url: null };
+  const arquivo = formData.get("logo");
+  if (!(arquivo instanceof File) || arquivo.size === 0) return null; // sem mudança
+  const ext = TIPOS_LOGO[arquivo.type];
+  if (!ext) return { erro: "Envie o logo em PNG, JPG ou WebP." };
+  if (arquivo.size > 2 * 1024 * 1024) return { erro: "O logo pode ter até 2 MB." };
+  const caminho = `${parceiroId}/logo-${Date.now()}.${ext}`;
+  const admin = createAdminClient();
+  const { error } = await admin.storage.from("logos-parceiros").upload(caminho, Buffer.from(await arquivo.arrayBuffer()), { contentType: arquivo.type, upsert: true });
+  if (error) {
+    console.error("Erro ao enviar logo do parceiro:", error);
+    return { erro: "Não foi possível enviar o logo (a migração 032 já rodou no Supabase?)." };
+  }
+  return { url: admin.storage.from("logos-parceiros").getPublicUrl(caminho).data.publicUrl };
 }
 
 // Produtos liberados ao parceiro/afiliado (Wilson, 29/out/2026). Vazio = todos.

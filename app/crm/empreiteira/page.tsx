@@ -24,7 +24,7 @@ export default async function PortalEmpreiteiraPage({ searchParams }: { searchPa
   const comEmbarque = lista.filter((c) => c.dataEmbarque).sort((a, b) => a.dataEmbarque!.localeCompare(b.dataEmbarque!));
 
   return (
-    <PortalShell titulo="Empreiteiras" empresa={acesso.parceiro.nome} usuario={acesso.email} crm={{ nome: "Empregos", cor: "#27675B" }}>
+    <PortalShell titulo="Empreiteiras" empresa={acesso.parceiro.nome} logo={acesso.parceiro.logo_url} usuario={acesso.email} crm={{ nome: "Empregos", cor: "#27675B" }}>
       <p className="mb-2 text-[13px] text-[#626B75]">Candidatos das suas vagas</p>
       <h1 className={`text-3xl font-medium md:text-4xl`}>Pipeline de candidatos</h1>
 

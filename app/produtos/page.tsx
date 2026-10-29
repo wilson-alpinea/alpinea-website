@@ -331,7 +331,7 @@ export default function ProdutosPage() {
               Como você quer organizar sua viagem?
             </h2>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               <ProductSelectorCard
                 href="#roteiro-personalizado"
                 onClick={() => setRoteiroModalOpen(true)}
@@ -343,17 +343,7 @@ export default function ProdutosPage() {
                 description="Receba um planejamento completo, criado para sua viagem, e faça suas próprias reservas."
                 cta="Conhecer o roteiro"
               />
-              <ProductSelectorCard
-                href="/pacotes"
-                onClick={() => setPacotesModalOpen(true)}
-                icon="/images/produtos/pacote-de-viagem.png"
-                iconWidth={350}
-                iconHeight={532}
-                title="Pacote de Viagem"
-                faixa="azul"
-                description="Escolha uma viagem já estruturada e deixe reservas e organização por nossa conta."
-                cta="Ver pacotes"
-              />
+              {/* Pacote de Viagem removido da vitrine (Wilson, 29/out/2026: "remover pacote"). */}
               <ProductSelectorCard
                 href="/viagem-personalizada"
                 onClick={() => setViagemModalOpen(true)}

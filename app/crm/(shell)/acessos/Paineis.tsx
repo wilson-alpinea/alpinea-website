@@ -152,6 +152,51 @@ function ProdutosParceiro({ inicial, ajuda }: { inicial?: string[]; ajuda: strin
   );
 }
 
+// Logo da empresa (Wilson, 29/out/2026) — aparece no topo do portal do parceiro.
+function CampoLogo({ atual, estado }: { atual?: string | null; estado: ResultadoAcesso | null }) {
+  const [previa, setPrevia] = useState<string | null>(atual ?? null);
+  const [remover, setRemover] = useState(false);
+  return (
+    <div className="rounded-xl border border-[#E6E9ED] bg-[#F7F9FB] p-4">
+      <p className="text-sm font-semibold text-[#20252B]">Logo da empresa</p>
+      <p className="text-[13px] text-[#626B75]">Aparece no topo do CRM do parceiro. PNG, JPG ou WebP, até 2 MB — de preferência com fundo transparente.</p>
+      <div className="mt-3 flex flex-wrap items-center gap-4">
+        <span className="flex h-16 w-32 items-center justify-center overflow-hidden rounded-lg border border-[#D5DAE0] bg-black">
+          {previa && !remover ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={previa} alt="Prévia do logo" className="max-h-12 max-w-[7rem] object-contain" />
+          ) : (
+            <span className="text-[12px] text-white/50">Sem logo</span>
+          )}
+        </span>
+        <div className="space-y-2">
+          <input
+            type="file"
+            name="logo"
+            accept="image/png,image/jpeg,image/webp"
+            aria-label="Enviar logo da empresa"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) {
+                setRemover(false);
+                setPrevia(URL.createObjectURL(f));
+              }
+            }}
+            className="block text-sm text-[#20252B] file:mr-3 file:rounded-lg file:border file:border-[#D5DAE0] file:bg-white file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:border-[#24476B]/50"
+          />
+          {atual && (
+            <label className="flex items-center gap-2 text-[13px] text-[#626B75]">
+              <input type="checkbox" name="remover_logo" value="1" checked={remover} onChange={(e) => setRemover(e.target.checked)} className="h-4 w-4 accent-[#B42318]" />
+              Remover o logo atual
+            </label>
+          )}
+        </div>
+      </div>
+      <ErroDoCampo estado={estado} campo="logo" />
+    </div>
+  );
+}
+
 // ── Usuário: novo / editar acesso ────────────────────────────────
 export function PainelUsuario({
   usuario,
@@ -461,6 +506,8 @@ export function PainelEmpresa({
           )}
           <ErroDoCampo estado={estado} campo="tipo" />
         </fieldset>
+
+        <CampoLogo atual={empresa?.logoUrl} estado={estado} />
 
         <CamposRemuneracao inicial={empresa?.remuneracao} estado={estado} />
 

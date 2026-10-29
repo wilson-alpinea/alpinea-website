@@ -56,7 +56,7 @@ export default async function PortalParceiroPage() {
   const link = `https://www.alpinea.io/?parceiro=${acesso.parceiro.slug}`;
 
   return (
-    <PortalShell titulo="Parceiros" empresa={acesso.parceiro.nome} usuario={acesso.email} crm={{ nome: "Agência de viagens", cor: "#24476B" }}>
+    <PortalShell titulo="Parceiros" empresa={acesso.parceiro.nome} logo={acesso.parceiro.logo_url} usuario={acesso.email} crm={{ nome: "Agência de viagens", cor: "#24476B" }}>
       <p className="mb-2 text-[13px] text-[#626B75]">Leads indicados por você</p>
       <h1 className={`text-3xl font-medium md:text-4xl`}>Meus leads</h1>
 
