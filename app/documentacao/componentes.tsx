@@ -315,6 +315,11 @@ export function FormularioDocumentacao({
         return;
       }
       window.gtag?.("event", "generate_lead", { form_name: `documentacao_${servico}`, contact_channel: "site" });
+      // Segue direto para o portal do processo (ficha completa e documentos).
+      if (typeof d?.portalUrl === "string" && d.portalUrl.startsWith("/documentacao/processo/")) {
+        window.location.href = d.portalUrl;
+        return;
+      }
       setStatus("enviado");
     } catch {
       setErroEnvio("Não foi possível enviar agora. Tente de novo ou fale pelo WhatsApp.");
@@ -397,11 +402,11 @@ export function FormularioDocumentacao({
           className="flex min-h-[52px] w-full max-w-md items-center justify-center rounded-full px-6 text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(11,61,48,0.3)] transition hover:-translate-y-0.5 disabled:opacity-50"
           style={{ background: VERDE }}
         >
-          {status === "enviando" ? "Enviando…" : "Enviar cadastro"}
+          {status === "enviando" ? "Enviando…" : "Enviar cadastro e continuar"}
         </button>
         {tentou && pendentes > 0 && <p className="text-xs text-red-600">Faltam {pendentes} campo(s) obrigatório(s).</p>}
         {status === "erro" && <p className="text-center text-xs text-red-600">{erroEnvio}</p>}
-        <p className="text-center text-xs text-black/45">Nada é cobrado agora. A equipe confirma seu caso antes de qualquer pagamento.</p>
+        <p className="text-center text-xs text-black/45">Nada é cobrado agora. Em seguida você preenche a ficha completa e envia os documentos, tudo online. A equipe confirma seu caso antes de qualquer pagamento.</p>
       </div>
     </div>
   );

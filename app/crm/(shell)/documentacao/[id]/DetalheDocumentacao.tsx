@@ -11,6 +11,7 @@ import { ETAPAS_DOC, FLUXO_DOC, SAIDAS_DOC, etapaDoc, servicoDoc, type EtapaDoc,
 import { adicionarNotaDoc, mudarEtapaDoc, salvarDadosDoc } from "../../../documentacaoActions";
 import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
 import { BadgeEtapaDoc, BadgeServicoDoc } from "../ListaDocumentacao";
+import { DOC_COMPROVANTE, MAX_PESSOAS_FICHA, documentosServico, linhasFichaDoc, parseFichaDoc, urlPortal } from "@/app/documentacao/processo";
 
 const COR = "#8A5A3C";
 const SOMBRA = "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]";
@@ -33,8 +34,9 @@ function lerVoltar() {
 // Ação principal de cada etapa (avança uma casa no fluxo).
 const PROXIMA: Partial<Record<EtapaDoc, { etapa: EtapaDoc; rotulo: string; ajuda: string }>> = {
   novo: { etapa: "em_analise", rotulo: "Iniciar análise", ajuda: "Confira as respostas do cadastro e os critérios eliminatórios." },
-  em_analise: { etapa: "pre_aprovado", rotulo: "Pré-aprovar e enviar proposta", ajuda: "Envie o valor final e os termos ao cliente pelo WhatsApp. Se não atende, use “Mudar etapa”." },
-  pre_aprovado: { etapa: "contratado", rotulo: "Confirmar pagamento", ajuda: "Visto e pet: 100%. Elegibilidade: primeiros 50% (PTAX do dia)." },
+  em_analise: { etapa: "pre_aprovado", rotulo: "Pré-aprovar e liberar contrato", ajuda: "Informe o valor final antes. O contrato aparece no portal do cliente e ele recebe um e-mail. Se não atende, use “Mudar etapa”." },
+  pre_aprovado: { etapa: "contrato_aceito", rotulo: "Marcar contrato aceito (manual)", ajuda: "Normalmente o cliente aceita sozinho no portal. Use só se o aceite foi feito fora do site." },
+  contrato_aceito: { etapa: "contratado", rotulo: "Confirmar pagamento", ajuda: "Confira o comprovante enviado no portal. Visto e pet: 100%. Elegibilidade: primeiros 50% (PTAX do dia)." },
   contratado: { etapa: "documentacao", rotulo: "Lista de documentos enviada", ajuda: "Quando o cliente receber a lista do que reunir." },
   documentacao: { etapa: "protocolado", rotulo: "Marcar como protocolado", ajuda: "Entrada no consulado, na imigração ou, no pet, envio da sorologia/Import Permit." },
   protocolado: { etapa: "concluido", rotulo: "Concluir (entregue ao cliente)", ajuda: "Visto, certificado ou CVI entregues. Se as autoridades negarem, use “Mudar etapa”." },
@@ -201,7 +203,9 @@ export function DetalheDocumentacao({ processo: p }: { processo: ProcessoDoc }) 
         </Card>
       </div>
 
-      <Card titulo="Cadastro enviado pelo cliente" cor="#42658A">
+      <PortalCliente p={p} />
+
+      <Card titulo="Cadastro inicial (pré-análise)" cor="#42658A">
         <Linhas larguraRotulo="22rem" itens={p.respostas.map(([k, v]) => [k, v] as [string, React.ReactNode])} />
       </Card>
 
@@ -222,6 +226,87 @@ export function DetalheDocumentacao({ processo: p }: { processo: ProcessoDoc }) 
       {painel?.tipo === "etapa" && <PainelEtapa processo={p} para={painel.para} onFechar={fechar} onSalvo={concluido} />}
       {painel?.tipo === "dados" && <PainelDados processo={p} onFechar={fechar} onSalvo={concluido} />}
     </div>
+  );
+}
+
+function PortalCliente({ p }: { p: ProcessoDoc }) {
+  const [copiado, setCopiado] = useState(false);
+  const link = p.acesso_token ? `https://www.alpinea.io${urlPortal(p.id, p.acesso_token)}` : null;
+  const ficha = p.ficha ? linhasFichaDoc(p.servico, parseFichaDoc(p.servico, p.ficha, MAX_PESSOAS_FICHA)) : [];
+  const docs = Array.isArray(p.documentos) ? p.documentos : [];
+  const rotuloDoc = (tipo: string) => (tipo === DOC_COMPROVANTE ? "Comprovante de pagamento" : documentosServico(p.servico).find((t) => t.id === tipo)?.rotulo ?? tipo);
+  return (
+    <>
+      <Card titulo="Portal do cliente" cor="#27675B">
+        {link ? (
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <code className="min-w-0 flex-1 truncate rounded-lg bg-[#F8F5F2] px-3 py-2 text-[13px] text-[#25211E]">{link}</code>
+            <button type="button" onClick={() => { void navigator.clipboard?.writeText(link); setCopiado(true); }} className="rounded-xl border border-[#EAE2DB] px-3 py-2 text-[13px] font-medium" style={{ color: COR }}>
+              {copiado ? "Copiado" : "Copiar link"}
+            </button>
+            <a href={link} target="_blank" rel="noopener" className="rounded-xl border border-[#EAE2DB] px-3 py-2 text-[13px] font-medium" style={{ color: COR }}>Abrir ↗</a>
+          </div>
+        ) : (
+          <p className="text-sm text-[#6B635D]">Rode a migração 027 para ativar o portal online.</p>
+        )}
+        <p className="mt-3 text-[13px] text-[#6B635D]">
+          Ficha completa: {p.ficha_enviada_em ? `enviada em ${dataHora(p.ficha_enviada_em)}` : p.ficha ? "rascunho em andamento" : "ainda não iniciada"} · Contrato: {p.contrato_aceito_em ? `aceito em ${dataHora(p.contrato_aceito_em)}` : p.liberado_contrato_em ? "liberado, aguardando aceite" : "não liberado"}
+        </p>
+      </Card>
+
+      <Card titulo={`Documentos enviados (${docs.length})`} cor="#75608B">
+        {docs.length === 0 ? (
+          <p className="text-sm text-[#6B635D]">Nenhum arquivo ainda.</p>
+        ) : (
+          <ul className="divide-y divide-[#F2ECE6] text-sm">
+            {docs.map((d) => (
+              <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                <span className="min-w-0">
+                  <span className="block text-[13px] text-[#6B635D]">{rotuloDoc(d.tipo)}</span>
+                  <span className="block truncate text-[#25211E]">{d.nome}</span>
+                </span>
+                <span className="flex items-center gap-3 text-[13px]">
+                  <span className="text-[#6B635D]">{dataHora(d.enviado_em)}</span>
+                  <a href={`/crm/documentacao/arquivo?path=${encodeURIComponent(d.path)}`} target="_blank" rel="noopener" className="font-medium hover:underline" style={{ color: COR }}>Abrir</a>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      {ficha.length > 0 && (
+        <Card titulo={p.ficha_enviada_em ? "Ficha completa" : "Ficha completa (rascunho)"} cor="#42658A">
+          <div className="space-y-5">
+            {ficha.map((b) => (
+              <div key={b.titulo}>
+                <p className="mb-1 text-[13px] font-semibold text-[#25211E]">{b.titulo}</p>
+                <Linhas larguraRotulo="18rem" itens={b.linhas.map(([k, v]) => [k, v] as [string, React.ReactNode])} />
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {p.contrato && (
+        <Card titulo="Contrato aceito" cor="#7A6233">
+          <Linhas
+            itens={[
+              ["Assinado por", `${p.contrato.nome} — CPF ${p.contrato.cpf}`],
+              ["Aceito em", dataHora(p.contrato.aceito_em)],
+              ["IP", p.contrato.ip ?? "—"],
+              ["Navegador", p.contrato.user_agent ?? "—"],
+              ["SHA-256", <span key="h" className="break-all font-mono text-[12px]">{p.contrato.hash}</span>],
+              ["Versão", p.contrato.versao],
+            ]}
+          />
+          <details className="mt-3 text-[13px]">
+            <summary className="cursor-pointer font-medium" style={{ color: COR }}>Ver texto integral</summary>
+            <div className="mt-3 space-y-2 text-[#25211E]">{[p.contrato.texto.titulo, ...p.contrato.texto.clausulas].map((c, i) => <p key={i}>{c}</p>)}</div>
+          </details>
+        </Card>
+      )}
+    </>
   );
 }
 

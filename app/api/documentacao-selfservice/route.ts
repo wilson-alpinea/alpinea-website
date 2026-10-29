@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { isServicoDoc, resumoDoCadastro, servicoDoc } from "../../../lib/crm/documentacao";
+import { urlPortal } from "../../documentacao/processo";
+import { URL_SITE } from "../../../lib/documentacao/processoPublico";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 
 export const runtime = "nodejs";
 
@@ -129,7 +132,7 @@ export async function POST(req: Request) {
         checkout_user_agent: navegador,
         historico: [{ em: agora.toISOString(), por: "site", tipo: "nota", texto: `Cadastro enviado pelo site (${nomeServico}).` }],
       })
-      .select("id")
+      .select("id, acesso_token")
       .single();
 
     if (error || !processo) {
@@ -139,7 +142,44 @@ export async function POST(req: Request) {
 
     await notificarPorEmail({ assunto: `[DOCUMENTAÇÃO] ${titulo} — ${nome}`, email, resumoTexto, resumoHtml });
 
-    return NextResponse.json({ success: true, id: processo.id }, { status: 200 });
+    // Portal online (migração 027): link com token para o cliente seguir as
+    // próximas etapas sozinho — mesmo desenho de /empregos. Se a 027 ainda
+    // não rodou, acesso_token vem vazio e o fluxo para no cadastro.
+    const token = (processo as { acesso_token?: string }).acesso_token;
+    const portalUrl = token ? urlPortal(processo.id, token) : null;
+    if (portalUrl) {
+      const emailCliente: EmailClienteParams = {
+        nome,
+        titulo: `Recebemos seu cadastro — ${nomeServico}`,
+        intro: "O próximo passo é a ficha completa e o envio dos documentos, tudo online. Guarde este e-mail: o link abaixo é o seu acesso ao processo.",
+        etapas: [
+          { titulo: "Cadastro", texto: "Recebido." },
+          { titulo: "Ficha e documentos", texto: `Preencha e envie em ${URL_SITE}${portalUrl}` },
+          { titulo: "Análise da equipe", texto: "Confirmamos seu caso e o valor final." },
+          { titulo: "Contrato e pagamento", texto: "Aceite online e envio do comprovante." },
+          { titulo: "Processo em andamento", texto: "Acompanhe cada etapa pelo mesmo link." },
+        ],
+        etapaAtual: 1,
+        status: "Aguardando a ficha completa e os documentos",
+        extras: [`Seu link de acesso: ${URL_SITE}${portalUrl}`, "Não compartilhe este link: ele dá acesso aos dados do seu processo."],
+        mensagemWhatsapp: `Olá! Tenho uma dúvida sobre meu processo de ${nomeServico} na Ajisai.`,
+        rotuloAndamento: "Andamento do seu processo",
+      };
+      try {
+        const apiKey = process.env.RESEND_API_KEY;
+        if (apiKey) {
+          await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ from: "Ajisai <contato@alpinea.io>", to: [email], subject: `Seu processo de ${nomeServico} — próximos passos`, text: emailClienteTexto(emailCliente), html: emailClienteHtml(emailCliente) }),
+          });
+        }
+      } catch (e) {
+        console.error("Erro ao enviar e-mail ao cliente (documentacao):", e);
+      }
+    }
+
+    return NextResponse.json({ success: true, id: processo.id, portalUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no cadastro de Documentação:", error);
     return NextResponse.json({ error: "Erro interno do servidor. Fale com a Ajisai pelo WhatsApp." }, { status: 500 });

@@ -12,7 +12,7 @@ export type ServicoDocCrm = (typeof SERVICOS_DOC)[number]["valor"];
 export const isServicoDoc = (v: unknown): v is ServicoDocCrm => SERVICOS_DOC.some((s) => s.valor === v);
 export const servicoDoc = (v: string) => SERVICOS_DOC.find((s) => s.valor === v) ?? SERVICOS_DOC[0];
 
-// Fluxo: cadastro → análise (filtros eliminatórios/scoring, a definir) →
+// Fluxo: cadastro → ficha e documentos (portal, migração 027) → análise (filtros eliminatórios/scoring, a definir) →
 // pré-aprovado (proposta enviada) → contratado (pago) → documentação →
 // protocolado → concluído. Saídas: não atende, negado, desistência.
 // Nenhum serviço é reembolsável (exceção: pet de raça restrita declarada
@@ -21,6 +21,7 @@ export const ETAPAS_DOC = [
   { valor: "novo", label: "Novo cadastro", curto: "Novo", fundo: "#F3F5F5", cor: "#5D6C70" },
   { valor: "em_analise", label: "Em análise", curto: "Em análise", fundo: "#FAF5EB", cor: "#93703D" },
   { valor: "pre_aprovado", label: "Pré-aprovado — proposta enviada", curto: "Pré-aprovado", fundo: "#EFF4FA", cor: "#42658A" },
+  { valor: "contrato_aceito", label: "Contrato aceito — aguardando pagamento", curto: "Contrato aceito", fundo: "#FAF5EB", cor: "#7A6233" },
   { valor: "contratado", label: "Contratado — pago", curto: "Contratado", fundo: "#F8F3EF", cor: "#8A5A3C" },
   { valor: "documentacao", label: "Reunindo documentação", curto: "Documentação", fundo: "#F4F1F8", cor: "#75608B" },
   { valor: "protocolado", label: "Protocolado / em processamento", curto: "Protocolado", fundo: "#EEF4F6", cor: "#3E6E7A" },
@@ -32,7 +33,7 @@ export const ETAPAS_DOC = [
 export type EtapaDoc = (typeof ETAPAS_DOC)[number]["valor"];
 export const isEtapaDoc = (v: unknown): v is EtapaDoc => ETAPAS_DOC.some((e) => e.valor === v);
 export const etapaDoc = (v: string) => ETAPAS_DOC.find((e) => e.valor === v) ?? ETAPAS_DOC[0];
-export const FLUXO_DOC: EtapaDoc[] = ["novo", "em_analise", "pre_aprovado", "contratado", "documentacao", "protocolado", "concluido"];
+export const FLUXO_DOC: EtapaDoc[] = ["novo", "em_analise", "pre_aprovado", "contrato_aceito", "contratado", "documentacao", "protocolado", "concluido"];
 export const SAIDAS_DOC: EtapaDoc[] = ["nao_atende", "negado", "cancelado"];
 
 export type EventoDoc = { em: string; por: string; tipo: "etapa" | "nota" | "edicao"; de?: string; para?: string; texto?: string };
@@ -63,6 +64,14 @@ export type ProcessoDoc = {
   canal: string | null;
   canal_detalhe: string | null;
   historico: EventoDoc[];
+  // Portal online (migração 027)
+  acesso_token: string;
+  ficha: unknown;
+  ficha_enviada_em: string | null;
+  documentos: { id: string; tipo: string; nome: string; path: string; tamanho: number; enviado_em: string }[];
+  contrato: { texto: { titulo: string; clausulas: string[] }; hash: string; nome: string; cpf: string; ip: string | null; user_agent: string | null; aceito_em: string; versao: string } | null;
+  contrato_aceito_em: string | null;
+  liberado_contrato_em: string | null;
 };
 
 /** Resumo de uma linha para a lista, a partir das respostas do cadastro. */

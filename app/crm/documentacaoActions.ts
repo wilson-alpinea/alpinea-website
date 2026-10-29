@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { garantirAdmin } from "@/lib/crm/acesso";
-import { SAIDAS_DOC, etapaDoc, isEtapaDoc, type EventoDoc } from "@/lib/crm/documentacao";
+import { SAIDAS_DOC, etapaDoc, isEtapaDoc, servicoDoc, type EventoDoc } from "@/lib/crm/documentacao";
+import { enviarEmailDoc, URL_SITE } from "@/lib/documentacao/processoPublico";
+import { urlPortal } from "@/app/documentacao/processo";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "@/lib/email/templateCliente";
 
 // Ações do CRM de Documentação (Wilson, 29/out/2026). Mesmo padrão do CRM de
 // Seguro: nada aqui envia mensagem ao cliente — a equipe registra o que fez.
@@ -15,7 +18,7 @@ const TABELA = "documentacao_processos";
 
 async function carregar(id: string) {
   const admin = createAdminClient();
-  const { data, error } = await admin.from(TABELA).select("id, etapa, historico, pago_em, protocolado_em, concluido_em, valor_final, email, telefone").eq("id", id).maybeSingle();
+  const { data, error } = await admin.from(TABELA).select("id, etapa, historico, pago_em, protocolado_em, concluido_em, valor_final, email, telefone, nome, servico, acesso_token, ficha_enviada_em, liberado_contrato_em").eq("id", id).maybeSingle();
   return { admin, processo: data, error };
 }
 
@@ -31,8 +34,15 @@ export async function mudarEtapaDoc(id: string, etapa: string, motivo?: string):
   if (error || !processo) return { ok: false, erro: "Processo não encontrado." };
   if (processo.etapa === etapa) return { ok: false, erro: "O processo já está nessa etapa." };
 
+  // Pré-aprovar libera o contrato no portal: precisa da ficha e do valor final.
+  if (etapa === "pre_aprovado") {
+    if (!processo.ficha_enviada_em) return { ok: false, erro: "O cliente ainda não enviou a ficha completa e os documentos." };
+    if (!processo.valor_final) return { ok: false, erro: "Informe o valor final antes de pré-aprovar — ele vai no contrato." };
+  }
+
   const agora = new Date().toISOString();
   const update: Record<string, unknown> = { etapa, updated_at: agora };
+  if (etapa === "pre_aprovado" && !processo.liberado_contrato_em) update.liberado_contrato_em = agora;
   // Datas de cada marco: gravadas na primeira vez, nunca sobrescritas.
   if (["contratado", "documentacao", "protocolado", "concluido"].includes(etapa) && !processo.pago_em) update.pago_em = agora;
   if (["protocolado", "concluido"].includes(etapa) && !processo.protocolado_em) update.protocolado_em = agora;
@@ -49,7 +59,29 @@ export async function mudarEtapaDoc(id: string, etapa: string, motivo?: string):
     return { ok: false, erro: "Não foi possível salvar. Nada foi alterado." };
   }
   revalidar(id);
-  return { ok: true, mensagem: `Etapa alterada para “${etapaDoc(etapa).label}”.` };
+
+  // Portal online: avisa o cliente por e-mail quando o contrato é liberado e
+  // quando o pagamento é confirmado (as demais etapas ele vê no link).
+  if ((etapa === "pre_aprovado" || etapa === "contratado") && processo.email && processo.acesso_token) {
+    const nomeServico = servicoDoc(processo.servico).label;
+    const link = `${URL_SITE}${urlPortal(processo.id, processo.acesso_token)}`;
+    const email: EmailClienteParams = {
+      nome: processo.nome,
+      titulo: etapa === "pre_aprovado" ? `Seu caso foi pré-aprovado — ${nomeServico}` : `Pagamento confirmado — ${nomeServico}`,
+      intro:
+        etapa === "pre_aprovado"
+          ? `Analisamos sua ficha e seus documentos. O contrato com o valor final (${processo.valor_final}) já está disponível para aceite online no seu link de acesso.`
+          : "Recebemos seu pagamento e o processo começou. Você acompanha cada etapa pelo seu link de acesso.",
+      etapas: [{ titulo: "Cadastro" }, { titulo: "Ficha e documentos" }, { titulo: "Análise da equipe" }, { titulo: "Contrato", texto: etapa === "pre_aprovado" ? `Aceite em ${link}` : undefined }, { titulo: "Pagamento" }, { titulo: "Processo em andamento" }],
+      etapaAtual: etapa === "pre_aprovado" ? 3 : 5,
+      status: etapa === "pre_aprovado" ? "Aguardando o aceite do contrato" : "Processo em andamento",
+      extras: [`Seu link de acesso: ${link}`, "Lembrete: o pagamento e o envio dos documentos não garantem a aprovação — a decisão é das autoridades."],
+      mensagemWhatsapp: `Olá! Tenho uma dúvida sobre meu processo de ${nomeServico}.`,
+      rotuloAndamento: "Andamento do seu processo",
+    };
+    await enviarEmailDoc({ para: [processo.email], assunto: `${email.titulo} (Ajisai)`, texto: emailClienteTexto(email), html: emailClienteHtml(email) });
+  }
+  return { ok: true, mensagem: `Etapa alterada para “${etapaDoc(etapa).label}”.${etapa === "pre_aprovado" ? " O cliente recebeu o contrato por e-mail." : ""}` };
 }
 
 export async function salvarDadosDoc(id: string, dados: { valor_final: string; email: string; telefone: string }): Promise<ResultadoDoc> {
