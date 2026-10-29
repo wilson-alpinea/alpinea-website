@@ -24,6 +24,9 @@ import { cookies } from "next/headers";
 import { obterAcesso } from "@/lib/crm/acesso";
 import { COOKIE_NOTIFICACOES, carregarNotificacoes } from "@/lib/crm/notificacoes";
 import { PeriodoSelector } from "./components/PeriodoSelector";
+import { FiltroProdutos, type OpcaoProduto } from "./components/FiltroProdutos";
+import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
+import { PRODUTO_ICONS } from "./clientes/ProdutoIcons";
 import { calcularComissoes } from "@/lib/crm/comissoes";
 import { hojeCRM } from "@/lib/crm/financeiro";
 import {
@@ -54,7 +57,12 @@ export const dynamic = "force-dynamic";
 // e financeira. Os blocos de cima mostram a situação ATUAL; só "Resultados
 // do período" obedece ao seletor de período.
 
-type Busca = { periodo?: string; dias?: string; de?: string; ate?: string };
+type Busca = { periodo?: string; dias?: string; de?: string; ate?: string; produto?: string };
+
+// Quadradinhos de produto no topo (Wilson, 29/out/2026). Ajisai Shopping fora (backlog).
+const OPCOES_PRODUTO: OpcaoProduto[] = [...PRODUTOS_PRINCIPAIS, ...PRODUTOS_SECUNDARIOS]
+  .filter((p) => p.valor !== "ajisai_shopping" && PRODUTO_ICONS[p.valor])
+  .map((p) => ({ valor: p.valor, label: p.label, icone: PRODUTO_ICONS[p.valor] }));
 
 const rotuloExecucao = (e: string) => {
   const l = ESTAGIO_ENTREGA_LABEL[e as keyof typeof ESTAGIO_ENTREGA_LABEL] ?? e;
@@ -67,8 +75,9 @@ const rotuloEtapa = (e: string) => {
 
 export default async function VisaoGeralPage({ searchParams }: { searchParams: Promise<Busca> }) {
   const params = await searchParams;
+  const produto = OPCOES_PRODUTO.some((o) => o.valor === params.produto) ? params.produto! : null;
   const supabase = await createClient();
-  const dados = carregarPainel(supabase, { eventos: 40 });
+  const dados = carregarPainel(supabase, { eventos: 40, produto });
 
   const hojeLongo = new Date().toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo", weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
@@ -95,7 +104,9 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
         </div>
       </div>
 
-      <Suspense fallback={<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{[0, 1, 2, 3].map((i) => <Esqueleto key={i} altura="h-32" />)}</div>}>
+      <FiltroProdutos opcoes={OPCOES_PRODUTO} ativo={produto} base="/crm" manter={{ periodo: params.periodo, dias: params.dias, de: params.de, ate: params.ate }} />
+
+      <Suspense key={produto ?? "todos"} fallback={<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{[0, 1, 2, 3].map((i) => <Esqueleto key={i} altura="h-32" />)}</div>}>
         <Indicadores dados={dados} />
       </Suspense>
 
@@ -646,7 +657,7 @@ async function Resultados({ dados: p, params }: { dados: Promise<DadosPainel>; p
       titulo="Resultados do período"
       subtitulo={`${rotulo} · este filtro vale só para esta seção`}
       cor="#59636F"
-      acao={<PeriodoSelector periodoAtivo={periodo} de={periodo === "custom" ? de : undefined} ate={periodo === "custom" ? ate : undefined} />}
+      acao={<PeriodoSelector base={params.produto ? `/crm?produto=${encodeURIComponent(params.produto)}` : "/crm"} periodoAtivo={periodo} de={periodo === "custom" ? de : undefined} ate={periodo === "custom" ? ate : undefined} />}
     >
       {falhou(d.clientes) || falhou(d.fechamentos) ? (
         <FalhaCarregar oque="os resultados" />

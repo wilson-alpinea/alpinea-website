@@ -62,9 +62,17 @@ export { addDias };
 const TABELA_AUSENTE = (e: { code?: string; message?: string } | null) =>
   !!e && (e.code === "42P01" || e.code === "PGRST205" || /does not exist|schema cache/i.test(e.message ?? ""));
 
-export async function carregarPainel(supabase: Supabase, opcoes: { eventos?: number } = {}): Promise<DadosPainel> {
+/** Cliente é do produto? (principal ou secundário) — filtro da Visão geral (Wilson, 29/out/2026). */
+export function clienteDoProduto(c: { produto_principal?: string | null; produto_secundario?: unknown }, produto: string) {
+  return c.produto_principal === produto || (Array.isArray(c.produto_secundario) && c.produto_secundario.includes(produto));
+}
+
+export async function carregarPainel(supabase: Supabase, opcoes: { eventos?: number; produto?: string | null } = {}): Promise<DadosPainel> {
   const hoje = hojeCRM();
   const limiteEventos = opcoes.eventos ?? 12;
+  const produto = opcoes.produto ?? null;
+  // Com filtro de produto, busca mais atividade para sobrar o suficiente depois do filtro.
+  const buscaEventos = produto ? limiteEventos * 15 : limiteEventos;
 
   const [rClientes, rMudancas, rPagamentos, rRecebimentos, rInteracoes, rEventosFin] = await Promise.all([
     supabase.from("clientes").select("*"),
@@ -80,8 +88,8 @@ export async function carregarPainel(supabase: Supabase, opcoes: { eventos?: num
       .from("interacoes")
       .select("id, cliente_id, tipo, conteudo, created_at, perfis(nome, email)")
       .order("created_at", { ascending: false })
-      .limit(limiteEventos),
-    supabase.from("financeiro_eventos").select("id, cliente_id, acao, descricao, autor_id, created_at").order("created_at", { ascending: false }).limit(limiteEventos),
+      .limit(buscaEventos),
+    supabase.from("financeiro_eventos").select("id, cliente_id, acao, descricao, autor_id, created_at").order("created_at", { ascending: false }).limit(buscaEventos),
   ]);
 
   // Clientes
@@ -90,7 +98,8 @@ export async function carregarPainel(supabase: Supabase, opcoes: { eventos?: num
   if (!rClientes.error && rClientes.data) {
     const comExecucao = new Set<string>();
     for (const m of rMudancas.data ?? []) if (m.tipo === "mudanca_estagio_entrega") comExecucao.add(m.cliente_id);
-    clientes = rClientes.data.map((c) => {
+    const doProduto = produto ? rClientes.data.filter((c) => clienteDoProduto(c, produto)) : rClientes.data;
+    clientes = doProduto.map((c) => {
       nomePorId.set(c.id, c.nome);
       return {
         id: c.id,
@@ -206,7 +215,7 @@ export async function carregarPainel(supabase: Supabase, opcoes: { eventos?: num
           quando: e.created_at,
         })),
     ];
-    eventos = lista.sort((a, b) => (a.quando < b.quando ? 1 : -1)).slice(0, limiteEventos);
+    eventos = lista.filter((e) => !produto || nomePorId.has(e.clienteId)).sort((a, b) => (a.quando < b.quando ? 1 : -1)).slice(0, limiteEventos);
   } else console.error("Visão geral: erro ao carregar interações", rInteracoes.error);
 
   return { hoje, clientes, fechamentos, parcelas, financeiroSemMigracao, eventos };

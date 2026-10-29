@@ -46,9 +46,9 @@ const UNIDADES = [
   },
   {
     unidade: "seguro" as const,
-    titulo: "Seguro Viagem",
-    descricao: "Acompanhe pedidos, pagamentos e o envio das apólices.",
-    botao: "Acessar seguro viagem",
+    titulo: "Seguro Viagem & eSIM",
+    descricao: "Acompanhe pedidos de seguro, envio das apólices e a emissão dos eSIMs.",
+    botao: "Acessar seguro e eSIM",
     aqui: "/crm/seguro",
     icone: null,
     fundo: "#F6F3F9",
@@ -68,6 +68,19 @@ const UNIDADES = [
     cor: "#8A5A3C",
     corHover: "#744A30",
     tonal: "#EFE3DA",
+  },
+  {
+    // Quinto CRM (Wilson, 29/out/2026).
+    unidade: "cambio" as const,
+    titulo: "Câmbio",
+    descricao: "Acompanhe compras e vendas de ienes, Pix e entregas.",
+    botao: "Acessar câmbio",
+    aqui: "/crm/cambio",
+    icone: null,
+    fundo: "#FBF7EE",
+    cor: "#9A6B12",
+    corHover: "#83590C",
+    tonal: "#F3E7CC",
   },
 ];
 
@@ -101,6 +114,12 @@ export default async function EscolherCrmPage() {
                 {u.icone ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={u.icone} alt="" aria-hidden="true" className="h-12 w-12" />
+                ) : u.unidade === "cambio" ? (
+                  // Moeda de iene, no mesmo estilo dos outros ícones.
+                  <svg viewBox="0 0 48 48" className="h-11 w-11" fill="none" aria-hidden="true">
+                    <circle cx="24" cy="24" r="17" fill="#fff" stroke={u.cor} strokeWidth={3} />
+                    <path d="m17.5 14.5 6.5 9.5 6.5-9.5M24 24v10M18.5 25.5h11M18.5 30.5h11" stroke={u.cor} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 ) : u.unidade === "documentacao" ? (
                   // Documento com selo, no mesmo estilo do escudo do seguro.
                   <svg viewBox="0 0 48 48" className="h-11 w-11" fill="none" aria-hidden="true">

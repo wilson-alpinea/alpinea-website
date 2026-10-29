@@ -69,7 +69,8 @@ const GUIAS: { key: TipoGuia; nome: string; perfil: string; diariaUSD: number }[
   },
 ];
 
-const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", "Nikko", "Kamakura", "Hiroshima", "Kanazawa", "Outra"];
+// Só as cidades atendidas pelo fornecedor (Wilson, 29/out/2026).
+const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", "Fujikawaguchiko (Monte Fuji)"];
 
 // Escopo do guia — Wilson, 06/out/2026: "deixar claro o que está sendo
 // contratado e escopo de funções / guia não é motorista particular, guia não
@@ -248,7 +249,6 @@ export default function GuiaTuristicoPage() {
   }
   if (guiasPorDia > 1) avisos.push(`Grupo de ${pessoas} pessoas: ${guiasPorDia} guias por dia (1 a cada ${GUIA_TAMANHO_GRUPO}).`);
   if (new Set(diasEscolhidos.map((d) => diasGuia[d])).size > 1) avisos.push(AVISO_DESLOCAMENTO_GUIA);
-  if (diasEscolhidos.some((d) => diasGuia[d] === "Outra")) avisos.push("Cidade “Outra” — informe qual nas observações.");
 
   const digitosWhatsapp = whatsapp.replace(/\D/g, "").length;
   const errosDados: Record<string, string | null> = {

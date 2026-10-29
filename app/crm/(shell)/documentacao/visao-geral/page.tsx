@@ -10,6 +10,14 @@ import { Detalhe, IconeEvento, Indicador, LinhaBarra, Numero, SemBase, Stat } fr
 import { PeriodoSelector } from "../../components/PeriodoSelector";
 import { GraficoDiario } from "../../components/GraficoDiario";
 import { SinoUnidade } from "../../components/SinoUnidade";
+import { FiltroProdutos, type OpcaoProduto } from "../../components/FiltroProdutos";
+
+// Quadradinhos de serviço no topo (Wilson, 29/out/2026) — mesmos ícones de /documentacao.
+const OPCOES_SERVICO: OpcaoProduto[] = [
+  { valor: "visto", label: "Visto específico", icone: "/images/icone-documentacao-visto.png", opaco: true },
+  { valor: "elegibilidade", label: "Certificado de Elegibilidade", icone: "/images/icone-documentacao-elegibilidade.png", opaco: true },
+  { valor: "pet", label: "Exportação de pet", icone: "/images/icone-documentacao-pet-caixa.png", opaco: true },
+];
 
 // Visão geral do CRM de Documentação (Wilson, 29/out/2026: "quero eles tão
 // arrojados e avançados quanto os outros 2") — indicadores do momento,
@@ -34,7 +42,7 @@ const DIAS_PARADO = 7;
 type Processo = Pick<ProcessoDoc, "id" | "created_at" | "updated_at" | "servico" | "etapa" | "nome" | "valor_total" | "valor_moeda" | "ficha_enviada_em" | "contrato_aceito_em" | "motivo_saida" | "pago_em" | "concluido_em" | "historico">;
 type Pagamento = { processo_id: string; valor_brl: number; status: string; pago_em: string | null };
 
-export default async function VisaoGeralDocumentacaoPage({ searchParams }: { searchParams: Promise<BuscaPeriodo> }) {
+export default async function VisaoGeralDocumentacaoPage({ searchParams }: { searchParams: Promise<BuscaPeriodo & { produto?: string }> }) {
   const acesso = await exigirAdmin();
   const params = await searchParams;
   const db = createAdminClient();
@@ -58,7 +66,8 @@ export default async function VisaoGeralDocumentacaoPage({ searchParams }: { sea
     );
   }
 
-  const processos = ((rp.data ?? []) as Processo[]).filter((p) => produtoVisivel(acesso.permissoes, "documentacao", p.servico)).map((p) => ({ ...p, historico: Array.isArray(p.historico) ? p.historico : [] }));
+  const servicoFiltro = OPCOES_SERVICO.some((o) => o.valor === params.produto) ? params.produto! : null;
+  const processos = ((rp.data ?? []) as Processo[]).filter((p) => produtoVisivel(acesso.permissoes, "documentacao", p.servico) && (!servicoFiltro || p.servico === servicoFiltro)).map((p) => ({ ...p, historico: Array.isArray(p.historico) ? p.historico : [] }));
   const idsVisiveis = new Set(processos.map((p) => p.id));
   const pagamentos = ((rg.data ?? []) as Pagamento[]).filter((g) => idsVisiveis.has(g.processo_id)).map((g) => ({ ...g, valor_brl: Number(g.valor_brl) || 0 }));
   const semPagamentos = !!rg.error;
@@ -157,6 +166,14 @@ export default async function VisaoGeralDocumentacaoPage({ searchParams }: { sea
         </div>
       </div>
 
+      <FiltroProdutos
+        opcoes={OPCOES_SERVICO.filter((o) => produtoVisivel(acesso.permissoes, "documentacao", o.valor))}
+        ativo={servicoFiltro}
+        base="/crm/documentacao/visao-geral"
+        manter={{ periodo: params.periodo, de: params.de, ate: params.ate }}
+        cor={BRONZE}
+      />
+
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <Indicador href="/crm/documentacao" titulo="Processos ativos" janela="Agora" fundo="#F8F3EF" cor={BRONZE}>
           <Numero cor={BRONZE}>{ativos.length}</Numero>
@@ -186,7 +203,7 @@ export default async function VisaoGeralDocumentacaoPage({ searchParams }: { sea
         titulo="Resultados do período"
         subtitulo={`${rotulo} · este filtro vale só para esta seção`}
         cor="#59636F"
-        acao={<PeriodoSelector base="/crm/documentacao/visao-geral" periodoAtivo={periodo} de={periodo === "custom" ? de : undefined} ate={periodo === "custom" ? ate : undefined} />}
+        acao={<PeriodoSelector base={servicoFiltro ? `/crm/documentacao/visao-geral?produto=${servicoFiltro}` : "/crm/documentacao/visao-geral"} periodoAtivo={periodo} de={periodo === "custom" ? de : undefined} ate={periodo === "custom" ? ate : undefined} />}
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Stat titulo="Novos cadastros" valor={novos.length} detalhe={SERVICOS_DOC.map((s) => `${s.curto} ${novos.filter((p) => p.servico === s.valor).length}`).join(" · ")} />

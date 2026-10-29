@@ -31,7 +31,7 @@ export function PeriodoSelector({ periodoAtivo, de, ate, base = "/crm" }: { peri
   function ir(query: string, periodo: string) {
     setAlvo(periodo);
     setAberto(false);
-    iniciar(() => router.push(`${base}?${query}`, { scroll: false }));
+    iniciar(() => router.push(`${base}${base.includes("?") ? "&" : "?"}${query}`, { scroll: false }));
   }
 
   function aplicar(e: React.FormEvent) {

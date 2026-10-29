@@ -7,6 +7,8 @@ export const CANAIS = [
   { valor: "busca_organica", label: "Busca orgânica" },
   { valor: "instagram", label: "Instagram (orgânico)" },
   { valor: "whatsapp", label: "WhatsApp" },
+  // Canal do YouTube (Wilson, 29/out/2026).
+  { valor: "youtube_tudo_sobre_japao", label: "YouTube — Tudo Sobre O Japão" },
   { valor: "consultor", label: "Consultor" },
   { valor: "parceiro", label: "Parceiro" },
   { valor: "indicacao", label: "Indicação de cliente" },
@@ -42,9 +44,11 @@ export function canalDaCampanha(d: DadosCampanha | null): { canal: Canal; detalh
     return { canal: "meta_ads", detalhe: d.utm_campaign || null };
   }
   if (contem(d.utm_source, "instagram", "ig")) return { canal: "instagram", detalhe: d.utm_campaign || null };
+  if (contem(d.utm_source, "youtube", "yt")) return { canal: "youtube_tudo_sobre_japao", detalhe: d.utm_campaign || null };
   if (contem(d.utm_source, "whatsapp", "wa")) return { canal: "whatsapp", detalhe: d.utm_campaign || null };
   if (d.utm_source) return { canal: "outro", detalhe: [d.utm_source, d.utm_medium, d.utm_campaign].filter(Boolean).join(" / ") };
   if (contem(d.referer, "google.", "bing.", "duckduckgo.", "yahoo.")) return { canal: "busca_organica", detalhe: d.referer || null };
+  if (contem(d.referer, "youtube.", "youtu.be")) return { canal: "youtube_tudo_sobre_japao", detalhe: null };
   if (contem(d.referer, "instagram.")) return { canal: "instagram", detalhe: null };
   if (contem(d.referer, "facebook.", "fb.")) return { canal: "meta_ads", detalhe: "orgânico" };
   if (d.referer) return { canal: "outro", detalhe: d.referer };

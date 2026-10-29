@@ -26,6 +26,8 @@ const NAV_EMPREGOS = [
 const NAV_SEGURO = [
   { href: "/crm/seguro/visao-geral", label: "Visão geral" },
   { href: "/crm/seguro", label: "Pedidos" },
+  // eSIM dentro do Seguro — "CRM de Seguro Viagem & eSIM" (Wilson, 29/out/2026).
+  { href: "/crm/seguro/esim", label: "eSIM" },
   { href: "/crm/acessos", label: "Acessos" },
 ];
 // CRM de Documentação (Wilson, 29/out/2026).
@@ -34,7 +36,12 @@ const NAV_DOCUMENTACAO = [
   { href: "/crm/documentacao", label: "Processos" },
   { href: "/crm/acessos", label: "Acessos" },
 ];
-const NAV_UNIDADE = { agencia: NAV_AGENCIA, empregos: NAV_EMPREGOS, seguro: NAV_SEGURO, documentacao: NAV_DOCUMENTACAO };
+// CRM de Câmbio (Wilson, 29/out/2026).
+const NAV_CAMBIO = [
+  { href: "/crm/cambio", label: "Pedidos" },
+  { href: "/crm/acessos", label: "Acessos" },
+];
+const NAV_UNIDADE = { agencia: NAV_AGENCIA, empregos: NAV_EMPREGOS, seguro: NAV_SEGURO, documentacao: NAV_DOCUMENTACAO, cambio: NAV_CAMBIO };
 
 export default async function CrmShellLayout({
   children,

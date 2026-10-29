@@ -9,12 +9,13 @@ import { Notificacoes } from "./Notificacoes";
 // Sino de notificações dos CRMs de Empregos, Seguro e Documentação (Wilson,
 // 29/out/2026) — mesmo componente da Visão geral da Agência.
 // + Agência e a tela de escolha de CRM, um sino por card (Wilson, 29/out/2026).
-type Unidade = "agencia" | "empregos" | "seguro" | "documentacao";
+type Unidade = "agencia" | "empregos" | "seguro" | "documentacao" | "cambio";
 const VER_TUDO: Record<Unidade, { href: string; rotulo: string }> = {
   agencia: { href: "/crm/atividade", rotulo: "Ver toda a atividade" },
   empregos: { href: "/crm/empregos", rotulo: "Ver candidatos" },
   seguro: { href: "/crm/seguro", rotulo: "Ver pedidos" },
   documentacao: { href: "/crm/documentacao", rotulo: "Ver processos" },
+  cambio: { href: "/crm/cambio", rotulo: "Ver pedidos de câmbio" },
 };
 
 async function Sino({ unidade }: { unidade: Unidade }) {

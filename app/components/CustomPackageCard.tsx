@@ -841,8 +841,12 @@ export const AVISO_DESLOCAMENTO_GUIA =
 // mais caro a diaria" (referente ao guia estrangeiro acima). Direto sobre
 // DIARIA_GUIA_ESTRANGEIRO_USD, não mais via comMargemEImposto (que dava
 // ~49,5% a mais — próximo mas não os 40% exatos pedidos).
+// Atualizado 29/out/2026 (Wilson): "valor base é 500 dólares, com nossa
+// margem deve ir pra 700 USD/dia" — custo próprio do guia brasileiro
+// (US$500/dia) × 1,4, independente do guia estrangeiro.
+export const CUSTO_GUIA_BRASILEIRO_USD_DIA = 500;
 const MULTIPLICADOR_GUIA_BRASILEIRO = 1.4;
-export const DIARIA_GUIA_USD = Math.round(DIARIA_GUIA_ESTRANGEIRO_USD * MULTIPLICADOR_GUIA_BRASILEIRO);
+export const DIARIA_GUIA_USD = Math.round(CUSTO_GUIA_BRASILEIRO_USD_DIA * MULTIPLICADOR_GUIA_BRASILEIRO);
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
 // não por diária do roteiro; preço não escala com ctx.dias. Custo do
 // fornecedor atualizado 25/set/2026 (Century Travel - Tour Operator,

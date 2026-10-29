@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
 export default async function AcessosPage() {
   const acesso = await exigirAdmin();
   const h = (await headers()).get("x-crm-unidade");
-  const unidade = h === "empregos" || h === "seguro" || h === "documentacao" ? h : "agencia";
+  const unidade = h === "empregos" || h === "seguro" || h === "documentacao" || h === "cambio" ? h : "agencia";
   const supabase = await createClient();
 
   const [rParceiros, rPerfis, rVinculos] = await Promise.all([

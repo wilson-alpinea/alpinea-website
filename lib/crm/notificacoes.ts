@@ -104,7 +104,7 @@ export async function carregarNotificacoes(
 // rápidos devem existir nos 4 CRMs") ─────────────────────────────────
 // Empregos, Seguro e Documentação: eventos tirados das próprias tabelas.
 // Cada CRM tem o seu cookie de "lidas".
-export type UnidadeNotificacao = "agencia" | "empregos" | "seguro" | "documentacao";
+export type UnidadeNotificacao = "agencia" | "empregos" | "seguro" | "documentacao" | "cambio";
 export const cookieNotificacoes = (u: UnidadeNotificacao) => (u === "agencia" ? COOKIE_NOTIFICACOES : `${COOKIE_NOTIFICACOES}_${u}`);
 
 type Item = Omit<Notificacao, "lida">;
@@ -155,6 +155,28 @@ export async function carregarNotificacoesUnidade(
       if (p.etapa === "pago" && p.pago_em && Date.now() - Date.parse(p.pago_em) > 24 * 3600_000) {
         lista.push({ ...base, id: `atraso-${p.id}`, tipo: "alerta", titulo: "Apólice atrasada (+24 h)", detalhe: p.plano ?? null, quando: new Date(Date.parse(p.pago_em) + 24 * 3600_000).toISOString() });
       }
+    }
+  }
+
+  // eSIM no CRM "Seguro Viagem & eSIM" (Wilson, 29/out/2026).
+  if (unidade === "seguro") {
+    const r = await supabase.from("pedidos_esim").select("id, cliente_id, nome_cliente, plano_nome, dias, status, erro, created_at, updated_at").gte("updated_at", desde).order("updated_at", { ascending: false }).limit(200);
+    for (const p of r.data ?? []) {
+      const base = { clienteId: p.cliente_id, clienteNome: p.nome_cliente, href: "/crm/seguro/esim" };
+      const plano = p.plano_nome ?? `eSIM ${p.dias} dias`;
+      if (p.status === "pedido_criado") lista.push({ ...base, id: `esim-ok-${p.id}`, tipo: "pagamento", titulo: "eSIM emitido", detalhe: plano, quando: p.updated_at });
+      if (p.status === "erro") lista.push({ ...base, id: `esim-erro-${p.id}`, tipo: "alerta", titulo: "Erro na emissão do eSIM", detalhe: p.erro ?? plano, quando: p.updated_at });
+    }
+  }
+
+  // CRM de Câmbio (Wilson, 29/out/2026): pedidos novos do site.
+  if (unidade === "cambio") {
+    const r = await supabase.from("clientes").select("id, nome, observacoes, created_at, arquivado_em").contains("produto_secundario", ["cambio"]).gte("created_at", desde).order("created_at", { ascending: false }).limit(200);
+    if (r.error) return { erro: true };
+    for (const c of r.data ?? []) {
+      if (c.arquivado_em) continue;
+      const venda = /Venda de ienes/i.test(c.observacoes ?? "");
+      lista.push({ id: `camb-${c.id}`, tipo: "novo_cliente", titulo: venda ? "Novo pedido — venda de ienes" : "Novo pedido — compra de ienes", detalhe: null, clienteId: c.id, clienteNome: c.nome, href: `/crm/cambio/${c.id}`, quando: c.created_at });
     }
   }
 
