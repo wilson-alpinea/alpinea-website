@@ -66,8 +66,8 @@ export function HeroServico({ kicker, titulo, subtitulo, voltar = true, imagem, 
       {fundo && (
         <>
           <Image src={fundo} alt="" fill priority sizes="100vw" className="-z-20 object-cover object-center" />
-          <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(90deg, #06261E 0%, rgba(11,61,48,0.94) 38%, rgba(11,61,48,0.72) 68%, rgba(11,61,48,0.45) 100%)` }} />
-          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1/3" style={{ background: "linear-gradient(0deg, rgba(6,38,30,0.65), transparent)" }} />
+          <div aria-hidden="true" className="absolute inset-0 -z-10" style={{ background: `linear-gradient(90deg, rgba(6,38,30,0.93) 0%, rgba(11,61,48,0.8) 35%, rgba(11,61,48,0.38) 65%, rgba(11,61,48,0.08) 100%)` }} />
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-1/3" style={{ background: "linear-gradient(0deg, rgba(6,38,30,0.45), transparent)" }} />
         </>
       )}
       <div className={`mx-auto max-w-5xl px-5 pb-12 pt-10 md:px-8 md:pb-20 md:pt-16 ${comFoto ? "md:grid md:grid-cols-[1.25fr_1fr] md:items-center md:gap-10" : ""}`}>
@@ -99,7 +99,13 @@ export function Secao({ kicker, titulo, children, id, cinza = false }: { kicker?
   return (
     <section id={id} className={`scroll-mt-24 border-b border-black/5 ${cinza ? "bg-[#F6F7F5]" : "bg-white"}`}>
       <div className="mx-auto max-w-5xl px-5 py-12 md:px-8 md:py-16">
-        {kicker && <p className="text-[10px] uppercase tracking-[0.25em] text-black/45">{kicker}</p>}
+        {/* Kicker mais legível (Wilson, 29/out/2026: "passo 1 é praticamente impossível de enxergar"). */}
+        {kicker && (
+          <p className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.2em]" style={{ color: VERDE }}>
+            <span aria-hidden="true" className="h-[2px] w-6 rounded-full" style={{ background: VERDE }} />
+            {kicker}
+          </p>
+        )}
         <h2 className={`${display.className} mt-2 text-2xl font-medium text-black md:text-3xl`}>{titulo}</h2>
         <div className="mt-7">{children}</div>
       </div>

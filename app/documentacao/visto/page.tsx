@@ -26,6 +26,11 @@ export default function VistoPage() {
         cta={{ href: "#solicitar", rotulo: "Solicitar online" }}
       />
 
+      {/* Formulário logo depois do banner (Wilson, 29/out/2026: "quantidade de pré-etapas é gigante, elas devem ser etapa 1"). */}
+      <Secao kicker="Solicitação 100% online" titulo="Solicite o seu visto" cinza id="solicitar">
+        <SolicitacaoOnline servico="visto" />
+      </Secao>
+
       <Secao kicker="Quem pode pedir" titulo="Este visto é para você?">
         <div className="rounded-2xl border p-5 md:p-7" style={{ borderColor: `${VERDE}33`, background: `${VERDE}08` }}>
           <p className="text-sm font-medium text-black">Atendemos exclusivamente o visto específico, para:</p>
@@ -118,9 +123,6 @@ export default function VistoPage() {
         </div>
       </Secao>
 
-      <Secao kicker="Solicitação 100% online" titulo="Solicite o seu visto" cinza id="solicitar">
-        <SolicitacaoOnline servico="visto" />
-      </Secao>
       <RodapeAjisai />
     </main>
   );

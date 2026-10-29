@@ -21,13 +21,13 @@ import { Campo, classeInput, mascararWhatsapp } from "../components/transporte/c
 import { formatBRL, formatJPY } from "../hooks/useCambioUSD";
 import { WHATSAPP_NUMBER } from "../produtos/page";
 import { formatarCpf } from "../lib/fichaCadastral";
-import { CONSULADOS, PERGUNTAS_GARANTIDOR, PERGUNTAS_VISTO, PRAZO_VISTO, VERSAO_TERMOS_DOC, type Pergunta } from "./conteudo";
+import { CONSULADOS, PALAVRAS_RACA_RESTRITA, PERGUNTAS_GARANTIDOR, PERGUNTAS_PET, PERGUNTAS_PET_TUTOR, PERGUNTAS_VISTO, PRAZO_VISTO, VERSAO_TERMOS_DOC, type Pergunta } from "./conteudo";
 import { documentosServico, errosFicha, estruturaFicha, urlPortal, type FichaDoc } from "./processo";
 import { Bloco, CampoDinamico, Documentos, PagarStone, type Contrato, type DocPublico } from "./processo/[id]/PortalProcesso";
 import { MAX_PESSOAS_ONLINE, precoOnline } from "@/lib/documentacao/precoOnline";
 
-type Servico = "visto" | "elegibilidade";
-type PassoId = "perfil" | "valor" | "dados" | "garantidor" | "solicitantes" | "titular" | "documentos" | "contrato" | "pagamento";
+type Servico = "visto" | "elegibilidade" | "pet";
+type PassoId = "perfil" | "valor" | "dados" | "garantidor" | "solicitantes" | "titular" | "documentos" | "contrato" | "pagamento" | "pet" | "analise";
 
 const PERFIS = [
   "Sou nissei (filho de japonês)",
@@ -37,7 +37,7 @@ const PERFIS = [
   "Nenhuma das opções",
 ];
 const PERFIL_FORA = "Nenhuma das opções";
-const NOME: Record<Servico, string> = { visto: "Visto específico", elegibilidade: "Certificado de Elegibilidade" };
+const NOME: Record<Servico, string> = { visto: "Visto específico", elegibilidade: "Certificado de Elegibilidade", pet: "Exportação de pet" };
 
 const PASSOS: Record<Servico, { id: PassoId; titulo: string; descricao: string }[]> = {
   visto: [
@@ -61,6 +61,26 @@ const PASSOS: Record<Servico, { id: PassoId; titulo: string; descricao: string }
     { id: "contrato", titulo: "Contrato", descricao: "Leia e aceite eletronicamente com nome e CPF." },
     { id: "pagamento", titulo: "Pagamento", descricao: "50% agora pela Stone; os outros 50% antes da entrada na imigração." },
   ],
+  // Pet (Wilson, 29/out/2026: "etapa 1 como se já estivesse preenchendo"):
+  // valor ainda sob consulta, então termina em análise da equipe; contrato e
+  // pagamento pela Stone seguem no link do portal.
+  pet: [
+    { id: "pet", titulo: "Seu pet", descricao: "Comece pelo pet: tipo, raça, porte e situação da sorologia." },
+    { id: "dados", titulo: "Seus dados", descricao: "Contato do tutor e as confirmações do serviço." },
+    { id: "titular", titulo: "Tutor, viagem e pet", descricao: "Documentos do tutor, data da viagem e dados completos do pet." },
+    { id: "documentos", titulo: "Documentos", descricao: "Envie foto ou PDF de cada documento. Celular serve." },
+    { id: "analise", titulo: "Análise e proposta", descricao: "A equipe confere a raça e a data da viagem e libera o contrato com o valor." },
+  ],
+};
+
+const ACEITES_PET = [
+  { id: "origem", resumo: "Confirmou origem Brasil", texto: "Confirmo que o passageiro e o pet vão sair do Brasil." },
+  { id: "racas", resumo: "Leu e aceitou as restrições de raças no transporte aéreo", texto: "Li e aceito os termos de aceite de animais no transporte aéreo internacional e a lista de raças NÃO aceitas desta página." },
+  { id: "termos", resumo: "Li e aceito os termos e condições do serviço (não reembolsável)", texto: "Li e aceito os termos e condições do serviço, incluindo que não há cancelamento com reembolso e que, se a raça for omitida ou declarada de forma incorreta, não há reembolso em nenhuma hipótese." },
+];
+const racaRestrita = (raca: string) => {
+  const r = raca.toLowerCase();
+  return r.length >= 3 && PALAVRAS_RACA_RESTRITA.some((p) => r.includes(p));
 };
 
 const ACEITES = [
@@ -104,7 +124,8 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
   const [whatsapp, setWhatsapp] = useState("");
   const [respostas, setRespostas] = useState<Record<string, string>>({});
   const [aceitos, setAceitos] = useState<Record<string, boolean>>({});
-  const perguntasDados = useMemo(() => PERGUNTAS_VISTO.filter((p) => p.id !== "qtd"), []);
+  const perguntasDados = useMemo(() => (servico === "pet" ? PERGUNTAS_PET_TUTOR : PERGUNTAS_VISTO.filter((p) => p.id !== "qtd")), [servico]);
+  const aceitesServico = servico === "pet" ? ACEITES_PET : ACEITES;
 
   // ── Processo criado no CRM ──
   const [sessao, setSessao] = useState<Sessao | null>(null);
@@ -185,7 +206,13 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
         if (servico === "visto") return [!consuladoId && "Escolha o consulado.", !temCOE && "Responda se já tem o Certificado de Elegibilidade."].filter(Boolean) as string[];
         return pessoas > MAX_PESSOAS_ONLINE.elegibilidade ? ["Para 6 pessoas ou mais, fale com a equipe."] : [];
       case "dados":
-        return [erroNome && "Nome completo", erroEmail && "E-mail", erroWhats && "WhatsApp", ...perguntasDados.filter((p) => erroPergunta(p)).map((p) => p.rotulo), ...ACEITES.filter((a) => !aceitos[a.id]).map((a) => a.resumo)].filter(Boolean) as string[];
+        return [erroNome && "Nome completo", erroEmail && "E-mail", erroWhats && "WhatsApp", ...perguntasDados.filter((p) => erroPergunta(p)).map((p) => p.rotulo), ...aceitesServico.filter((a) => !aceitos[a.id]).map((a) => a.resumo)].filter(Boolean) as string[];
+      case "pet": {
+        const r = PERGUNTAS_PET.filter((p) => erroPergunta(p)).map((p) => p.rotulo);
+        if (respostas.p_racaRestrita === "Sim, está na lista") r.push("Raça NÃO aceita pelas companhias aéreas — não conseguimos atender.");
+        if (respostas.p_racaRestrita === "Não sei") r.push("Confira a lista de raças NÃO aceitas antes de continuar.");
+        return r;
+      }
       case "garantidor":
         return PERGUNTAS_GARANTIDOR.filter((p) => erroPergunta(p)).map((p) => p.rotulo);
       case "solicitantes":
@@ -206,7 +233,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
   }
   const faltas = pendencias(passo.id);
   const criado = !!sessao;
-  const idxCriacao = passos.findIndex((p) => p.id === "solicitantes");
+  const idxCriacao = passos.findIndex((p) => p.id === (servico === "pet" ? "titular" : "solicitantes"));
 
   function irPara(n: number) {
     setIdx(n);
@@ -223,22 +250,23 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
       ["Solicitantes", String(pessoas)],
       ["Valor pela tabela", textoPreco ?? "—"],
     ];
-    const grupos = servico === "elegibilidade" ? [...perguntasDados, ...PERGUNTAS_GARANTIDOR] : perguntasDados;
-    const linhas: [string, string][] = [...contexto, ...grupos.map((p) => [p.rotulo, respostas[p.id] ?? ""] as [string, string]), ...ACEITES.map((a) => [a.resumo, "Aceito"] as [string, string])];
+    const grupos = servico === "elegibilidade" ? [...perguntasDados, ...PERGUNTAS_GARANTIDOR] : servico === "pet" ? [...PERGUNTAS_PET, ...perguntasDados] : perguntasDados;
+    const ctx: [string, string][] = servico === "pet" ? [["Solicitação", "Online pelo site"], ["País de origem do passageiro e do pet", "Brasil (confirmado no cadastro)"]] : contexto;
+    const linhas: [string, string][] = [...ctx, ...grupos.map((p) => [p.rotulo, respostas[p.id] ?? ""] as [string, string]), ...aceitesServico.map((a) => [a.resumo, "Aceito"] as [string, string])];
     const r = await fetch("/api/documentacao-selfservice", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        online: true,
+        online: servico !== "pet",
         servico,
         nome,
         email,
         whatsapp,
         respostas: linhas,
-        campos: { ...respostas, perfil, qtd: String(pessoas), consuladoId, consulado: consulado?.nome ?? "", temCOE },
+        campos: servico === "pet" ? { ...respostas } : { ...respostas, perfil, qtd: String(pessoas), consuladoId, consulado: consulado?.nome ?? "", temCOE },
         valorReferenciaBRL: preco?.moeda === "BRL" ? preco.total : brlAprox,
         termosVersao: VERSAO_TERMOS_DOC,
-        aceites: ACEITES.map((a) => a.resumo),
+        aceites: aceitesServico.map((a) => a.resumo),
       }),
     }).catch(() => null);
     const d = await r?.json().catch(() => ({}));
@@ -253,7 +281,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
     } catch {}
     window.gtag?.("event", "generate_lead", { form_name: `documentacao_${servico}_online`, contact_channel: "site" });
     // Ficha já começa com o titular e o nome do responsável.
-    setFicha({ pessoas: Array.from({ length: pessoas }, (_, i): Record<string, string> => (i === 0 ? { relacao: "Titular", nome } : {})), dados: {} });
+    setFicha(servico === "pet" ? { pessoas: [], dados: { nome } } : { pessoas: Array.from({ length: pessoas }, (_, i): Record<string, string> => (i === 0 ? { relacao: "Titular", nome } : {})), dados: {} });
     setAssNome(nome);
     return true;
   }
@@ -266,6 +294,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
       setErro(d?.error || "Não foi possível enviar a ficha agora. Tente novamente.");
       return false;
     }
+    if (servico === "pet") return true; // segue para a análise da equipe
     if (!d?.contratoLiberado || !d?.contrato) {
       setErro("Recebemos sua ficha. A equipe vai conferir o caso e liberar o contrato pelo seu link de acesso.");
       return false;
@@ -304,7 +333,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
   const zap = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Olá! Estou fazendo a solicitação online de ${NOME[servico]} e tenho uma dúvida.`)}`;
   const mostrar = (e: string | null | undefined) => (tentou ? e ?? null : null);
   const pct = Math.round(((idx + 1) / passos.length) * 100);
-  const podeVoltar = idx > 0 && !(criado && idx <= idxCriacao) && passo.id !== "pagamento";
+  const podeVoltar = idx > 0 && !(criado && idx <= idxCriacao) && passo.id !== "pagamento" && passo.id !== "analise";
 
   return (
     <div ref={topo} className="scroll-mt-24">
@@ -332,8 +361,8 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
       </div>
       <ol className="mt-4 hidden flex-wrap gap-x-5 gap-y-2 md:flex">
         {passos.map((p, i) => (
-          <li key={p.id} className="flex items-center gap-2 text-xs" style={{ color: i === idx ? VERDE : i < idx ? "#111" : "#9a9a9a" }}>
-            <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${i <= idx ? "text-white" : "border border-black/15"}`} style={i <= idx ? { background: i === idx ? VERDE : "#5f8a7c" } : undefined}>
+          <li key={p.id} className="flex items-center gap-2 text-xs" style={{ color: i === idx ? VERDE : i < idx ? "#111" : "rgba(0,0,0,0.6)" }}>
+            <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${i <= idx ? "text-white" : "border border-black/30 bg-white"}`} style={i <= idx ? { background: i === idx ? VERDE : "#5f8a7c" } : undefined}>
               {i < idx ? "✓" : i + 1}
             </span>
             <span className={i === idx ? "font-semibold" : ""}>{p.titulo}</span>
@@ -418,7 +447,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
             <div className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <Campo rotulo="Nome completo do titular" erro={mostrar(erroNome)}>
+                  <Campo rotulo={servico === "pet" ? "Nome completo do tutor" : "Nome completo do titular"} erro={mostrar(erroNome)}>
                     <input value={nome} onChange={(e) => setNome(e.target.value)} className={classeInput(Boolean(mostrar(erroNome)))} autoComplete="name" />
                   </Campo>
                 </div>
@@ -435,13 +464,48 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                 ))}
               </div>
               <div className="space-y-3 border-t border-black/5 pt-6">
-                {ACEITES.map((a) => (
+                {aceitesServico.map((a) => (
                   <label key={a.id} className="flex cursor-pointer gap-3 text-sm leading-6 text-black/75">
                     <input type="checkbox" checked={Boolean(aceitos[a.id])} onChange={(e) => setAceitos((s) => ({ ...s, [a.id]: e.target.checked }))} className="mt-1 h-4 w-4 shrink-0 accent-[#0B3D30]" />
                     <span>{a.texto}</span>
                   </label>
                 ))}
               </div>
+            </div>
+          )}
+
+          {passo.id === "pet" && (
+            <div className="space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                {PERGUNTAS_PET.map((p) => (
+                  <CampoPergunta key={p.id} p={p} valor={respostas[p.id] ?? ""} erro={mostrar(erroPergunta(p))} onChange={(v) => setRespostas((r) => ({ ...r, [p.id]: v }))} />
+                ))}
+              </div>
+              <p className="text-xs leading-5 text-black/55">
+                Confira a <a href="#racas" className="underline" style={{ color: VERDE }}>lista de raças NÃO aceitas</a> pelas companhias aéreas antes de seguir. Para mais de um pet, faça uma solicitação por animal.
+              </p>
+              {racaRestrita(respostas.p_raca ?? "") && respostas.p_racaRestrita !== "Sim, está na lista" && (
+                <div className="rounded-2xl border border-amber-500/40 bg-amber-50 p-5 text-sm leading-6 text-amber-900">
+                  A raça informada parece estar na lista de raças NÃO aceitas. Confira a lista: essas raças não podem ser contratadas, e declarar a raça de forma incorreta tira o direito a qualquer reembolso.
+                </div>
+              )}
+              {respostas.p_racaRestrita === "Sim, está na lista" && (
+                <div role="alert" className="rounded-2xl border border-red-300 bg-red-50 p-5 text-sm leading-6 text-red-800">
+                  Infelizmente não conseguimos atender: as companhias aéreas não embarcam essas raças para o Japão, mesmo com toda a documentação pronta.
+                </div>
+              )}
+            </div>
+          )}
+
+          {passo.id === "analise" && sessao && (
+            <div className="rounded-2xl p-6 text-center md:p-10" style={{ background: `${VERDE}0D` }}>
+              <p className={`${display.className} text-2xl text-black`}>Ficha e documentos recebidos.</p>
+              <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-black/65">
+                A equipe confere a raça, a situação da sorologia e a data da viagem e libera o contrato com o valor no seu link de acesso — o mesmo que enviamos para {email || "o seu e-mail"}. O pagamento é feito ali mesmo, pela Stone (cartão ou Pix).
+              </p>
+              <Link href={urlPortal(sessao.id, sessao.token)} className="mt-6 inline-flex min-h-[48px] items-center rounded-full px-7 text-[11px] font-semibold uppercase tracking-[0.2em] text-white" style={{ background: VERDE }}>
+                Acompanhar meu processo
+              </Link>
             </div>
           )}
 
@@ -546,7 +610,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
         )}
         {erro && <p role="alert" className="mt-4 text-sm text-red-600">{erro}</p>}
 
-        {passo.id !== "pagamento" && (
+        {passo.id !== "pagamento" && passo.id !== "analise" && (
           <div className="mt-8 flex flex-col-reverse items-stretch gap-3 border-t border-black/5 pt-6 sm:flex-row sm:items-center sm:justify-between">
             {podeVoltar ? (
               <button type="button" onClick={() => irPara(idx - 1)} className={`${botao} border border-black/15 text-black/70`}>
@@ -562,7 +626,7 @@ export function SolicitacaoOnline({ servico }: { servico: Servico }) {
                   : idx + 1 === idxCriacao && !criado
                     ? "Registrar e continuar"
                     : passo.id === "documentos"
-                      ? "Enviar ficha e ver contrato"
+                      ? servico === "pet" ? "Enviar para análise" : "Enviar ficha e ver contrato"
                       : passo.id === "contrato"
                         ? "Aceitar contrato e pagar"
                         : "Continuar"}

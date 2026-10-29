@@ -6,17 +6,13 @@
 // consulta até o Wilson confirmar o preço atual (ver PRECO_PET_BRL).
 
 import Image from "next/image";
-import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, FormularioDocumentacao, VERDE, display } from "../componentes";
+import { CabecalhoAjisai, RodapeAjisai, HeroServico, Secao, ListaCheck, Etapas, Prazos, Termos, VERDE, display } from "../componentes";
+import { SolicitacaoOnline } from "../SolicitacaoOnline";
 import { formatBRL } from "../../hooks/useCambioUSD";
 import {
-  TERMOS_PET, EXPERIENCIA, PALAVRAS_RACA_RESTRITA, PERGUNTAS_PET, PERGUNTAS_PET_TUTOR, PRECO_PET_BRL,
+  TERMOS_PET, EXPERIENCIA, PRECO_PET_BRL,
   RACAS_RESTRITAS_CAES, RACAS_RESTRITAS_GATOS, TERMOS_RACAS, type RacaRestrita,
 } from "../conteudo";
-
-function racaRestrita(raca: string) {
-  const r = raca.toLowerCase();
-  return r.length >= 3 && PALAVRAS_RACA_RESTRITA.some((p) => r.includes(p));
-}
 
 function GradeRacas({ titulo, racas }: { titulo: string; racas: RacaRestrita[] }) {
   return (
@@ -56,10 +52,16 @@ export default function PetPage() {
       <HeroServico
         kicker="Ajisai Pet · Exportação"
         titulo="Seu cão ou gato no Japão, com toda a documentação"
-        subtitulo="Microchip, vacinas, sorologia, Import Permit e certificado veterinário internacional — o processo inteiro, com clínicas parceiras em São Paulo, para o seu pet chegar ao Japão sem quarentena."
+        subtitulo="Microchip, vacinas, sorologia, Import Permit e certificado veterinário internacional — o processo inteiro, com clínicas parceiras em São Paulo, para o seu pet chegar ao Japão sem quarentena. Solicitação 100% online."
         imagem="/images/documentacao-pet.webp"
         alt="Tutora com um cavalier king charles ao lado da caixa de transporte no aeroporto"
+        cta={{ href: "#solicitar", rotulo: "Solicitar online" }}
       />
+
+      {/* Formulário logo depois do banner (Wilson, 29/out/2026: "quantidade de pré-etapas é gigante, elas devem ser etapa 1"). */}
+      <Secao kicker="Solicitação 100% online" titulo="Comece pelo seu pet" cinza id="solicitar">
+        <SolicitacaoOnline servico="pet" />
+      </Secao>
 
       <Secao kicker="Antes de começar" titulo="Um processo longo, que exige planejamento">
         <div className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
@@ -80,8 +82,8 @@ export default function PetPage() {
       <Secao kicker="Como funciona" titulo="Etapas da exportação" cinza>
         <Etapas
           itens={[
-            { titulo: "Cadastro e proposta", texto: "Analisamos o seu pet e a data da viagem." },
-            { titulo: "Contratação", texto: "Pagamento de 100% na contratação." },
+            { titulo: "Solicitação online", texto: "Pet, tutor, ficha e documentos, aqui no site." },
+            { titulo: "Contrato e pagamento", texto: "Aceite eletrônico e 100% pela Stone no seu link." },
             { titulo: "Microchip", texto: "Padrão ISO 11784/11785, o primeiro passo do processo." },
             { titulo: "Vacina da raiva", texto: "Duas doses de vacina inativada, com 30 dias entre elas, por veterinário credenciado." },
             { titulo: "Sorologia", texto: "Coleta em São Paulo, envio refrigerado e análise em laboratório nos EUA. Depois, 180 dias de espera." },
@@ -123,7 +125,7 @@ export default function PetPage() {
         <p className="mt-4 text-xs leading-5 text-black/50">Taxas da companhia aérea para o transporte do pet e a caixa transportadora não estão inclusas.</p>
       </Secao>
 
-      <Secao kicker="Transporte aéreo" titulo="Raças NÃO aceitas">
+      <Secao kicker="Transporte aéreo" titulo="Raças NÃO aceitas" id="racas">
         <div className="mb-8 rounded-2xl border border-amber-500/30 bg-amber-50/60 p-5 text-sm leading-6 text-black/70 md:p-6">
           <p className="font-medium text-black">Por que a raça importa tanto</p>
           <p className="mt-2">
@@ -141,42 +143,8 @@ export default function PetPage() {
         </div>
       </Secao>
 
-      <Secao kicker="Cadastro" titulo="Cadastro do tutor e do pet" cinza id="cadastro">
-        <p className="mb-6 text-sm leading-6 text-black/60">Todas as perguntas são obrigatórias. Para mais de um pet, envie um cadastro por animal.</p>
-        <FormularioDocumentacao
-          servico="pet"
-          grupos={[
-            { titulo: "Sobre o tutor", perguntas: PERGUNTAS_PET_TUTOR },
-            { titulo: "Sobre o pet", perguntas: PERGUNTAS_PET },
-          ]}
-          contexto={[["País de origem do passageiro e do pet", "Brasil (confirmado no cadastro)"]]}
-          bloqueio={(r) =>
-            r.p_racaRestrita === "Sim, está na lista"
-              ? "Infelizmente não conseguimos atender: as companhias aéreas não embarcam essas raças para o Japão, mesmo com toda a documentação pronta."
-              : r.p_racaRestrita === "Não sei"
-                ? "Confira a lista de raças NÃO aceitas na seção “Transporte aéreo” desta página antes de enviar. Se tiver dúvida sobre o cruzamento, fale com a equipe pelo WhatsApp."
-                : null
-          }
-          aviso={(r) =>
-            racaRestrita(r.p_raca ?? "") && r.p_racaRestrita !== "Sim, está na lista" ? (
-              <div className="rounded-2xl border border-amber-500/40 bg-amber-50 p-5 text-sm leading-6 text-amber-900">
-                A raça informada parece estar na lista de raças NÃO aceitas. Confira a lista antes de enviar: essas raças não podem ser contratadas, e declarar a raça de forma incorreta tira o direito a qualquer reembolso.
-              </div>
-            ) : null
-          }
-          aceites={[
-            { id: "origem", resumo: "Confirmou origem Brasil", texto: "Confirmo que o passageiro e o pet vão sair do Brasil." },
-            {
-              id: "racas",
-              resumo: "Leu e aceitou as restrições de raças no transporte aéreo",
-              texto: "Li e aceito os termos de aceite de animais no transporte aéreo internacional e a lista de raças NÃO aceitas, na seção “Transporte aéreo” acima.",
-            },
-            { id: "termos", resumo: "Li e aceito os termos e condições do serviço (não reembolsável)", texto: "Li e aceito os termos e condições do serviço abaixo, incluindo que não há cancelamento com reembolso e que, se a raça for omitida ou declarada de forma incorreta, não há reembolso em nenhuma hipótese." },
-          ]}
-        />
-        <div className="mt-8">
-          <Termos clausulas={TERMOS_PET} />
-        </div>
+      <Secao kicker="Termos" titulo="Termos e condições do serviço" cinza>
+        <Termos clausulas={TERMOS_PET} />
       </Secao>
       <RodapeAjisai />
     </main>

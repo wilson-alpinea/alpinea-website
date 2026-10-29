@@ -28,6 +28,11 @@ export default function ElegibilidadePage() {
         cta={{ href: "#solicitar", rotulo: "Solicitar online" }}
       />
 
+      {/* Formulário logo depois do banner (Wilson, 29/out/2026: "quantidade de pré-etapas é gigante, elas devem ser etapa 1"). */}
+      <Secao kicker="Solicitação 100% online" titulo="Solicite o seu certificado" cinza id="solicitar">
+        <SolicitacaoOnline servico="elegibilidade" />
+      </Secao>
+
       <Secao kicker="O que é" titulo="Um garantidor no Japão, oficializado pela imigração">
         <div className="grid gap-6 md:grid-cols-2">
           <p className="text-sm leading-7 text-black/70">
@@ -133,9 +138,6 @@ export default function ElegibilidadePage() {
         </div>
       </Secao>
 
-      <Secao kicker="Solicitação 100% online" titulo="Solicite o seu certificado" cinza id="solicitar">
-        <SolicitacaoOnline servico="elegibilidade" />
-      </Secao>
       <RodapeAjisai />
     </main>
   );

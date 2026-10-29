@@ -92,8 +92,8 @@ export default function DocumentacaoPage() {
             />
             <CardServico
               href="/documentacao/pet"
-              imagem="/images/documentacao-pet.webp"
-              alt="Tutora com um cavalier king charles ao lado da caixa de transporte no aeroporto"
+              imagem="/images/documentacao-pet-icone.webp"
+              alt="Ícone de caixa de transporte com um cachorro"
               kicker="Cães e gatos"
               titulo="Exportação de pet"
               texto="Microchip, vacinas, sorologia, Import Permit e certificado veterinário internacional — o processo completo, com clínicas parceiras em São Paulo."
