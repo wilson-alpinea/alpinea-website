@@ -94,7 +94,7 @@ export function Notificacoes({
           ) : lista.length === 0 ? (
             <p className="px-4 py-8 text-center text-sm text-[#626B75]">Nenhuma notificação por enquanto.</p>
           ) : (
-            <ul className="max-h-[60vh] divide-y divide-[#EEF0F2] overflow-y-auto">
+            <ul className="max-h-[min(60vh,420px)] divide-y divide-[#EEF0F2] overflow-y-auto">
               {lista.map((n) => {
                 const nova = destacadas.has(n.id);
                 return (

@@ -83,7 +83,7 @@ export default async function EscolherCrmPage() {
           {UNIDADES.map((u) => (
             <section
               key={u.unidade}
-              className="relative flex flex-col rounded-2xl border border-t-[3px] border-black/[0.06] p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(0,0,0,0.05),0_22px_40px_-22px_rgba(0,0,0,0.25)] md:p-8"
+              className="relative flex flex-col rounded-2xl border border-t-[3px] has-[[role=dialog]]:z-50 border-black/[0.06] p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgba(0,0,0,0.05),0_22px_40px_-22px_rgba(0,0,0,0.25)] md:p-8"
               style={{ backgroundColor: u.fundo, borderTopColor: u.cor }}
             >
               {/* Sino com as notificações recentes de cada CRM (Wilson, 29/out/2026). */}
