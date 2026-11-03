@@ -50,6 +50,7 @@ export function ProcessoCard({
   opcoes,
   estagioAtualSelect,
   placeholderSelect,
+  bloqueado = false,
 }: {
   titulo: string;
   tema: TemaProcesso;
@@ -63,6 +64,8 @@ export function ProcessoCard({
   opcoes: { valor: string; label: string }[];
   estagioAtualSelect: string;
   placeholderSelect?: string;
+  /** true: processo encerrado por outro card (execução com negócio perdido) — sem "Alterar etapa". */
+  bloqueado?: boolean;
 }) {
   // Guarda o status de quando o painel "Alterar etapa" foi aberto: depois de
   // confirmar, a página revalida, o status muda e o painel fecha sozinho.
@@ -190,6 +193,7 @@ export function ProcessoCard({
 
       <div className="mt-auto pt-4">
         <div className="flex flex-wrap items-center gap-2">
+          {!bloqueado && (
           <button
             type="button"
             onClick={() => setAlterandoEm(alterando ? null : estagioAtualSelect)}
@@ -200,6 +204,7 @@ export function ProcessoCard({
           >
             Alterar etapa
           </button>
+          )}
           <button
             type="button"
             onClick={() => setHistoricoAberto(true)}
@@ -208,7 +213,7 @@ export function ProcessoCard({
             Ver histórico
           </button>
         </div>
-        {alterando && (
+        {alterando && !bloqueado && (
           <div id={painelId} className="mt-3 rounded-xl border border-[#D5DAE0] bg-white p-3">
             <p className="mb-2 text-[13px] text-[#626B75]">Escolha a etapa e a data em que o cliente entrou nela.</p>
             <EstagioSelect

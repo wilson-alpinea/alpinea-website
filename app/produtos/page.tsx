@@ -51,7 +51,7 @@ const PRODUTOS: Record<
 > = {
   roteiro: {
     nome: "Roteiro Personalizado",
-    precoBRL: 1500,
+    precoBRL: 2100, // Wilson, 03/nov/2026 (antes 1500)
     href: "/ajisairoteiros",
   },
   caravana: {

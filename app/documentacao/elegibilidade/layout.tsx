@@ -4,11 +4,12 @@ import type { Metadata } from "next";
 const TITULO = "Ajisai | Certificado de Elegibilidade (COE)";
 const DESCRICAO = "Certificado de Elegibilidade para o visto específico: valor final por pessoa ou família, prazos e cadastro online.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: TITULO,
   description: DESCRICAO,
-  openGraph: { title: TITULO, description: DESCRICAO, siteName: "Ajisai", locale: "pt_BR", type: "website", images: [{ url: "/images/documentacao-hero.webp", width: 1902, height: 827, alt: "Atendimento de documentação Ajisai" }] },
-  twitter: { card: "summary_large_image", title: TITULO, description: DESCRICAO, images: ["/images/documentacao-hero.webp"] },
+  openGraph: { title: TITULO, description: DESCRICAO, siteName: "Ajisai", locale: "pt_BR", type: "website", images: [{ url: "/images/og/og-elegibilidade.jpg", width: 1200, height: 630, alt: "Certificado de Elegibilidade — Ajisai" }] },
+  twitter: { card: "summary_large_image", title: TITULO, description: DESCRICAO, images: ["/images/og/og-elegibilidade.jpg"] },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

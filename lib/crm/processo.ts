@@ -98,7 +98,22 @@ export function execucaoIniciada(estagioEntrega: EstagioEntrega, temHistoricoExe
   return estagioEntrega !== "roteiro_elaboracao" || temHistoricoExecucao;
 }
 
-export function resumoExecucao(estagioEntrega: EstagioEntrega, iniciada: boolean): ResumoProcesso {
+// perdidoComercial (Wilson, 03/nov/2026: "ao deixar fechado perdido, a
+// atividade deve encerrar também no card ao lado na parte de execução"): com
+// o comercial em "Fechado — perdido", a execução aparece encerrada. É
+// derivado do comercial — se o negócio voltar a andar, a execução reabre
+// sozinha no ponto em que estava. Viagem já concluída continua concluída.
+export function resumoExecucao(estagioEntrega: EstagioEntrega, iniciada: boolean, perdidoComercial = false): ResumoProcesso {
+  if (perdidoComercial && !(iniciada && estagioEntrega === "concluida")) {
+    const alcancado = iniciada ? (INDICE_EXECUCAO[estagioEntrega] ?? 0) : -1;
+    return {
+      situacao: "perdido",
+      indiceAtual: 4,
+      indiceAlcancado: Math.min(alcancado, 3),
+      etapaAtual: iniciada ? `Encerrada em ${ETAPAS_EXECUCAO[alcancado]}` : "Encerrada — não iniciada",
+      proximaEtapa: null,
+    };
+  }
   if (!iniciada) {
     return { situacao: "aguardando", indiceAtual: -1, indiceAlcancado: -1, etapaAtual: "Aguardando início", proximaEtapa: ETAPAS_EXECUCAO[0] };
   }

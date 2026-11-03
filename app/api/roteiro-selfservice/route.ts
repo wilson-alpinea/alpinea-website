@@ -63,7 +63,7 @@ const inteiro = (v: unknown, min: number, max: number) => Math.max(min, Math.min
 // Mesma regra de app/components/PriceCalculator.tsx (recalculada aqui para o
 // CRM não depender do valor vindo do navegador).
 const BASE_DIAS = 15;
-const PRECO_BASE = 1500;
+const PRECO_BASE = 2100; // Wilson, 03/nov/2026 (antes 1500)
 const PRECO_DIA_EXTRA = 120;
 const PESSOAS_SEM_TAXA = 3;
 const TAXA_USD_A_CADA_2 = 80;

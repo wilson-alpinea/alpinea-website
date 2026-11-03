@@ -78,6 +78,7 @@ const EXECUCAO_OPCOES = [
   { valor: "aguardando", label: "Aguardando início" },
   { valor: "preparacao", label: "Em preparação (antes da viagem)" },
   ...ESTAGIOS_ENTREGA.map((e) => ({ valor: e.valor, label: e.label.charAt(0) + e.label.slice(1).toLowerCase() })),
+  { valor: "encerrada", label: "Encerrada (negócio perdido)" },
 ];
 const EXECUCAO_LABEL = Object.fromEntries(EXECUCAO_OPCOES.map((e) => [e.valor, e.label])) as Record<string, string>;
 

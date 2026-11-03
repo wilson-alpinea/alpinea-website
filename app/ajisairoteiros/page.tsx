@@ -1223,7 +1223,7 @@ export default function RoteirosAdsPage() {
             <p
               className={`${display.className} mt-2 text-6xl font-medium leading-none text-[#b79ce6] md:text-8xl`}
             >
-              R$ 1.500
+              R$ 2.100
             </p>
 
             <PriceCalculator />

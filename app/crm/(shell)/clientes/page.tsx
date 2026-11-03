@@ -66,7 +66,8 @@ export default async function ClientesPage() {
       email: c.email,
       telefone: c.telefone,
       estagio: c.estagio,
-      execucao: iniciada ? c.estagio_entrega : "aguardando",
+      // Perdido no comercial = execução encerrada (Wilson, 03/nov/2026).
+      execucao: c.estagio === "fechado_perdido" && !(iniciada && c.estagio_entrega === "concluida") ? "encerrada" : iniciada ? c.estagio_entrega : "aguardando",
       valor: c.valor_proposta === null || c.valor_proposta === undefined ? null : Number(c.valor_proposta),
       produtoPrincipal: c.produto_principal,
       produtosSecundarios: c.produto_secundario ?? [],

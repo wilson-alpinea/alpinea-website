@@ -169,16 +169,21 @@ export default async function ClienteDetalhePage({
     mudancasComercial.map((i) => String(i.estagio_destino)),
   );
   const iniciouExecucao = execucaoIniciada(cliente.estagio_entrega as EstagioEntrega, mudancasExecucao.length > 0);
-  const resumoExe = resumoExecucao(cliente.estagio_entrega as EstagioEntrega, iniciouExecucao);
+  const perdidoComercial = cliente.estagio === "fechado_perdido";
+  const resumoExe = resumoExecucao(cliente.estagio_entrega as EstagioEntrega, iniciouExecucao, perdidoComercial);
+  const execucaoEncerrada = resumoExe.situacao === "perdido";
 
   // Data de entrada na etapa atual: só do histórico. Exceção: "Novo lead"
   // usa a data de cadastro do cliente, que é quando ele de fato entrou.
   const dataEntradaComercial =
     datasPorEstagio[cliente.estagio as Estagio] ??
     (cliente.estagio === "novo_lead" ? cliente.created_at : null);
-  const dataEntradaExecucao = iniciouExecucao
-    ? (datasPorEstagioEntrega[cliente.estagio_entrega as EstagioEntrega] ?? null)
-    : null;
+  // Execução encerrada pelo comercial: "Encerrado em" = data do Fechado — perdido.
+  const dataEntradaExecucao = execucaoEncerrada
+    ? dataEntradaComercial
+    : iniciouExecucao
+      ? (datasPorEstagioEntrega[cliente.estagio_entrega as EstagioEntrega] ?? null)
+      : null;
 
   const historicoComercial: EventoHistorico[] = [
     ...mudancasComercial.map((i) => ({
@@ -308,10 +313,11 @@ export default async function ClienteDetalhePage({
           dataEntrada={dataEntradaExecucao}
           extras={dataViagem ? [{ rotulo: "Data da viagem", valor: dataViagem }] : []}
           aviso={
-            !iniciouExecucao && cliente.estagio === "fechado_perdido"
-              ? "Negócio perdido no comercial."
+            execucaoEncerrada
+              ? "Negócio perdido no comercial. A execução reabre se o comercial voltar para uma etapa em andamento."
               : null
           }
+          bloqueado={execucaoEncerrada}
           historico={historicoExecucao}
           action={moveEstagioEntregaComId}
           opcoes={ESTAGIOS_ENTREGA}

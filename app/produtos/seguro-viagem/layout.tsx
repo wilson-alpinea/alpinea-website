@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 const DESCRICAO =
   "Seguro viagem para o Japão — compare 3 níveis de cobertura médica e assistência 24 h, veja o valor para o seu grupo e compre online.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: "Ajisai | Seguro Viagem",
   description: DESCRICAO,
@@ -14,14 +15,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Seguro Viagem",
     description: DESCRICAO,
     siteName: "Ajisai",
-    images: [
-      {
-        url: "/images/produtos/seguro-viagem-header.jpg",
-        width: 1600,
-        height: 893,
-        alt: "Seguro Viagem — Ajisai",
-      },
-    ],
+    images: [{ url: "/images/og/og-seguro-viagem.jpg", width: 1200, height: 630, alt: "Seguro Viagem — Ajisai" }],
     locale: "pt_BR",
     type: "website",
   },
@@ -29,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Seguro Viagem",
     description: DESCRICAO,
-    images: ["/images/produtos/seguro-viagem-header.jpg"],
+    images: ["/images/og/og-seguro-viagem.jpg"],
   },
 };
 

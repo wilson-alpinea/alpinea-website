@@ -68,7 +68,7 @@ export default function RoteiroPersonalizadoPage() {
     return () => observer.disconnect();
   }, [status]);
 
-  // Preço-base em reais (R$ 1.500 até 15 dias + R$ 120 por dia extra) e
+  // Preço-base em reais (R$ 2.100 até 15 dias + R$ 120 por dia extra) e
   // taxa de grupo em dólar (US$ 80 a cada 2 pessoas acima de 3).
   const baseBRL = calculatePrice(dias);
   const taxaGrupoUSD = calcularGruposExtras(pessoas) * TAXA_USD_A_CADA_2_PASSAGEIROS;

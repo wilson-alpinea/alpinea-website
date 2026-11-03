@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 const DESCRICAO =
   "Compras no Japão com acompanhamento da Ajisai — relógios, câmeras, moda, facas e mais, com tradução, negociação e apoio com tax free.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: "Ajisai | Ajisai Shopping",
   description: DESCRICAO,
@@ -12,14 +13,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Ajisai Shopping",
     description: DESCRICAO,
     siteName: "Ajisai",
-    images: [
-      {
-        url: "/images/produtos/ajisai-shopping-header.jpg",
-        width: 2069,
-        height: 760,
-        alt: "Ajisai Shopping — Ajisai",
-      },
-    ],
+    images: [{ url: "/images/og/og-ajisai-shopping.jpg", width: 1200, height: 630, alt: "Ajisai Shopping — Ajisai" }],
     locale: "pt_BR",
     type: "website",
   },
@@ -27,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Ajisai Shopping",
     description: DESCRICAO,
-    images: ["/images/produtos/ajisai-shopping-header.jpg"],
+    images: ["/images/og/og-ajisai-shopping.jpg"],
   },
 };
 

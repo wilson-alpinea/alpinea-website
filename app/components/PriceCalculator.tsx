@@ -9,10 +9,11 @@ import { CambioLabel } from "./CambioLabel";
 const display = bodoniModa;
 
 // Exportado também para /produtos/roteiro-personalizado (03/nov/2026).
-// Mesma regra usada no texto "Roteiros de até 15 dias, a partir de R$ 1.500":
+// Mesma regra usada no texto "Roteiros de até 15 dias, a partir de R$ 2.100":
 // preço-base fixo até 15 dias, + valor por dia extra acima disso.
 export const BASE_DAYS = 15;
-export const BASE_PRICE = 1500;
+// R$ 2.100 até 15 dias (Wilson, 03/nov/2026 — antes R$ 1.500).
+export const BASE_PRICE = 2100;
 export const EXTRA_DAY_PRICE = 120;
 export const MIN_DAYS = 5;
 export const MAX_DAYS = 45;

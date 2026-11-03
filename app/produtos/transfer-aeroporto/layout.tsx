@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 const DESCRICAO =
   "Transfer privativo entre aeroporto e hotel no Japão — escolha ida e volta, só chegada ou só volta, veja o valor na hora e envie seu pedido.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: "Ajisai | Transfer Aeroporto",
   description: DESCRICAO,
@@ -12,14 +13,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Transfer Aeroporto",
     description: DESCRICAO,
     siteName: "Ajisai",
-    images: [
-      {
-        url: "/images/produtos/transfer-aeroporto-header.jpg",
-        width: 1916,
-        height: 821,
-        alt: "Transfer Aeroporto — Ajisai",
-      },
-    ],
+    images: [{ url: "/images/og/og-transfer-aeroporto.jpg", width: 1200, height: 630, alt: "Transfer Aeroporto — Ajisai" }],
     locale: "pt_BR",
     type: "website",
   },
@@ -27,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Transfer Aeroporto",
     description: DESCRICAO,
-    images: ["/images/produtos/transfer-aeroporto-header.jpg"],
+    images: ["/images/og/og-transfer-aeroporto.jpg"],
   },
 };
 

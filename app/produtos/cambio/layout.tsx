@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 const DESCRICAO =
   "Compra e venda de ienes em espécie em São Paulo, Rio de Janeiro, Curitiba ou no Aeroporto de Guarulhos — cotação do dia e pagamento via Pix, direto pelo site.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: "Ajisai | Câmbio de Ienes",
   description: DESCRICAO,
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Câmbio de Ienes",
     description: DESCRICAO,
     siteName: "Ajisai",
-    images: [{ url: "/images/produtos/cambio-header.jpg", width: 1600, height: 893, alt: "Câmbio de ienes — Ajisai" }],
+    images: [{ url: "/images/og/og-cambio.jpg", width: 1200, height: 630, alt: "Câmbio de Ienes — Ajisai" }],
     locale: "pt_BR",
     type: "website",
   },
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Câmbio de Ienes",
     description: DESCRICAO,
-    images: ["/images/produtos/cambio-header.jpg"],
+    images: ["/images/og/og-cambio.jpg"],
   },
 };
 

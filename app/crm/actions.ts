@@ -261,6 +261,9 @@ export async function moveEstagioEntrega(clienteId: string, formData: FormData) 
   if (!isEstagioEntrega(novoEstagio) || !dataEvento) return;
 
   const supabase = await createClient();
+  // Negócio perdido no comercial = execução encerrada (Wilson, 03/nov/2026).
+  const { data: atual } = await supabase.from("clientes").select("estagio").eq("id", clienteId).maybeSingle();
+  if (atual?.estagio === "fechado_perdido") return;
   const {
     data: { user },
   } = await supabase.auth.getUser();

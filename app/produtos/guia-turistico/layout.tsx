@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 const DESCRICAO =
   "Guia particular no Japão, brasileiro ou local, nos dias que você escolher — veja o valor na hora e envie seu pedido pelo WhatsApp.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: "Ajisai | Guia Turístico",
   description: DESCRICAO,
@@ -12,14 +13,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Guia Turístico",
     description: DESCRICAO,
     siteName: "Ajisai",
-    images: [
-      {
-        url: "/images/produtos/guia-turistico-header.jpg",
-        width: 1672,
-        height: 941,
-        alt: "Guia Turístico — Ajisai",
-      },
-    ],
+    images: [{ url: "/images/og/og-guia-turistico.jpg", width: 1200, height: 630, alt: "Guia Turístico — Ajisai" }],
     locale: "pt_BR",
     type: "website",
   },
@@ -27,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Guia Turístico",
     description: DESCRICAO,
-    images: ["/images/produtos/guia-turistico-header.jpg"],
+    images: ["/images/og/og-guia-turistico.jpg"],
   },
 };
 

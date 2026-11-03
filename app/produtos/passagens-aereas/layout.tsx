@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 const DESCRICAO =
   "Passagens aéreas Brasil ↔ Japão com suporte da Ajisai do check-in ao desembarque — escolha trechos, datas e cabine e receba a cotação pelo WhatsApp.";
 
+// Card de compartilhamento 1200×630 (WhatsApp etc.) — public/images/og/ (Wilson, 03/nov/2026).
 export const metadata: Metadata = {
   title: "Ajisai | Passagens Aéreas",
   description: DESCRICAO,
@@ -12,14 +13,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Passagens Aéreas",
     description: DESCRICAO,
     siteName: "Ajisai",
-    images: [
-      {
-        url: "/images/produtos/passagens-aereas-header.jpg",
-        width: 1916,
-        height: 821,
-        alt: "Passagens Aéreas — Ajisai",
-      },
-    ],
+    images: [{ url: "/images/og/og-passagens-aereas.jpg", width: 1200, height: 630, alt: "Passagens Aéreas — Ajisai" }],
     locale: "pt_BR",
     type: "website",
   },
@@ -27,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Passagens Aéreas",
     description: DESCRICAO,
-    images: ["/images/produtos/passagens-aereas-header.jpg"],
+    images: ["/images/og/og-passagens-aereas.jpg"],
   },
 };
 
