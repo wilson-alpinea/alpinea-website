@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarCandidaturaPublica } from "@/lib/empregos/candidaturaPublica";
 import { horariosDisponiveis } from "@/lib/empregos/agendaServidor";
@@ -14,7 +14,7 @@ import { vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 
 // Etapa 4 — agendamento da pré-entrevista (Wilson, 06/out/2026).
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 
 export const metadata: Metadata = {
   title: "Pré-entrevista — Ajisai Empregos",

@@ -5,17 +5,14 @@ import { DIARIA_SEGURO_VIAGEM } from "../lib/precoSeguroViagem";
 import { PRECO_CAMBIO_BRASIL, CUSTO_ENTREGA_AEROPORTO_CAMBIO } from "../lib/precoCambioIene";
 import { JPY_POR_USD_REFERENCIA } from "../lib/servicosAdicionaisCatalogo";
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useCart } from "./CartContext";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 function IconCheck({ className }: { className?: string }) {
   return (

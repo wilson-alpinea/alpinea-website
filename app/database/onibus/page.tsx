@@ -1,11 +1,8 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import { OnibusGuideContent } from "../../components/OnibusGuideContent";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Página interna (banco de conteúdo, uso da equipe) do guia de Ônibus em
 // Kyoto. O conteúdo em si vive em OnibusGuideContent, compartilhado com o

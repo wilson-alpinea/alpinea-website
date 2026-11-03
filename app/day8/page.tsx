@@ -1,14 +1,11 @@
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 import { ZoomImage } from "../components/ZoomImage";
 import { TripDashboard } from "../components/TripDashboard";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export const metadata = {
   title: "Alpinea | Dia 8 — Kyoto",

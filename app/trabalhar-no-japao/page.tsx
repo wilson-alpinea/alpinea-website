@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { metaEmpregos } from "@/lib/empregos/metaCompartilhamento";
 import { WHATSAPP_AJISAI_NUMERO } from "@/lib/email/templateCliente";
 
@@ -13,7 +13,7 @@ import { WHATSAPP_AJISAI_NUMERO } from "@/lib/email/templateCliente";
 // quem é a Ajisai, como funciona e o botão "Explorar oportunidades", que
 // leva ao catálogo em /empregos. Conteúdo derivado de /empregos.
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 
 export const metadata: Metadata = {
   // Sem as palavras-chave de turismo de luxo herdadas do layout raiz.

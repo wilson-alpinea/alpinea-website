@@ -3,14 +3,11 @@
 import { useEffect, useState } from "react";
 import { ContactCTA } from "./components/ContactCTA";
 import { CarouselScroller } from "./components/CarouselScroller";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 
 // Mesma fonte de destaque usada na landing page e na página de Serviços —
 // mantém a identidade visual consistente entre as páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 
 export default function Home() {

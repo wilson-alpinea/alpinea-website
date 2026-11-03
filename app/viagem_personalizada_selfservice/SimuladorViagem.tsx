@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BarraProduto, ComoFunciona, type PassoComoFunciona } from "../produtos/templateProduto";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import {
   NumberStepper,
   LabelNumerado,
@@ -103,7 +103,7 @@ import {
   calcularFeePlanejamento,
 } from "../lib/precificacaoPerfil";
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 
 // Página pública, self-service: o cliente estima a própria viagem sem
 // depender de um vendedor pra rodar a Calculadora Reversa interna

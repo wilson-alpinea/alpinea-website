@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "./ContactCTA";
 import { useCambioUSD, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
@@ -20,10 +20,7 @@ import {
   NumberStepper,
 } from "./CustomPackageCard";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 const MIN_NOITES = 1;
 const MAX_NOITES = 30;

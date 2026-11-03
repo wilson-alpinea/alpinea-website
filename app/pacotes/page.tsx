@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModaItalico } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 import { CartProvider } from "../components/CartContext";
 import { CartWidget } from "../components/CartWidget";
@@ -10,11 +10,7 @@ import { PackageSectionNote } from "../components/PackageSectionNote";
 import { formatUSD } from "../lib/currency";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-});
+const display = bodoniModaItalico;
 
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",

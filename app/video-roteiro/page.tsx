@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ApprovalPanel } from "./ApprovalPanel";
 
 // Material de base para gravação de vídeo institucional sobre o produto
@@ -10,10 +10,7 @@ import { ApprovalPanel } from "./ApprovalPanel";
 // off-white), com logo Ajisai e sem qualquer texto de "rascunho" ou
 // "aprovação".
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
 // cliente na contratação. Usada só como leitura interna da equipe pra

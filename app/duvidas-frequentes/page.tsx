@@ -1,12 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Página de dúvidas frequentes — pedido do Wilson, 16/set/2026, em 3
 // pedidos separados que convergem pro mesmo lugar: link de bagagem na

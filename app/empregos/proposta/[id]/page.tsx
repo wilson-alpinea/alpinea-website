@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { carregarCandidaturaPublica } from "@/lib/empregos/candidaturaPublica";
 import { buscarCotacaoIene } from "@/app/lib/cotacaoIeneServidor";
 import { AEROPORTOS, dataHojeSaoPaulo, type SelecaoProposta } from "@/app/lib/financiamentoEmpregos";
@@ -13,7 +13,7 @@ import { candidatoTemReEntry } from "@/app/lib/prazosCandidatura";
 
 // Etapa 3 — proposta de financiamento (Wilson, 06/out/2026).
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 
 export const metadata: Metadata = {
   title: "Proposta de financiamento — Ajisai Empregos",

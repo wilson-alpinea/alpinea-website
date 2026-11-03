@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
@@ -28,10 +28,7 @@ import {
 // Pacotes Individuais/Personalizados continuam no PackageDetailModal
 // original (ver isCaravana em PackageCard.tsx).
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 const CIDADE_LABEL_PT: Record<string, string> = {
   Tokyo: "Tóquio",

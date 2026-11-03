@@ -1,12 +1,9 @@
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 import { TripDashboard } from "../components/TripDashboard";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export const metadata = {
   title: "Alpinea | Trading Card Game Tour no Japão",

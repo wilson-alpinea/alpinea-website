@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { useMemo, useState } from "react";
 import { gerarEBaixarPdf } from "./PacotePdf";
 import { gerarEBaixarTexto } from "./PacoteTexto";
@@ -1206,10 +1206,7 @@ const CIDADE_MOTORISTA_NOTA: Partial<
   },
 };
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Mês/quinzena de referência da tabela de preços do JR Pass usada em
 // JR_PASS_PRECO_USD / JR_PASS_PRECO_USD_GREEN (CustomPackageCard.tsx) —

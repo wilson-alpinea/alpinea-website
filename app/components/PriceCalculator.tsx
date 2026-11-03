@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "./ContactCTA";
 import { useCambioUSD, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Exportado também para /produtos/roteiro-personalizado (03/nov/2026).
 // Mesma regra usada no texto "Roteiros de até 15 dias, a partir de R$ 1.500":

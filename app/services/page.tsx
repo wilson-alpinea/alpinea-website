@@ -1,12 +1,9 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "@/app/components/ContactCTA";
 
 // Mesma fonte de destaque usada na landing page e na home — mantém a
 // identidade visual consistente entre as páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export default function ServicesPage() {
   return (

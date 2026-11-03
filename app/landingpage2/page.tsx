@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 
 declare global {
@@ -15,10 +15,7 @@ declare global {
 // If it's not quite the match you're after, two easy swaps:
 //   import { Playfair_Display as Bodoni_Moda } from "next/font/google";
 //   import { Cormorant as Bodoni_Moda } from "next/font/google";
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Seta de "ver mais" para os carrosséis horizontais do mobile — some no desktop (md:hidden),
 // já que lá o conteúdo é grid e não rola. Inclui fade lateral pra reforçar que há mais conteúdo.

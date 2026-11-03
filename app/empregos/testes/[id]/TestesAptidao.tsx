@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import {
   COMPARACAO,
   FRACIONADOS,
@@ -30,7 +30,7 @@ import {
   type EstadoPublicoTestes,
 } from "../../../lib/testesAptidao";
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 const AZUL = "#2f80c9";
 const NAVY = "#0A2540";
 

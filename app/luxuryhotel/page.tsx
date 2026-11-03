@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModaItalico } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 
 declare global {
@@ -11,11 +11,7 @@ declare global {
   }
 }
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  style: ["normal", "italic"],
-});
+const display = bodoniModaItalico;
 
 // Seta de "ver mais" para os carrosséis horizontais do mobile.
 function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement | null> }) {

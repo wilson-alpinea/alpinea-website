@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 const sections = [
   ["introducao", "01", "Introdução"],

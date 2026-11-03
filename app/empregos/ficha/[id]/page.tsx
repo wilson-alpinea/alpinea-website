@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { fichaLiberada } from "@/app/lib/fichaCadastral";
 import FichaForm from "./FichaFormCliente";
@@ -12,7 +12,7 @@ import { testesAptidaoPendentes, urlTestes } from "@/app/lib/testesAptidao";
 // Etapa 2 da candidatura de /empregos — ficha cadastral unificada
 // (Wilson, 06/out/2026). Acesso só pelo link com token gerado na etapa 1.
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 
 export const metadata: Metadata = {
   title: "Ficha cadastral — Ajisai Empregos",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ApprovalPanel } from "./ApprovalPanel";
 
 // Página de aprovação de rascunho — enviada individualmente para cada
@@ -10,10 +10,7 @@ import { ApprovalPanel } from "./ApprovalPanel";
 // principal e pontos de interesse) para validação rápida antes de
 // iniciarmos o painel digital completo.
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 const APPROVAL_KEY = "69u4mazc";
 

@@ -1,11 +1,8 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import { DXBGuideContent } from "../../components/DXBGuideContent";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Página interna (banco de conteúdo, uso da equipe) do guia de conexão em
 // Dubai (DXB). O conteúdo em si vive em DXBGuideContent, compartilhado com o

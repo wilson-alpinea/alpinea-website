@@ -1,11 +1,8 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import { CambioGuideContent } from "../../components/CambioGuideContent";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Página interna (banco de conteúdo, uso da equipe) do guia de Câmbio.
 // O conteúdo em si vive em CambioGuideContent, compartilhado com o card

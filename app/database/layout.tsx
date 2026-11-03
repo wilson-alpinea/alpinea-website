@@ -1,12 +1,9 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginForm } from "./LoginForm";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 const COOKIE_NAME = "db_access";
 const COOKIE_VALUE = "granted";

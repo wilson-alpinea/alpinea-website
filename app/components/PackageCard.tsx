@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
 import { PackageDetailModal } from "./PackageDetailModal";
@@ -10,10 +10,7 @@ import { PrecoPacote } from "./PrecoPacote";
 
 export type { PackageVariant } from "./packageTypes";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export function PackageCard({
   divisao,

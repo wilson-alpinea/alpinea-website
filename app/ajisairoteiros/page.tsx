@@ -1,15 +1,12 @@
 import Image from "next/image";
 import type { ReactElement } from "react";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
 import { PriceCalculator } from "../components/PriceCalculator";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export const metadata = {
   title: "Ajisai | Roteiros Personalizados para o Japão",

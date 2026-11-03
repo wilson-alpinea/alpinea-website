@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { fichaLiberada } from "@/app/lib/fichaCadastral";
 import { estadoPublico, lerEstadoTestes, vagaExigeTestesAptidao } from "@/app/lib/testesAptidao";
@@ -10,7 +10,7 @@ import TestesAptidao from "./TestesAptidao";
 // cadastral, só para vagas com `testesAptidao: true` (Wilson, 08/out/2026).
 // Acesso pelo mesmo link com token das outras etapas.
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = bodoniModa;
 
 export const metadata: Metadata = {
   title: "Testes de aptidão — Ajisai Empregos",

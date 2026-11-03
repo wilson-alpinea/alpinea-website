@@ -3,17 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
 import { PrecoPacote } from "./PrecoPacote";
 import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
 import { TrajetoArrowHead } from "./AirportGuideKit";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Vale para todos os pacotes de Caravana e Individual — mesma lista usada
 // antes na seção global "O que está incluso", agora dentro do detalhe de

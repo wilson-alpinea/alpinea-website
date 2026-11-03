@@ -1,4 +1,4 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import {
   IconPlane,
@@ -11,10 +11,7 @@ import {
   IconExchange,
 } from "../components/AirportGuideKit";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Índice do banco de conteúdo interno — guias e atrações reutilizados na
 // montagem de roteiros. Não faz parte do site público e não é indexado

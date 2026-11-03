@@ -1,4 +1,4 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import {
   InternalGuideHeader,
@@ -22,10 +22,7 @@ import {
   IconPlaneTakeoff,
 } from "../../../components/AirportGuideKit";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export const metadata: Metadata = {
   title: "Banco de Conteúdo · Aeroporto de Kansai (KIX)",

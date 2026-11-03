@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { DIFERENCIAIS_AEREO } from "../lib/diferenciaisAereo";
 
 // Rede de companhias aéreas parceiras — pedido do Wilson, 01/set/2026.
@@ -20,10 +20,7 @@ const COMPANHIAS_SAZONAIS = [
 ];
 
 // Mesma fonte de destaque usada nas demais páginas do site.
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export const metadata = {
   title: "Ajisai | Diferenciais para Passagens Aéreas",

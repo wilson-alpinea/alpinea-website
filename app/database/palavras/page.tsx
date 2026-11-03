@@ -1,11 +1,8 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import { PalavrasGuideContent } from "../../components/PalavrasGuideContent";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Página interna (banco de conteúdo, uso da equipe) do guia de Palavras e
 // Expressões Úteis. O conteúdo em si vive em PalavrasGuideContent,

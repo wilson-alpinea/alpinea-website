@@ -1,4 +1,4 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 
 // Dashboard de viagem — usado em todos os roteiros vendidos, do Alpinea
 // Design ao Alpinea Private. Mostra o esquema de fluxo da viagem, o
@@ -6,10 +6,7 @@ import { Bodoni_Moda } from "next/font/google";
 // gratuitas, normalmente só o Dia 1 recebe `href` (os demais ficam sem
 // link, apenas ilustrativos).
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 export type DayCell = {
   day: number;

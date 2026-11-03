@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import { ApprovalPanel } from "./ApprovalPanel";
 
 // Página do roteiro personalizado — enviada individualmente para cada
@@ -9,10 +9,7 @@ import { ApprovalPanel } from "./ApprovalPanel";
 // substituída por uma visão simplificada dos 7 dias (Manhã/Tarde, atração
 // principal e pontos de interesse).
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
 // cliente na contratação. Usada só como leitura interna da equipe pra

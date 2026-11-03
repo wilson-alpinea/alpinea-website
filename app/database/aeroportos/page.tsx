@@ -1,12 +1,9 @@
-import { Bodoni_Moda } from "next/font/google";
+import { bodoniModa } from "@/app/fonts/bodoni";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { IconArrowLeft, IconPlane } from "../../components/AirportGuideKit";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
+const display = bodoniModa;
 
 // Banco de conteúdo interno — não faz parte do site público, não deve ser
 // linkado a partir de páginas voltadas ao cliente e não é indexado por
