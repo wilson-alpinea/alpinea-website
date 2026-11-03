@@ -115,3 +115,56 @@ export function diferencaDoOriginal(original: Vaga, editada: EdicaoVaga): Edicao
   }
   return d;
 }
+
+// ── Vagas novas cadastradas no CRM (Wilson, 03/nov/2026 — migração 034) ──
+// Moram inteiras em public.vagas_novas. Regras do funil ficam no padrão:
+// sem testes de aptidão, com etapa de proposta de financiamento e critérios
+// de triagem padrão (esses três continuam definidos só no código).
+
+export type LinhaVagaNova = { vaga_id: string; codigo: string; dados: unknown };
+
+const INFO_VAZIA: InfoVaga = { moradia: null, beneficios: [], kitBoasVindas: null, bonus: null, sobreCidade: null, diferenciaisHospedagem: [] };
+
+/** Monta a Vaga a partir da linha do banco; null se faltar campo obrigatório. */
+export function montarVagaNova(l: LinhaVagaNova): Vaga | null {
+  const e = lerEdicao(l.dados);
+  if (!e.empresa || !e.titulo || !e.cidade || !e.regiao || !e.salario || !e.publicadaEm || !e.setor || !e.publico?.length) return null;
+  const base: Vaga = {
+    id: String(l.vaga_id),
+    codigo: String(l.codigo),
+    publicadaEm: e.publicadaEm,
+    empresa: e.empresa,
+    titulo: e.titulo,
+    setor: e.setor,
+    regiao: e.regiao,
+    cidade: e.cidade,
+    publico: e.publico,
+    turno: e.turno || "A confirmar com a nossa equipe",
+    contrato: e.contrato || "A confirmar com a nossa equipe",
+    salario: e.salario,
+    status: e.status ?? "aberta",
+    info: { ...INFO_VAZIA },
+  };
+  return aplicarEdicao(base, { ...e, turno: base.turno, contrato: base.contrato });
+}
+
+/** Próximo código AJ-xxxx livre, olhando catálogo do código + vagas do CRM. */
+export function proximoCodigoVaga(codigos: string[]): string {
+  const maior = Math.max(0, ...codigos.map((c) => Number(/^AJ-(\d+)$/.exec(c)?.[1] ?? 0)));
+  return `AJ-${String(maior + 1).padStart(4, "0")}`;
+}
+
+/** Slug da URL a partir de empresa + cidade, sem repetir um id existente. */
+export function slugVaga(empresa: string, cidade: string, existentes: Set<string>): string {
+  const base =
+    `${empresa}-${cidade}`
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "vaga";
+  let id = base;
+  for (let n = 2; existentes.has(id); n++) id = `${base}-${n}`;
+  return id;
+}

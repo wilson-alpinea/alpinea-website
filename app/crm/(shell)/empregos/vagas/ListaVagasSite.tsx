@@ -27,6 +27,8 @@ export type LinhaVaga = {
   /** Vaga já com as edições do CRM (migração 033). */
   vaga: Vaga;
   editada: { em: string; por: string | null } | null;
+  /** Vaga cadastrada no CRM (migração 034), não no catálogo do código. */
+  criada: { em: string; por: string | null } | null;
 };
 
 const SOMBRA = "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]";
@@ -114,6 +116,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
   const pp = POR_PAGINA.includes(Number(sp.get("pp"))) ? Number(sp.get("pp")) : 25;
   const detalheId = sp.get("detalhe");
   const editarId = sp.get("editar");
+  const criandoNova = sp.get("nova") === "1";
 
   const atualizar = useCallback(
     (mudancas: Record<string, string | null>, manterPagina = false) => {
@@ -190,7 +193,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
   const detalhe = detalheId ? linhas.find((l) => l.id === detalheId) : undefined;
   const fecharDetalhe = useCallback(() => atualizar({ detalhe: null }, true), [atualizar]);
   const editando = editarId ? linhas.find((l) => l.id === editarId) : undefined;
-  const fecharEdicao = useCallback(() => atualizar({ editar: null }, true), [atualizar]);
+  const fecharEdicao = useCallback(() => atualizar({ editar: null, nova: null }, true), [atualizar]);
 
   const chips: { rotulo: string; limpar: Record<string, null> }[] = [];
   if (q) chips.push({ rotulo: `Busca: “${q}”`, limpar: { q: null } });
@@ -406,6 +409,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>Empresa, logo, função, condições, moradia e benefícios podem ser editados em “Editar”. O site atualiza assim que você salva.</li>
             <li>Vaga editada no CRM leva o selo “Editada”; “Restaurar original” volta para o texto do catálogo do código.</li>
+            <li>“+ Nova vaga” cria a vaga com código AJ-xxxx e página própria no site (selo “Criada no CRM”). Sem candidaturas, ela pode ser excluída em “Editar”.</li>
             <li>Vaga nova do catálogo entra visível automaticamente.</li>
             <li>Vaga oculta sai de /empregos, dos hot sites e das sugestões e deixa de aceitar candidaturas. O link direto continua abrindo e mostra a vaga como encerrada.</li>
             <li>Ocultar não apaga nem altera candidaturas já recebidas.</li>
@@ -494,6 +498,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
                       <span className="mt-1 flex flex-wrap items-center gap-1.5">
                         <span className="inline-block rounded-md bg-[#F3F5F5] px-1.5 py-0.5 font-mono text-[12px] font-medium text-[#5D6C70]">{l.codigo}</span>
                         {l.editada && <SeloEditada />}
+                        {l.criada && <SeloCriada />}
                       </span>
                     </td>
                     <td className="px-4 py-3.5 text-sm">
@@ -555,6 +560,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
                       <span className="text-sm font-semibold text-[#202B28]">{l.empresa}</span>
                       <span className="rounded-md bg-[#F3F5F5] px-1.5 py-0.5 font-mono text-[12px] text-[#5D6C70]">{l.codigo}</span>
                       {l.editada && <SeloEditada />}
+                        {l.criada && <SeloCriada />}
                     </span>
                     <span className="line-clamp-2 text-sm text-[#626E69]">{l.titulo}</span>
                     <span className="mt-0.5 block text-[13px] text-[#626E69]">
@@ -635,7 +641,16 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
       {detalhe && !editando && (
         <PainelDetalhe l={detalhe} ativa={ativas.has(detalhe.id)} onFechar={fecharDetalhe} onEditar={() => atualizar({ detalhe: null, editar: detalhe.id }, true)} />
       )}
-      {editando && <EditarVaga key={`${editando.id}-${editando.editada?.em ?? "codigo"}`} vaga={editando.vaga} editada={!!editando.editada} onFechar={fecharEdicao} />}
+      {editando && (
+        <EditarVaga
+          key={`${editando.id}-${editando.editada?.em ?? "codigo"}`}
+          vaga={editando.vaga}
+          editada={!!editando.editada}
+          podeExcluir={!!editando.criada && editando.candidaturas === 0}
+          onFechar={fecharEdicao}
+        />
+      )}
+      {criandoNova && !editando && <EditarVaga key="nova" vaga={null} onFechar={fecharEdicao} />}
     </div>
   );
 }
@@ -728,6 +743,10 @@ function PainelLote({
   );
 }
 
+function SeloCriada() {
+  return <span className="rounded-md bg-[#EEF6F3] px-1.5 py-0.5 text-[11px] font-medium text-[#27675B]">Criada no CRM</span>;
+}
+
 function SeloEditada() {
   return <span className="rounded-md bg-[#FFF4DB] px-1.5 py-0.5 text-[11px] font-medium text-[#6F4A00]">Editada</span>;
 }
@@ -742,6 +761,9 @@ function PainelDetalhe({ l, ativa, onFechar, onEditar }: { l: LinhaVaga; ativa: 
     ["Publicação", l.publicadaBR],
     ["Visibilidade", <span key="v" className={`rounded-full px-2.5 py-0.5 text-[13px] font-medium ${ativa ? "bg-[#EEF6F3] text-[#27675B]" : "bg-[#F3F5F5] text-[#5D6C70]"}`}>{ativa ? "Visível no site" : "Oculta do site"}</span>],
     ["Candidaturas", <Candidaturas key="n" l={l} />],
+    ...(l.criada
+      ? ([["Criada", `${new Date(l.criada.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${l.criada.por ? ` · ${l.criada.por}` : ""}`]] as [string, React.ReactNode][])
+      : []),
     ...(l.editada
       ? ([["Editada", `${new Date(l.editada.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${l.editada.por ? ` · ${l.editada.por}` : ""}`]] as [string, React.ReactNode][])
       : []),

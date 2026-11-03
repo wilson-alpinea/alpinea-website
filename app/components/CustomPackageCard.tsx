@@ -1579,7 +1579,7 @@ export function LabelNumerado({ texto }: { texto: string }) {
           (leading-none) sem afetar a caixa do círculo. */}
       <span
         aria-hidden
-        className="mr-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black text-[13px] font-semibold text-white"
+        className="esfera-numero mr-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black text-[13px] font-semibold text-white"
       >
         <span className="leading-none tabular-nums">{m[1]}</span>
       </span>

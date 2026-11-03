@@ -24,9 +24,9 @@ const GRUPOS: { titulo: string; cor: string; itens: { href: string; nome: string
     titulo: "Organize sua viagem",
     cor: "#24476B",
     itens: [
-      { href: "/produtos?abrir=roteiro", nome: "Roteiro Personalizado", abrir: "roteiro" },
+      { href: "/produtos/roteiro-personalizado", nome: "Roteiro Personalizado" },
       // Pacote de Viagem fora da vitrine (Wilson, 29/out/2026).
-      { href: "/viagem-personalizada", nome: "Viagem Personalizada" },
+      { href: "/produtos/viagem-personalizada", nome: "Viagem Personalizada" },
     ],
   },
   {

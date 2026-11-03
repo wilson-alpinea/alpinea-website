@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { VAGAS, formatarDataPostagem } from "@/app/lib/vagasCatalogo";
-import { aplicarEdicao, lerEdicao } from "@/app/lib/vagasEdicao";
+import { aplicarEdicao, lerEdicao, montarVagaNova } from "@/app/lib/vagasEdicao";
+import type { Vaga } from "@/app/lib/vagasCatalogo";
 import ListaVagasSite, { type LinhaVaga } from "./ListaVagasSite";
 import { urlSite } from "@/lib/crm/unidades";
 
@@ -36,37 +38,47 @@ async function contarCandidaturas(supabase: Awaited<ReturnType<typeof createClie
 
 export default async function VagasSitePage() {
   const supabase = await createClient();
-  const [{ data: status, error }, totalDe, { data: edicoes, error: erroEdicoes }] = await Promise.all([
+  const [{ data: status, error }, totalDe, { data: edicoes, error: erroEdicoes }, { data: novas, error: erroNovas }] = await Promise.all([
     supabase.from("vagas_status").select("vaga_id, ativa"),
     contarCandidaturas(supabase),
     // Edições feitas no CRM (migração 033). Se a tabela ainda não existir,
     // a lista segue com o catálogo do código e a edição avisa ao salvar.
     supabase.from("vagas_edicoes").select("vaga_id, dados, updated_at, updated_by_email"),
+    // Vagas criadas no CRM (migração 034).
+    supabase.from("vagas_novas").select("vaga_id, codigo, dados, created_at, created_by_email").order("created_at", { ascending: false }),
   ]);
+  if (erroNovas) console.error("Erro ao ler vagas_novas:", erroNovas.message);
   if (error) console.error("Erro ao ler vagas_status:", error);
   if (erroEdicoes) console.error("Erro ao ler vagas_edicoes:", erroEdicoes.message);
   const edicaoDe = new Map((edicoes ?? []).map((e) => [String(e.vaga_id), e]));
 
   const ativaDe = new Map((status ?? []).map((s) => [s.vaga_id as string, Boolean(s.ativa)]));
-  const linhas: LinhaVaga[] = VAGAS.map((original) => {
+  const linha = (v: Vaga, extra: Pick<LinhaVaga, "editada" | "criada">): LinhaVaga => ({
+    id: v.id,
+    codigo: v.codigo,
+    publicadaEm: v.publicadaEm,
+    publicadaBR: formatarDataPostagem(v.publicadaEm),
+    empresa: v.empresa,
+    titulo: v.titulo,
+    cidade: v.cidade,
+    provincia: v.regiao,
+    // Sem linha em vagas_status = vaga visível.
+    ativa: ativaDe.get(v.id) ?? true,
+    candidaturas: totalDe ? (totalDe.get(v.id) ?? 0) : null,
+    vaga: v,
+    ...extra,
+  });
+  const idsCodigo = new Set(VAGAS.map((v) => v.id));
+  const linhasNovas: LinhaVaga[] = (novas ?? []).flatMap((l) => {
+    const v = idsCodigo.has(String(l.vaga_id)) ? null : montarVagaNova(l);
+    return v ? [linha(v, { editada: null, criada: { em: String(l.created_at), por: l.created_by_email ? String(l.created_by_email) : null } })] : [];
+  });
+  const linhasCodigo: LinhaVaga[] = VAGAS.map((original) => {
     const e = edicaoDe.get(original.id);
     const v = aplicarEdicao(original, e ? lerEdicao(e.dados) : undefined);
-    return {
-      id: v.id,
-      codigo: v.codigo,
-      publicadaEm: v.publicadaEm,
-      publicadaBR: formatarDataPostagem(v.publicadaEm),
-      empresa: v.empresa,
-      titulo: v.titulo,
-      cidade: v.cidade,
-      provincia: v.regiao,
-      // Sem linha em vagas_status = regra atual: vaga nova entra visível.
-      ativa: ativaDe.get(v.id) ?? true,
-      candidaturas: totalDe ? (totalDe.get(v.id) ?? 0) : null,
-      vaga: v,
-      editada: e ? { em: String(e.updated_at), por: e.updated_by_email ? String(e.updated_by_email) : null } : null,
-    };
+    return linha(v, { editada: e ? { em: String(e.updated_at), por: e.updated_by_email ? String(e.updated_by_email) : null } : null, criada: null });
   });
+  const linhas = [...linhasNovas, ...linhasCodigo];
 
   return (
     <div className="space-y-6">
@@ -78,6 +90,14 @@ export default async function VagasSitePage() {
           <p className="mt-1 text-sm text-[#626E69]">Gerencie quais vagas aparecem no site e acompanhe suas candidaturas.</p>
           <p className="mt-1 text-[13px] text-[#8A9792]">As alterações de visibilidade são salvas automaticamente.</p>
         </div>
+        <span className="flex flex-wrap gap-2">
+        <Link
+          href="/crm/empregos/vagas?nova=1"
+          scroll={false}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-[#27675B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#20564C]"
+        >
+          + Nova vaga
+        </Link>
         <a
           href={urlSite("/empregos")}
           target="_blank"
@@ -87,6 +107,7 @@ export default async function VagasSitePage() {
           Ver vagas no site
           <IconeExterno />
         </a>
+        </span>
       </div>
       <Suspense>
         <ListaVagasSite linhas={linhas} erroStatus={!!error} />

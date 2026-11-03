@@ -14,7 +14,8 @@ import VagaPagina from "./VagaPagina";
 // 404, para quem chega por link antigo/anúncio ainda achar as outras vagas.
 
 export const revalidate = 60;
-export const dynamicParams = false;
+// true: vagas criadas no CRM (migração 034) ganham página sem novo deploy.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return VAGAS.map((v) => ({ id: v.id }));

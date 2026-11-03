@@ -505,8 +505,9 @@ export async function liberarFichaCandidatura(candidaturaId: string, liberar: bo
 // em vez de redirecionar porque a lista salva cada checkbox na hora. ──
 export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Promise<{ ok: true; alteradas: number; ignoradas: number } | { ok: false; erro: string }> {
   await garantirAdmin();
-  const { VAGAS } = await import("@/app/lib/vagasCatalogo");
-  const validos = new Set(VAGAS.map((v) => v.id));
+  // Catálogo do código + vagas criadas no CRM (migração 034).
+  const { catalogoVagas } = await import("@/lib/empregos/vagasAtivas");
+  const validos = new Set((await catalogoVagas()).map((v) => v.id));
   const ids = vagaIds.filter((id) => validos.has(id));
   if (ids.length === 0) return { ok: false, erro: "Nenhuma vaga válida." };
 

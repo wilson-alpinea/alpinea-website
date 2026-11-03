@@ -8,13 +8,16 @@ import { aplicarEdicoes, type MapaEdicoes } from "./vagasEdicao";
 // (Wilson, 03/nov/2026). O layout de /empregos busca as edições no servidor
 // e passa só o mapa de alterações (pequeno) — o catálogo já vem no bundle.
 // Fora do provider, o hook devolve o catálogo do código.
-const Contexto = createContext<MapaEdicoes>({});
+// Vagas criadas no CRM (migração 034) vêm inteiras, já montadas no servidor.
+type Valor = { edicoes: MapaEdicoes; novas: Vaga[] };
+const Contexto = createContext<Valor>({ edicoes: {}, novas: [] });
 
-export function CatalogoVagasProvider({ edicoes, children }: { edicoes: MapaEdicoes; children: React.ReactNode }) {
-  return <Contexto.Provider value={edicoes}>{children}</Contexto.Provider>;
+export function CatalogoVagasProvider({ edicoes, novas, children }: { edicoes: MapaEdicoes; novas: Vaga[]; children: React.ReactNode }) {
+  const valor = useMemo(() => ({ edicoes, novas }), [edicoes, novas]);
+  return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }
 
 export function useCatalogoVagas(): Vaga[] {
-  const edicoes = useContext(Contexto);
-  return useMemo(() => aplicarEdicoes(VAGAS, edicoes), [edicoes]);
+  const { edicoes, novas } = useContext(Contexto);
+  return useMemo(() => [...aplicarEdicoes(VAGAS, edicoes), ...novas], [edicoes, novas]);
 }

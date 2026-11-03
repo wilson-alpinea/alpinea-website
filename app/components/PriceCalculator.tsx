@@ -11,15 +11,16 @@ const display = Bodoni_Moda({
   weight: ["400", "500", "600"],
 });
 
+// Exportado também para /produtos/roteiro-personalizado (03/nov/2026).
 // Mesma regra usada no texto "Roteiros de até 15 dias, a partir de R$ 1.500":
 // preço-base fixo até 15 dias, + valor por dia extra acima disso.
-const BASE_DAYS = 15;
-const BASE_PRICE = 1500;
-const EXTRA_DAY_PRICE = 120;
-const MIN_DAYS = 5;
-const MAX_DAYS = 45;
+export const BASE_DAYS = 15;
+export const BASE_PRICE = 1500;
+export const EXTRA_DAY_PRICE = 120;
+export const MIN_DAYS = 5;
+export const MAX_DAYS = 45;
 
-function calculatePrice(days: number) {
+export function calculatePrice(days: number) {
   const extraDays = Math.max(0, days - BASE_DAYS);
   return BASE_PRICE + extraDays * EXTRA_DAY_PRICE;
 }
@@ -27,12 +28,12 @@ function calculatePrice(days: number) {
 // Acima de 3 passageiros, soma US$ 80 a cada 2 passageiros adicionais —
 // cobrado já em dólar (não é conversão de um valor em reais), diferente do
 // preço-base acima que é calculado em reais.
-const MIN_PASSENGERS = 1;
-const MAX_PASSENGERS = 20;
-const PASSENGERS_SEM_TAXA = 3;
-const TAXA_USD_A_CADA_2_PASSAGEIROS = 80;
+export const MIN_PASSENGERS = 1;
+export const MAX_PASSENGERS = 20;
+export const PASSENGERS_SEM_TAXA = 3;
+export const TAXA_USD_A_CADA_2_PASSAGEIROS = 80;
 
-function calcularGruposExtras(passengers: number) {
+export function calcularGruposExtras(passengers: number) {
   const extras = Math.max(0, passengers - PASSENGERS_SEM_TAXA);
   return Math.ceil(extras / 2);
 }

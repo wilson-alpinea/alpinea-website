@@ -11,7 +11,8 @@ import CheckoutCandidatura from "./CheckoutCandidatura";
 // (CandidaturaModal em modo página) e grava pela mesma API.
 
 export const revalidate = 60;
-export const dynamicParams = false;
+// true: vagas criadas no CRM (migração 034) ganham página sem novo deploy.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return VAGAS.map((v) => ({ id: v.id }));

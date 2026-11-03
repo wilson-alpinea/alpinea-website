@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { PublicoKey, SetorKey, StatusVaga, Vaga } from "@/app/lib/vagasCatalogo";
-import { restaurarVagaOriginal, salvarEdicaoVaga } from "../../../vagasEdicaoActions";
-import { BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Erro, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
+import { criarVaga, excluirVagaNova, restaurarVagaOriginal, salvarEdicaoVaga } from "../../../vagasEdicaoActions";
+import { BOTAO_PERIGO, BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Erro, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
 
 // Edição da vaga pelo CRM (Wilson, 03/nov/2026). Salva só o que mudou em
 // relação ao catálogo do código (migração 033) e o site atualiza na hora.
@@ -42,6 +42,28 @@ type Form = {
   diferenciaisHospedagem: string;
   sobreCidade: string;
 };
+
+// Ponto de partida do formulário de "Nova vaga" (Wilson, 03/nov/2026).
+function hojeISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+const vagaEmBranco = (): Vaga => ({
+  id: "",
+  codigo: "",
+  publicadaEm: hojeISO(),
+  empresa: "",
+  titulo: "",
+  setor: "eletronicos",
+  regiao: "",
+  cidade: "",
+  publico: ["brasil"],
+  turno: "",
+  contrato: "",
+  salario: "",
+  status: "aberta",
+  info: { moradia: null, beneficios: [], kitBoasVindas: null, bonus: null, sobreCidade: null, diferenciaisHospedagem: [] },
+});
 
 const doVaga = (v: Vaga): Form => ({
   empresa: v.empresa,
@@ -89,13 +111,28 @@ function Campo({ rotulo, dica, children }: { rotulo: string; dica?: string; chil
   );
 }
 
-export default function EditarVaga({ vaga, editada, onFechar }: { vaga: Vaga; editada: boolean; onFechar: () => void }) {
+/** vaga = null: cadastro de vaga nova. editada: vaga do código com edição no CRM.
+ * podeExcluir: vaga criada no CRM e sem candidaturas. */
+export default function EditarVaga({
+  vaga: vagaProp,
+  editada = false,
+  podeExcluir = false,
+  onFechar,
+}: {
+  vaga: Vaga | null;
+  editada?: boolean;
+  podeExcluir?: boolean;
+  onFechar: () => void;
+}) {
   const router = useRouter();
+  const nova = vagaProp === null;
+  const [vaga] = useState<Vaga>(() => vagaProp ?? vagaEmBranco());
   const [f, setF] = useState<Form>(() => doVaga(vaga));
+  const [publicar, setPublicar] = useState(true);
+  const [confirmar, setConfirmar] = useState<null | "restaurar" | "excluir">(null);
   const [logo, setLogo] = useState<File | null>(null);
   const [removerLogo, setRemoverLogo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [confirmarRestaurar, setConfirmarRestaurar] = useState(false);
   const [pendente, iniciar] = useTransition();
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((x) => ({ ...x, [k]: v }));
   const texto = (k: keyof Form) => ({ value: f[k] as string, onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => set(k, e.target.value as never) });
@@ -136,23 +173,25 @@ export default function EditarVaga({ vaga, editada, onFechar }: { vaga: Vaga; ed
     fd.set("dados", JSON.stringify(dados));
     if (logo) fd.set("logo", logo);
     if (removerLogo) fd.set("remover_logo", "1");
+    if (nova && publicar) fd.set("publicar", "1");
     iniciar(async () => {
       let r: Awaited<ReturnType<typeof salvarEdicaoVaga>>;
       try {
-        r = await salvarEdicaoVaga(vaga.id, fd);
+        r = nova ? await criarVaga(fd) : await salvarEdicaoVaga(vaga.id, fd);
       } catch {
         r = { ok: false, erro: "Sem conexão com o servidor." };
       }
-      if (!r.ok) return setErro(`${r.erro} Nada foi alterado.`);
+      if (!r.ok) return setErro(`${r.erro} ${nova ? "A vaga não foi criada." : "Nada foi alterado."}`);
       router.refresh();
       onFechar();
     });
   }
 
-  function restaurar() {
+  function confirmarAcao() {
     setErro(null);
+    const acao = confirmar === "excluir" ? excluirVagaNova : restaurarVagaOriginal;
     iniciar(async () => {
-      const r = await restaurarVagaOriginal(vaga.id).catch(() => ({ ok: false as const, erro: "Sem conexão com o servidor." }));
+      const r = await acao(vaga.id).catch(() => ({ ok: false as const, erro: "Sem conexão com o servidor." }));
       if (!r.ok) return setErro(r.erro);
       router.refresh();
       onFechar();
@@ -161,25 +200,30 @@ export default function EditarVaga({ vaga, editada, onFechar }: { vaga: Vaga; ed
 
   return (
     <Painel
-      titulo={`Editar vaga ${vaga.codigo}`}
-      subtitulo="As alterações aparecem no site assim que você salvar."
+      titulo={nova ? "Nova vaga" : `Editar vaga ${vaga.codigo}`}
+      subtitulo={nova ? "O código AJ-xxxx e o link da vaga são gerados ao salvar." : "As alterações aparecem no site assim que você salvar."}
       onFechar={onFechar}
       largura="max-w-2xl"
       rodape={
         <>
-          {editada && !confirmarRestaurar && (
-            <button type="button" className={`${BOTAO_SECUNDARIO} mr-auto`} disabled={pendente} onClick={() => setConfirmarRestaurar(true)}>
+          {!confirmar && editada && (
+            <button type="button" className={`${BOTAO_SECUNDARIO} mr-auto`} disabled={pendente} onClick={() => setConfirmar("restaurar")}>
               Restaurar original
             </button>
           )}
-          {confirmarRestaurar && (
+          {!confirmar && podeExcluir && (
+            <button type="button" className={`${BOTAO_SECUNDARIO} mr-auto text-[#B42318]`} disabled={pendente} onClick={() => setConfirmar("excluir")}>
+              Excluir vaga
+            </button>
+          )}
+          {confirmar && (
             <span className="mr-auto flex flex-wrap items-center gap-2 text-[13px] text-[#202B28]">
-              Desfazer todas as edições do CRM?
-              <button type="button" className={BOTAO_SECUNDARIO} disabled={pendente} onClick={() => setConfirmarRestaurar(false)}>
+              {confirmar === "excluir" ? "Excluir esta vaga do site e do CRM?" : "Desfazer todas as edições do CRM?"}
+              <button type="button" className={BOTAO_SECUNDARIO} disabled={pendente} onClick={() => setConfirmar(null)}>
                 Não
               </button>
-              <button type="button" className={BOTAO_PRIMARIO} disabled={pendente} onClick={restaurar}>
-                Sim, restaurar
+              <button type="button" className={confirmar === "excluir" ? BOTAO_PERIGO : BOTAO_PRIMARIO} disabled={pendente} onClick={confirmarAcao}>
+                {confirmar === "excluir" ? "Sim, excluir" : "Sim, restaurar"}
               </button>
             </span>
           )}
@@ -188,13 +232,19 @@ export default function EditarVaga({ vaga, editada, onFechar }: { vaga: Vaga; ed
           </button>
           <button type="button" className={BOTAO_PRIMARIO} onClick={salvar} disabled={pendente}>
             {pendente && <Spinner />}
-            Salvar
+            {nova ? "Criar vaga" : "Salvar"}
           </button>
         </>
       }
     >
       <div className="space-y-5">
         <Erro>{erro}</Erro>
+        {nova && (
+          <p className="rounded-lg border border-[#42658A]/15 bg-[#EFF4FA] px-3 py-2 text-[13px] leading-5 text-[#2F4D6B]">
+            Vaga nova segue o funil padrão: proposta de financiamento, sem testes de aptidão e triagem padrão. Para mudar essas regras, fale com o
+            desenvolvimento.
+          </p>
+        )}
 
         <Grupo titulo="Empresa e logo">
           <Campo rotulo="Empresa">
@@ -334,6 +384,16 @@ export default function EditarVaga({ vaga, editada, onFechar }: { vaga: Vaga; ed
           </Campo>
           <p className="text-[12px] text-[#8A9792]">Campo vazio aparece no site como “A confirmar com a nossa equipe”.</p>
         </Grupo>
+
+        {nova && (
+          <label className="flex items-start gap-3 rounded-xl border border-[#DEE6E2] bg-[#F8FAF9] px-4 py-3 text-sm text-[#202B28]">
+            <input type="checkbox" checked={publicar} onChange={(e) => setPublicar(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#27675B]" />
+            <span>
+              Publicar no site ao criar
+              <span className="block text-[12px] text-[#626E69]">Desmarcado, a vaga é criada oculta e você liga depois pelo switch da lista.</span>
+            </span>
+          </label>
+        )}
       </div>
     </Painel>
   );

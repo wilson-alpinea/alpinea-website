@@ -172,8 +172,13 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: `${TAG_SELF_SERVICE} — Calculadora (/viagem_personalizada_selfservice)`,
-        produto_principal: "roteiro_personalizado",
+        // Página de produto ou simulador avulso (Wilson, 03/nov/2026); o lead
+        // é de Viagem Personalizada (antes caía como Roteiro Personalizado).
+        origem:
+          body.pagina === "produto"
+            ? `${TAG_SELF_SERVICE} — Viagem Personalizada (/produtos/viagem-personalizada)`
+            : `${TAG_SELF_SERVICE} — Calculadora (/viagem_personalizada_selfservice)`,
+        produto_principal: "viagem_personalizada",
         valor_proposta: valorEstimado,
         data_viagem: dataViagem || null,
         estagio: "novo_lead",

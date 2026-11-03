@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
-import { PriceCalculator } from "../components/PriceCalculator";
 import {
   useCambioUSD,
   brlParaUSDLabel,
@@ -77,7 +76,7 @@ const PRODUTOS: Record<
   personalizado: {
     nome: "Viagem Personalizada",
     precoBRL: null,
-    href: "/viagem-personalizada",
+    href: "/produtos/viagem-personalizada",
   },
   guia: {
     nome: "Guia Turístico Avulso",
@@ -92,14 +91,6 @@ const PRODUTOS: Record<
   },
 };
 
-// Espelha os 4 blocos do roteiro-vídeo descrito: perfil do dia, detalhe da
-// atração, hotéis/restaurantes/anexos e o "nós planejamos, você reserva".
-const ROTEIRO_DESTAQUES = [
-  "Cada dia planejado de acordo com seu perfil: cidade, horário, atração, deslocamento e refeição.",
-  "Cada atração com melhor horário, tempo de visita, estação, transporte recomendado e ingressos.",
-  "Hotéis, restaurantes, logística e anexos especiais organizados em um único painel.",
-  "Nós planejamos. Você reserva e viaja por conta própria.",
-];
 export default function ProdutosPage() {
   const cambio = useCambioUSD();
 
@@ -131,9 +122,7 @@ export default function ProdutosPage() {
   const [passagens, setPassagens] = useState<"sim" | "nao" | "">("");
   const [primeiraViagem, setPrimeiraViagem] = useState<"sim" | "nao" | "">("");
   const [enviado, setEnviado] = useState(false);
-  const [roteiroModalOpen, setRoteiroModalOpen] = useState(false);
   const [pacotesModalOpen, setPacotesModalOpen] = useState(false);
-  const [viagemModalOpen, setViagemModalOpen] = useState(false);
   const [passagensModalOpen, setPassagensModalOpen] = useState(false);
   const [guiaModalOpen, setGuiaModalOpen] = useState(false);
   const [servicosModalOpen, setServicosModalOpen] = useState(false);
@@ -165,23 +154,16 @@ export default function ProdutosPage() {
     if (params.get("abrir") === "hoteis") {
       setHoteisModalOpen(true);
     }
-    // ?abrir=roteiro e o evento do menu de três barras (MenuProdutos) abrem
-    // o popup do Roteiro Personalizado (Wilson, 27/out/2026).
+    // Links antigos (?abrir=roteiro) levam à página nova do Roteiro
+    // Personalizado (Wilson, 03/nov/2026 — antes abriam um pop-up).
     if (params.get("abrir") === "roteiro") {
-      setRoteiroModalOpen(true);
+      window.location.replace("/produtos/roteiro-personalizado");
     }
-    const abrirPeloMenu = (e: Event) => {
-      if ((e as CustomEvent<string>).detail === "roteiro") setRoteiroModalOpen(true);
-    };
-    window.addEventListener("alpinea:abrir-produto", abrirPeloMenu);
-    return () => window.removeEventListener("alpinea:abrir-produto", abrirPeloMenu);
   }, []);
 
   useEffect(() => {
     if (
-      !roteiroModalOpen &&
       !pacotesModalOpen &&
-      !viagemModalOpen &&
       !passagensModalOpen &&
       !guiaModalOpen &&
       !servicosModalOpen &&
@@ -194,9 +176,7 @@ export default function ProdutosPage() {
     document.body.style.overflow = "hidden";
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setRoteiroModalOpen(false);
         setPacotesModalOpen(false);
-        setViagemModalOpen(false);
         setPassagensModalOpen(false);
         setGuiaModalOpen(false);
         setServicosModalOpen(false);
@@ -211,30 +191,13 @@ export default function ProdutosPage() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [
-    roteiroModalOpen,
     pacotesModalOpen,
-    viagemModalOpen,
     passagensModalOpen,
     guiaModalOpen,
     servicosModalOpen,
     ajisaiShoppingModalOpen,
     hoteisModalOpen,
   ]);
-
-  // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
-  // já com o produto marcado.
-  function escolherProduto(produto: ProdutoKey) {
-    const produtoSelecionado = PRODUTOS[produto];
-    const text = encodeURIComponent(
-      `Olá! Tenho interesse em ${produtoSelecionado.nome} e gostaria de receber mais informações.`,
-    );
-
-    window.gtag?.("event", "whatsapp_click", {
-      form_name: "produtos_interesse_direto",
-      produto: produtoSelecionado.nome,
-    });
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
-  }
 
   function trocarProduto() {
     setQualProduto(null);
@@ -333,8 +296,7 @@ export default function ProdutosPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <ProductSelectorCard
-                href="#roteiro-personalizado"
-                onClick={() => setRoteiroModalOpen(true)}
+                href="/produtos/roteiro-personalizado"
                 icon="/images/produtos/roteiro-personalizado.png"
                 iconWidth={439}
                 iconHeight={504}
@@ -345,8 +307,7 @@ export default function ProdutosPage() {
               />
               {/* Pacote de Viagem removido da vitrine (Wilson, 29/out/2026: "remover pacote"). */}
               <ProductSelectorCard
-                href="/viagem-personalizada"
-                onClick={() => setViagemModalOpen(true)}
+                href="/produtos/viagem-personalizada"
                 icon="/images/produtos/viagem-personalizada-icone-v2.png"
                 iconWidth={1254}
                 iconHeight={1254}
@@ -529,154 +490,9 @@ export default function ProdutosPage() {
       </section>
 
       {/* ── ROTEIRO PERSONALIZADO — DEMONSTRAÇÃO ── */}
-      {roteiroModalOpen && (
-        <div
-          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="roteiro-modal-title"
-          onClick={() => setRoteiroModalOpen(false)}
-        >
-          <section
-            id="roteiro-personalizado"
-            className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white px-6 py-16 shadow-2xl md:rounded-3xl md:px-16 md:py-20"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setRoteiroModalOpen(false)}
-              aria-label="Fechar informações do Roteiro Personalizado"
-              className="sticky right-0 top-0 z-20 ml-auto flex h-10 w-10 items-center justify-center rounded-full border border-black/15 bg-white/70 text-2xl leading-none text-black/65 backdrop-blur transition hover:border-black/40 hover:text-black"
-            >
-              ×
-            </button>
-        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
-              Roteiro Personalizado
-            </p>
-            <h2
-              id="roteiro-modal-title"
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-black md:text-4xl`}
-            >
-              Isto não é uma lista de lugares para visitar.
-            </h2>
-            <p className="mt-5 text-sm font-light leading-6 text-black/60 md:text-base md:leading-7">
-              É um painel digital onde cada dia da sua viagem é planejado de
-              acordo com o seu perfil — acessível pelo celular, do início ao
-              fim da viagem.
-            </p>
-
-            <ul className="mt-6 space-y-3">
-              {ROTEIRO_DESTAQUES.map((item) => (
-                <li
-                  key={item}
-                  className={`flex items-start gap-2.5 text-sm leading-6 ${
-                    item.startsWith("Nós planejamos") ? "font-medium text-[#1c6ea8]" : "text-black/65"
-                  }`}
-                >
-                  <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1c6ea8]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">A partir de</p>
-                <p className={`${display.className} text-4xl font-medium text-black`}>
-                  {precoProdutoLabel(PRODUTOS.roteiro, false)}
-                </p>
-                {precoBRLProdutoLabel(PRODUTOS.roteiro) && (
-                  <p className="mt-1 text-lg font-semibold leading-none text-[#2f74ab]">
-                    {precoBRLProdutoLabel(PRODUTOS.roteiro)}
-                  </p>
-                )}
-                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/40" />
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setRoteiroModalOpen(false);
-                  escolherProduto("roteiro");
-                }}
-                className="rounded-full px-6 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5"
-                style={{ backgroundColor: "#2f80c9" }}
-              >
-                Quero meu roteiro personalizado →
-              </button>
-            </div>
-            <div>
-              <PriceCalculator />
-            </div>
-            <Link
-              href="/ajisairoteiros"
-              className="mt-5 inline-block text-xs uppercase tracking-[0.2em] text-black/40 underline underline-offset-4 transition hover:text-black"
-            >
-              Ver o roteiro completo →
-            </Link>
-          </div>
-
-          <div className="flex justify-center">
-            <a
-              href="/images/mock-roteiro-iphone.png"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Ver painel do roteiro em tamanho maior"
-              className="group relative w-[320px] overflow-visible rounded-[36px] shadow-2xl transition duration-500 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(110,195,217,0.25)] md:w-[400px]"
-            >
-              <div className="relative aspect-[1024/1536] w-full">
-                <Image
-                  src="/images/mock-roteiro-iphone.png"
-                  alt="Painel Ajisai — roteiro diário, atrações e logística organizados"
-                  fill
-                  sizes="400px"
-                  className="object-contain transition duration-700 group-hover:scale-[1.015]"
-                />
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <div className="mx-auto mt-16 max-w-5xl">
-          <p className="text-center text-[10px] uppercase tracking-[0.2em] text-black/40">
-            Veja funcionando
-          </p>
-          <h3
-            className={`${display.className} mt-2 text-center text-xl font-medium text-black md:text-2xl`}
-          >
-            Demonstração do Roteiro Personalizado
-          </h3>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm font-light leading-6 text-black/55">
-            Duas versões — escolha a que preferir: a rápida dura só 1:46, a
-            completa mostra o painel com todos os detalhes.
-          </p>
-          <div className="mx-auto mt-8 w-full">
-            <DemoVideo
-              src="/videos/roteiro-personalizado-short.mp4"
-              poster="/videos/roteiro-personalizado-short-poster.jpg"
-              label="Versão Rápida · 1:46"
-              descricao="Visão geral direto ao ponto, em menos de 2 minutos."
-            />
-          </div>
-
-          <div className="mx-auto mt-10 max-w-sm">
-            <p className="text-center text-sm uppercase tracking-[0.2em] text-black/50">
-              Quer ver mais?
-            </p>
-            <div className="mt-3">
-              <DemoVideo
-                src="/videos/roteiro-personalizado-detalhado.mp4"
-                poster="/videos/roteiro-personalizado-detalhado-poster.jpg"
-                label="Versão Completa · 8:08"
-                descricao="Navegação real pelo painel — dia a dia, atrações, deslocamento e logística."
-              />
-            </div>
-          </div>
-        </div>
-          </section>
-        </div>
-      )}
+      {/* Roteiro Personalizado e Viagem Personalizada saíram do pop-up e
+          viraram páginas no template novo (Wilson, 03/nov/2026):
+          /produtos/roteiro-personalizado e /produtos/viagem-personalizada. */}
 
       {pacotesModalOpen && (
         <div
@@ -717,51 +533,6 @@ export default function ProdutosPage() {
             <iframe
               src="/pacotes"
               title="Conteúdo completo de Pacotes de Viagem"
-              className="h-full w-full border-0 pt-14"
-            />
-          </div>
-        </div>
-      )}
-
-      {viagemModalOpen && (
-        <div
-          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="viagem-modal-title"
-          onClick={() => setViagemModalOpen(false)}
-        >
-          <div
-            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-[#6ec3d9]/30 bg-white shadow-[0_0_60px_-20px_rgba(110,195,217,0.45)] md:h-[94vh] md:rounded-3xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
-              <p
-                id="viagem-modal-title"
-                className={`${display.className} text-lg font-medium text-black md:text-xl`}
-              >
-                Viagem Personalizada
-              </p>
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/viagem-personalizada"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1c6ea8] transition hover:text-black sm:block"
-                >
-                  Abrir página completa
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setViagemModalOpen(false)}
-                  aria-label="Fechar Viagem Personalizada"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-            <iframe
-              src="/viagem-personalizada"
-              title="Configurador completo de Viagem Personalizada"
               className="h-full w-full border-0 pt-14"
             />
           </div>
@@ -1694,43 +1465,5 @@ export function IconCheck({ className }: { className?: string }) {
       <circle cx="12" cy="12" r="9" />
       <path d="M8.5 12.5l2.5 2.5 4.5-5" />
     </svg>
-  );
-}
-
-// Vídeo real de demonstração — player nativo com poster, sem autoplay
-// (carrega só metadata até o clique, pra não pesar a página).
-function DemoVideo({
-  src,
-  poster,
-  label,
-  descricao,
-}: {
-  src: string;
-  poster: string;
-  label: string;
-  descricao?: string;
-}) {
-  return (
-    <div>
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-black/10 bg-black">
-        <video
-          controls
-          preload="metadata"
-          poster={poster}
-          playsInline
-          className="h-full w-full bg-black object-contain fullscreen:h-screen fullscreen:w-screen fullscreen:object-contain"
-        >
-          <source src={src} type="video/mp4" />
-        </video>
-      </div>
-      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
-        {label}
-      </p>
-      {descricao && (
-        <p className="mx-auto mt-1 max-w-xs text-center text-xs leading-5 text-black/50">
-          {descricao}
-        </p>
-      )}
-    </div>
   );
 }

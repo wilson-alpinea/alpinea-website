@@ -322,8 +322,8 @@ export async function redefinirSenhaUsuario(_: ResultadoAcesso | null, formData:
 
 export async function definirEmpreiteiraDaVaga(vagaId: string, parceiroId: string | null): Promise<{ ok: boolean }> {
   await garantirAdmin();
-  const { VAGAS } = await import("@/app/lib/vagasCatalogo");
-  if (!VAGAS.some((v) => v.id === vagaId)) return { ok: false };
+  const { catalogoVagas } = await import("@/lib/empregos/vagasAtivas");
+  if (!(await catalogoVagas()).some((v) => v.id === vagaId)) return { ok: false };
   const admin = createAdminClient();
   if (!parceiroId) {
     const { error } = await admin.from("vagas_empreiteira").delete().eq("vaga_id", vagaId);
