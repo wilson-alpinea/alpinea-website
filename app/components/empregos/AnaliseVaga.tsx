@@ -14,8 +14,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { display } from "../../produtos/page";
 import { inter } from "../transporte/compartilhado";
-import { VAGAS, localVaga, type SetorKey, type Vaga } from "../../lib/vagasCatalogo";
-import { HORAS_MES_REFERENCIA, MEDIA_NOTA_FICHA, PONTOS_SALARIO, analisarVaga, itensFicha, notaFicha, salarioBaseHora, type PontoSalario } from "../../lib/analiseVagas";
+import { localVaga, type SetorKey, type Vaga } from "../../lib/vagasCatalogo";
+import { useCatalogoVagas } from "../../lib/CatalogoVagasProvider";
+import { HORAS_MES_REFERENCIA, analisarVaga, mediaNotaFicha, pontosSalario, itensFicha, notaFicha, salarioBaseHora, type PontoSalario } from "../../lib/analiseVagas";
 import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
 import { formatBRL, formatJPY } from "../../lib/currency";
 
@@ -107,8 +108,8 @@ function quantil(ordenados: number[], q: number) {
   return ordenados[i] + (ordenados[Math.min(i + 1, ordenados.length - 1)] - ordenados[i]) * (pos - i);
 }
 
-function posicaoSalario(base: number) {
-  const vals = PONTOS_SALARIO.map((p) => p.base).sort((x, y) => x - y);
+function posicaoSalario(base: number, pontos: PontoSalario[]) {
+  const vals = pontos.map((p) => p.base).sort((x, y) => x - y);
   const cortes = [0, 0.25, 0.5, 0.75, 1].map((q) => quantil(vals, q));
   let faixa = 3;
   for (let i = 0; i < 4; i++)
@@ -120,8 +121,8 @@ function posicaoSalario(base: number) {
   return { cortes, faixa, pct: ((faixa + Math.min(1, Math.max(0, dentro))) / 4) * 100, tipico: cortes[2] };
 }
 
-function PosicaoSalario({ base }: { base: number }) {
-  const { cortes, faixa, pct, tipico } = posicaoSalario(base);
+function PosicaoSalario({ base, pontos }: { base: number; pontos: PontoSalario[] }) {
+  const { cortes, faixa, pct, tipico } = posicaoSalario(base, pontos);
   const dif = Math.round(base - tipico);
   return (
     <div>
@@ -168,10 +169,10 @@ function PosicaoSalario({ base }: { base: number }) {
 // do nome das marcas". Os logos são escuros, então ficam sempre numa caixa
 // branca (legíveis também no painel azul-marinho). Sem logo cadastrado,
 // mostra as iniciais para manter o alinhamento.
-const LOGO_POR_VAGA = new Map(VAGAS.map((v) => [v.id, v.logo]));
-
+// Logo vem do catálogo com as edições do CRM (Wilson, 03/nov/2026).
 function LogoEmpresa({ vagaId, empresa, tamanho = "md" }: { vagaId: string; empresa: string; tamanho?: "sm" | "md" }) {
-  const logo = LOGO_POR_VAGA.get(vagaId);
+  const catalogo = useCatalogoVagas();
+  const logo = catalogo.find((v) => v.id === vagaId)?.logo;
   const caixa = tamanho === "sm" ? "h-5 w-9 rounded p-0.5" : "h-9 w-14 rounded-lg p-1.5";
   return (
     <span className={`flex shrink-0 items-center justify-center bg-white ring-1 ring-black/10 ${caixa}`}>
@@ -369,7 +370,10 @@ function PainelComparacao({
 
 // ── Componente ──
 export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
-  const a = useMemo(() => analisarVaga(vaga), [vaga]);
+  const catalogo = useCatalogoVagas();
+  const pontos = useMemo(() => pontosSalario(catalogo), [catalogo]);
+  const mediaNota = useMemo(() => mediaNotaFicha(catalogo), [catalogo]);
+  const a = useMemo(() => analisarVaga(vaga, pontos), [vaga, pontos]);
   const cotacao = useCotacao();
   const itens = itensFicha(vaga);
   const [verTabela, setVerTabela] = useState(false);
@@ -381,7 +385,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
     const id = typeof v === "function" ? v(comparada) : v;
     setSelecao(id ? { origem: vaga.id, id } : null);
   };
-  const vagaComparada = comparada ? (VAGAS.find((v) => v.id === comparada) ?? null) : null;
+  const vagaComparada = comparada ? (catalogo.find((v) => v.id === comparada) ?? null) : null;
   const painelRef = useRef<HTMLDivElement | null>(null);
 
   // No celular o painel abre abaixo da análise — rola até ele.
@@ -438,8 +442,8 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
         />
         <Tile
           rotulo="Posição salarial"
-          valor={a.base !== null ? FAIXAS[posicaoSalario(a.base).faixa] : "—"}
-          detalhe={a.base !== null ? `Faixa ${posicaoSalario(a.base).faixa + 1} de 4 do catálogo, da menor para a maior.` : undefined}
+          valor={a.base !== null ? FAIXAS[posicaoSalario(a.base, pontos).faixa] : "—"}
+          detalhe={a.base !== null ? `Faixa ${posicaoSalario(a.base, pontos).faixa + 1} de 4 do catálogo, da menor para a maior.` : undefined}
         />
       </div>
 
@@ -470,7 +474,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-black/[0.06]">
-                  {[...PONTOS_SALARIO]
+                  {[...pontos]
                     .sort((x, y) => y.base - x.base)
                     .map((p) => (
                       <tr key={p.id} className={p.id === vaga.id ? "font-semibold" : ""} style={p.id === vaga.id ? { color: AZUL } : undefined}>
@@ -487,7 +491,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
             </div>
           ) : (
             <div className="mt-3">
-              <PosicaoSalario base={a.base} />
+              <PosicaoSalario base={a.base} pontos={pontos} />
             </div>
           )}
           <p className="mt-3 text-[11px] leading-5 text-black/45">
@@ -512,7 +516,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
               <span key={i.rotulo} className="h-2 flex-1 first:rounded-l-full last:rounded-r-full" style={{ background: i.ok ? AZUL : "#e3e7ec" }} />
             ))}
           </div>
-          <p className="mt-2 text-[11px] text-black/50">Média do catálogo: {MEDIA_NOTA_FICHA.toFixed(1).replace(".", ",")}/{itens.length}</p>
+          <p className="mt-2 text-[11px] text-black/50">Média do catálogo: {mediaNota.toFixed(1).replace(".", ",")}/{itens.length}</p>
           <ul className="mt-3 grid gap-1.5 text-xs sm:grid-cols-2">
             {itens.map((i) => (
               <li key={i.rotulo} className={`flex items-center gap-1.5 ${i.ok ? "text-black/75" : "text-black/40"}`}>

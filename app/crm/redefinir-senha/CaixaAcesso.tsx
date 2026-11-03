@@ -10,7 +10,7 @@ export function CaixaAcesso({ titulo, children }: { titulo: string; children: Re
       <div className="w-full max-w-sm space-y-5 rounded-2xl border border-black/5 bg-white p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_70px_-30px_rgba(0,0,0,0.25)]">
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/ajisai-group-logo-crop.png" alt="Alpinea — Empresa do Grupo Ajisai" className="mx-auto h-12 w-auto" />
+          <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="mx-auto h-10 w-auto invert" />
           <p className="mt-4 text-base font-semibold text-[#20252B]">{titulo}</p>
         </div>
         {children}

@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { ListaDocumentacao, type LinhaDoc } from "./ListaDocumentacao";
 import { SinoUnidade } from "../components/SinoUnidade";
+import { urlSite } from "@/lib/crm/unidades";
 
 // CRM de Documentação — lista de processos (Wilson, 29/out/2026).
 export const metadata: Metadata = {
@@ -40,7 +41,7 @@ export default async function DocumentacaoCrmPage() {
         <div className="flex flex-wrap items-center gap-2">
           {!dono && <SinoUnidade unidade="documentacao" />}
           {!dono && <Link href="/crm/documentacao/visao-geral" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50">Visão geral</Link>}
-          <a href="/documentacao" target="_blank" rel="noreferrer" className="rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#2C5480]">
+          <a href={urlSite("/documentacao")} target="_blank" rel="noreferrer" className="rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#2C5480]">
             Página de venda ↗
           </a>
         </div>

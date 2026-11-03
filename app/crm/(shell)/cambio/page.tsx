@@ -7,6 +7,7 @@ import { DIRECAO_LABEL, campoResumo, direcaoCambio, ienesDoResumo } from "@/lib/
 import { ehRegistroTeste } from "@/lib/crm/origem";
 import type { Estagio } from "@/lib/crm/types";
 import { SinoUnidade } from "../components/SinoUnidade";
+import { urlSite } from "@/lib/crm/unidades";
 
 // CRM de Câmbio — lista de pedidos (Wilson, 29/out/2026: "criar um CRM novo para câmbio").
 export const metadata: Metadata = {
@@ -71,7 +72,7 @@ export default async function CambioPage({ searchParams }: { searchParams: Promi
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {!dono && <SinoUnidade unidade="cambio" />}
-          <a href="/produtos/cambio" target="_blank" rel="noreferrer" className="rounded-xl px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90" style={{ backgroundColor: COR }}>
+          <a href={urlSite("/produtos/cambio")} target="_blank" rel="noreferrer" className="rounded-xl px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90" style={{ backgroundColor: COR }}>
             Página de câmbio ↗
           </a>
         </div>

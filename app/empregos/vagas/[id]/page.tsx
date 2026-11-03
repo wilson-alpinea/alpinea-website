@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { metaEmpregos } from "@/lib/empregos/metaCompartilhamento";
 import { notFound } from "next/navigation";
-import { VAGAS, encontrarVaga, localVaga } from "../../../lib/vagasCatalogo";
+import { VAGAS, localVaga } from "../../../lib/vagasCatalogo";
 import { HOTSITE_POR_VAGA } from "../../../lib/landingsMurata";
-import { vagaEstaAtiva } from "@/lib/empregos/vagasAtivas";
+import { vagaAtual, vagaEstaAtiva } from "@/lib/empregos/vagasAtivas";
 import VagaPagina from "./VagaPagina";
 
 // Página própria de cada vaga do catálogo — Wilson, 07/out/2026: "todas as
@@ -22,7 +22,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const vaga = encontrarVaga(id);
+  const vaga = await vagaAtual(id); // com as edições do CRM
   if (!vaga) return {};
   const titulo = `${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade} | Ajisai Empregos`;
   const descricao = `Vaga em ${localVaga(vaga)} (Japão): ${vaga.salario}. ${vaga.turno}. Candidate-se pelo site da Ajisai.`;
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const vaga = encontrarVaga(id);
+  const vaga = await vagaAtual(id); // com as edições do CRM
   if (!vaga) notFound();
   const ativa = await vagaEstaAtiva(vaga.id);
   return <VagaPagina vaga={vaga} ativa={ativa} hotsite={HOTSITE_POR_VAGA[vaga.id] ?? null} />;

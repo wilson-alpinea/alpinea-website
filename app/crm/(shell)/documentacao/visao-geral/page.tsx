@@ -11,6 +11,7 @@ import { PeriodoSelector } from "../../components/PeriodoSelector";
 import { GraficoDiario } from "../../components/GraficoDiario";
 import { SinoUnidade } from "../../components/SinoUnidade";
 import { FiltroProdutos, type OpcaoProduto } from "../../components/FiltroProdutos";
+import { urlSite } from "@/lib/crm/unidades";
 
 // Quadradinhos de serviço no topo (Wilson, 29/out/2026) — mesmos ícones de /documentacao.
 const OPCOES_SERVICO: OpcaoProduto[] = [
@@ -160,7 +161,7 @@ export default async function VisaoGeralDocumentacaoPage({ searchParams }: { sea
           <Link href="/crm/documentacao" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50">
             Ver processos
           </Link>
-          <a href="/documentacao" target="_blank" rel="noreferrer" className="rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#2C5480]">
+          <a href={urlSite("/documentacao")} target="_blank" rel="noreferrer" className="rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#2C5480]">
             Página de venda ↗
           </a>
         </div>

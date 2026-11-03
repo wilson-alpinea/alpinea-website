@@ -19,9 +19,9 @@ export function LoginForm({
         <div className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/ajisai-group-logo-crop.png"
-            alt="Alpinea — Empresa do Grupo Ajisai"
-            className="mx-auto h-12 w-auto"
+            src="/images/AJISAI-LOGO.avif"
+            alt="Ajisai"
+            className="mx-auto h-10 w-auto invert"
           />
           <p
             className="mt-4 text-[13px] text-[#626B75]"

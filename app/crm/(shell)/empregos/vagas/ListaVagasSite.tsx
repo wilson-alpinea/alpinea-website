@@ -5,6 +5,9 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { definirVagasAtivas } from "../../../actions";
 import { BOTAO_PRIMARIO, BOTAO_SECUNDARIO, Painel, Spinner } from "../../clientes/[id]/financeiro/ui";
+import type { Vaga } from "@/app/lib/vagasCatalogo";
+import EditarVaga from "./EditarVaga";
+import { urlSite } from "@/lib/crm/unidades";
 
 // Vagas no site — redesenho 23/out/2026. Seleção (checkbox) e publicação
 // (switch) são controles separados; nada muda de visibilidade sem um
@@ -21,6 +24,9 @@ export type LinhaVaga = {
   provincia: string;
   ativa: boolean;
   candidaturas: number | null; // null = contagem não carregou
+  /** Vaga já com as edições do CRM (migração 033). */
+  vaga: Vaga;
+  editada: { em: string; por: string | null } | null;
 };
 
 const SOMBRA = "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]";
@@ -47,7 +53,7 @@ function IconeExterno() {
 function VerPagina({ l, compacto = false }: { l: LinhaVaga; compacto?: boolean }) {
   return (
     <a
-      href={`/empregos/vagas/${l.id}`}
+      href={urlSite(`/empregos/vagas/${l.id}`)}
       target="_blank"
       rel="noopener"
       className={`inline-flex items-center gap-1 whitespace-nowrap font-medium text-[#42658A] hover:underline ${compacto ? "text-[13px]" : "text-sm"}`}
@@ -107,6 +113,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
   const ord = ORDENS.some((o) => o.v === sp.get("ord")) ? sp.get("ord")! : "recentes";
   const pp = POR_PAGINA.includes(Number(sp.get("pp"))) ? Number(sp.get("pp")) : 25;
   const detalheId = sp.get("detalhe");
+  const editarId = sp.get("editar");
 
   const atualizar = useCallback(
     (mudancas: Record<string, string | null>, manterPagina = false) => {
@@ -182,6 +189,8 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
   const nVisiveis = linhas.filter((l) => ativas.has(l.id)).length;
   const detalhe = detalheId ? linhas.find((l) => l.id === detalheId) : undefined;
   const fecharDetalhe = useCallback(() => atualizar({ detalhe: null }, true), [atualizar]);
+  const editando = editarId ? linhas.find((l) => l.id === editarId) : undefined;
+  const fecharEdicao = useCallback(() => atualizar({ editar: null }, true), [atualizar]);
 
   const chips: { rotulo: string; limpar: Record<string, null> }[] = [];
   if (q) chips.push({ rotulo: `Busca: “${q}”`, limpar: { q: null } });
@@ -395,7 +404,8 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
         <details className="group mt-3 text-[13px] text-[#626E69]">
           <summary className="cursor-pointer select-none font-medium text-[#42658A] hover:underline">Como funciona a publicação</summary>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>As vagas vêm do catálogo do site; empresa, função e condições são editadas no catálogo, não aqui.</li>
+            <li>Empresa, logo, função, condições, moradia e benefícios podem ser editados em “Editar”. O site atualiza assim que você salva.</li>
+            <li>Vaga editada no CRM leva o selo “Editada”; “Restaurar original” volta para o texto do catálogo do código.</li>
             <li>Vaga nova do catálogo entra visível automaticamente.</li>
             <li>Vaga oculta sai de /empregos, dos hot sites e das sugestões e deixa de aceitar candidaturas. O link direto continua abrindo e mostra a vaga como encerrada.</li>
             <li>Ocultar não apaga nem altera candidaturas já recebidas.</li>
@@ -481,7 +491,10 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
                           {l.titulo}
                         </span>
                       </button>
-                      <span className="mt-1 inline-block rounded-md bg-[#F3F5F5] px-1.5 py-0.5 font-mono text-[12px] font-medium text-[#5D6C70]">{l.codigo}</span>
+                      <span className="mt-1 flex flex-wrap items-center gap-1.5">
+                        <span className="inline-block rounded-md bg-[#F3F5F5] px-1.5 py-0.5 font-mono text-[12px] font-medium text-[#5D6C70]">{l.codigo}</span>
+                        {l.editada && <SeloEditada />}
+                      </span>
                     </td>
                     <td className="px-4 py-3.5 text-sm">
                       <span className="block text-[#202B28]">{l.cidade}</span>
@@ -499,6 +512,9 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
                         <VerPagina l={l} />
                         <button type="button" onClick={() => atualizar({ detalhe: l.id }, true)} className="text-[13px] text-[#626E69] hover:text-[#202B28] hover:underline">
                           Detalhes
+                        </button>
+                        <button type="button" onClick={() => atualizar({ editar: l.id }, true)} className="text-[13px] text-[#626E69] hover:text-[#202B28] hover:underline">
+                          Editar
                         </button>
                       </span>
                     </td>
@@ -538,6 +554,7 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
                     <span className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-semibold text-[#202B28]">{l.empresa}</span>
                       <span className="rounded-md bg-[#F3F5F5] px-1.5 py-0.5 font-mono text-[12px] text-[#5D6C70]">{l.codigo}</span>
+                      {l.editada && <SeloEditada />}
                     </span>
                     <span className="line-clamp-2 text-sm text-[#626E69]">{l.titulo}</span>
                     <span className="mt-0.5 block text-[13px] text-[#626E69]">
@@ -550,6 +567,9 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
                   <span className="flex items-center gap-4">
                     <Candidaturas l={l} />
                     <VerPagina l={l} compacto />
+                    <button type="button" onClick={() => atualizar({ editar: l.id }, true)} className="text-[13px] font-medium text-[#42658A] hover:underline">
+                      Editar
+                    </button>
                   </span>
                 </div>
                 {erroLinha[l.id] && (
@@ -612,7 +632,10 @@ export default function ListaVagasSite({ linhas, erroStatus }: { linhas: LinhaVa
           }}
         />
       )}
-      {detalhe && <PainelDetalhe l={detalhe} ativa={ativas.has(detalhe.id)} onFechar={fecharDetalhe} />}
+      {detalhe && !editando && (
+        <PainelDetalhe l={detalhe} ativa={ativas.has(detalhe.id)} onFechar={fecharDetalhe} onEditar={() => atualizar({ detalhe: null, editar: detalhe.id }, true)} />
+      )}
+      {editando && <EditarVaga key={`${editando.id}-${editando.editada?.em ?? "codigo"}`} vaga={editando.vaga} editada={!!editando.editada} onFechar={fecharEdicao} />}
     </div>
   );
 }
@@ -705,7 +728,11 @@ function PainelLote({
   );
 }
 
-function PainelDetalhe({ l, ativa, onFechar }: { l: LinhaVaga; ativa: boolean; onFechar: () => void }) {
+function SeloEditada() {
+  return <span className="rounded-md bg-[#FFF4DB] px-1.5 py-0.5 text-[11px] font-medium text-[#6F4A00]">Editada</span>;
+}
+
+function PainelDetalhe({ l, ativa, onFechar, onEditar }: { l: LinhaVaga; ativa: boolean; onFechar: () => void; onEditar: () => void }) {
   const itens: [string, React.ReactNode][] = [
     ["Código", <span key="c" className="font-mono">{l.codigo}</span>],
     ["Empresa", l.empresa],
@@ -715,9 +742,27 @@ function PainelDetalhe({ l, ativa, onFechar }: { l: LinhaVaga; ativa: boolean; o
     ["Publicação", l.publicadaBR],
     ["Visibilidade", <span key="v" className={`rounded-full px-2.5 py-0.5 text-[13px] font-medium ${ativa ? "bg-[#EEF6F3] text-[#27675B]" : "bg-[#F3F5F5] text-[#5D6C70]"}`}>{ativa ? "Visível no site" : "Oculta do site"}</span>],
     ["Candidaturas", <Candidaturas key="n" l={l} />],
+    ...(l.editada
+      ? ([["Editada", `${new Date(l.editada.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${l.editada.por ? ` · ${l.editada.por}` : ""}`]] as [string, React.ReactNode][])
+      : []),
   ];
   return (
-    <Painel titulo={l.empresa} subtitulo={`Vaga ${l.codigo}`} onFechar={onFechar} largura="max-w-md" rodape={<VerPagina l={l} />}>
+    <Painel
+      titulo={l.empresa}
+      subtitulo={`Vaga ${l.codigo}`}
+      onFechar={onFechar}
+      largura="max-w-md"
+      rodape={
+        <>
+          <span className="mr-auto self-center">
+            <VerPagina l={l} />
+          </span>
+          <button type="button" className={BOTAO_PRIMARIO} onClick={onEditar}>
+            Editar vaga
+          </button>
+        </>
+      }
+    >
       <dl className="divide-y divide-[#EEF2F0]">
         {itens.map(([k, v]) => (
           <div key={k} className="grid grid-cols-[7.5rem_1fr] gap-3 py-2.5 text-sm">
@@ -726,7 +771,7 @@ function PainelDetalhe({ l, ativa, onFechar }: { l: LinhaVaga; ativa: boolean; o
           </div>
         ))}
       </dl>
-      <p className="mt-4 text-[13px] text-[#626E69]">Os dados vêm do catálogo do site e não são editados no CRM. A visibilidade muda pelo switch na lista.</p>
+      <p className="mt-4 text-[13px] text-[#626E69]">Para mudar empresa, logo, função ou condições, use “Editar vaga”. A visibilidade muda pelo switch na lista.</p>
     </Painel>
   );
 }

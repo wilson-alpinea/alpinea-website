@@ -67,9 +67,9 @@ export default async function CrmShellLayout({
             <Link href={consultor ? NAV_CONSULTOR[unidade].href : INICIO_UNIDADE[unidade]} className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/ajisai-group-white-crop.png"
-                alt="Alpinea — Empresa do Grupo Ajisai"
-                className="h-12 w-auto sm:h-16"
+                src="/images/AJISAI-LOGO.avif"
+                alt="Ajisai"
+                className="h-8 w-auto sm:h-10"
               />
               <span className="hidden h-9 w-px bg-white/15 sm:block" />
               {/* Unidade embaixo de "CRM" para não invadir o menu (Wilson, 21/out/2026). */}

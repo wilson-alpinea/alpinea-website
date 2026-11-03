@@ -29,10 +29,15 @@ export function salarioBaseHora(salario: string): number | null {
 
 export type PontoSalario = { id: string; codigo: string; empresa: string; cidade: string; regiao: string; setor: SetorKey; base: number };
 
-export const PONTOS_SALARIO: PontoSalario[] = VAGAS.flatMap((v) => {
-  const base = salarioBaseHora(v.salario);
-  return base === null ? [] : [{ id: v.id, codigo: v.codigo, empresa: v.empresa, cidade: v.cidade, regiao: v.regiao, setor: v.setor, base }];
-});
+// Recebe o catálogo para valer também com as edições do CRM (Wilson,
+// 03/nov/2026); as constantes abaixo são o catálogo do código.
+export function pontosSalario(vagas: Vaga[]): PontoSalario[] {
+  return vagas.flatMap((v) => {
+    const base = salarioBaseHora(v.salario);
+    return base === null ? [] : [{ id: v.id, codigo: v.codigo, empresa: v.empresa, cidade: v.cidade, regiao: v.regiao, setor: v.setor, base }];
+  });
+}
+export const PONTOS_SALARIO: PontoSalario[] = pontosSalario(VAGAS);
 
 export function mediana(valores: number[]): number {
   const o = [...valores].sort((a, b) => a - b);
@@ -62,7 +67,8 @@ export function notaFicha(vaga: Vaga): number {
   return itensFicha(vaga).filter((i) => i.ok).length;
 }
 
-export const MEDIA_NOTA_FICHA = VAGAS.reduce((s, v) => s + notaFicha(v), 0) / VAGAS.length;
+export const mediaNotaFicha = (vagas: Vaga[]) => (vagas.length ? vagas.reduce((s, v) => s + notaFicha(v), 0) / vagas.length : 0);
+export const MEDIA_NOTA_FICHA = mediaNotaFicha(VAGAS);
 
 export type AnaliseCalculada = {
   base: number | null;
@@ -82,11 +88,11 @@ export type AnaliseCalculada = {
 // extras, adicional noturno nem bônus — o piso do mês, não promessa.
 export const HORAS_MES_REFERENCIA = 160;
 
-export function analisarVaga(vaga: Vaga): AnaliseCalculada {
+export function analisarVaga(vaga: Vaga, pontos: PontoSalario[] = PONTOS_SALARIO): AnaliseCalculada {
   const base = salarioBaseHora(vaga.salario);
-  const doSetor = PONTOS_SALARIO.filter((p) => p.setor === vaga.setor && p.id !== vaga.id);
+  const doSetor = pontos.filter((p) => p.setor === vaga.setor && p.id !== vaga.id);
   const setorMediana = doSetor.length >= 3 ? mediana(doSetor.map((p) => p.base)) : null;
-  const outros = PONTOS_SALARIO.filter((p) => p.id !== vaga.id);
+  const outros = pontos.filter((p) => p.id !== vaga.id);
   return {
     base,
     setorNome: vaga.setor,

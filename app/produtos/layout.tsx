@@ -16,10 +16,12 @@ export const metadata: Metadata = {
     siteName: "Ajisai",
     images: [
       {
-        url: "/images/dashmobile-ajisai.jpg",
+        // Card próprio da página de produtos (Wilson, 03/nov/2026) — antes
+        // usava o print do painel de roteiro, que parecia link de roteiro.
+        url: "/images/og-produtos-ajisai.jpg",
         width: 1200,
         height: 630,
-        alt: "Painel do Roteiro Personalizado Ajisai",
+        alt: "Ajisai — Produtos e Preços para sua viagem ao Japão",
       },
     ],
     locale: "pt_BR",
@@ -30,7 +32,7 @@ export const metadata: Metadata = {
     title: "Ajisai | Produtos e Preços",
     description:
       "Compare os produtos Ajisai para sua viagem ao Japão e veja o preço de cada um.",
-    images: ["/images/dashmobile-ajisai.jpg"],
+    images: ["/images/og-produtos-ajisai.jpg"],
   },
 };
 

@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
-import { encontrarVaga } from "../../lib/vagasCatalogo";
 import { urlAposMatch } from "../../lib/testesAptidao";
-import { vagaEstaAtiva } from "../../../lib/empregos/vagasAtivas";
+import { vagaAtual, vagaEstaAtiva } from "../../../lib/empregos/vagasAtivas";
 import { calcularPontuacaoCandidatura, type RespostasTriagem } from "../../lib/candidaturaScoring";
 
 export const runtime = "nodejs";
@@ -19,7 +18,7 @@ export async function POST(req: Request) {
     const corpo = (await req.json().catch(() => null)) as { candidaturaId?: string; token?: string; vagaId?: string } | null;
     const candidaturaId = String(corpo?.candidaturaId ?? "").trim();
     const token = String(corpo?.token ?? "").trim();
-    const vaga = encontrarVaga(String(corpo?.vagaId ?? ""));
+    const vaga = await vagaAtual(String(corpo?.vagaId ?? "")); // com as edições do CRM
     if (!candidaturaId || !token || !vaga) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
     }

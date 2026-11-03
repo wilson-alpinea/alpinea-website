@@ -3,9 +3,8 @@ import { NextResponse } from "next/server";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
-import { encontrarVaga, VAGAS } from "../../lib/vagasCatalogo";
 import { urlAposMatch } from "../../lib/testesAptidao";
-import { idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
+import { catalogoVagas, idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
 import {
   calcularPontuacaoCandidatura,
   ASCENDENCIA_JAPONESA,
@@ -107,7 +106,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "E-mail inválido." }, { status: 400 });
     }
 
-    const vaga = encontrarVaga(vagaId);
+    // Catálogo com as edições do CRM (Wilson, 03/nov/2026).
+    const catalogo = await catalogoVagas();
+    const vaga = catalogo.find((v) => v.id === vagaId) ?? null;
     if (!vaga) {
       return NextResponse.json({ error: "Vaga não encontrada." }, { status: 400 });
     }
@@ -384,7 +385,7 @@ export async function POST(req: Request) {
     // Wilson, 06/out/2026.
     const sugestoes = resultado.aprovadoParaFoto
       ? []
-      : VAGAS.filter((v) => v.id !== vaga.id && !vagasInativas.has(v.id))
+      : catalogo.filter((v) => v.id !== vaga.id && !vagasInativas.has(v.id))
           .map((v) => ({
             v,
             r: calcularPontuacaoCandidatura({

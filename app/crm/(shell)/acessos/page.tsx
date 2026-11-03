@@ -4,7 +4,8 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { exigirSomenteAdmin as exigirAdmin } from "@/lib/crm/acesso";
 import { lerAcessoUsuarioParceiro, lerPermissoes, lerProdutosParceiro, lerRemuneracaoProdutos, lerUnidadesParceiro } from "@/lib/crm/permissoes";
-import { VAGAS, localVaga } from "@/app/lib/vagasCatalogo";
+import { localVaga } from "@/app/lib/vagasCatalogo";
+import { catalogoVagas } from "@/lib/empregos/vagasAtivas";
 import { AcessosPagina, type EmpresaAcesso, type UsuarioAcesso, type VagaAcesso, type Remuneracao } from "./AcessosPagina";
 
 // Acessos e permissões (Wilson, 21/out/2026; redesenho 23/out/2026).
@@ -55,7 +56,8 @@ export default async function AcessosPage() {
     remuneracao: remun(u),
   }));
   const vinculos: Record<string, string> = Object.fromEntries((rVinculos.data ?? []).map((v) => [v.vaga_id, v.parceiro_id]));
-  const vagas: VagaAcesso[] = VAGAS.map((v) => ({ id: v.id, titulo: v.titulo, codigo: v.codigo, empresa: v.empresa, local: localVaga(v) }));
+  // Com as edições do CRM (Wilson, 03/nov/2026).
+  const vagas: VagaAcesso[] = (await catalogoVagas()).map((v) => ({ id: v.id, titulo: v.titulo, codigo: v.codigo, empresa: v.empresa, local: localVaga(v) }));
 
   return (
     <Suspense fallback={null}>

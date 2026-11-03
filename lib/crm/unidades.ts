@@ -15,6 +15,12 @@ export const UNIDADE_CURTO: Record<UnidadeCrm, string> = { agencia: "Agência", 
 export const UNIDADE_COR: Record<UnidadeCrm, string> = { agencia: "#24476B", empregos: "#27675B", seguro: "#75608B", documentacao: "#8A5A3C", cambio: "#9A6B12" };
 export const isUnidadeCrm = (v: unknown): v is UnidadeCrm => v === "agencia" || v === "empregos" || v === "seguro" || v === "documentacao" || v === "cambio";
 // + despachante (Wilson, 29/out/2026): vê só os processos de Documentação atribuídos a ele, sem financeiro.
+// Site público (Wilson, 03/nov/2026): nos domínios de CRM o proxy manda
+// qualquer caminho fora de /crm para o início da unidade — link do CRM para
+// página do site precisa ser absoluto, senão cai de volta no CRM.
+export const SITE_PUBLICO = "https://www.alpinea.io";
+export const urlSite = (caminho: string) => `${SITE_PUBLICO}${caminho}`;
+
 export type PapelCrm = "admin" | "parceiro_agencia" | "empreiteira" | "despachante" | "consultor";
 
 export const isPapelCrm = (v: unknown): v is PapelCrm =>

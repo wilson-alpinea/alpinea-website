@@ -4,7 +4,7 @@ import { logout } from "./actions";
 // menu da equipe.
 
 // `crm`: selo com o CRM em que a pessoa está (Wilson, 29/out/2026).
-// `logo`: logo da empresa parceira, ao lado do da Alpinea (Wilson, 29/out/2026).
+// `logo`: logo da empresa parceira, ao lado do da Ajisai (Wilson, 29/out/2026).
 export function PortalShell({ titulo, empresa, usuario, crm, logo, children }: { titulo: string; empresa: string; usuario: string; crm?: { nome: string; cor: string }; logo?: string | null; children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#20252B]">
@@ -12,7 +12,7 @@ export function PortalShell({ titulo, empresa, usuario, crm, logo, children }: {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-10">
           <div className="flex min-w-0 items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/ajisai-group-white-crop.png" alt="Alpinea — Empresa do Grupo Ajisai" className="h-10 w-auto sm:h-12" />
+            <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-7 w-auto sm:h-9" />
             {logo && (
               <>
                 <span className="text-lg text-white/30" aria-hidden="true">×</span>

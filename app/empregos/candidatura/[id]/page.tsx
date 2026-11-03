@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { VAGAS, encontrarVaga } from "../../../lib/vagasCatalogo";
-import { vagaEstaAtiva } from "@/lib/empregos/vagasAtivas";
+import { VAGAS } from "../../../lib/vagasCatalogo";
+import { vagaAtual, vagaEstaAtiva } from "@/lib/empregos/vagasAtivas";
 import CheckoutCandidatura from "./CheckoutCandidatura";
 
 // Página de candidatura ("checkout") comum a todas as vagas — Wilson,
@@ -19,7 +19,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const vaga = encontrarVaga(id);
+  const vaga = await vagaAtual(id); // com as edições do CRM
   if (!vaga) return {};
   return {
     title: `Candidatura — ${vaga.empresa}, ${vaga.cidade} | Ajisai Empregos`,
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const vaga = encontrarVaga(id);
+  const vaga = await vagaAtual(id); // com as edições do CRM
   if (!vaga) notFound();
   const ativa = await vagaEstaAtiva(vaga.id);
   return <CheckoutCandidatura vaga={vaga} ativa={ativa} />;

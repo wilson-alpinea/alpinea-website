@@ -10,7 +10,8 @@
 // próprio".
 
 import { medirGoogleEmpregos, medirOpenAI } from "./PixelOpenAI";
-import { VAGAS, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { useCatalogoVagas } from "../lib/CatalogoVagasProvider";
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES_DETALHADOS,
@@ -975,11 +976,13 @@ function Marquee({ itens, estatico }: { itens: ItemMarquee[]; estatico?: boolean
 
 export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
   const router = useRouter();
+  // Catálogo com as edições do CRM (Wilson, 03/nov/2026).
+  const catalogo = useCatalogoVagas();
   // Vagas desligadas no CRM somem do catálogo (e das regiões do filtro).
   const vagasNoSite = useMemo(() => {
     const fora = new Set(inativas);
-    return VAGAS.filter((v) => !fora.has(v.id));
-  }, [inativas]);
+    return catalogo.filter((v) => !fora.has(v.id));
+  }, [inativas, catalogo]);
   const REGIOES = useMemo(
     () => Array.from(new Set(vagasNoSite.map((v) => v.regiao))).sort((a, b) => a.localeCompare(b, "pt-BR")),
     [vagasNoSite],
@@ -1091,7 +1094,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
     });
   }, [vagasNoSite, destaqueFiltro, publicoFiltro, setorFiltro, regioesFiltro]);
 
-  const vagasSelecionadas = VAGAS.filter((v) => selecionadas.has(v.id));
+  const vagasSelecionadas = catalogo.filter((v) => selecionadas.has(v.id));
 
   function mensagemCandidatura() {
     const linhas = [

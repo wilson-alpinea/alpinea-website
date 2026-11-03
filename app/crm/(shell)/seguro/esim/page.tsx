@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { exigirAdmin, donoObrigatorio } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { HOST_AGENCIA } from "@/lib/crm/unidades";
+import { HOST_AGENCIA, urlSite } from "@/lib/crm/unidades";
 
 // eSIM dentro do CRM de Seguro Viagem — "CRM de Seguro Viagem & eSIM"
 // (Wilson, 29/out/2026). Lê pedidos_esim (migração 024), um por celular.
@@ -76,7 +76,7 @@ export default async function EsimPage({ searchParams }: { searchParams: Promise
           </h1>
           <p className="mt-1 text-sm text-[#67626F]">Um pedido por celular. Depois do pagamento, o eSIM é emitido automaticamente na Simpremium.</p>
         </div>
-        <a href="/produtos/esim" target="_blank" rel="noreferrer" className="rounded-xl bg-[#75608B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#63507A]">
+        <a href={urlSite("/produtos/esim")} target="_blank" rel="noreferrer" className="rounded-xl bg-[#75608B] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#63507A]">
           Página do eSIM ↗
         </a>
       </div>
