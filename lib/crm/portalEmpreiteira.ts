@@ -105,6 +105,12 @@ async function montar(brutos: Bruto[]): Promise<CandidatoEmpreiteira[]> {
   });
 }
 
+// Consulta à parte para não quebrar o portal antes da migração 037 rodar.
+async function idsAnuladas(): Promise<Set<string>> {
+  const { data, error } = await createAdminClient().from("candidaturas_vagas").select("id").not("anulada_em", "is", null).limit(5000);
+  return new Set(error ? [] : (data ?? []).map((c) => c.id as string));
+}
+
 export async function candidatosDaEmpreiteira(parceiroId: string): Promise<CandidatoEmpreiteira[]> {
   const vagas = await vagasDaEmpreiteira(parceiroId);
   if (!vagas.length) return [];
@@ -115,7 +121,9 @@ export async function candidatosDaEmpreiteira(parceiroId: string): Promise<Candi
     .order("created_at", { ascending: false })
     .limit(3000);
   if (error) console.error("Erro ao carregar candidatos da empreiteira:", error);
-  return montar((data ?? []) as Bruto[]);
+  // Anuladas pela blacklist (migração 037) não aparecem para a empreiteira.
+  const anuladas = await idsAnuladas();
+  return montar(((data ?? []) as Bruto[]).filter((c) => !anuladas.has(c.id)));
 }
 
 export type DocumentoEmpreiteira = { chave: string; label: string };
@@ -133,7 +141,7 @@ export async function candidatoDaEmpreiteira(parceiroId: string, candidaturaId: 
     .eq("id", candidaturaId)
     .in("vaga_id", vagas)
     .maybeSingle();
-  if (!data) return null;
+  if (!data || (await idsAnuladas()).has(candidaturaId)) return null;
   const [base] = await montar([data as Bruto]);
   if (!base) return null;
 

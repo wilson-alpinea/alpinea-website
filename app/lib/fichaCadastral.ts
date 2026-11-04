@@ -895,7 +895,10 @@ export function pontosRevisarFicha(f: FichaCadastral): string[] {
 
 // Quem pode abrir a etapa 2: score >= 80 e não eliminado, ou liberado
 // manualmente pela equipe no CRM.
-export function fichaLiberada(c: { pontuacao: number | null; classificacao?: string | null; ficha_liberada?: boolean | null }) {
+export function fichaLiberada(c: { pontuacao: number | null; classificacao?: string | null; ficha_liberada?: boolean | null; anulada_em?: string | null }) {
+  // Candidatura anulada pela blacklist (migração 037) nunca avança — nem
+  // liberada à mão (Wilson, 04/nov/2026).
+  if (c.anulada_em) return false;
   if (c.ficha_liberada) return true;
   // Etapa 2 aberta para todo candidato não eliminado, qualquer nota
   // (Wilson, 15/out/2026). Eliminado só passa se a equipe liberar no CRM.

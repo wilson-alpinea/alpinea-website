@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { cpfDaFicha, camposCandidaturaAnulada, encontrarNaBlacklist } from "@/lib/empregos/blacklist";
+import { lerAndamentoManual } from "@/lib/crm/andamentoManual";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { FALTA_CPF_INVALIDO, fichaLiberada, linhasFicha, parseFicha, pendenciasFicha, pontosRevisarFicha } from "../../lib/fichaCadastral";
@@ -79,9 +81,18 @@ export async function POST(req: Request) {
     const revisar = Array.from(new Set([...revisarAnteriores, ...pontosRevisarFicha(ficha)]));
 
     const agora = new Date().toISOString();
+    // Blacklist pelo CPF (e demais dados) informado na ficha — migração 037.
+    // A ficha é gravada e a candidatura fica anulada; o candidato não é avisado.
+    const bloqueio = await encontrarNaBlacklist({ nome: c.nome, sobrenome: c.sobrenome, email: c.email, telefone: c.telefone, cpf: cpfDaFicha(ficha) }, supabase);
+    const extrasBlacklist: Record<string, unknown> = {};
+    if (bloqueio) {
+      const andamento = lerAndamentoManual(c.andamento_manual);
+      andamento.reclassificacoes.push({ em: agora, por: "sistema (blacklist)", de: c.classificacao ?? "", para: "eliminado", motivo: `Blacklist (${bloqueio.campo}): ${bloqueio.entrada.motivo}` });
+      Object.assign(extrasBlacklist, camposCandidaturaAnulada(bloqueio.entrada.id, (c.motivos_eliminacao ?? []) as string[]), { andamento_manual: andamento });
+    }
     const { error: erroUpdate } = await supabase
       .from("candidaturas_vagas")
-      .update({ ficha, ficha_enviada_em: agora, pontos_revisar: revisar, updated_at: agora })
+      .update({ ficha, ficha_enviada_em: agora, pontos_revisar: revisar, updated_at: agora, ...extrasBlacklist })
       .eq("id", candidaturaId);
     if (erroUpdate) {
       console.error("Erro ao gravar ficha (empregos-ficha):", erroUpdate);
@@ -102,7 +113,7 @@ export async function POST(req: Request) {
       ]),
     ].join("\n");
     await notificarPorEmail({
-      assunto: `[Candidatura] Ficha cadastral — ${c.vaga_titulo} — ${c.nome} ${c.sobrenome}`,
+      assunto: `[Candidatura${bloqueio ? ` — ANULADA (blacklist: ${bloqueio.campo})` : ""}] Ficha cadastral — ${c.vaga_titulo} — ${c.nome} ${c.sobrenome}`,
       texto,
       replyTo: c.email,
     });

@@ -7,6 +7,7 @@ const podeEditarEquipe = async () => {
 };
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PASTA_ANEXOS_EQUIPE, TIPOS_DOCUMENTO_CANDIDATO } from "@/lib/crm/empregos";
+import { lerAndamentoManual } from "@/lib/crm/andamentoManual";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -60,6 +61,10 @@ export async function POST(request: NextRequest) {
   const nomeLivre = String(form.get("nomeDocumento") ?? "").trim().slice(0, 60);
   if (tipo === "outros" && nomeLivre.length < 2) return voltar("Em “Outros”, digite o nome do documento.");
 
+  // Anotação curta do arquivo (Wilson, 04/nov/2026 — ex.: "visto vencido").
+  const anotacao = String(form.get("anotacao") ?? "").trim().slice(0, 80);
+  const enviados: string[] = [];
+
   const admin = createAdminClient();
   for (const [i, a] of arquivos.entries()) {
     const ext = (a.name.match(/\.[A-Za-z0-9]{1,6}$/)?.[0] ?? "").toLowerCase();
@@ -71,6 +76,17 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Erro ao anexar arquivo (crm/empregos/anexo):", error);
       return voltar("Não foi possível anexar o arquivo agora. Tente de novo.");
+    }
+    enviados.push(caminho);
+  }
+  if (anotacao && enviados.length) {
+    const { data: c } = await admin.from("candidaturas_vagas").select("andamento_manual").eq("id", id).maybeSingle();
+    if (c) {
+      const andamento = lerAndamentoManual(c.andamento_manual);
+      const em = new Date().toISOString();
+      for (const caminho of enviados) andamento.notasArquivos[caminho] = { em, por: user.email ?? "equipe", texto: anotacao };
+      const { error } = await admin.from("candidaturas_vagas").update({ andamento_manual: andamento }).eq("id", id);
+      if (error) console.error("Erro ao salvar anotação do anexo:", error.message);
     }
   }
   return voltar();

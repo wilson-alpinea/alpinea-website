@@ -26,10 +26,19 @@ export type ComentarioCandidatura = { em: string; por: string; texto: string; et
 // Reclassificação manual aprovado/eliminado (Wilson, 15/out/2026) — guarda
 // quem fez, quando e o motivo; a última entrada vale.
 export type Reclassificacao = { em: string; por: string; de: string; para: string; motivo: string };
+// Anotações gerais do candidato (Wilson, 04/nov/2026): thread livre que vai
+// somando observações (ex.: "visto saiu em tal data", preferências,
+// condição negociada). Só a equipe vê — não vai para o portal da empreiteira.
+export type AnotacaoGeral = { em: string; por: string; texto: string };
+// Anotação curta de um arquivo/foto (ex.: "visto vencido"), pela chave do
+// arquivo no storage (path).
+export type NotaArquivo = { em: string; por: string; texto: string };
 export type AndamentoManual = {
   etapas: Partial<Record<EtapaManualId, MarcaEtapa>>;
   comentarios: ComentarioCandidatura[];
   reclassificacoes: Reclassificacao[];
+  anotacoes: AnotacaoGeral[];
+  notasArquivos: Record<string, NotaArquivo>;
 };
 
 export function lerAndamentoManual(v: unknown): AndamentoManual {
@@ -38,6 +47,8 @@ export function lerAndamentoManual(v: unknown): AndamentoManual {
     etapas: o.etapas ?? {},
     comentarios: Array.isArray(o.comentarios) ? o.comentarios : [],
     reclassificacoes: Array.isArray(o.reclassificacoes) ? o.reclassificacoes : [],
+    anotacoes: Array.isArray(o.anotacoes) ? o.anotacoes : [],
+    notasArquivos: o.notasArquivos && typeof o.notasArquivos === "object" && !Array.isArray(o.notasArquivos) ? o.notasArquivos : {},
   };
 }
 

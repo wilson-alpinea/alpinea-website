@@ -20,6 +20,7 @@ const NAV_EMPREGOS = [
   { href: "/crm/empregos", label: "Candidatos" },
   { href: "/crm/empregos/agenda", label: "Agenda" },
   { href: "/crm/empregos/vagas", label: "Vagas" },
+  { href: "/crm/empregos/blacklist", label: "Blacklist" },
   { href: "/crm/acessos", label: "Acessos" },
   { href: "/crm/precos", label: "Preços" },
 ];

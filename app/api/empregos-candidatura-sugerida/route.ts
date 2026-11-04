@@ -31,6 +31,10 @@ export async function POST(req: Request) {
     if (!original || original.ficha_token !== token) {
       return NextResponse.json({ error: "Candidatura não encontrada." }, { status: 404 });
     }
+    // Candidatura anulada pela blacklist não gera outra (migração 037).
+    if (original.anulada_em) {
+      return NextResponse.json({ error: "Seu perfil não atingiu o mínimo para esta vaga." }, { status: 400 });
+    }
     if (original.vaga_id === vaga.id) {
       return NextResponse.json({ error: "Você já se candidatou a esta vaga." }, { status: 400 });
     }

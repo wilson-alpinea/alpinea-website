@@ -8,6 +8,17 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { atualizarCandidatura, liberarFichaCandidatura, reclassificarCandidatura, registrarAndamentoCandidatura, salvarEmbarqueCandidatura } from "@/app/crm/actions";
 import { MODELOS_ORIGINAIS } from "@/lib/empregos/valoresModelos";
+import {
+  adicionarAnotacaoGeral,
+  adicionarCandidatoBlacklist,
+  concluirFollowUp,
+  criarFollowUp,
+  excluirFollowUp,
+  salvarNotaArquivo,
+} from "@/app/crm/empregosExtrasActions";
+import { dataBR, diasAte, followUpsDaCandidatura, hojeSP, rotuloPrazo } from "@/lib/empregos/followups";
+import { cpfDaFicha, type EntradaBlacklist } from "@/lib/empregos/blacklist";
+import type { NotaArquivo } from "@/lib/crm/andamentoManual";
 import { ETAPAS_MANUAIS, dataHoraSP, lerAndamentoManual } from "@/lib/crm/andamentoManual";
 import { dataCurtaSP, linhaTempoCandidatura } from "@/lib/crm/linhaTempoCandidatura";
 import { fichaLiberada, linhasFicha, type FichaCadastral } from "@/app/lib/fichaCadastral";
@@ -34,6 +45,41 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 type Criterio = { label: string; pontosObtidos: number; pontosMaximos: number; detalhe: string };
+
+const CARTAO = "rounded-2xl border border-t-[3px] border-[#DEE6E2] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]";
+
+// Anotação curta de um arquivo/foto (Wilson, 04/nov/2026 — ex.: "visto
+// vencido"): mostra a anotação e um campo para incluir/editar/apagar.
+function NotaArquivoInline({ candidaturaId, chave, nota }: { candidaturaId: string; chave: string; nota?: NotaArquivo }) {
+  const salvar = salvarNotaArquivo.bind(null, candidaturaId, chave);
+  return (
+    <div className="mt-1">
+      {nota && (
+        <p className="inline-flex max-w-full rounded-md bg-[#FAF5EB] px-2 py-0.5 text-[12px] font-medium text-[#6E5430]" title={`${nota.por} · ${dataHoraSP(nota.em)}`}>
+          <span className="truncate">{nota.texto}</span>
+        </p>
+      )}
+      <details className="group">
+        <summary className="cursor-pointer list-none text-[12px] text-[#626E69] hover:text-[#27675B] [&::-webkit-details-marker]:hidden">
+          {nota ? "Editar anotação" : "+ Anotação"}
+        </summary>
+        <form action={salvar} className="mt-1 flex gap-1.5">
+          <input
+            name="nota"
+            maxLength={80}
+            defaultValue={nota?.texto ?? ""}
+            placeholder="Ex.: visto vencido"
+            className="min-w-0 flex-1 rounded-lg border border-black/15 px-2 py-1 text-[13px] text-[#20252B] outline-none focus:border-[#27675B]"
+          />
+          <button type="submit" className="rounded-lg border border-black/15 px-2.5 py-1 text-[12px] text-[#20252B] hover:border-black/40">
+            Salvar
+          </button>
+        </form>
+        {nota && <p className="mt-0.5 text-[11px] text-[#8A929B]">Deixe vazio e salve para apagar.</p>}
+      </details>
+    </div>
+  );
+}
 type ArquivoRef = { path?: string; nome?: string } | null | undefined;
 
 export default async function CandidatoPage({
@@ -65,19 +111,19 @@ export default async function CandidatoPage({
   const certificado = respostas.certificadoJapones as ArquivoRef;
   const certidao = respostas.certidaoAntecedentes as ArquivoRef;
 
-  const arquivos: { label: string; href: string }[] = [];
+  const arquivos: { label: string; href: string; path: string }[] = [];
   if (c.curriculo_path)
-    arquivos.push({ label: `Currículo${c.curriculo_nome_arquivo ? ` (${c.curriculo_nome_arquivo})` : ""}`, href: urlArquivoCandidato("curriculos-candidatos", c.curriculo_path) });
-  if (certificado?.path) arquivos.push({ label: "Certificado de japonês", href: urlArquivoCandidato("curriculos-candidatos", certificado.path) });
-  if (certidao?.path) arquivos.push({ label: "Certidão de antecedentes (PF)", href: urlArquivoCandidato("curriculos-candidatos", certidao.path) });
-  if (c.foto_path) arquivos.push({ label: "Foto", href: urlArquivoCandidato("fotos-candidatos", c.foto_path) });
+    arquivos.push({ label: `Currículo${c.curriculo_nome_arquivo ? ` (${c.curriculo_nome_arquivo})` : ""}`, href: urlArquivoCandidato("curriculos-candidatos", c.curriculo_path), path: c.curriculo_path });
+  if (certificado?.path) arquivos.push({ label: "Certificado de japonês", href: urlArquivoCandidato("curriculos-candidatos", certificado.path), path: certificado.path });
+  if (certidao?.path) arquivos.push({ label: "Certidão de antecedentes (PF)", href: urlArquivoCandidato("curriculos-candidatos", certidao.path), path: certidao.path });
+  if (c.foto_path) arquivos.push({ label: "Foto", href: urlArquivoCandidato("fotos-candidatos", c.foto_path), path: c.foto_path });
   // Anexos manuais da equipe (Wilson, 15/out/2026) — listados pelo prefixo
   // do id da candidatura na pasta anexos-equipe/.
   const { data: anexosEquipe } = await createAdminClient()
     .storage.from("curriculos-candidatos")
     .list(PASTA_ANEXOS_EQUIPE, { search: `${id}__`, limit: 100, sortBy: { column: "created_at", order: "asc" } });
   // Documentos anexados pela equipe, agrupados pelo tipo escolhido no menu.
-  const documentos: { tipo: string; nome: string; href: string }[] = [];
+  const documentos: { tipo: string; nome: string; href: string; path: string }[] = [];
   for (const a of anexosEquipe ?? []) {
     if (!a.name.startsWith(`${id}__`)) continue;
     const partes = a.name.split("__");
@@ -86,6 +132,7 @@ export default async function CandidatoPage({
       tipo: temTipo ? partes[2] : "outros",
       nome: ((temTipo ? partes.slice(3) : partes.slice(2)).join("__") || a.name).replace(/_/g, " "),
       href: urlArquivoCandidato("curriculos-candidatos", `${PASTA_ANEXOS_EQUIPE}/${a.name}`),
+      path: `${PASTA_ANEXOS_EQUIPE}/${a.name}`,
     });
   }
 
@@ -117,6 +164,24 @@ export default async function CandidatoPage({
   const reclassificacao = andamento.reclassificacoes.at(-1);
   const eliminadoAgora = classificacao === "eliminado";
   const alternarLiberacao = liberarFichaCandidatura.bind(null, id, !c.ficha_liberada);
+
+  // Anotações gerais, follow-ups e blacklist (Wilson, 04/nov/2026 — migração 037).
+  const notasArquivos = andamento.notasArquivos;
+  const anotacoes = [...andamento.anotacoes].reverse();
+  const salvarAnotacao = adicionarAnotacaoGeral.bind(null, id);
+  const followUps = await followUpsDaCandidatura(id);
+  const followUpsPendentes = (followUps ?? []).filter((f) => !f.concluido_em);
+  const followUpsConcluidos = (followUps ?? []).filter((f) => f.concluido_em).slice(-5).reverse();
+  const agendarFollowUp = criarFollowUp.bind(null, id);
+  const hoje = hojeSP();
+  let entradaBlacklist: EntradaBlacklist | null = null;
+  if (c.blacklist_id) {
+    const { data } = await createAdminClient().from("empregos_blacklist").select("*").eq("id", c.blacklist_id).maybeSingle();
+    entradaBlacklist = (data as EntradaBlacklist | null) ?? null;
+  }
+  const anulada = Boolean(c.anulada_em);
+  const cpfCandidato = cpfDaFicha(c.ficha);
+  const incluirBlacklist = adicionarCandidatoBlacklist.bind(null, id);
 
   return (
     <div>
@@ -155,6 +220,24 @@ export default async function CandidatoPage({
           </div>
         )}
       </div>
+      {c.foto_path && (
+        <div className="ml-auto mt-1 w-[180px] max-w-full text-right [&_form]:justify-end [&_summary]:text-right">
+          <NotaArquivoInline candidaturaId={id} chave={c.foto_path} nota={notasArquivos[c.foto_path]} />
+        </div>
+      )}
+
+      {/* Candidatura anulada pela blacklist (migração 037). */}
+      {anulada && (
+        <div className="mt-4 rounded-xl border border-[#B42318]/25 bg-[#FDECEA] px-4 py-3 text-sm text-[#7A1A12]">
+          <p className="font-semibold text-[#B42318]">Candidatura anulada — candidato na blacklist</p>
+          <p className="mt-0.5">
+            {entradaBlacklist ? `Motivo: ${entradaBlacklist.motivo} · incluído por ${entradaBlacklist.created_by_email ?? "equipe"} em ${dataHoraSP(entradaBlacklist.created_at)}` : "Não é processada como ativa nem avança de etapa."}{" "}
+            <Link href="/crm/empregos/blacklist" className="font-medium underline underline-offset-2">
+              Ver blacklist
+            </Link>
+          </p>
+        </div>
+      )}
 
       <div className="mt-6">
         <CardsCandidatura
@@ -173,6 +256,44 @@ export default async function CandidatoPage({
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">
+          {/* Anotações gerais — thread livre (Wilson, 04/nov/2026). */}
+          <section id="anotacoes" className={`scroll-mt-28 ${CARTAO} border-t-[#93703D]`}>
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="text-[#202B28]">Anotações gerais</h2>
+              <span className="text-[13px] tabular-nums text-[#626E69]">
+                {anotacoes.length} {anotacoes.length === 1 ? "anotação" : "anotações"}
+              </span>
+            </div>
+            <p className="mt-1 text-[13px] text-[#626B75]">Observações livres sobre o candidato — só a equipe vê.</p>
+            <form action={salvarAnotacao} className="mt-3 space-y-2">
+              <textarea
+                name="texto"
+                required
+                rows={3}
+                maxLength={4000}
+                placeholder="Ex.: visto saiu em 12/11; prefere Aichi; condição negociada: passagem descontada em 6x"
+                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#27675B]"
+              />
+              <div className="flex justify-end">
+                <button type="submit" className="rounded-xl bg-[#27675B] px-4 py-2 text-sm font-medium text-white hover:bg-[#20564C]">
+                  Adicionar anotação
+                </button>
+              </div>
+            </form>
+            {anotacoes.length > 0 && (
+              <ul className="mt-4 space-y-3 border-t border-black/10 pt-4">
+                {anotacoes.map((a, i) => (
+                  <li key={`${a.em}-${i}`} className="border-l-2 border-[#93703D]/40 pl-3">
+                    <p className="whitespace-pre-wrap text-sm text-[#20252B]">{a.texto}</p>
+                    <p className="mt-0.5 text-[12px] tabular-nums text-[#626B75]">
+                      {dataHoraSP(a.em)} · {a.por}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
           {motivos.length > 0 && (
             <section className="rounded-2xl border border-t-[3px] border-[#B42318]/20 border-t-[#B42318] bg-[#FDECEA] p-5">
               <h2 className="text-[#B42318]">
@@ -317,6 +438,86 @@ export default async function CandidatoPage({
         </div>
 
         <aside className="space-y-6">
+          {/* Follow-ups manuais (Wilson, 04/nov/2026): na data aparece alerta no
+              sino do CRM de Empregos e sai e-mail para a equipe. */}
+          <section id="followup" className={`scroll-mt-28 ${CARTAO} border-t-[#B42318]/70`}>
+            <h2 className="text-[#202B28]">Follow-up</h2>
+            {followUps === null ? (
+              <p className="mt-2 text-[13px] text-amber-700">Rode a migração 037 no Supabase para usar os follow-ups.</p>
+            ) : (
+              <>
+                {followUpsPendentes.length === 0 ? (
+                  <p className="mt-1 text-[13px] text-[#626B75]">Nenhum follow-up agendado.</p>
+                ) : (
+                  <ul className="mt-3 space-y-2.5">
+                    {followUpsPendentes.map((f) => {
+                      const vencido = diasAte(f.data_alvo) <= 0;
+                      return (
+                        <li key={f.id} className={`rounded-xl border px-3 py-2.5 ${vencido ? "border-[#B42318]/30 bg-[#FDF3F2]" : "border-black/10"}`}>
+                          <p className="text-sm font-medium tabular-nums text-[#20252B]">
+                            {dataBR(f.data_alvo)} <span className={`font-normal ${vencido ? "text-[#B42318]" : "text-[#626B75]"}`}>· {rotuloPrazo(f.data_alvo)}</span>
+                          </p>
+                          {f.nota && <p className="mt-0.5 whitespace-pre-wrap text-[13px] text-[#20252B]">{f.nota}</p>}
+                          <p className="mt-0.5 text-[12px] text-[#626B75]">por {f.created_by_email ?? "equipe"}{f.email_enviado_em ? " · e-mail enviado" : ""}</p>
+                          <div className="mt-2 flex gap-2">
+                            <form action={concluirFollowUp.bind(null, id, f.id)}>
+                              <button type="submit" className="rounded-lg bg-[#27675B] px-3 py-1 text-[12px] font-medium text-white hover:bg-[#20564C]">
+                                Concluir
+                              </button>
+                            </form>
+                            <form action={excluirFollowUp.bind(null, id, f.id)}>
+                              <button type="submit" className="rounded-lg border border-black/15 px-3 py-1 text-[12px] text-[#626B75] hover:border-black/40">
+                                Excluir
+                              </button>
+                            </form>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                <form action={agendarFollowUp} className="mt-4 space-y-2 border-t border-black/10 pt-4">
+                  <p className="text-[13px] text-[#626B75]">Agendar follow-up</p>
+                  <div className="flex flex-wrap items-end gap-2">
+                    <label className="w-[92px]">
+                      <span className="text-[12px] text-[#626B75]">Em (dias)</span>
+                      <input type="number" name="dias" min={1} max={730} placeholder="20" className="mt-0.5 block w-full rounded-lg border border-black/15 px-2.5 py-1.5 text-sm" />
+                    </label>
+                    <span className="pb-2 text-[12px] text-[#8A929B]">ou</span>
+                    <label className="min-w-0 flex-1">
+                      <span className="text-[12px] text-[#626B75]">Data</span>
+                      <input type="date" name="data" min={hoje} className="mt-0.5 block w-full rounded-lg border border-black/15 px-2.5 py-1.5 text-sm" />
+                    </label>
+                  </div>
+                  <textarea
+                    name="nota"
+                    rows={2}
+                    maxLength={500}
+                    placeholder="O que fazer (ex.: confirmar se o visto saiu)"
+                    className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#27675B]"
+                  />
+                  <button type="submit" className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white hover:bg-[#1C3A5E]/90">
+                    Agendar
+                  </button>
+                  <p className="text-[12px] text-[#626B75]">Na data, aparece no sino do CRM e vai por e-mail para {"a equipe"} e para quem agendou.</p>
+                </form>
+                {followUpsConcluidos.length > 0 && (
+                  <div className="mt-4 border-t border-black/10 pt-3">
+                    <p className="text-[12px] text-[#626B75]">Concluídos recentemente</p>
+                    <ul className="mt-1 space-y-1 text-[12px] text-[#626B75]">
+                      {followUpsConcluidos.map((f) => (
+                        <li key={f.id}>
+                          <span className="tabular-nums">{dataBR(f.data_alvo)}</span>
+                          {f.nota ? ` — ${f.nota}` : ""} · ✓ {f.concluido_por ?? "equipe"}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+
           <section id="andamento" className="scroll-mt-28 rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#27675B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
             <h2 className="text-[#202B28]">Andamento</h2>
             <span className="mt-2 inline-block rounded-full px-2.5 py-0.5 text-[13px]" style={{ color: progresso.cor, background: `${progresso.cor}14` }}>
@@ -587,6 +788,7 @@ export default async function CandidatoPage({
                     <a href={a.href} target="_blank" rel="noopener noreferrer" className="text-[#1C3A5E] underline underline-offset-2">
                       {a.label}
                     </a>
+                    <NotaArquivoInline candidaturaId={id} chave={a.path} nota={notasArquivos[a.path]} />
                   </li>
                 ))}
               </ul>
@@ -608,9 +810,12 @@ export default async function CandidatoPage({
                     <div className="min-w-0">
                       <p className={docs.length ? "text-[#20252B]" : "text-[#626B75]"}>{t.label}</p>
                       {docs.map((d) => (
-                        <a key={d.href} href={d.href} target="_blank" rel="noopener noreferrer" className="block truncate text-[13px] text-[#1C3A5E] underline underline-offset-2">
-                          {d.nome}
-                        </a>
+                        <div key={d.href} className="mt-0.5">
+                          <a href={d.href} target="_blank" rel="noopener noreferrer" className="block truncate text-[13px] text-[#1C3A5E] underline underline-offset-2">
+                            {d.nome}
+                          </a>
+                          <NotaArquivoInline candidaturaId={id} chave={d.path} nota={notasArquivos[d.path]} />
+                        </div>
                       ))}
                     </div>
                   </li>
@@ -643,6 +848,15 @@ export default async function CandidatoPage({
                 placeholder="Ex.: Comprovante de residência"
                 className="mt-1 w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
               />
+              <label className="mt-2 block text-[13px] text-[#626B75]" htmlFor="anotacao-doc">
+                Anotação curta <span className="text-[#8A929B]">(opcional — ex.: visto vencido)</span>
+              </label>
+              <input
+                id="anotacao-doc"
+                name="anotacao"
+                maxLength={80}
+                className="mt-1 w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
+              />
               <input
                 type="file"
                 name="arquivo"
@@ -655,6 +869,57 @@ export default async function CandidatoPage({
                 Anexar
               </button>
             </form>
+          </section>
+
+          {/* Blacklist (Wilson, 04/nov/2026 — migração 037). */}
+          <section id="blacklist" className={`scroll-mt-28 ${CARTAO} border-t-[#20252B]`}>
+            <h2 className="text-[#202B28]">Blacklist</h2>
+            {anulada ? (
+              <p className="mt-2 text-[13px] text-[#626B75]">
+                Este candidato já está na blacklist. Para tirar, use a{" "}
+                <Link href="/crm/empregos/blacklist" className="text-[#1C3A5E] underline underline-offset-2">
+                  página da blacklist
+                </Link>
+                .
+              </p>
+            ) : (
+              <details className="mt-1">
+                <summary className="cursor-pointer text-[13px] text-[#626B75] hover:text-[#B42318]">Adicionar este candidato à blacklist</summary>
+                <form action={incluirBlacklist} className="mt-3 space-y-2 text-[13px] text-[#20252B]">
+                  <p className="text-[#626B75]">Bloquear pelos dados:</p>
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" name="usar_nome" value="1" defaultChecked /> Nome completo ({c.nome} {c.sobrenome})
+                  </label>
+                  {cpfCandidato && (
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" name="usar_cpf" value="1" defaultChecked /> CPF da ficha
+                    </label>
+                  )}
+                  {c.email && (
+                    <label className="flex items-center gap-2 break-all">
+                      <input type="checkbox" name="usar_email" value="1" defaultChecked /> E-mail ({c.email})
+                    </label>
+                  )}
+                  {c.telefone && (
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" name="usar_telefone" value="1" defaultChecked /> Telefone ({c.telefone})
+                    </label>
+                  )}
+                  <textarea
+                    name="motivo"
+                    required
+                    rows={2}
+                    maxLength={1000}
+                    placeholder="Motivo (obrigatório)"
+                    className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm outline-none focus:border-[#B42318]"
+                  />
+                  <button type="submit" className="w-full rounded-xl bg-[#B42318] px-4 py-2 text-sm font-medium text-white hover:bg-[#9A1E14]">
+                    Adicionar à blacklist
+                  </button>
+                  <p className="text-[12px] text-[#626B75]">Anula esta e as demais candidaturas que baterem com esses dados, e as próximas que chegarem.</p>
+                </form>
+              </details>
+            )}
           </section>
         </aside>
       </div>

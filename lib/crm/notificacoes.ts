@@ -4,6 +4,8 @@ import { ESTAGIO_ENTREGA_LABEL } from "./estagiosEntrega";
 import { ehRegistroTeste, ehSelfService } from "./origem";
 import type { Estagio, EstagioEntrega } from "./types";
 import { nfPendentes } from "./notasFiscais";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { followUpsVencidos, rotuloPrazo } from "@/lib/empregos/followups";
 
 // Notificações do CRM (Wilson, 22/out/2026): novos clientes/propostas,
 // propostas enviadas, mudanças de etapa, propostas anexadas e pagamentos.
@@ -135,6 +137,8 @@ export async function carregarNotificacoesUnidade(
     if (rc.error) return { erro: true };
     const nomes = new Map<string, string>();
     for (const c of rc.data ?? []) {
+      // Anulada pela blacklist (migração 037) não gera notificação.
+      if (c.anulada_em) continue;
       const nome = `${c.nome ?? ""} ${c.sobrenome ?? ""}`.trim() || "Candidato";
       nomes.set(c.id, nome);
       const base = { clienteId: c.id, clienteNome: nome, href: `/crm/empregos/${c.id}` };
@@ -211,5 +215,21 @@ export async function carregarNotificacoesUnidade(
     }
   }
 
-  return fecharLista(lista, lidasEm, await nfPendentes(unidade));
+  // Follow-ups vencidos (migração 037): alerta fixo no topo até ser concluído
+  // na tela do candidato.
+  const fixosFollowUp: Notificacao[] =
+    unidade === "empregos"
+      ? (await followUpsVencidos(createAdminClient())).map((f) => ({
+          id: `fu-${f.id}`,
+          tipo: "alerta",
+          titulo: `Follow-up ${rotuloPrazo(f.data_alvo)}`,
+          detalhe: f.nota || f.vaga || null,
+          clienteId: f.candidatura_id,
+          clienteNome: f.nome,
+          href: `/crm/empregos/${f.candidatura_id}#followup`,
+          quando: `${f.data_alvo}T11:00:00.000Z`,
+          lida: false,
+        }))
+      : [];
+  return fecharLista(lista, lidasEm, [...fixosFollowUp, ...(await nfPendentes(unidade))]);
 }

@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { urlAposMatch } from "../../lib/testesAptidao";
 import { catalogoVagas, idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
+import { camposCandidaturaAnulada, encontrarNaBlacklist } from "../../../lib/empregos/blacklist";
 import {
   calcularPontuacaoCandidatura,
   ASCENDENCIA_JAPONESA,
@@ -236,6 +237,12 @@ export async function POST(req: Request) {
       respostas,
     });
 
+    // Blacklist (migração 037 — Wilson, 04/nov/2026): candidatura de quem
+    // está na lista é gravada já anulada. O candidato vê a mesma resposta de
+    // um perfil não aprovado (sem ficha nem sugestões).
+    const bloqueio = await encontrarNaBlacklist({ nome, sobrenome, email, telefone }, supabase);
+    const aprovado = !bloqueio && resultado.aprovadoParaFoto;
+
     const dadosCandidatura: Record<string, unknown> = {
         vaga_id: vaga.id,
         vaga_titulo: vaga.titulo,
@@ -258,6 +265,7 @@ export async function POST(req: Request) {
         classificacao: resultado.classificacao,
         motivos_eliminacao: resultado.motivosEliminacao,
         pontos_revisar: resultado.pontosRevisar,
+        ...(bloqueio ? camposCandidaturaAnulada(bloqueio.entrada.id, resultado.motivosEliminacao) : {}),
       };
 
     // Se o banco estiver sem alguma coluna (migração ainda não rodada no
@@ -374,7 +382,7 @@ export async function POST(req: Request) {
     ].join("\n");
 
     await notificarPorEmail({
-      assunto: `[Candidatura${resultado.eliminado ? " — ELIMINADO" : ""}] ${vaga.titulo} — ${nome} ${sobrenome} (${resultado.pontuacao}%)`,
+      assunto: `[Candidatura${bloqueio ? ` — ANULADA (blacklist: ${bloqueio.campo})` : resultado.eliminado ? " — ELIMINADO" : ""}] ${vaga.titulo} — ${nome} ${sobrenome} (${resultado.pontuacao}%)`,
       texto: resumoTexto,
       html: `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${resumoTexto}</pre>`,
       replyTo: email,
@@ -383,7 +391,7 @@ export async function POST(req: Request) {
     // Não passou nesta vaga? Sugere até 3 outras vagas em que o MESMO
     // perfil + currículo passaria (score >= 80 e sem eliminatória) —
     // Wilson, 06/out/2026.
-    const sugestoes = resultado.aprovadoParaFoto
+    const sugestoes = resultado.aprovadoParaFoto || bloqueio
       ? []
       : catalogo.filter((v) => v.id !== vaga.id && !vagasInativas.has(v.id))
           .map((v) => ({
@@ -419,12 +427,12 @@ export async function POST(req: Request) {
       // Etapa 2 — ficha cadastral (só quando passou: score >= 80 e não
       // eliminado). Vagas com testes de aptidão passam antes pelos testes.
       fichaUrl:
-        resultado.aprovadoParaFoto && candidatura.ficha_token
+        aprovado && candidatura.ficha_token
           ? urlAposMatch(vagaId, candidatura.id, candidatura.ficha_token)
           : null,
       // Pontuação e critérios não vão para o navegador do candidato
       // (Wilson, 15/out/2026) — ficam só no banco/CRM e no e-mail da equipe.
-      aprovadoParaFoto: resultado.aprovadoParaFoto,
+      aprovadoParaFoto: aprovado,
     });
   } catch (error) {
     console.error("Erro na candidatura de vaga:", error);
