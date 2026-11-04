@@ -232,9 +232,9 @@ export default function AprovacaoRoteiroPage() {
           </div>
           <a
             href="https://www.alpinea.io/produtos/roteiro-personalizado"
-            className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-[13px] text-white/70 transition hover:border-white/40 hover:text-white"
+            className="shrink-0 rounded-full bg-[#2F80C9] px-5 py-2 text-[14px] font-semibold text-white shadow-[0_6px_18px_-6px_rgba(47,128,201,0.7)] transition hover:bg-[#3B8FDB] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
           >
-            Quero meu roteiro
+            Quero meu roteiro →
           </a>
         </div>
       </header>
