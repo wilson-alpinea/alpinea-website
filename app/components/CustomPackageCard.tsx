@@ -1044,11 +1044,10 @@ export const DIARIA_CONCIERGE_USD = comMargemEImposto(35);
 // é replicada aqui porque o pacote já cobra sua própria taxa de grupo
 // (TAXA_POR_PASSAGEIRO_EXTRA, abaixo) sobre o total — duplicar cobraria
 // duas vezes pelo mesmo grupo grande. Preço final já com imposto+margem
-// (o produto standalone em /ajisairoteiros não foi alterado por este
-// pedido, que era específico do calculador do Personalizado).
-export const ROTEIRO_BASE_DIAS = 15;
-export const ROTEIRO_PRECO_BASE = comMargemEImposto(1500);
-export const ROTEIRO_PRECO_DIA_EXTRA = comMargemEImposto(120);
+// Desde 03/nov/2026 o roteiro avulso usa este mesmo preço — fonte única
+// em app/lib/precoRoteiro.ts.
+import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA } from "../lib/precoRoteiro";
+export { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA };
 
 // Aéreo: Economy segue o valor de referência original (nativo em reais,
 // como todo o resto do calculador). Business é o valor exato que você

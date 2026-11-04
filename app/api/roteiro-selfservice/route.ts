@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA } from "../../lib/precoRoteiro";
 import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
@@ -62,9 +63,9 @@ const inteiro = (v: unknown, min: number, max: number) => Math.max(min, Math.min
 
 // Mesma regra de app/components/PriceCalculator.tsx (recalculada aqui para o
 // CRM não depender do valor vindo do navegador).
-const BASE_DIAS = 15;
-const PRECO_BASE = 2100; // Wilson, 03/nov/2026 (antes 1500)
-const PRECO_DIA_EXTRA = 120;
+const BASE_DIAS = ROTEIRO_BASE_DIAS;
+const PRECO_BASE = ROTEIRO_PRECO_BASE; // fonte única: app/lib/precoRoteiro.ts
+const PRECO_DIA_EXTRA = ROTEIRO_PRECO_DIA_EXTRA;
 const PESSOAS_SEM_TAXA = 3;
 const TAXA_USD_A_CADA_2 = 80;
 

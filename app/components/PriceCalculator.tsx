@@ -5,16 +5,18 @@ import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "./ContactCTA";
 import { useCambioUSD, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
+import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA } from "../lib/precoRoteiro";
 
 const display = bodoniModa;
 
 // Exportado também para /produtos/roteiro-personalizado (03/nov/2026).
-// Mesma regra usada no texto "Roteiros de até 15 dias, a partir de R$ 2.100":
+// Regra do texto "Roteiros de até 15 dias, a partir de …":
 // preço-base fixo até 15 dias, + valor por dia extra acima disso.
-export const BASE_DAYS = 15;
-// R$ 2.100 até 15 dias (Wilson, 03/nov/2026 — antes R$ 1.500).
-export const BASE_PRICE = 2100;
-export const EXTRA_DAY_PRICE = 120;
+// Mesmo preço do roteiro dentro da Viagem Personalizada (Wilson, 03/nov/2026:
+// "usar o mesmo valor para ambos, usar o maior valor") — app/lib/precoRoteiro.ts.
+export const BASE_DAYS = ROTEIRO_BASE_DIAS;
+export const BASE_PRICE = ROTEIRO_PRECO_BASE;
+export const EXTRA_DAY_PRICE = ROTEIRO_PRECO_DIA_EXTRA;
 export const MIN_DAYS = 5;
 export const MAX_DAYS = 45;
 

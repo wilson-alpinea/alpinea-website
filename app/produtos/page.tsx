@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { bodoniModa } from "@/app/fonts/bodoni";
+import { ROTEIRO_PRECO_BASE } from "../lib/precoRoteiro";
 import {
   useCambioUSD,
   brlParaUSDLabel,
@@ -51,7 +52,7 @@ const PRODUTOS: Record<
 > = {
   roteiro: {
     nome: "Roteiro Personalizado",
-    precoBRL: 2100, // Wilson, 03/nov/2026 (antes 1500)
+    precoBRL: ROTEIRO_PRECO_BASE, // app/lib/precoRoteiro.ts
     href: "/ajisairoteiros",
   },
   caravana: {

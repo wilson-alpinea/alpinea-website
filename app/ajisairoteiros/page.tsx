@@ -4,6 +4,8 @@ import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
 import { PriceCalculator } from "../components/PriceCalculator";
+import { ROTEIRO_PRECO_BASE } from "../lib/precoRoteiro";
+import { formatBRL } from "../lib/currency";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = bodoniModa;
@@ -1223,7 +1225,7 @@ export default function RoteirosAdsPage() {
             <p
               className={`${display.className} mt-2 text-6xl font-medium leading-none text-[#b79ce6] md:text-8xl`}
             >
-              R$ 2.100
+              {formatBRL(ROTEIRO_PRECO_BASE).replace(/,00$/, "")}
             </p>
 
             <PriceCalculator />
