@@ -1928,7 +1928,7 @@ const DAY_7: DayContent = {
 
 const CHEGADA: DayContent = {
   day: 0,
-  badge: "DXB-NRT",
+  badge: "FRA-HND",
   city: "Chegada",
   date: "04 Mai",
   travel: true,
@@ -1937,7 +1937,7 @@ const CHEGADA: DayContent = {
 
 const PARTIDA: DayContent = {
   day: 8,
-  badge: "HND-DXB",
+  badge: "HND-FRA",
   city: "Partida",
   date: "12 Mai",
   travel: true,
@@ -1978,6 +1978,17 @@ const DAYS: DayContent[] = [
   DAY_2,
   PARTIDA,
 ];
+
+// Círculo colorido por cidade no menu de dias (Wilson, 04/nov/2026: "mudar
+// as dragonballs por círculos coloridos").
+const COR_CIDADE: Record<string, [string, string]> = {
+  Tokyo: ["#5AA6E6", "#1C6EA8"],
+  Kyoto: ["#E39A68", "#B96432"],
+};
+function corCidade(cidade: string) {
+  const [claro, escuro] = COR_CIDADE[cidade] ?? ["#8FA3B8", "#4A6178"];
+  return `radial-gradient(circle at 35% 30%, ${claro} 0%, ${escuro} 75%)`;
+}
 
 // Demonstração (Wilson, 04/nov/2026): só o Dia 1 (Tokyo) e o Dia 4 (Kyoto)
 // têm conteúdo; os outros aparecem no menu com cadeado.
@@ -3944,12 +3955,9 @@ function TransporteHanedaTokyoBlock() {
 }
 
 // =============================================================================
-// Passagem Aérea — dados reais extraídos diretamente dos e-tickets Emirates
-// enviados pelo cliente (bilhete do cliente). Nenhum dado abaixo foi
-// inventado: cada campo (código IATA, voo, terminal, data, horário) veio de
-// uma captura de tela real da Emirates. Confirmado: a ida chega em Tóquio
-// por Narita (NRT) e a volta embarca por Haneda (HND) — dois aeroportos
-// diferentes na mesma cidade, exatamente como o bilhete real mostra.
+// Passagem Aérea — DEMONSTRAÇÃO (Wilson, 04/nov/2026: "em vez de emirates,
+// use um voo da Lufthansa genérico"). Voos e horários ilustrativos, via
+// Frankfurt, chegando e saindo por Haneda — não é a reserva de nenhum cliente.
 // =============================================================================
 
 type PassagemSegmento = {
@@ -3963,59 +3971,52 @@ type PassagemSegmento = {
   bagagem: string;
 };
 
-// Número do bilhete NÃO é armazenado nem exibido aqui — é dado confidencial
-// do cliente e não deve constar no painel.
-
 const PASSAGEM_IDA: PassagemSegmento[] = [
   {
     numeroSegmento: "1 de 4",
-    voo: "EK 262",
-    classe: "Economy Saver",
+    voo: "LH 507",
+    classe: "Economy",
     origem: { iata: "GRU", cidade: "São Paulo", terminal: "3" },
-    destino: { iata: "DXB", cidade: "Dubai", terminal: "3" },
-    partida: { data: "03 Mai 2027", hora: "01:35" },
-    chegada: { data: "03 Mai 2027", hora: "23:00" },
-    bagagem: "2 peças",
+    destino: { iata: "FRA", cidade: "Frankfurt", terminal: "1" },
+    partida: { data: "02 Mai 2027", hora: "18:10" },
+    chegada: { data: "03 Mai 2027", hora: "10:40" },
+    bagagem: "1 peça",
   },
   {
     numeroSegmento: "2 de 4",
-    voo: "EK 318",
-    classe: "Economy Saver",
-    origem: { iata: "DXB", cidade: "Dubai", terminal: "3" },
-    destino: { iata: "NRT", cidade: "Tóquio", terminal: "2" },
-    partida: { data: "04 Mai 2027", hora: "02:40" },
-    chegada: { data: "04 Mai 2027", hora: "17:35" },
-    bagagem: "2 peças",
+    voo: "LH 716",
+    classe: "Economy",
+    origem: { iata: "FRA", cidade: "Frankfurt", terminal: "1" },
+    destino: { iata: "HND", cidade: "Tóquio", terminal: "3" },
+    partida: { data: "03 Mai 2027", hora: "17:45" },
+    chegada: { data: "04 Mai 2027", hora: "13:30" },
+    bagagem: "1 peça",
   },
 ];
 
 const PASSAGEM_VOLTA: PassagemSegmento[] = [
   {
     numeroSegmento: "3 de 4",
-    voo: "EK 313",
-    classe: "Economy Saver",
+    voo: "LH 717",
+    classe: "Economy",
     origem: { iata: "HND", cidade: "Tóquio", terminal: "3" },
-    destino: { iata: "DXB", cidade: "Dubai", terminal: "3" },
-    partida: { data: "12 Mai 2027", hora: "00:05" },
-    chegada: { data: "12 Mai 2027", hora: "06:25" },
-    bagagem: "2 peças",
+    destino: { iata: "FRA", cidade: "Frankfurt", terminal: "1" },
+    partida: { data: "12 Mai 2027", hora: "08:00" },
+    chegada: { data: "12 Mai 2027", hora: "14:55" },
+    bagagem: "1 peça",
   },
   {
     numeroSegmento: "4 de 4",
-    voo: "EK 261",
-    classe: "Economy Saver",
-    origem: { iata: "DXB", cidade: "Dubai", terminal: "3" },
+    voo: "LH 506",
+    classe: "Economy",
+    origem: { iata: "FRA", cidade: "Frankfurt", terminal: "1" },
     destino: { iata: "GRU", cidade: "São Paulo", terminal: "3" },
-    partida: { data: "12 Mai 2027", hora: "09:05" },
-    chegada: { data: "12 Mai 2027", hora: "17:40" },
-    bagagem: "2 peças",
+    partida: { data: "12 Mai 2027", hora: "22:15" },
+    chegada: { data: "13 Mai 2027", hora: "05:10" },
+    bagagem: "1 peça",
   },
 ];
 
-// Direções exibidas — rótulo/período fixos (datas já
-// conhecidas e conferidas contra o bilhete real) + nota final explicando
-// por qual aeroporto de Tóquio se chega/sai (Narita na ida, Haneda na
-// volta — dois aeroportos diferentes, conforme o bilhete real).
 const PASSAGEM_DIRECOES: {
   label: "IDA" | "VOLTA";
   periodo: string;
@@ -4024,15 +4025,15 @@ const PASSAGEM_DIRECOES: {
 }[] = [
   {
     label: "IDA",
-    periodo: "03–04 Mai 2027",
+    periodo: "02–04 Mai 2027",
     segmentos: PASSAGEM_IDA,
-    notaFinal: "Chegada em Tóquio pelo Aeroporto de Narita (NRT), Terminal 2",
+    notaFinal: "Chegada em Tóquio pelo Aeroporto de Haneda (HND), Terminal 3 · voos de exemplo",
   },
   {
     label: "VOLTA",
-    periodo: "12 Mai 2027",
+    periodo: "12–13 Mai 2027",
     segmentos: PASSAGEM_VOLTA,
-    notaFinal: "Saída de Tóquio pelo Aeroporto de Haneda (HND), Terminal 3",
+    notaFinal: "Saída de Tóquio pelo Aeroporto de Haneda (HND), Terminal 3 · voos de exemplo",
   },
 ];
 
@@ -4073,15 +4074,15 @@ export function PassagemAereaSecao() {
       <div className="mt-6 flex items-center gap-3">
         <img
                 loading="lazy"
-          src="/images/emirates-logo.webp"
-          alt="Emirates"
-          className="h-24 w-auto rounded-md object-contain sm:h-28"
+          src="/images/lufthansa-logo.png"
+          alt="Lufthansa"
+          className="h-16 w-16 object-contain sm:h-20 sm:w-20"
         />
         <div>
           <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
             Companhia Aérea
           </p>
-          <p className="text-sm font-semibold text-[#000000]">Emirates</p>
+          <p className="text-sm font-semibold text-[#000000]">Lufthansa</p>
         </div>
       </div>
 
@@ -6519,19 +6520,13 @@ function IconWhatsapp({ className }: { className?: string }) {
 }
 
 const INFO_CARDS = [
-  { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
-  {
-    label: "Aeroporto NRT (Narita)",
-    Icon: IconPlane,
-    view: "narita" as const,
-    subLabel: "CHEGADA",
-  },
   {
     label: "Aeroporto HND (Haneda)",
     Icon: IconPlane,
     view: "haneda" as const,
-    subLabel: "RETORNO",
+    subLabel: "CHEGADA E RETORNO",
   },
+  { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
   { label: "Metrô", Icon: IconMetro, view: "trem" as const },
   { label: "Ônibus", Icon: IconBus, view: "onibus" as const },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" as const },
@@ -7628,7 +7623,7 @@ export function ApprovalPanel({
                   style={
                     d.badge
                       ? {
-                          background: "#0A0A0A",
+                          background: "#0A2540",
                           boxShadow:
                             "inset 0 0 8px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.15)",
                         }
@@ -7638,14 +7633,13 @@ export function ApprovalPanel({
                   {d.badge ? (
                     d.badge
                   ) : (
-                    <Image
-                      src={`/images/dragonball-${d.day}-star-tight.png`}
-                      alt={`Dia ${d.day}`}
-                      fill
-                      sizes="56px"
-                      quality={90}
-                      className="object-cover"
-                    />
+                    <span
+                      aria-hidden="true"
+                      className="flex h-full w-full items-center justify-center rounded-full text-lg font-semibold text-white"
+                      style={{ background: corCidade(d.city) }}
+                    >
+                      {d.day}
+                    </span>
                   )}
                 </span>
                 <span
@@ -8018,8 +8012,7 @@ export function ApprovalPanel({
                   {current.travelNote}
                 </p>
               </div>
-              {current.badge === "DXB-NRT" && <TransporteNaritaTokyoBlock variant="chegada" />}
-              {current.badge === "HND-DXB" && <TransporteHanedaTokyoBlock />}
+              {current.badge === "HND-FRA" && <TransporteHanedaTokyoBlock />}
             </>
           ) : (
             <>
@@ -8088,15 +8081,14 @@ export function ApprovalPanel({
       <button
         type="button"
         onClick={scrollToDaysMenu}
-        className="fixed right-3 z-50 flex flex-col items-center gap-1 rounded-2xl bg-black px-2.5 py-2.5 text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-x-0.5 sm:right-5"
+        className="fixed right-3 z-50 flex flex-col items-center gap-1 rounded-2xl bg-[#0A2540] px-2.5 py-2.5 text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-x-0.5 sm:right-5"
         style={{ bottom: "calc(6rem + env(safe-area-inset-bottom, 0px))" }}
       >
-        <img
-                loading="lazy"
-          src="/images/dragonball-4-star-tight.webp"
-          alt=""
-          className="h-7 w-7 shrink-0 rounded-full object-cover"
-        />
+        <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: corCidade("Tokyo") }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.4" strokeLinecap="round" className="h-3.5 w-3.5">
+            <path d="M5 7h14M5 12h14M5 17h14" />
+          </svg>
+        </span>
         <span className="text-[8px] font-bold uppercase leading-tight tracking-[0.1em]">
           Menu
         </span>
