@@ -11,7 +11,7 @@
 import { useEffect, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { Inter } from "next/font/google";
+import { inter as interLocal } from "../../fonts/inter";
 import {
   VEICULOS_MOTORISTA,
   ROTAS_MOTORISTA,
@@ -21,7 +21,7 @@ import {
 } from "../../lib/motoristaPrivadoRotas";
 import { display } from "../../produtos/page";
 
-export const inter = Inter({ subsets: ["latin"], weight: ["500", "600", "700"] });
+export const inter = interLocal;
 
 // Nome curto + diferenciação curta por veículo (só nesta página — os
 // nomes completos de motoristaPrivadoRotas.ts continuam valendo no
