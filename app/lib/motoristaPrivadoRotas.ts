@@ -38,13 +38,14 @@
 // (ex.: Tóquio↔Kansai por estrada) — mesma ressalva já usada no
 // TransportePrivadoCalculator para a diária genérica do Personalizado.
 
-import { comMargemMotoristaPrivado } from "../components/CustomPackageCard";
+import { comMargemMotoristaPrivado } from "./precosPacote";
+import { P } from "./parametrosPreco";
 
 // Transfer aeroporto ↔ hotel: margem de 50% sobre o custo do fornecedor
 // (Wilson, 06/out/2026: "margem de 50% sob custo do fornecedor") — as rotas
 // de categoria "transfer-aeroporto" abaixo usam esta função; o motorista à
 // disposição (dentro da cidade / passeios) continua com 40%.
-const MULTIPLICADOR_TRANSFER_AEROPORTO = 1.5;
+const MULTIPLICADOR_TRANSFER_AEROPORTO = P("transfer.margem", 1.5);
 function comMargemTransferAeroporto(custo: number) {
   return Math.round(custo * MULTIPLICADOR_TRANSFER_AEROPORTO);
 }
@@ -159,20 +160,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(150), // ¥22.500
-      hiace10: comMargemTransferAeroporto(180), // ¥27.000
-      hiace14: comMargemTransferAeroporto(210), // ¥31.500
-      coaster18: comMargemTransferAeroporto(480), // ¥72.000
-      coaster21: comMargemTransferAeroporto(480), // ¥72.000
-      coaster29: comMargemTransferAeroporto(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.preco.alphard8", 150)), // ¥22.500
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.preco.hiace10", 180)), // ¥27.000
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.preco.hiace14", 210)), // ¥31.500
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.preco.coaster18", 480)), // ¥72.000
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.preco.coaster21", 480)), // ¥72.000
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.preco.coaster29", 480)), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.narita-tokyo.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -182,20 +183,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(150), // ¥22.500
-      hiace10: comMargemTransferAeroporto(180), // ¥27.000
-      hiace14: comMargemTransferAeroporto(210), // ¥31.500
-      coaster18: comMargemTransferAeroporto(480), // ¥72.000
-      coaster21: comMargemTransferAeroporto(480), // ¥72.000
-      coaster29: comMargemTransferAeroporto(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.preco.alphard8", 150)), // ¥22.500
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.preco.hiace10", 180)), // ¥27.000
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.preco.hiace14", 210)), // ¥31.500
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.preco.coaster18", 480)), // ¥72.000
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.preco.coaster21", 480)), // ¥72.000
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.preco.coaster29", 480)), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.tokyo-narita.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -205,20 +206,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(120), // ¥18.000
-      hiace10: comMargemTransferAeroporto(147), // ¥22.000
-      hiace14: comMargemTransferAeroporto(180), // ¥27.000
-      coaster18: comMargemTransferAeroporto(420), // ¥63.000
-      coaster21: comMargemTransferAeroporto(420), // ¥63.000
-      coaster29: comMargemTransferAeroporto(450), // ¥67.500
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.preco.alphard8", 120)), // ¥18.000
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.preco.hiace10", 147)), // ¥22.000
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.preco.hiace14", 180)), // ¥27.000
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.preco.coaster18", 420)), // ¥63.000
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.preco.coaster21", 420)), // ¥63.000
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.preco.coaster29", 450)), // ¥67.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(17), // ¥2.500/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.overtime.hiace14", 17)), // ¥2.500/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.haneda-tokyo.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -228,20 +229,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(96), // ¥14.400
-      hiace10: comMargemTransferAeroporto(113), // ¥17.000
-      hiace14: comMargemTransferAeroporto(180), // ¥27.000
-      coaster18: comMargemTransferAeroporto(420), // ¥63.000
-      coaster21: comMargemTransferAeroporto(420), // ¥63.000
-      coaster29: comMargemTransferAeroporto(450), // ¥67.500
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.preco.alphard8", 96)), // ¥14.400
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.preco.hiace10", 113)), // ¥17.000
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.preco.hiace14", 180)), // ¥27.000
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.preco.coaster18", 420)), // ¥63.000
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.preco.coaster21", 420)), // ¥63.000
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.preco.coaster29", 450)), // ¥67.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.tokyo-haneda.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -251,20 +252,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "dentro-cidade",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(84), // ¥12.600
-      hiace10: comMargemMotoristaPrivado(102), // ¥15.300
-      hiace14: comMargemMotoristaPrivado(180), // ¥27.000
-      coaster18: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster21: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster29: comMargemMotoristaPrivado(450), // ¥67.500
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.preco.alphard8", 84)), // ¥12.600
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.preco.hiace10", 102)), // ¥15.300
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.preco.hiace14", 180)), // ¥27.000
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.preco.coaster18", 420)), // ¥63.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.preco.coaster21", 420)), // ¥63.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.preco.coaster29", 450)), // ¥67.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.dentro-tokyo.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -274,20 +275,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(360), // ¥54.000
-      hiace10: comMargemMotoristaPrivado(390), // ¥58.500
-      hiace14: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster18: comMargemMotoristaPrivado(600), // ¥90.000
-      coaster21: comMargemMotoristaPrivado(660), // ¥99.000
-      coaster29: comMargemMotoristaPrivado(720), // ¥108.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.preco.alphard8", 360)), // ¥54.000
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.preco.hiace10", 390)), // ¥58.500
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.preco.hiace14", 420)), // ¥63.000
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.preco.coaster18", 600)), // ¥90.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.preco.coaster21", 660)), // ¥99.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.preco.coaster29", 720)), // ¥108.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.tokyo-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -297,20 +298,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(378), // ¥56.700
-      hiace10: comMargemMotoristaPrivado(408), // ¥61.200
-      hiace14: comMargemMotoristaPrivado(450), // ¥67.500
-      coaster18: comMargemMotoristaPrivado(630), // ¥94.500
-      coaster21: comMargemMotoristaPrivado(690), // ¥103.500
-      coaster29: comMargemMotoristaPrivado(750), // ¥112.500
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.preco.alphard8", 378)), // ¥56.700
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.preco.hiace10", 408)), // ¥61.200
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.preco.hiace14", 450)), // ¥67.500
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.preco.coaster18", 630)), // ¥94.500
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.preco.coaster21", 690)), // ¥103.500
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.preco.coaster29", 750)), // ¥112.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.tokyo-yokohama-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -320,20 +321,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(390), // ¥58.500
-      hiace10: comMargemMotoristaPrivado(420), // ¥63.000
-      hiace14: comMargemMotoristaPrivado(468), // ¥70.200
-      coaster18: comMargemMotoristaPrivado(660), // ¥99.000
-      coaster21: comMargemMotoristaPrivado(720), // ¥108.000
-      coaster29: comMargemMotoristaPrivado(780), // ¥117.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.preco.alphard8", 390)), // ¥58.500
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.preco.hiace10", 420)), // ¥63.000
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.preco.hiace14", 468)), // ¥70.200
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.preco.coaster18", 660)), // ¥99.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.preco.coaster21", 720)), // ¥108.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.preco.coaster29", 780)), // ¥117.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.fuji-hakone-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -343,20 +344,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(150), // ¥22.500
-      hiace10: comMargemTransferAeroporto(180), // ¥27.000
-      hiace14: comMargemTransferAeroporto(210), // ¥31.500
-      coaster18: comMargemTransferAeroporto(480), // ¥72.000
-      coaster21: comMargemTransferAeroporto(480), // ¥72.000
-      coaster29: comMargemTransferAeroporto(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.preco.alphard8", 150)), // ¥22.500
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.preco.hiace10", 180)), // ¥27.000
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.preco.hiace14", 210)), // ¥31.500
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.preco.coaster18", 480)), // ¥72.000
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.preco.coaster21", 480)), // ¥72.000
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.preco.coaster29", 480)), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(17), // ¥2.500/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.overtime.hiace14", 17)), // ¥2.500/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.kansai-osaka.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -366,20 +367,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(150), // ¥22.500
-      hiace10: comMargemTransferAeroporto(180), // ¥27.000
-      hiace14: comMargemTransferAeroporto(210), // ¥31.500
-      coaster18: comMargemTransferAeroporto(480), // ¥72.000
-      coaster21: comMargemTransferAeroporto(480), // ¥72.000
-      coaster29: comMargemTransferAeroporto(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.preco.alphard8", 150)), // ¥22.500
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.preco.hiace10", 180)), // ¥27.000
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.preco.hiace14", 210)), // ¥31.500
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.preco.coaster18", 480)), // ¥72.000
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.preco.coaster21", 480)), // ¥72.000
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.preco.coaster29", 480)), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.osaka-kansai.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -389,20 +390,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "dentro-cidade",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(84), // ¥12.600
-      hiace10: comMargemMotoristaPrivado(102), // ¥15.300
-      hiace14: comMargemMotoristaPrivado(180), // ¥27.000
-      coaster18: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster21: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster29: comMargemMotoristaPrivado(450), // ¥67.500
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.preco.alphard8", 84)), // ¥12.600
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.preco.hiace10", 102)), // ¥15.300
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.preco.hiace14", 180)), // ¥27.000
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.preco.coaster18", 420)), // ¥63.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.preco.coaster21", 420)), // ¥63.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.preco.coaster29", 450)), // ¥67.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.dentro-osaka.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -412,20 +413,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "dentro-cidade",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(114), // ¥17.100
-      hiace10: comMargemMotoristaPrivado(138), // ¥20.700
-      hiace14: comMargemMotoristaPrivado(180), // ¥27.000
-      coaster18: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster21: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster29: comMargemMotoristaPrivado(447), // ¥67.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.preco.alphard8", 114)), // ¥17.100
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.preco.hiace10", 138)), // ¥20.700
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.preco.hiace14", 180)), // ¥27.000
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.preco.coaster18", 420)), // ¥63.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.preco.coaster21", 420)), // ¥63.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.preco.coaster29", 447)), // ¥67.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.dentro-kyoto-ou-kyoto-osaka.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -435,20 +436,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(180), // ¥27.000
-      hiace10: comMargemTransferAeroporto(210), // ¥31.500
-      hiace14: comMargemTransferAeroporto(240), // ¥36.000
-      coaster18: comMargemTransferAeroporto(510), // ¥76.500
-      coaster21: comMargemTransferAeroporto(510), // ¥76.500
-      coaster29: comMargemTransferAeroporto(510), // ¥76.500
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.preco.alphard8", 180)), // ¥27.000
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.preco.hiace10", 210)), // ¥31.500
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.preco.hiace14", 240)), // ¥36.000
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.preco.coaster18", 510)), // ¥76.500
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.preco.coaster21", 510)), // ¥76.500
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.preco.coaster29", 510)), // ¥76.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.kansai-kyoto.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -458,20 +459,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemTransferAeroporto(180), // ¥27.000
-      hiace10: comMargemTransferAeroporto(210), // ¥31.500
-      hiace14: comMargemTransferAeroporto(240), // ¥36.000
-      coaster18: comMargemTransferAeroporto(510), // ¥76.500
-      coaster21: comMargemTransferAeroporto(510), // ¥76.500
-      coaster29: comMargemTransferAeroporto(510), // ¥76.500
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.preco.alphard8", 180)), // ¥27.000
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.preco.hiace10", 210)), // ¥31.500
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.preco.hiace14", 240)), // ¥36.000
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.preco.coaster18", 510)), // ¥76.500
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.preco.coaster21", 510)), // ¥76.500
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.preco.coaster29", 510)), // ¥76.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
-      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
-      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
-      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.overtime.alphard8", 17)), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.overtime.hiace10", 17)), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.overtime.hiace14", 20)), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.overtime.coaster18", 33)), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.overtime.coaster21", 33)), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(P("motorista.rota.kyoto-kansai.overtime.coaster29", 33)), // ¥5.000/30min
     },
   },
   {
@@ -481,20 +482,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(360), // ¥54.000
-      hiace10: comMargemMotoristaPrivado(390), // ¥58.500
-      hiace14: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster18: comMargemMotoristaPrivado(600), // ¥90.000
-      coaster21: comMargemMotoristaPrivado(660), // ¥99.000
-      coaster29: comMargemMotoristaPrivado(720), // ¥108.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.preco.alphard8", 360)), // ¥54.000
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.preco.hiace10", 390)), // ¥58.500
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.preco.hiace14", 420)), // ¥63.000
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.preco.coaster18", 600)), // ¥90.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.preco.coaster21", 660)), // ¥99.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.preco.coaster29", 720)), // ¥108.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -504,20 +505,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(390), // ¥58.500
-      hiace10: comMargemMotoristaPrivado(420), // ¥63.000
-      hiace14: comMargemMotoristaPrivado(468), // ¥70.200
-      coaster18: comMargemMotoristaPrivado(660), // ¥99.000
-      coaster21: comMargemMotoristaPrivado(720), // ¥108.000
-      coaster29: comMargemMotoristaPrivado(780), // ¥117.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.preco.alphard8", 390)), // ¥58.500
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.preco.hiace10", 420)), // ¥63.000
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.preco.hiace14", 468)), // ¥70.200
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.preco.coaster18", 660)), // ¥99.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.preco.coaster21", 720)), // ¥108.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.preco.coaster29", 780)), // ¥117.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-kyoto-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -527,20 +528,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(390), // ¥58.500
-      hiace10: comMargemMotoristaPrivado(420), // ¥63.000
-      hiace14: comMargemMotoristaPrivado(468), // ¥70.200
-      coaster18: comMargemMotoristaPrivado(660), // ¥99.000
-      coaster21: comMargemMotoristaPrivado(720), // ¥108.000
-      coaster29: comMargemMotoristaPrivado(780), // ¥117.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.preco.alphard8", 390)), // ¥58.500
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.preco.hiace10", 420)), // ¥63.000
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.preco.hiace14", 468)), // ¥70.200
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.preco.coaster18", 660)), // ¥99.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.preco.coaster21", 720)), // ¥108.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.preco.coaster29", 780)), // ¥117.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-nara-kyoto-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -550,20 +551,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(390), // ¥58.500
-      hiace10: comMargemMotoristaPrivado(420), // ¥63.000
-      hiace14: comMargemMotoristaPrivado(468), // ¥70.200
-      coaster18: comMargemMotoristaPrivado(660), // ¥99.000
-      coaster21: comMargemMotoristaPrivado(720), // ¥108.000
-      coaster29: comMargemMotoristaPrivado(780), // ¥117.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.preco.alphard8", 390)), // ¥58.500
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.preco.hiace10", 420)), // ¥63.000
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.preco.hiace14", 468)), // ¥70.200
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.preco.coaster18", 660)), // ¥99.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.preco.coaster21", 720)), // ¥108.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.preco.coaster29", 780)), // ¥117.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.osaka-kobe-kyoto-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
   {
@@ -573,20 +574,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "tour-dia-inteiro",
     minutosLivres: null,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(533), // ¥80.000
-      hiace10: comMargemMotoristaPrivado(600), // ¥90.000
-      hiace14: comMargemMotoristaPrivado(633), // ¥95.000
-      coaster18: comMargemMotoristaPrivado(867), // ¥130.000
-      coaster21: comMargemMotoristaPrivado(933), // ¥140.000
-      coaster29: comMargemMotoristaPrivado(933), // ¥140.000
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.preco.alphard8", 533)), // ¥80.000
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.preco.hiace10", 600)), // ¥90.000
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.preco.hiace14", 633)), // ¥95.000
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.preco.coaster18", 867)), // ¥130.000
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.preco.coaster21", 933)), // ¥140.000
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.preco.coaster29", 933)), // ¥140.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace10: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      hiace14: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster18: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster21: comMargemMotoristaPrivado(67), // ¥10.000/30min
-      coaster29: comMargemMotoristaPrivado(67), // ¥10.000/30min
+      alphard8: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.overtime.alphard8", 33)), // ¥5.000/30min
+      hiace10: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.overtime.hiace10", 33)), // ¥5.000/30min
+      hiace14: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.overtime.hiace14", 33)), // ¥5.000/30min
+      coaster18: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.overtime.coaster18", 67)), // ¥10.000/30min
+      coaster21: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.overtime.coaster21", 67)), // ¥10.000/30min
+      coaster29: comMargemMotoristaPrivado(P("motorista.rota.hiroshima-tour-10h.overtime.coaster29", 67)), // ¥10.000/30min
     },
   },
 ];
@@ -597,8 +598,8 @@ export function encontrarRotaMotorista(id: string): RotaMotorista | null {
 
 // Adicionais opcionais do fornecedor — mesma regra de custo+margem,
 // ¥3.000 cada (≈ US$20 de custo na cotação de referência).
-export const ADICIONAL_MEET_GREET_USD = comMargemMotoristaPrivado(20); // ¥3.000
-export const ADICIONAL_CADEIRINHA_USD = comMargemMotoristaPrivado(20); // ¥3.000
+export const ADICIONAL_MEET_GREET_USD = comMargemMotoristaPrivado(P("motorista.meetGreetCustoUSD", 20)); // ¥3.000
+export const ADICIONAL_CADEIRINHA_USD = comMargemMotoristaPrivado(P("motorista.cadeirinhaCustoUSD", 20)); // ¥3.000
 
 // Política de cancelamento do fornecedor — mesmo texto usado nas 3 telas
 // de motorista privado (/produtos, calculadora reversa, self-service).

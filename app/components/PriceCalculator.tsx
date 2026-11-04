@@ -5,7 +5,7 @@ import { bodoniModa } from "@/app/fonts/bodoni";
 import { ContactCTA } from "./ContactCTA";
 import { useCambioUSD, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
-import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA } from "../lib/precoRoteiro";
+import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA, ROTEIRO_PESSOAS_SEM_TAXA, ROTEIRO_TAXA_USD_A_CADA_2 } from "../lib/precoRoteiro";
 
 const display = bodoniModa;
 
@@ -30,8 +30,8 @@ export function calculatePrice(days: number) {
 // preço-base acima que é calculado em reais.
 export const MIN_PASSENGERS = 1;
 export const MAX_PASSENGERS = 20;
-export const PASSENGERS_SEM_TAXA = 3;
-export const TAXA_USD_A_CADA_2_PASSAGEIROS = 80;
+export const PASSENGERS_SEM_TAXA = ROTEIRO_PESSOAS_SEM_TAXA;
+export const TAXA_USD_A_CADA_2_PASSAGEIROS = ROTEIRO_TAXA_USD_A_CADA_2;
 
 export function calcularGruposExtras(passengers: number) {
   const extras = Math.max(0, passengers - PASSENGERS_SEM_TAXA);

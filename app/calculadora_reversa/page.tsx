@@ -61,7 +61,6 @@ import {
   ROTEIRO_BASE_DIAS,
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
-  comMargemEImposto,
 } from "../components/CustomPackageCard";
 import {
   useCambioUSD,
@@ -91,6 +90,20 @@ import {
   diasMinimosPorPerfil,
   type PerfilViajanteKey,
 } from "../lib/calculadoraCatalogoPublico";
+import {
+  TEMPORADA_MULTIPLICADOR_HOTEL as TEMPORADA_MULTIPLICADOR_HOTEL_COMPARTILHADO,
+  DIARIA_HOTEL_EXTENSAO_USD as DIARIA_HOTEL_EXTENSAO_USD_COMPARTILHADO,
+  ECONOMIA_FLEXIBILIDADE_PCT as ECONOMIA_FLEXIBILIDADE_PCT_COMPARTILHADO,
+  PRECO_VOO_TOQUIO_SEOUL_USD_PAX,
+  PRECO_VOO_TOQUIO_PEQUIM_USD_PAX,
+  PRECO_TREM_PEQUIM_XANGAI_USD_PAX,
+  FATOR_CAMBIO_IENE,
+  TAXA_MAQUINA_CARTAO,
+  TAXA_JUROS_CARTAO_MES,
+  ENTRADA_PIX_PCT,
+  TAXA_JUROS_PIX_MES,
+} from "../lib/calculadoraCatalogoPublico";
+import { IDADE_LIMITE_SEGURO, multiplicadorSeguroPorIdade, textoFaixasSeguroIdade } from "../lib/precoSeguroViagem";
 
 type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamlabKyoto";
 
@@ -565,19 +578,7 @@ const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: str
 // mais alto, dentro da faixa de 2×–4× sobre a temporada verde já
 // sinalizada neste arquivo; o Ano Novo especificamente em Niseko pode
 // passar disso ainda mais.
-const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<TemporadaKey, number>>> = {
-  tokyo: { sakura: 1.45, primavera: 1.35, julho: 1.1, outono: 1.3, inverno: 1.1, baixa: 1.0 },
-  yokohama: { sakura: 1.25, primavera: 1.2, julho: 1.05, outono: 1.15, inverno: 1.05, baixa: 1.0 },
-  kyoto: { sakura: 1.85, primavera: 1.6, julho: 1.15, outono: 1.75, inverno: 1.15, baixa: 1.0 },
-  osaka: { sakura: 1.4, primavera: 1.3, julho: 1.1, outono: 1.2, inverno: 1.05, baixa: 1.0 },
-  nagoya: { sakura: 1.1, primavera: 1.1, julho: 1.05, outono: 1.12, inverno: 1.0, baixa: 1.0 },
-  kobe: { sakura: 1.08, primavera: 1.08, julho: 1.05, outono: 1.1, inverno: 1.0, baixa: 1.0 },
-  hiroshima: { sakura: 1.15, primavera: 1.15, julho: 1.1, outono: 1.2, inverno: 1.0, baixa: 1.0 },
-  fukuoka: { sakura: 1.12, primavera: 1.15, julho: 1.1, outono: 1.12, inverno: 1.0, baixa: 1.0 },
-  hokkaido: { sakura: 1.12, primavera: 1.2, julho: 1.15, outono: 1.05, inverno: 1.55, baixa: 1.0 },
-  okinawa: { sakura: 1.1, primavera: 1.35, julho: 1.4, outono: 1.03, inverno: 0.85, baixa: 1.0 },
-  niseko: { sakura: 0.85, primavera: 0.85, julho: 1.08, outono: 1.1, inverno: 2.8, baixa: 1.0 },
-};
+const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<TemporadaKey, number>>> = TEMPORADA_MULTIPLICADOR_HOTEL_COMPARTILHADO; // app/lib/calculadoraCatalogoPublico.ts (editável em /crm/precos)
 
 type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
 
@@ -619,12 +620,7 @@ const FLEXIBILIDADE_DATAS = [
   { key: "flexivel", nome: "Flexível" },
 ] as const;
 type FlexibilidadeDatasKey = (typeof FLEXIBILIDADE_DATAS)[number]["key"];
-const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = {
-  fixas: 0,
-  tres: 0.08,
-  sete: 0.15,
-  flexivel: 0.22,
-};
+const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = ECONOMIA_FLEXIBILIDADE_PCT_COMPARTILHADO;
 
 // Seguro Viagem por faixa etária — pedido do Wilson, 16/set/2026: "seguro
 // viagem limitado até 82 anos, até 60 anos usamos o valor atual, 60-65 é
@@ -636,19 +632,7 @@ const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = {
 // definiu; usando 82 como teto real. Ajustar com o Wilson se o critério de
 // faixa for outro. Acima do limite, o seguro não é precificado aqui — fica
 // sob consulta direta com a seguradora.
-const IDADE_LIMITE_SEGURO = 82;
-const FAIXAS_SEGURO_IDADE: { idadeMax: number; multiplicador: number }[] = [
-  { idadeMax: 60, multiplicador: 1 },
-  { idadeMax: 65, multiplicador: 2 },
-  { idadeMax: 70, multiplicador: 2.5 },
-  { idadeMax: 75, multiplicador: 3 },
-  { idadeMax: 80, multiplicador: 4 },
-  { idadeMax: IDADE_LIMITE_SEGURO, multiplicador: 5 },
-];
-function multiplicadorSeguroPorIdade(idade: number): number | null {
-  if (idade > IDADE_LIMITE_SEGURO) return null;
-  return FAIXAS_SEGURO_IDADE.find((f) => idade <= f.idadeMax)?.multiplicador ?? null;
-}
+// Faixas e multiplicadores: app/lib/precoSeguroViagem.ts (editáveis em /crm/precos).
 
 // Ajisai Shopping — serviço novo, pedido do Wilson, 16/set/2026: "criar na
 // pagina de calculadora reversa e produtos um card novo de serviço chamado
@@ -746,9 +730,7 @@ type AeroportoChegadaKey = (typeof AEROPORTOS_CHEGADA_JAPAO)[number]["key"];
 // tempo de deslocamento até o aeroporto. Confiança média (tarifa aérea
 // varia bastante por antecedência/temporada) — revisar quando houver
 // cotação real de emissão.
-const PRECO_VOO_TOQUIO_SEOUL_USD_PAX = comMargemEImposto(210);
-const PRECO_VOO_TOQUIO_PEQUIM_USD_PAX = comMargemEImposto(280);
-const PRECO_TREM_PEQUIM_XANGAI_USD_PAX = comMargemEImposto(85);
+// Voos/trem e diárias das extensões: app/lib/calculadoraCatalogoPublico.ts (editáveis em /crm/precos).
 
 type ExtensaoCidadeKey = "seoul" | "beijing" | "shanghai";
 
@@ -772,23 +754,7 @@ type ExtensaoCidadeKey = "seoul" | "beijing" | "shanghai";
 // Oriental Pudong, mesma categoria). Confiança média (tarifa hoteleira
 // varia por antecedência/temporada) — revisar quando houver dado de
 // reserva real ou tabela de parceiros.
-const DIARIA_HOTEL_EXTENSAO_USD: Record<ExtensaoCidadeKey, Record<CategoriaHotelExtensao, number>> = {
-  seoul: {
-    "3 estrelas": comMargemEImposto(75),
-    "4 estrelas": comMargemEImposto(350),
-    "5 estrelas": comMargemEImposto(600),
-  },
-  beijing: {
-    "3 estrelas": comMargemEImposto(65),
-    "4 estrelas": comMargemEImposto(170),
-    "5 estrelas": comMargemEImposto(600),
-  },
-  shanghai: {
-    "3 estrelas": comMargemEImposto(70),
-    "4 estrelas": comMargemEImposto(150),
-    "5 estrelas": comMargemEImposto(380),
-  },
-};
+const DIARIA_HOTEL_EXTENSAO_USD: Record<ExtensaoCidadeKey, Record<CategoriaHotelExtensao, number>> = DIARIA_HOTEL_EXTENSAO_USD_COMPARTILHADO;
 
 // Extensões internacionais — dias adicionais FORA do Japão, somados ao
 // total da viagem quando o vendedor ativa o card (não dividem os dias já
@@ -1012,7 +978,7 @@ const MAX_TEMAS_SIMULTANEOS = 3;
 const MAX_CIDADES_ROTEIRO = 5;
 // Câmbio de ienes — spread da Alpinea sobre a cotação de papel-moeda do
 // melhorcambio.com, e piso mínimo pedido pelo Wilson (08/set/2026).
-const SPREAD_CAMBIO_IENE = 1.15;
+const SPREAD_CAMBIO_IENE = FATOR_CAMBIO_IENE; // editável em /crm/precos
 const CAMBIO_IENES_MINIMO = 100000;
 
 const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
@@ -1224,12 +1190,9 @@ const MAX_ORCAMENTO_BRL = 2000000;
 // Simulação de parcelamento (cartão e PIX) — pedido do Wilson, 10/set/2026.
 // Confirmado com ele (11/set/2026): usar a fórmula de amortização Price
 // (juros compostos), não multiplicação simples — PMT = PV × i / (1 − (1+i)⁻ⁿ).
-const TAXA_MAQUINA_CARTAO = 0.0355; // 3.55% fixo da maquininha, sobre o valor financiado
-const TAXA_JUROS_CARTAO_MES = 0.0169; // 1,69% a.m. — custo de parcelar no cartão
 const OPCOES_PARCELAS_CARTAO = [1, 4, 10, 12] as const;
 
-const ENTRADA_PIX_PCT = 0.3; // 30% de entrada no PIX parcelado
-const TAXA_JUROS_PIX_MES = 0.0149; // 1,49% a.m.
+// Taxas de cartão/Pix: app/lib/calculadoraCatalogoPublico.ts (editáveis em /crm/precos).
 const OPCOES_PARCELAS_PIX = [4, 10, 12] as const;
 
 // Valor de cada parcela pela Tabela Price (juros compostos), dado o valor
@@ -4901,8 +4864,7 @@ export default function CalculadoraReversaPage() {
                   ))}
                 </div>
                 <p className="mt-2 text-[11px] leading-4 text-black/60">
-                  Usado pra faixa etária do seguro viagem — até 60 anos, valor padrão; 61–65, 2x;
-                  66–70, 2,5x; 71–75, 3x; 76–80, 4x; 81–{IDADE_LIMITE_SEGURO}, 5x. Acima de{" "}
+                  Usado pra faixa etária do seguro viagem — {textoFaixasSeguroIdade()}. Acima de{" "}
                   {IDADE_LIMITE_SEGURO} anos não entra no preço automático — cotar sob consulta.
                 </p>
               </>

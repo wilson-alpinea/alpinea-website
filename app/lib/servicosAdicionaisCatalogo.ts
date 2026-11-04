@@ -15,10 +15,11 @@
 // Limousine Bus antes de gerar o pagamento).
 
 import { comMargemEImposto } from "./margemPadrao";
+import { P, tabelaP } from "./parametrosPreco";
 
 // Cotação de referência JPY/US$ usada para custos de fornecedor japonês no
 // site (mesma ~150 de motoristaPrivadoRotas.ts).
-export const JPY_POR_USD_REFERENCIA = 150;
+export const JPY_POR_USD_REFERENCIA = P("geral.jpyPorUsdReferencia", 150);
 
 // ── eSIM ──
 // Custos de referência (out/2026, pesquisa de mercado — ex.: Ubigi Japão
@@ -119,9 +120,9 @@ export const TERMOS_RESTAURANTES = [
 // Criança (6 a 11 anos) paga metade; menores de 6 no colo não pagam.
 // Margem de 50% sobre o custo (Wilson, 06/out/2026). ⚠️ Conferir tarifas
 // no site oficial (limousinebus.co.jp) quando houver reajuste.
-export const MULTIPLICADOR_LIMOUSINE = 1.5;
+export const MULTIPLICADOR_LIMOUSINE = P("limousine.margem", 1.5);
 export type AeroportoLimousine = "narita" | "haneda";
-export const TARIFA_LIMOUSINE_JPY: Record<AeroportoLimousine, number> = { narita: 3600, haneda: 1800 };
+export const TARIFA_LIMOUSINE_JPY: Record<AeroportoLimousine, number> = tabelaP("limousine.tarifaJPY", { narita: 3600, haneda: 1800 });
 export type SentidoLimousine = "chegada" | "partida" | "ida-volta";
 export const SENTIDOS_LIMOUSINE: { id: SentidoLimousine; nome: string; trechos: number }[] = [
   { id: "chegada", nome: "Aeroporto → Tóquio", trechos: 1 },

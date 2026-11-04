@@ -1,5 +1,6 @@
 "use client";
 
+import { PRECO_DESDE_CARAVANA_USD, PRECO_DESDE_INDIVIDUAL_USD } from "../lib/precosPacotesProntos";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -60,7 +61,7 @@ const PRODUTOS: Record<
     // Preço "a partir de" — menor valor entre os pacotes Sakura de 7 dias
     // (Sakura 2 - Maio 2027), já em dólar fixo (ver /pacotes).
     precoBRL: null,
-    precoUSD: 4280,
+    precoUSD: PRECO_DESDE_CARAVANA_USD,
     href: "/pacotes#pacotes",
   },
   individual: {
@@ -68,7 +69,7 @@ const PRODUTOS: Record<
     // Preço "a partir de" — menor valor entre os pacotes Sakura de 7 dias
     // (Sakura 2 - Maio 2027), já em dólar fixo (ver /pacotes).
     precoBRL: null,
-    precoUSD: 2490,
+    precoUSD: PRECO_DESDE_INDIVIDUAL_USD,
     href: "/pacotes#individuais",
   },
   personalizado: {

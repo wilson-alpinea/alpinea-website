@@ -12,8 +12,10 @@
 // base presumida de 32%, mais PIS/COFINS e ISS; ajuste aqui se sua
 // contabilidade usar uma alíquota efetiva diferente), depois 30% de
 // margem sobre esse valor. Fórmula: preço final = custo × 1,15 × 1,30.
-export const IMPOSTO_SOBRE_LUCRO = 1.15;
-export const MARGEM_SOBRE_IMPOSTO = 1.3;
+// Editáveis em /crm/precos (app/lib/parametrosPreco.ts).
+import { P } from "./parametrosPreco";
+export const IMPOSTO_SOBRE_LUCRO = P("geral.imposto", 1.15);
+export const MARGEM_SOBRE_IMPOSTO = P("geral.margemPadrao", 1.3);
 export const MULTIPLICADOR_PRECO_FINAL = IMPOSTO_SOBRE_LUCRO * MARGEM_SOBRE_IMPOSTO; // 1,495
 
 export function comMargemEImposto(custo: number) {

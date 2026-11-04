@@ -14,6 +14,7 @@ import {
 } from "./lib/crm/unidades";
 import { lerPermissoes } from "./lib/crm/permissoes";
 import { COOKIE_UTM, PARAMS_CAMPANHA, type DadosCampanha } from "./lib/crm/canal";
+import { X_ROBOTS_PRIVADO, caminhoPrivado, ehRoboIndexador } from "./lib/privacidade";
 
 // (No Next.js 16, "middleware.ts" foi renomeado para "proxy.ts".)
 //
@@ -24,7 +25,21 @@ import { COOKIE_UTM, PARAMS_CAMPANHA, type DadosCampanha } from "./lib/crm/canal
 //    empregos, seguro.alpinea.io = seguro viagem. Cada domínio só abre as telas da sua unidade.
 // 3. /crm/*: exige sessão e respeita o papel — parceiro da agência só abre
 //    /crm/parceiro, empreiteira só /crm/empreiteira, admin abre tudo.
+// 4. Páginas privadas (lib/privacidade.ts — roteiros, CRM, sistemas
+//    internos) e todos os domínios de CRM: X-Robots-Tag noindex/noai em
+//    toda resposta e 404 para robôs de busca e de IA (Wilson, 04/nov/2026).
 export async function proxy(request: NextRequest) {
+  const privado = caminhoPrivado(request.nextUrl.pathname) || !!unidadeDoHost(request.headers.get("host"));
+  if (!privado) return proxyBase(request);
+  if (ehRoboIndexador(request.headers.get("user-agent"))) {
+    return new NextResponse("Not found", { status: 404, headers: { "X-Robots-Tag": X_ROBOTS_PRIVADO, "Cache-Control": "no-store" } });
+  }
+  const resposta = await proxyBase(request);
+  resposta.headers.set("X-Robots-Tag", X_ROBOTS_PRIVADO);
+  return resposta;
+}
+
+async function proxyBase(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const host = request.headers.get("host");
   const unidadeHost = unidadeDoHost(host);

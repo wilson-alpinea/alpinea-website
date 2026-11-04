@@ -14,12 +14,14 @@ const NAV_AGENCIA = [
   { href: "/crm/fornecedores", label: "Fornecedores" },
   { href: "/crm/pipeline", label: "Pipeline" },
   { href: "/crm/acessos", label: "Acessos" },
+  { href: "/crm/precos", label: "Preços" },
 ];
 const NAV_EMPREGOS = [
   { href: "/crm/empregos", label: "Candidatos" },
   { href: "/crm/empregos/agenda", label: "Agenda" },
   { href: "/crm/empregos/vagas", label: "Vagas" },
   { href: "/crm/acessos", label: "Acessos" },
+  { href: "/crm/precos", label: "Preços" },
 ];
 // CRM de Seguro Viagem (Wilson, 26/out/2026).
 // + Visão geral (Wilson, 29/out/2026), como a da Agência.
@@ -29,17 +31,20 @@ const NAV_SEGURO = [
   // eSIM dentro do Seguro — "CRM de Seguro Viagem & eSIM" (Wilson, 29/out/2026).
   { href: "/crm/seguro/esim", label: "eSIM" },
   { href: "/crm/acessos", label: "Acessos" },
+  { href: "/crm/precos", label: "Preços" },
 ];
 // CRM de Documentação (Wilson, 29/out/2026).
 const NAV_DOCUMENTACAO = [
   { href: "/crm/documentacao/visao-geral", label: "Visão geral" },
   { href: "/crm/documentacao", label: "Processos" },
   { href: "/crm/acessos", label: "Acessos" },
+  { href: "/crm/precos", label: "Preços" },
 ];
 // CRM de Câmbio (Wilson, 29/out/2026).
 const NAV_CAMBIO = [
   { href: "/crm/cambio", label: "Pedidos" },
   { href: "/crm/acessos", label: "Acessos" },
+  { href: "/crm/precos", label: "Preços" },
 ];
 const NAV_UNIDADE = { agencia: NAV_AGENCIA, empregos: NAV_EMPREGOS, seguro: NAV_SEGURO, documentacao: NAV_DOCUMENTACAO, cambio: NAV_CAMBIO };
 

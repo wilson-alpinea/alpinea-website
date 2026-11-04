@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { X_ROBOTS_PRIVADO } from "./lib/privacidade";
 
 const nextConfig: NextConfig = {
   images: {
@@ -12,6 +13,12 @@ const nextConfig: NextConfig = {
   // Upload do logo do parceiro pela server action de Acessos (até 2 MB).
   experimental: {
     serverActions: { bodySizeLimit: "3mb" },
+  },
+  // APIs ficam fora do proxy.ts: o X-Robots-Tag de "privado" vem daqui
+  // (lib/privacidade.ts — Wilson, 04/nov/2026). As páginas privadas recebem
+  // o cabeçalho pelo proxy.ts.
+  async headers() {
+    return [{ source: "/api/:path*", headers: [{ key: "X-Robots-Tag", value: X_ROBOTS_PRIVADO }] }];
   },
   outputFileTracingIncludes: {
     "/crm/empregos/[id]/ficha-original": ["./lib/empregos/modelos/**", "./lib/empregos/fontes/**"],

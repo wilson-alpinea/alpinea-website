@@ -24,6 +24,9 @@
 
 import type { PerfilViajanteKey } from "./calculadoraCatalogoPublico";
 
+import { P, tabelaP } from "./parametrosPreco";
+import { IMPOSTO_SOBRE_LUCRO, MARGEM_SOBRE_IMPOSTO } from "./margemPadrao";
+
 export type PerfilPrecificacao = PerfilViajanteKey;
 
 export type CategoriaRitmo =
@@ -80,40 +83,45 @@ export type ConfigPrecificacaoPerfil = {
   };
 };
 
+// Números editáveis em /crm/precos (prefixo "perfil."). A margem e o
+// imposto seguem a margem padrão do site (geral.margemPadrao/geral.imposto):
+// 1/(1 − margem) = margem padrão → mesmo markup de comMargemEImposto.
+const porPerfil = (id: string, c: number, e: number, a: number): PorPerfil => tabelaP(id, { cadenciado: c, equilibrado: e, acelerado: a });
 export const CONFIG_PRECIFICACAO_PERFIL_PADRAO: ConfigPrecificacaoPerfil = {
-  travelPaceIndex: { cadenciado: 0.7, equilibrado: 1.0, acelerado: 1.4 },
-  atracoesPorDiaAtivo: { cadenciado: 1, equilibrado: 2, acelerado: 3.5 },
+  travelPaceIndex: porPerfil("perfil.travelPaceIndex", 0.7, 1.0, 1.4),
+  atracoesPorDiaAtivo: porPerfil("perfil.atracoesPorDia", 1, 2, 3.5),
   fatoresCategoria: {
-    ingressos: { cadenciado: 0.65, equilibrado: 1.0, acelerado: 1.5 },
-    transporteUrbano: { cadenciado: 0.8, equilibrado: 1.0, acelerado: 1.3 },
-    experienciasReservas: { cadenciado: 0.7, equilibrado: 1.0, acelerado: 1.45 },
-    complexidadeOperacional: { cadenciado: 0.8, equilibrado: 1.0, acelerado: 1.35 },
+    ingressos: porPerfil("perfil.fator.ingressos", 0.65, 1.0, 1.5),
+    transporteUrbano: porPerfil("perfil.fator.transporteUrbano", 0.8, 1.0, 1.3),
+    experienciasReservas: porPerfil("perfil.fator.experienciasReservas", 0.7, 1.0, 1.45),
+    complexidadeOperacional: porPerfil("perfil.fator.complexidadeOperacional", 0.8, 1.0, 1.35),
   },
   // PLACEHOLDERS (USD, custo sem margem/imposto, por dia ativo). Substituir
   // por médias reais de viagens já operadas.
   custoBasePorDiaAtivo: {
-    ingressos: { valor: 8, escala: "porPessoa" },
-    transporteUrbano: { valor: 6, escala: "porPessoa" },
-    experienciasReservas: { valor: 8, escala: "porPessoa" },
-    complexidadeOperacional: { valor: 15, escala: "porGrupo" },
+    ingressos: { valor: P("perfil.custoDia.ingressos", 8), escala: "porPessoa" },
+    transporteUrbano: { valor: P("perfil.custoDia.transporteUrbano", 6), escala: "porPessoa" },
+    experienciasReservas: { valor: P("perfil.custoDia.experienciasReservas", 8), escala: "porPessoa" },
+    complexidadeOperacional: { valor: P("perfil.custoDia.complexidadeOperacional", 15), escala: "porGrupo" },
   },
   modoAplicacao: "total",
   planejamento: {
-    fatorPorPerfil: { cadenciado: 0.9, equilibrado: 1.0, acelerado: 1.2 },
-    complexidadePorCidadeAdicional: 0,
+    fatorPorPerfil: porPerfil("perfil.feePlanejamento", 0.9, 1.0, 1.2),
+    complexidadePorCidadeAdicional: P("perfil.feePorCidadeAdicional", 0),
   },
   pesosDia: { completo: 1, meioDia: 0.5, chegadaLeve: 0.5, saidaCedo: 0.25, soAeroporto: 0 },
   diasAutomaticos: { chegada: "chegadaLeve", saida: "meioDia" },
   comercial: {
     // Calibrado para reproduzir o markup atual do sistema (custo × 1,15 ×
     // 1,30 = comMargemEImposto): 1/(1 − margem) = 1,30 → margem ≈ 23,08%.
-    margemPercentual: 1 - 1 / 1.3,
-    impostoFator: 1.15,
-    contingenciaPercentual: 0,
-    taxaServicoPercentual: 0,
+    margemPercentual: 1 - 1 / MARGEM_SOBRE_IMPOSTO,
+    impostoFator: IMPOSTO_SOBRE_LUCRO,
+    contingenciaPercentual: P("perfil.contingencia", 0),
+    taxaServicoPercentual: P("perfil.taxaServico", 0),
     arredondarPara: 1,
   },
 };
+
 
 type DeepPartial<T> = { [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K] };
 

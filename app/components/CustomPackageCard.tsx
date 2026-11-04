@@ -1,6 +1,84 @@
 "use client";
 
-import { comMargemEImposto, IMPOSTO_SOBRE_LUCRO } from "../lib/margemPadrao";
+import { comMargemEImposto } from "../lib/margemPadrao";
+// Preços e margens do calculador: definidos em app/lib/precosPacote.ts
+// (editáveis pelo CRM em /crm/precos) — re-exportados com os mesmos nomes.
+import {
+  comMargemMotoristaPrivado,
+  DIARIA_HOTEL,
+  ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA,
+  FATOR_QUARTO,
+  DIARIA_TRANSPORTE,
+  JR_PASS_DIAS_OPCOES,
+  JR_PASS_PRECO_USD,
+  JR_PASS_PRECO_USD_GREEN,
+  DIARIA_MOTORISTA_PRIVADO_USD,
+  COMISSAO_AJISAI_SHOPPING_PCT,
+  DIARIA_WIFI_USD_PAX,
+  DIARIA_ESIM_USD_PAX,
+  PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX,
+  PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
+  PRECO_INGRESSO_DISNEYSEA_USD_PAX,
+  PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
+  PRECO_INGRESSO_USJ_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_4_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_5_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_7_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_8_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
+  PRECO_MALA_INTERMUNICIPAL_USD,
+  PRECO_RESTAURANTES_HIGHEND_USD,
+  PRECO_TRANSFER_ONIBUS_USD_PAX,
+  PRECO_RESERVA_RESTAURANTE_USD,
+  PRECO_EXPERIENCIA_SOB_MEDIDA_USD,
+  DIARIA_CONCIERGE_USD,
+  PRECO_AEREO_ECONOMY_BRL,
+  PRECO_AEREO_PREMIUM_ECONOMY_USD,
+  PRECO_AEREO_BUSINESS_USD,
+  PRECO_AEREO_FIRST_USD,
+  CIDADE_MULTIPLICADOR_HOTEL,
+  LIMITE_PESSOAS_SEM_TAXA,
+  TAXA_POR_PASSAGEIRO_EXTRA,
+} from "../lib/precosPacote";
+export {
+  comMargemMotoristaPrivado,
+  DIARIA_HOTEL,
+  ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA,
+  FATOR_QUARTO,
+  DIARIA_TRANSPORTE,
+  JR_PASS_DIAS_OPCOES,
+  JR_PASS_PRECO_USD,
+  JR_PASS_PRECO_USD_GREEN,
+  DIARIA_MOTORISTA_PRIVADO_USD,
+  COMISSAO_AJISAI_SHOPPING_PCT,
+  DIARIA_WIFI_USD_PAX,
+  DIARIA_ESIM_USD_PAX,
+  PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX,
+  PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
+  PRECO_INGRESSO_DISNEYSEA_USD_PAX,
+  PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
+  PRECO_INGRESSO_USJ_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_4_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_5_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_7_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_8_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
+  PRECO_MALA_INTERMUNICIPAL_USD,
+  PRECO_RESTAURANTES_HIGHEND_USD,
+  PRECO_TRANSFER_ONIBUS_USD_PAX,
+  PRECO_RESERVA_RESTAURANTE_USD,
+  PRECO_EXPERIENCIA_SOB_MEDIDA_USD,
+  DIARIA_CONCIERGE_USD,
+  PRECO_AEREO_ECONOMY_BRL,
+  PRECO_AEREO_PREMIUM_ECONOMY_USD,
+  PRECO_AEREO_BUSINESS_USD,
+  PRECO_AEREO_FIRST_USD,
+  CIDADE_MULTIPLICADOR_HOTEL,
+};
 import { DIARIA_SEGURO_VIAGEM } from "../lib/precoSeguroViagem";
 import { PRECO_CAMBIO_BRASIL, CUSTO_ENTREGA_AEROPORTO_CAMBIO } from "../lib/precoCambioIene";
 import { JPY_POR_USD_REFERENCIA } from "../lib/servicosAdicionaisCatalogo";
@@ -377,10 +455,6 @@ export { comMargemEImposto };
 // app/lib/motoristaPrivadoRotas.ts (calculadora de Transporte Privado em
 // /produtos, calculadora reversa e self-service).
 // Atualizado 29/out/2026 (Wilson): "transporte privado ajustar margem para a partir de 45%" (antes 40%).
-const MULTIPLICADOR_MOTORISTA_PRIVADO = 1.45;
-export function comMargemMotoristaPrivado(custo: number) {
-  return Math.round(custo * MULTIPLICADOR_MOTORISTA_PRIVADO);
-}
 
 // Diária de hotel por categoria — usada pra calcular o total do pacote
 // conforme categoria do hotel, tipo de quarto e quantidade de dias.
@@ -396,12 +470,6 @@ export function comMargemMotoristaPrivado(custo: number) {
 // (~R$ 5,15/US$) e arredondado. Ainda uma média de mercado, não a diária
 // negociada com cada fornecedor específico — ajuste se tiver uma tabela de
 // parceiros mais precisa.
-export const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
-  "3 estrelas": comMargemEImposto(400),
-  "4 estrelas": comMargemEImposto(800),
-  "5 estrelas": comMargemEImposto(2600),
-  "Elite": comMargemEImposto(7500),
-};
 
 // Adicional de café da manhã por pessoa/dia, por categoria de hotel —
 // pedido do Wilson, 14/set/2026: "gerar variavel de hotel com refeicao e
@@ -429,15 +497,6 @@ export const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
 // uma média de mercado por categoria, não o valor negociado com cada
 // hotel específico — ajuste se tiver uma tabela de parceiros mais
 // precisa.
-export const ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA: Record<
-  (typeof CATEGORIAS_HOTEL)[number],
-  number
-> = {
-  "3 estrelas": comMargemEImposto(60),
-  "4 estrelas": comMargemEImposto(150),
-  "5 estrelas": comMargemEImposto(250),
-  "Elite": comMargemEImposto(400),
-};
 
 // Os 10 principais destinos do Japao pra turismo de alta renda — usados no
 // seletor de cidade do popup de Hoteis. Mesmas chaves de DestinoKey (ver
@@ -798,12 +857,6 @@ export const EXEMPLOS_HOTEIS_POR_CIDADE: Record<
 };
 
 // Fator por tipo de quarto — quarto compartilhado dilui o custo por pessoa.
-export const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
-  Individual: 1,
-  "Duplo (casal)": 0.65,
-  "Duplo (compartilhado)": 0.65,
-  Triplo: 0.5,
-};
 
 // Van dedicada (Toyota Alphard/Hiace) com motorista, sem compartilhar
 // veículo — recalibrado em 08/set/2026 a pedido do Wilson ("valores estao
@@ -811,7 +864,6 @@ export const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
 // ¥40.000-70.000/dia (~US$265-465) por uma van particular com motorista no
 // Japão; Wilson confirmou R$1.500/dia como valor final (custo base 1000,
 // já com a margem padrão da Alpinea).
-export const DIARIA_TRANSPORTE = comMargemEImposto(1000);
 // Guia estrangeiro (português limitado ou inglês) — opção mais barata,
 // pedido do Wilson, 16/set/2026: "deixar duas opções de guia, guia
 // brasileiro e guia estrangeiro". Valor final já escolhido por ele (não é
@@ -869,19 +921,7 @@ export const AVISO_DESLOCAMENTO_GUIA =
 // ~49,5% — imposto 1,15 × margem 1,3, o padrão dos outros produtos) — usa
 // esse multiplicador próprio de 30% direto sobre a tabela do fornecedor
 // acima. Nunca exposto em texto público (mesma regra de sempre).
-const SPREAD_JR_PASS = 1.3;
-export const JR_PASS_DIAS_OPCOES = [7, 14, 21] as const;
-export const JR_PASS_PRECO_USD: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
-  7: Math.round(329.0 * SPREAD_JR_PASS),
-  14: Math.round(527.0 * SPREAD_JR_PASS),
-  21: Math.round(658.0 * SPREAD_JR_PASS),
-};
 // Classe Green Car (luxo) — mesma tabela do fornecedor, coluna "Luxo (Green)".
-export const JR_PASS_PRECO_USD_GREEN: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
-  7: Math.round(461.0 * SPREAD_JR_PASS),
-  14: Math.round(724.0 * SPREAD_JR_PASS),
-  21: Math.round(921.0 * SPREAD_JR_PASS),
-};
 // Seguro Viagem: valor de referência por pessoa/dia. Nativo em REAIS (ao
 // contrário de guia/motorista/JR Pass/câmbio-aeroporto, que são nativos em
 // dólar) — confirmado pelo Wilson, 25/set/2026: "o custo diario de seguro
@@ -897,7 +937,6 @@ export { DIARIA_SEGURO_VIAGEM };
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
 // imposto+margem.
-export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemMotoristaPrivado(700);
 export const MOTORISTA_TAMANHO_GRUPO = 4;
 // PRECO_CAMBIO_BRASIL e CUSTO_ENTREGA_AEROPORTO_CAMBIO moraram aqui até
 // 29/set/2026 — movidos pra app/lib/precoCambioIene.ts (servidor recalcula
@@ -914,12 +953,10 @@ export { PRECO_CAMBIO_BRASIL, CUSTO_ENTREGA_AEROPORTO_CAMBIO };
 // de 20% sobre o valor das compras acompanhadas (sem diária/valor fixo).
 // Compartilhado entre calculadora_reversa/page.tsx (cálculo do item na
 // proposta) e produtos/page.tsx (card + popup do serviço).
-export const COMISSAO_AJISAI_SHOPPING_PCT = 0.2;
 // Wi-fi e ingressos Disney/Universal: valores de referência da planilha
 // "Simulação de Orçamento v2.1" (JPY convertido pra dólar) — não foram
 // passados valores explícitos por você para esses dois itens. Também
 // nativos em dólar.
-export const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax (custo)
 // eSIM — usado só na Calculadora Reversa (DIARIA_WIFI_USD_PAX acima
 // continua servindo o calculador do Personalizado). Custo do eSIM:
 // baseado nos planos "unlimited" (7-15 dias) da Airalo e Holafly pro
@@ -928,8 +965,6 @@ export const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax
 // Pocket Wi-Fi foi removido do catálogo — pedido do Wilson, 16/set/2026:
 // "não vamos mais trabalhar com pocket wifi, pode remover da
 // calculadora, pagina de produtos e roteiros".
-export const DIARIA_ESIM_USD_PAX = comMargemEImposto(4);
-export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso) — usado só no calculador do Personalizado
 // Catálogo detalhado de ingressos da Calculadora Reversa — pesquisa
 // set/2026, custo puro em USD (convertido de JPY na cotação de referência
 // ~150 JPY/USD), 1 dia/adulto, antes de imposto+margem:
@@ -942,8 +977,6 @@ export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); //
 // - teamLab Kyoto (Biovortex): ¥3.800 — teamlab.art/e/kyoto
 // Todos com precificação dinâmica por data no fornecedor — valores aqui
 // são referência de mercado, não tarifa negociada.
-export const PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX = comMargemEImposto(63);
-export const PRECO_INGRESSO_DISNEYSEA_USD_PAX = comMargemEImposto(63);
 // Disney Premier Access (fast pass pago) NÃO é um pacote único — é
 // vendido por atração, ¥1.000 (menos concorridas, ex. Monsters Inc.,
 // Haunted Mansion) a ¥2.000 (mais concorridas, ex. Frozen, Soaring,
@@ -951,13 +984,10 @@ export const PRECO_INGRESSO_DISNEYSEA_USD_PAX = comMargemEImposto(63);
 // a MÉDIA ponderada dessas faixas (~¥1.700/atração) — o vendedor escolhe
 // quantas atrações o cliente quer, não um pacote fechado.
 // neverendingvoyage.com/tokyo-disney-premier-access
-export const PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX = comMargemEImposto(11);
-export const PRECO_INGRESSO_USJ_USD_PAX = comMargemEImposto(72);
 // USJ Express Pass tem 3 produtos oficiais com preços bem diferentes
 // entre si (variam por temporada — valores abaixo são o tier médio):
 // Express 4 ~¥13.000, Express 7 ~¥18.000, Premium ~¥45.000.
 // japan.asoventure.jp/en/article/usj-express-pass-guide-2026-worth-buying
-export const PRECO_EXPRESS_PASS_USJ_4_USD_PAX = comMargemEImposto(87);
 // ⚠️ ESTIMATIVA — Express 5 e Express 8 não têm preço oficial/custo
 // confirmado ainda (só temos a lista de atrações incluídas, vinda de
 // prints do Klook enviados pelo Wilson em 04/set/2026). Custo estimado por
@@ -965,12 +995,6 @@ export const PRECO_EXPRESS_PASS_USJ_4_USD_PAX = comMargemEImposto(87);
 // atrações, custo 120) — Express 5 fica no meio, Express 8 é o Express 7 +
 // 1 atração extra (Minion Blast). SUBSTITUIR pelo custo real assim que o
 // Wilson confirmar (ver nota "confirmar preço" nos botões da calculadora).
-export const PRECO_EXPRESS_PASS_USJ_5_USD_PAX = comMargemEImposto(100);
-export const PRECO_EXPRESS_PASS_USJ_7_USD_PAX = comMargemEImposto(120);
-export const PRECO_EXPRESS_PASS_USJ_8_USD_PAX = comMargemEImposto(130);
-export const PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX = comMargemEImposto(300);
-export const PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX = comMargemEImposto(27);
-export const PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX = comMargemEImposto(25);
 
 // Transporte de malas inter-municipal ("takkyubin", serviço de courier
 // hotel-a-hotel operado por transportadoras japonesas como Yamato
@@ -986,11 +1010,9 @@ export const PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX = comMargemEImposto(25);
 // usado aqui só como referência do trecho mais comum. Convertido pra
 // dólar na cotação de referência (~150 JPY/US$): ≈ US$19/mala/trecho.
 // Entrega no dia seguinte — não é serviço no mesmo dia.
-export const PRECO_MALA_INTERMUNICIPAL_USD = comMargemEImposto(19);
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
 // restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor
 // fixo até 3 pessoas — não escala por dia nem por pessoa dentro do limite.
-export const PRECO_RESTAURANTES_HIGHEND_USD = comMargemEImposto(1000);
 export const RESTAURANTES_HIGHEND_QTD = 7;
 export const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 
@@ -1010,7 +1032,6 @@ export const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 // trip.com/guide/transport/haneda-airport-limousine-bus.html. Ida e volta:
 // ¥3.600 × 2 = ¥7.200/pessoa, convertido na cotação de referência ~150
 // JPY/US$ igual aos outros itens nativos em dólar.
-export const PRECO_TRANSFER_ONIBUS_USD_PAX = comMargemEImposto(48);
 // Reserva de restaurante avulsa (fora do pacote high-end Michelin/Tabelog)
 // — 1 reserva. ⚠️ ESTIMATIVA: não existe preço de mercado público pra esse
 // serviço específico (é o trabalho do concierge de conseguir mesa, não uma
@@ -1018,7 +1039,6 @@ export const PRECO_TRANSFER_ONIBUS_USD_PAX = comMargemEImposto(48);
 // de concierge em geral (US$50-300/tarefa avulsa), usando a ponta mais
 // baixa por ser uma reserva simples — approvedexperiences.com/blog/
 // concierge-service-pricing. Confirmar/ajustar com o Wilson.
-export const PRECO_RESERVA_RESTAURANTE_USD = comMargemEImposto(60);
 // Experiência sob medida — taxa de curadoria/coordenação por experiência
 // (o concierge pesquisa, negocia e agenda algo fora do catálogo padrão —
 // cerimônia do chá particular, acesso exclusivo, etc.). Cobre só o
@@ -1027,7 +1047,6 @@ export const PRECO_RESERVA_RESTAURANTE_USD = comMargemEImposto(60);
 // pedido. ⚠️ ESTIMATIVA — mesma base "pay-per-request" acima, ponta mais
 // alta por exigir mais pesquisa/negociação que uma reserva de restaurante.
 // Confirmar/ajustar com o Wilson.
-export const PRECO_EXPERIENCIA_SOB_MEDIDA_USD = comMargemEImposto(180);
 // Concierge dedicado durante a viagem (WhatsApp/telefone, suporte e
 // tradução sob demanda) — por dia, mesma lógica de diária do
 // guia/motorista acima. ⚠️ ESTIMATIVA: sem preço de mercado específico pra
@@ -1035,7 +1054,6 @@ export const PRECO_EXPERIENCIA_SOB_MEDIDA_USD = comMargemEImposto(180);
 // mensal de serviços de concierge em geral (US$1.000-5.000/mês) dividida
 // por ~30 dias — approvedexperiences.com/blog/concierge-service-pricing.
 // Confirmar/ajustar com o Wilson.
-export const DIARIA_CONCIERGE_USD = comMargemEImposto(35);
 
 // Roteiro Personalizado: mesma regra de preço do produto standalone
 // vendido em /ajisairoteiros (ver PriceCalculator.tsx) — preço-base fixo
@@ -1071,10 +1089,6 @@ export { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA };
 // de novo aqui (senão dobraria a margem); leva só o imposto sobre o lucro,
 // pra ficar no mesmo padrão de carga tributária dos demais itens.
 export const CLASSES_AEREO = ["Economy", "Premium Economy", "Business", "First Class"] as const;
-export const PRECO_AEREO_ECONOMY_BRL = comMargemEImposto(8000);
-export const PRECO_AEREO_PREMIUM_ECONOMY_USD = comMargemEImposto(3200);
-export const PRECO_AEREO_BUSINESS_USD = comMargemEImposto(6000);
-export const PRECO_AEREO_FIRST_USD = Math.round(17500 * IMPOSTO_SOBRE_LUCRO);
 
 // Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
 // viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
@@ -1396,80 +1410,6 @@ type DestinoKey = (typeof DESTINOS)[number]["key"];
 // mercado, não uma tabela de diária negociada por cidade — pedido do
 // Wilson, 01/set/2026: "a cidade também deve influenciar a calculadora do
 // hotel", como um multiplicador simples sobre o preço por categoria.
-export const CIDADE_MULTIPLICADOR_HOTEL: Record<DestinoKey, number> = {
-  tokyo: 1.15,
-  kyoto: 1.1,
-  osaka: 1.0,
-  hokkaido: 0.95,
-  okinawa: 1.05,
-  hiroshima: 0.9,
-  nara: 0.9,
-  hakone: 1.05,
-  nikko: 0.9,
-  kanazawa: 0.9,
-  takayama: 0.85,
-  kamakura: 0.95,
-  nagoya: 0.9,
-  fukuoka: 0.9,
-  kobe: 0.95,
-  yokohama: 1.0,
-  miyajima: 0.9,
-  nagano: 0.85,
-  ishigaki: 1.05,
-  yakushima: 0.9,
-  // Cidades dos "Temas" da Calculadora Reversa (04/set/2026) — pesquisa
-  // individual de mercado por cidade (04/set/2026), mesmo critério de
-  // ajuste relativo acima (não é tarifa negociada por fornecedor).
-  // Fuji/Kawaguchiko: ryokan com vista pro Fuji ~US$135-230 mid-range,
-  // US$300-700+ no topo (Kawaguchiko Fufu) — tier parecido com Hakone.
-  // (japanryokanguide.com/en/blog/best-ryokans-kawaguchiko)
-  fuji: 1.05,
-  // Niseko: resort de ski internacional, ultra-luxo chega a US$2.000+
-  // /noite em temporada (Park Hyatt Niseko Hanazono, Ritz-Carlton
-  // Reserve) — bem acima de Tokyo. Multiplicador médio no ano; pico de
-  // inverno na prática custa ainda mais.
-  // (thehotelguru.com/en-us/best-hotels-in/japan/niseko)
-  niseko: 1.35,
-  // Hakuba: mid-range já em US$150-220/noite (quarto), premium
-  // US$319-438 — patamar de Tokyo 4-5 estrelas mesmo na média do mercado,
-  // por oferta limitada num resort concorrido. Wilson confirmou "bem
-  // caro" (04/set/2026) — revisado pra cima da estimativa inicial.
-  // (thehotelguru.com/en-us/best-hotels-in/japan/hakuba)
-  hakuba: 1.2,
-  // Kamikochi: vale de acesso controlado (carro particular proibido lá
-  // dentro), oferta de hospedagem muito limitada — faixa de US$254 a
-  // US$1.087/noite, média de temporada alta ~US$506. Bem acima da
-  // estimativa inicial.
-  // (tripadvisor.com/Hotels-g12830931-Kamikochi_Matsumoto_Nagano_Prefecture_Koshinetsu_Chubu-Hotels.html)
-  kamikochi: 1.25,
-  // Nozawa Onsen: vila de ski + onsen tradicional, mais em conta que
-  // Kusatsu/Kinosaki (piso de ~¥5.000/pessoa) — estimativa relativa.
-  nozawa: 1.0,
-  // Kusatsu: ryokans premium cobram US$250-800/pessoa/noite com 2
-  // refeições, mid-range US$120-350/pessoa — um dos onsen mais
-  // concorridos do Japão, ajustado pra cima da estimativa inicial.
-  // (japanryokanguide.com/en/blog/best-ryokans-kusatsu)
-  kusatsu: 1.05,
-  // Kinosaki: perfil de preço parecido com Kusatsu (premium US$250-800+
-  // /pessoa, mid-range US$130-220/pessoa), mas cidade pequena e
-  // totalmente andável — mantido levemente abaixo de Kusatsu.
-  // (japanryokanguide.com/en/area/kinosaki)
-  kinosaki: 1.0,
-  // Koyasan: shukubo (templo) roda ¥15.000-25.000/pessoa/noite já com 2
-  // refeições — mercado modesto apesar da experiência única, revisado
-  // pra baixo da estimativa inicial.
-  // (osaka-escape.com/guides/koyasan-temple-stay)
-  koyasan: 0.85,
-  // Suzuka: hotéis a partir de US$26-30/noite — mercado de hotel de
-  // negócios comum, sem premium turístico.
-  // (expedia.com/Suzuka-Hotels.d602819.Travel-Guide-Hotels)
-  suzuka: 0.8,
-  // Motegi: hotéis na cidade a partir de US$30-44/noite (o resort dentro
-  // do próprio circuito custa mais, ~US$205, mas não é a opção típica de
-  // hospedagem) — mercado rural modesto, mesmo tier de Suzuka.
-  // (tripadvisor.com/Hotels-g1121046-Motegi_machi_Haga_gun_Tochigi_Prefecture_Kanto-Hotels.html)
-  motegi: 0.8,
-};
 
 const MIN_DIAS = 3;
 const MAX_DIAS = 30;
@@ -1480,8 +1420,6 @@ const MAX_PESSOAS = 20;
 // Grupos acima de 3 pessoas têm custo adicional de logística (veículo maior,
 // guia/motorista ajustado etc.) — cobrado por passageiro excedente. Preço
 // final já com imposto+margem.
-const LIMITE_PESSOAS_SEM_TAXA = 3;
-const TAXA_POR_PASSAGEIRO_EXTRA = comMargemEImposto(350);
 
 // Extrai o "N. " do início de um label numerado ("1. Orçamento", "9.
 // Cidades do roteiro") e desenha o número como bolinha preta com fonte

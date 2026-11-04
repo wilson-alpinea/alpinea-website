@@ -13,12 +13,14 @@
 // iene em papel-moeda (mesma fonte da página de Câmbio).
 // Pure module: usado pela página (cliente) e recalculado na API.
 
+import { P } from "./parametrosPreco";
+
 export const PRECOS = {
-  vistoBRL: 1200,
-  certificadoJPY: 70000,
-  passagemJPY: 200000,
-  adicionalNorteNordesteJPY: 50000,
-  cestaExtrasJPY: 100000,
+  vistoBRL: P("empregos.vistoBRL", 1200),
+  certificadoJPY: P("empregos.certificadoJPY", 70000),
+  passagemJPY: P("empregos.passagemJPY", 200000),
+  adicionalNorteNordesteJPY: P("empregos.adicionalNorteNordesteJPY", 50000),
+  cestaExtrasJPY: P("empregos.cestaExtrasJPY", 100000),
 } as const;
 
 export const MAX_PROPONENTES = 10;

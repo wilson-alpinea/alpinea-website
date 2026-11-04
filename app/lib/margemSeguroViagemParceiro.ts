@@ -14,15 +14,17 @@
 // viajantes (cada um pela sua idade).
 // ⚠️ MARGEM_80_ANOS é um ponto de partida — ajustar com o Wilson.
 
-export const MARGEM_ATE_60_ANOS = 50;
+import { P } from "./parametrosPreco";
+
+export const MARGEM_ATE_60_ANOS = P("seguroParceiro.margemAte60", 50);
 // Canal de venda direta (Wilson, 29/out/2026: "o site COMPETITIVO, padrão
 // ... mas o canal direto [WhatsApp] vai com a margem turbo" — "cria uma
 // depois com 300% de margem para ver como fica"). Link
 // /produtos/seguro-viagem/direto: margem fixa, sem o limite do preço de
 // balcão do fornecedor (o mercado chega a 300%–400%).
 export type CanalSeguro = "site" | "direto";
-export const MARGEM_CANAL_DIRETO = 300;
-export const MARGEM_80_ANOS = 100;
+export const MARGEM_CANAL_DIRETO = P("seguroParceiro.margemCanalDireto", 300);
+export const MARGEM_80_ANOS = P("seguroParceiro.margem80", 100);
 export const IDADE_MAXIMA_ONLINE = 80;
 
 export function margemPorIdade(idade: number): number {

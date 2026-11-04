@@ -9,9 +9,10 @@ import {
   PRECO_EXPRESS_PASS_USJ_7_USD_PAX,
   PRECO_EXPRESS_PASS_USJ_8_USD_PAX,
   PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
-  DESTINOS,
-  comMargemEImposto,
-} from "../components/CustomPackageCard";
+} from "./precosPacote";
+import type { DESTINOS } from "../components/CustomPackageCard";
+import { comMargemEImposto } from "./margemPadrao";
+import { P, tabelaP } from "./parametrosPreco";
 
 // Catálogo da calculadora voltada ao cliente (/viagem_personalizada_selfservice).
 // Espelha o da Calculadora Reversa interna, mas SÓ com o que pode aparecer
@@ -110,17 +111,17 @@ export const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; ico
 ];
 
 export const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<string, Record<TemporadaKey, number>>> = {
-  tokyo: { sakura: 1.45, primavera: 1.35, julho: 1.1, outono: 1.3, inverno: 1.1, baixa: 1.0 },
-  yokohama: { sakura: 1.25, primavera: 1.2, julho: 1.05, outono: 1.15, inverno: 1.05, baixa: 1.0 },
-  kyoto: { sakura: 1.85, primavera: 1.6, julho: 1.15, outono: 1.75, inverno: 1.15, baixa: 1.0 },
-  osaka: { sakura: 1.4, primavera: 1.3, julho: 1.1, outono: 1.2, inverno: 1.05, baixa: 1.0 },
-  nagoya: { sakura: 1.1, primavera: 1.1, julho: 1.05, outono: 1.12, inverno: 1.0, baixa: 1.0 },
-  kobe: { sakura: 1.08, primavera: 1.08, julho: 1.05, outono: 1.1, inverno: 1.0, baixa: 1.0 },
-  hiroshima: { sakura: 1.15, primavera: 1.15, julho: 1.1, outono: 1.2, inverno: 1.0, baixa: 1.0 },
-  fukuoka: { sakura: 1.12, primavera: 1.15, julho: 1.1, outono: 1.12, inverno: 1.0, baixa: 1.0 },
-  hokkaido: { sakura: 1.12, primavera: 1.2, julho: 1.15, outono: 1.05, inverno: 1.55, baixa: 1.0 },
-  okinawa: { sakura: 1.1, primavera: 1.35, julho: 1.4, outono: 1.03, inverno: 0.85, baixa: 1.0 },
-  niseko: { sakura: 0.85, primavera: 0.85, julho: 1.08, outono: 1.1, inverno: 2.8, baixa: 1.0 },
+  tokyo: tabelaP("hotel.temporada.tokyo", { sakura: 1.45, primavera: 1.35, julho: 1.1, outono: 1.3, inverno: 1.1, baixa: 1.0 }),
+  yokohama: tabelaP("hotel.temporada.yokohama", { sakura: 1.25, primavera: 1.2, julho: 1.05, outono: 1.15, inverno: 1.05, baixa: 1.0 }),
+  kyoto: tabelaP("hotel.temporada.kyoto", { sakura: 1.85, primavera: 1.6, julho: 1.15, outono: 1.75, inverno: 1.15, baixa: 1.0 }),
+  osaka: tabelaP("hotel.temporada.osaka", { sakura: 1.4, primavera: 1.3, julho: 1.1, outono: 1.2, inverno: 1.05, baixa: 1.0 }),
+  nagoya: tabelaP("hotel.temporada.nagoya", { sakura: 1.1, primavera: 1.1, julho: 1.05, outono: 1.12, inverno: 1.0, baixa: 1.0 }),
+  kobe: tabelaP("hotel.temporada.kobe", { sakura: 1.08, primavera: 1.08, julho: 1.05, outono: 1.1, inverno: 1.0, baixa: 1.0 }),
+  hiroshima: tabelaP("hotel.temporada.hiroshima", { sakura: 1.15, primavera: 1.15, julho: 1.1, outono: 1.2, inverno: 1.0, baixa: 1.0 }),
+  fukuoka: tabelaP("hotel.temporada.fukuoka", { sakura: 1.12, primavera: 1.15, julho: 1.1, outono: 1.12, inverno: 1.0, baixa: 1.0 }),
+  hokkaido: tabelaP("hotel.temporada.hokkaido", { sakura: 1.12, primavera: 1.2, julho: 1.15, outono: 1.05, inverno: 1.55, baixa: 1.0 }),
+  okinawa: tabelaP("hotel.temporada.okinawa", { sakura: 1.1, primavera: 1.35, julho: 1.4, outono: 1.03, inverno: 0.85, baixa: 1.0 }),
+  niseko: tabelaP("hotel.temporada.niseko", { sakura: 0.85, primavera: 0.85, julho: 1.08, outono: 1.1, inverno: 2.8, baixa: 1.0 }),
 };
 
 export const MESES_NOME = [
@@ -199,7 +200,7 @@ export const MAX_TEMAS_SIMULTANEOS = 3;
 export const MAX_CIDADES_ROTEIRO = 5;
 export { CAMBIO_IENES_MINIMO } from "./precoCambioIene"; // valor em precoCambioIene.ts (29/set/2026)
 // Fator interno de conversão usado no preço final do câmbio — não exibido.
-export const FATOR_CAMBIO_IENE = 1.15;
+export const FATOR_CAMBIO_IENE = P("cambio.fatorIeneCalculadoras", 1.15);
 
 // Câmbio de ienes — página pública /produtos (self-checkout). Pedido do
 // Wilson, 25/set/2026: "desenvolver um algoritmo que baseado na escolha da
@@ -230,7 +231,7 @@ export { SPREAD_CAMBIO_IENE_PUBLICO_COMPRA, SPREAD_CAMBIO_IENE_PUBLICO_VENDA } f
 // margem/fornecedor em texto público). Cotação de base vem de
 // app/lib/cambioDolarTurismo.ts (melhorcambio.com, papel-moeda) — só o
 // JR Pass usa esse spread por enquanto.
-export const SPREAD_DOLAR_TURISMO_PUBLICO = 1.2;
+export const SPREAD_DOLAR_TURISMO_PUBLICO = P("cambio.spreadDolarTurismo", 1.2);
 
 // Mesmo mínimo já usado na Calculadora Reversa (CAMBIO_IENES_MINIMO acima)
 // — reexportado com nome mais específico só pra deixar claro, no
@@ -387,25 +388,25 @@ export type DiaRoteiroExtensao = {
 };
 export type TrechoDeslocamentoExtensao = { label: string; precoUSDPax: number };
 
-const PRECO_VOO_TOQUIO_SEOUL_USD_PAX = comMargemEImposto(210);
-const PRECO_VOO_TOQUIO_PEQUIM_USD_PAX = comMargemEImposto(280);
-const PRECO_TREM_PEQUIM_XANGAI_USD_PAX = comMargemEImposto(85);
+export const PRECO_VOO_TOQUIO_SEOUL_USD_PAX = comMargemEImposto(P("extensao.vooToquioSeoulUSD", 210));
+export const PRECO_VOO_TOQUIO_PEQUIM_USD_PAX = comMargemEImposto(P("extensao.vooToquioPequimUSD", 280));
+export const PRECO_TREM_PEQUIM_XANGAI_USD_PAX = comMargemEImposto(P("extensao.tremPequimXangaiUSD", 85));
 
 export const DIARIA_HOTEL_EXTENSAO_USD: Record<ExtensaoCidadeKey, Record<CategoriaHotelExtensao, number>> = {
   seoul: {
-    "3 estrelas": comMargemEImposto(75),
-    "4 estrelas": comMargemEImposto(350),
-    "5 estrelas": comMargemEImposto(600),
+    "3 estrelas": comMargemEImposto(P("extensao.hotel.seoul.3estrelas", 75)),
+    "4 estrelas": comMargemEImposto(P("extensao.hotel.seoul.4estrelas", 350)),
+    "5 estrelas": comMargemEImposto(P("extensao.hotel.seoul.5estrelas", 600)),
   },
   beijing: {
-    "3 estrelas": comMargemEImposto(65),
-    "4 estrelas": comMargemEImposto(170),
-    "5 estrelas": comMargemEImposto(600),
+    "3 estrelas": comMargemEImposto(P("extensao.hotel.beijing.3estrelas", 65)),
+    "4 estrelas": comMargemEImposto(P("extensao.hotel.beijing.4estrelas", 170)),
+    "5 estrelas": comMargemEImposto(P("extensao.hotel.beijing.5estrelas", 600)),
   },
   shanghai: {
-    "3 estrelas": comMargemEImposto(70),
-    "4 estrelas": comMargemEImposto(150),
-    "5 estrelas": comMargemEImposto(380),
+    "3 estrelas": comMargemEImposto(P("extensao.hotel.shanghai.3estrelas", 70)),
+    "4 estrelas": comMargemEImposto(P("extensao.hotel.shanghai.4estrelas", 150)),
+    "5 estrelas": comMargemEImposto(P("extensao.hotel.shanghai.5estrelas", 380)),
   },
 };
 
@@ -537,13 +538,21 @@ export const FLEXIBILIDADE_DATAS = [
   { key: "flexivel", nome: "Flexível" },
 ] as const;
 export type FlexibilidadeDatasKey = (typeof FLEXIBILIDADE_DATAS)[number]["key"];
+// Economia ESTIMADA no aéreo com datas flexíveis (nota consultiva da
+// Calculadora Reversa — fração do preço do aéreo). Editável em /crm/precos.
+export const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = tabelaP("aereo.economiaFlexibilidade", {
+  fixas: 0,
+  tres: 0.08,
+  sete: 0.15,
+  flexivel: 0.22,
+});
 
 // Simulação de pagamento (Tabela Price) — só valores finais são exibidos ao cliente.
-export const TAXA_MAQUINA_CARTAO = 0.0355;
-export const TAXA_JUROS_CARTAO_MES = 0.0169;
+export const TAXA_MAQUINA_CARTAO = P("pagamento.taxaMaquinaCartao", 0.0355);
+export const TAXA_JUROS_CARTAO_MES = P("pagamento.jurosCartaoMes", 0.0169);
 export const OPCOES_PARCELAS_CARTAO = [1, 4, 10, 12] as const;
-export const ENTRADA_PIX_PCT = 0.3;
-export const TAXA_JUROS_PIX_MES = 0.0149;
+export const ENTRADA_PIX_PCT = P("pagamento.entradaPix", 0.3);
+export const TAXA_JUROS_PIX_MES = P("pagamento.jurosPixMes", 0.0149);
 export const OPCOES_PARCELAS_PIX = [4, 10, 12] as const;
 export function calcularParcelaPrice(valorFinanciado: number, taxaMensal: number, parcelas: number) {
   if (parcelas <= 1) return valorFinanciado;

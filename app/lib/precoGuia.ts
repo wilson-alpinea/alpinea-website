@@ -3,24 +3,25 @@
 // /api/guia-selfservice, que RECALCULA o total antes de gerar o pagamento
 // da Stone (Wilson, 29/out/2026: "guia turístico deixar pagamento via Stone").
 import { comMargemEImposto } from "./margemPadrao";
+import { P } from "./parametrosPreco";
 import { JPY_POR_USD_REFERENCIA } from "./servicosAdicionaisCatalogo";
 
 // Guia estrangeiro: custo HK Tourist (¥40.000/dia) com a margem padrão.
-export const CUSTO_GUIA_JPY_DIA = 40000;
+export const CUSTO_GUIA_JPY_DIA = P("guia.estrangeiroCustoJPY", 40000);
 export const DIARIA_GUIA_ESTRANGEIRO_USD = comMargemEImposto(CUSTO_GUIA_JPY_DIA / JPY_POR_USD_REFERENCIA);
 // Guia brasileiro: "valor base é 500 dólares, com nossa margem deve ir pra 700 USD/dia".
-export const CUSTO_GUIA_BRASILEIRO_USD_DIA = 500;
-export const MULTIPLICADOR_GUIA_BRASILEIRO = 1.4;
+export const CUSTO_GUIA_BRASILEIRO_USD_DIA = P("guia.brasileiroCustoUSD", 500);
+export const MULTIPLICADOR_GUIA_BRASILEIRO = P("guia.margemBrasileiro", 1.4);
 export const DIARIA_GUIA_USD = Math.round(CUSTO_GUIA_BRASILEIRO_USD_DIA * MULTIPLICADOR_GUIA_BRASILEIRO);
 export const GUIA_TAMANHO_GRUPO = 4;
 // Gorjeta exigida pelo fornecedor — repassada sem margem.
-export const GORJETA_GUIA_USD_PAX_DIA = 7;
+export const GORJETA_GUIA_USD_PAX_DIA = P("guia.gorjetaUSD", 7);
 // Monte Fuji (Fujikawaguchiko): +US$100 por guia, por dia, nos dois tipos de guia.
-export const ADICIONAL_GUIA_MONTE_FUJI_USD = 100;
+export const ADICIONAL_GUIA_MONTE_FUJI_USD = P("guia.adicionalFujiUSD", 100);
 export const CIDADE_MONTE_FUJI = "Fujikawaguchiko (Monte Fuji)";
 export const CIDADES_GUIA = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", CIDADE_MONTE_FUJI];
 // Roteiro Personalizado incluído quando o cliente ainda não tem (em reais).
-export const ROTEIRO_PRECO_BASE_BRL = comMargemEImposto(1500);
+export const ROTEIRO_PRECO_BASE_BRL = comMargemEImposto(P("roteiro.baseCusto", 1500));
 
 export type TipoGuiaPreco = "brasileiro" | "estrangeiro";
 

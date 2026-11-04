@@ -11,6 +11,8 @@
 // (página) e no servidor (/api/jrpass-selfservice recalcula pelo CEP/UF,
 // nunca confia no valor vindo do cliente).
 
+import { P } from "./parametrosPreco";
+
 export const PRAZO_POSTAGEM_DIAS_UTEIS = 3;
 
 // Prazo de entrega do SEDEX após a postagem — único para todo o Brasil:
@@ -28,14 +30,14 @@ export type FaixaFrete = {
 };
 
 const FAIXAS: Record<string, FaixaFrete> = {
-  spCapital: { id: "spCapital", nome: "São Paulo capital e Grande SP", valorBRL: 25, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  spInterior: { id: "spInterior", nome: "Interior de São Paulo", valorBRL: 32, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  sudeste: { id: "sudeste", nome: "RJ, MG, ES e PR", valorBRL: 42, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  sul: { id: "sul", nome: "SC e RS", valorBRL: 48, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  centroOeste: { id: "centroOeste", nome: "DF, GO e MS", valorBRL: 55, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  centroNorte: { id: "centroNorte", nome: "MT e TO", valorBRL: 62, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  nordeste: { id: "nordeste", nome: "Nordeste", valorBRL: 68, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
-  norte: { id: "norte", nome: "Norte", valorBRL: 78, prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  spCapital: { id: "spCapital", nome: "São Paulo capital e Grande SP", valorBRL: P("frete.spCapital", 25), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  spInterior: { id: "spInterior", nome: "Interior de São Paulo", valorBRL: P("frete.spInterior", 32), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  sudeste: { id: "sudeste", nome: "RJ, MG, ES e PR", valorBRL: P("frete.sudeste", 42), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  sul: { id: "sul", nome: "SC e RS", valorBRL: P("frete.sul", 48), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  centroOeste: { id: "centroOeste", nome: "DF, GO e MS", valorBRL: P("frete.centroOeste", 55), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  centroNorte: { id: "centroNorte", nome: "MT e TO", valorBRL: P("frete.centroNorte", 62), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  nordeste: { id: "nordeste", nome: "Nordeste", valorBRL: P("frete.nordeste", 68), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
+  norte: { id: "norte", nome: "Norte", valorBRL: P("frete.norte", 78), prazoMinDiasUteis: PRAZO_ENTREGA_MIN, prazoMaxDiasUteis: PRAZO_ENTREGA_MAX },
 };
 
 const UF_FAIXA: Record<string, keyof typeof FAIXAS> = {

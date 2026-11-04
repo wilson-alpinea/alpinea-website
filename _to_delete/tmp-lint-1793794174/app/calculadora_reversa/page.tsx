@@ -1,0 +1,5773 @@
+"use client";
+
+import Link from "next/link";
+import { bodoniModa } from "@/app/fonts/bodoni";
+import { useMemo, useState } from "react";
+import { gerarEBaixarPdf } from "./PacotePdf";
+import { gerarEBaixarTexto } from "./PacoteTexto";
+import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug } from "../hooks/useCambioIene";
+import { COTACAO_FALLBACK_BRL_POR_JPY } from "../lib/cambioIene";
+import {
+  NumberStepper,
+  LabelNumerado,
+  BotaoOcultarCampo,
+  IconEye,
+  IconEyeOff,
+  DESTINOS,
+  CIDADE_MULTIPLICADOR_HOTEL,
+  CATEGORIAS_HOTEL,
+  TIPOS_QUARTO,
+  FATOR_QUARTO,
+  CAPACIDADE_QUARTO,
+  DIARIA_HOTEL,
+  ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA,
+  CLASSES_AEREO,
+  PRECO_AEREO_ECONOMY_BRL,
+  PRECO_AEREO_PREMIUM_ECONOMY_USD,
+  PRECO_AEREO_BUSINESS_USD,
+  PRECO_AEREO_FIRST_USD,
+  DIARIA_GUIA_USD,
+  DIARIA_GUIA_ESTRANGEIRO_USD,
+  GUIA_TAMANHO_GRUPO,
+  GORJETA_GUIA_USD_PAX_DIA,
+  ADICIONAL_GUIA_MONTE_FUJI_USD,
+  AVISO_DESLOCAMENTO_GUIA,
+  DIARIA_SEGURO_VIAGEM,
+  JR_PASS_DIAS_OPCOES,
+  JR_PASS_PRECO_USD,
+  JR_PASS_PRECO_USD_GREEN,
+  DIARIA_ESIM_USD_PAX,
+  PRECO_CAMBIO_BRASIL,
+  COMISSAO_AJISAI_SHOPPING_PCT,
+  PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
+  PRECO_INGRESSO_DISNEYSEA_USD_PAX,
+  PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
+  PRECO_INGRESSO_USJ_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_4_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_5_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_7_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_8_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
+  PRECO_MALA_INTERMUNICIPAL_USD,
+  PRECO_RESTAURANTES_HIGHEND_USD,
+  RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
+  RESTAURANTES_HIGHEND_QTD,
+  PRECO_TRANSFER_ONIBUS_USD_PAX,
+  PRECO_RESERVA_RESTAURANTE_USD,
+  PRECO_EXPERIENCIA_SOB_MEDIDA_USD,
+  DIARIA_CONCIERGE_USD,
+  ROTEIRO_BASE_DIAS,
+  ROTEIRO_PRECO_BASE,
+  ROTEIRO_PRECO_DIA_EXTRA,
+  comMargemEImposto,
+} from "../components/CustomPackageCard";
+import {
+  useCambioUSD,
+  formatBRL,
+  formatUSD,
+  formatValor,
+  brlParaUSDLabel,
+  type MoedaExibicao,
+} from "../hooks/useCambioUSD";
+import { CambioLabel } from "../components/CambioLabel";
+import PerfilViajanteSeletor from "../components/PerfilViajanteSeletor";
+import { MotoristaPrivadoPicker } from "../components/MotoristaPrivadoPicker";
+import {
+  SELECAO_MOTORISTA_VAZIA,
+  calcularTotalMotoristaUSD,
+  resumoSelecaoMotorista,
+  type SelecaoMotorista,
+} from "../lib/motoristaPrivadoRotas";
+import {
+  calcularComponentesRitmo,
+  calcularFeePlanejamento,
+  EXPLICACAO_CLIENTE_PERFIL,
+} from "../lib/precificacaoPerfil";
+import {
+  PERFIL_VIAJANTE_PADRAO,
+  PERFIS_VIAJANTE,
+  diasMinimosPorPerfil,
+  type PerfilViajanteKey,
+} from "../lib/calculadoraCatalogoPublico";
+
+type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamlabKyoto";
+
+// Catálogo de ingressos/experiências oferecidos na Calculadora Reversa —
+// cada um vira um candidato do preenchimento por orçamento quando marcado
+// pelo vendedor (ver ingressosSelecionados). Preços em CustomPackageCard.tsx.
+const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; icone?: string }[] = [
+  { key: "disneyland", nome: "Disneyland Tokyo", precoUSD: PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
+  { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX, icone: "/images/ingressos/disneysea-logo.png" },
+  { key: "usj", nome: "Universal Studios Japan", precoUSD: PRECO_INGRESSO_USJ_USD_PAX, icone: "/images/ingressos/usj-logo.png" },
+  {
+    key: "teamlabTokyo",
+    nome: "teamLab Tokyo",
+    precoUSD: PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
+    icone: "/images/ingressos/teamlab-logo.png",
+  },
+  {
+    key: "teamlabKyoto",
+    nome: "teamLab Kyoto",
+    precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
+    icone: "/images/ingressos/teamlab-logo.png",
+  },
+];
+
+type ServicoAdicionalKey =
+  | "malasIntermunicipal"
+  | "cambioBrasil"
+  | "restaurantesHighEnd"
+  | "transferOnibus"
+  | "reservaRestaurante"
+  | "experienciaSobMedida"
+  | "concierge"
+  | "ajisaiShopping";
+
+// Catálogo de serviços adicionais/avulsos mostrados como cards na seção 16
+// — mesmo espírito visual/funcional do catálogo de Ingressos acima (card
+// com ícone + nome + preço, marcação vira candidato do preenchimento por
+// orçamento). Auditado contra a lista de "Serviços avulsos"
+// (SERVICOS_AVULSOS, em app/lib/servicosAvulsos.ts) em 10/set/2026.
+//
+// Câmbio no Brasil e Reserva de Restaurantes High-End eram itens
+// automáticos (entravam sozinhos em todo pacote, sem opção de tirar) —
+// viraram cards opcionais aqui a pedido do Wilson, 10/set/2026, pro
+// vendedor decidir por proposta. Transporte de Malas já era opcional.
+// Seguro Viagem e JR Pass continuam de fora deste catálogo: Seguro é
+// obrigatório em todo pacote (pedido do Wilson, 08/set/2026 — ver
+// comentário em "Seguro Viagem é item fixo/obrigatório" mais abaixo) e JR
+// Pass já tem seção própria (11). eSIM tem a seção 15.
+//
+// Cada item tem sua própria fórmula de preço (calculada onde é usado, não
+// aqui no catálogo — os formatos são diferentes demais pra generalizar):
+// malas é por pessoa × trecho entre cidades; câmbio é um valor fixo (taxa
+// de serviço) somado ao valor dos ienes configurado na seção 13; e
+// restaurantes é um pacote fechado, só disponível até
+// RESTAURANTES_HIGHEND_LIMITE_PESSOAS pessoas.
+const CATALOGO_SERVICOS_ADICIONAIS: {
+  key: ServicoAdicionalKey;
+  nome: string;
+  descricao: string;
+  /** Caminho de imagem do ícone (mesmo usado em /servicos-adicionais).
+   * Ausente = usa o ícone local IconMala como fallback. */
+  icone?: string;
+}[] = [
+  {
+    key: "malasIntermunicipal",
+    nome: "Transporte de Malas Inter-Municipal",
+    descricao:
+      "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen. Por mala, por trecho entre cidades.",
+    // Ícone próprio — pedido do Wilson, 14/set/2026: "novos icones para os
+    // serviços adicionais". Antes reaproveitava icone-transporte-malas.png
+    // (compartilhado com outras páginas do site) — trocado por um arquivo
+    // dedicado pra não afetar essas outras páginas.
+    icone: "/images/icone-servico-malas-intermunicipal.png",
+  },
+  {
+    key: "cambioBrasil",
+    nome: "Câmbio no Brasil",
+    descricao:
+      "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem. Valor configurado na seção 13 (cidade e quantidade de ienes).",
+    icone: "/images/icone-servico-cambio-brasil.png",
+  },
+  {
+    key: "restaurantesHighEnd",
+    nome: "Reserva de Restaurantes High-End",
+    descricao: `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente. Disponível para até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
+    icone: "/images/icone-servico-restaurantes-highend.png",
+  },
+  // 4 itens abaixo — pedido do Wilson, 14/set/2026, questionando o aviso
+  // "itens sem preço fixo (concierge, experiências sob medida, transfer de
+  // ônibus, reservas de restaurantes fora do pacote high-end)": "quem
+  // disse que nao tem preço? [...] é pra incluir os preços e discriminar
+  // nas linhas deles dentro do valor final". Preços de referência/estimados
+  // — ver comentário de cada constante em CustomPackageCard.tsx. Quando o
+  // valor exato de um pedido específico (reserva, experiência) for
+  // diferente do valor de referência, o vendedor ajusta manualmente o
+  // preço do item já dentro da proposta (mesmo recurso usado em todos os
+  // outros itens da lista).
+  {
+    key: "transferOnibus",
+    nome: "Transfer de Ônibus (Limousine Bus)",
+    descricao:
+      "Aeroporto ↔ hotel em Tóquio, ida e volta, por pessoa — alternativa/complemento à van privada (item “Motorista Privado”), que não inclui esse trajeto.",
+    icone: "/images/icone-servico-transfer-onibus.png",
+  },
+  {
+    key: "reservaRestaurante",
+    nome: "Reserva de Restaurante",
+    descricao:
+      "Reserva avulsa em restaurante fora do pacote High-End (não Michelin/Tabelog Awards) — o trabalho do concierge de conseguir mesa em local concorrido.",
+    icone: "/images/icone-servico-reserva-restaurante.png",
+  },
+  {
+    key: "experienciaSobMedida",
+    nome: "Experiência Sob Medida",
+    descricao:
+      "Taxa de curadoria do concierge pra pesquisar, negociar e agendar uma experiência fora do catálogo padrão (ex.: cerimônia do chá particular, acesso exclusivo). O custo da experiência em si é cotado à parte.",
+    icone: "/images/icone-servico-experiencia-sob-medida.png",
+  },
+  {
+    key: "concierge",
+    nome: "Concierge Dedicado",
+    descricao:
+      "Suporte e tradução sob demanda por WhatsApp/telefone durante toda a viagem, por dia.",
+    icone: "/images/icone-servico-concierge.png",
+  },
+  // Pedido do Wilson, 16/set/2026: "criar [...] um card novo de serviço
+  // chamado Ajisai Shopping, será um serviço de compra durante a viagem no
+  // japao" — comissão de 20% sobre o valor das compras (ver
+  // COMISSAO_AJISAI_SHOPPING_PCT), não uma diária ou valor fixo como os
+  // demais itens deste catálogo.
+  {
+    key: "ajisaiShopping",
+    nome: "Ajisai Shopping",
+    descricao:
+      "Acompanhamento pessoal em compras durante a viagem no Japão — negociação, tradução e apoio logístico nas lojas. Comissão de 20% sobre o valor das compras realizadas com o acompanhamento.",
+    icone: "/images/icone-servico-ajisai-shopping.png",
+  },
+];
+
+// Catálogo de referência dos combos reais vendidos para o USJ Express Pass.
+// A USJ e revendedores (Klook, KKday etc.) vendem dezenas de combinações
+// diferentes de atrações a cada tier — o valor cobrado no calculadora é uma
+// média/estimativa por tier (PRECO_EXPRESS_PASS_USJ_*_USD_PAX), então este
+// catálogo serve só para o vendedor entender o que costuma vir incluso e
+// dar transparência sobre o que varia. Preços de referência em BRL vêm de
+// revenda (Klook, capturado 04/set/2026) — cobram markup sobre o oficial da
+// USJ, por isso divergem do custo interno usado no cálculo. Fonte: print
+// enviado pelo Wilson (listagem Klook) + usjexpresspass.com/guide (04/set/2026).
+const USJ_EXPRESS_PASS_DETALHES: {
+  tier: "4" | "5" | "7" | "8" | "premium";
+  atracoesTipicas: string[];
+  nintendoWorld: string;
+  wizardingWorld: string;
+  faixaPrecoReferenciaBRL: string;
+  observacao: string;
+}[] = [
+  {
+    tier: "4",
+    atracoesTipicas: [
+      "Combos com foco em Mario/Donkey Kong: Mine-Cart Madness (Mario Kart: Bowser's Challenge) + Donkey Kong Country: Mine-Cart Madness",
+      "Combos com Flying Dinosaur: Jurassic Park The Flying Dinosaur + JAWS/Backdrop/Theater",
+      "Combos sazonais: Halloween Horror Nights (Chainsaw Man, Resident Evil Requiem)",
+    ],
+    nintendoWorld:
+      "Só nos combos que citam Mine-Cart/Mario/Koopa's Challenge — não vem em todo Express 4 (ex.: combo “Adventure for all” não inclui)",
+    wizardingWorld: "Normalmente não incluso — checar o combo específico antes de vender",
+    faixaPrecoReferenciaBRL: "R$ 385 – 620/pessoa (revenda) — varia por combo, data e temporada",
+    observacao:
+      "É o tier mais fragmentado: cada operadora vende dezenas de combinações diferentes de 4 atrações, cada uma com nome e preço próprios.",
+  },
+  {
+    tier: "5",
+    atracoesTipicas: [
+      "Combo “Adventure Special”: Mario Kart Koopa's Challenge + Yoshi's Adventure + Flying Dinosaur + Despicable Me: Minion Mayhem + Hollywood Dream – The Ride",
+      "Combo “Race & Minecart Special”: Mario Kart Koopa's Challenge + Mine Cart Madness + Illumination's Villain-Con Minion Blast + Flying Dinosaur + Harry Potter and the Forbidden Journey",
+      "Combo “Race & Minion Special”: Mario Kart Koopa's Challenge + Illumination's Villain-Con Minion Blast + Despicable Me: Minion Mayhem + Harry Potter and the Forbidden Journey + escolha 1 entre JAWS/Jurassic Park",
+    ],
+    nintendoWorld:
+      "Depende do combo — “Race & Minecart Special” e “Race & Minion Special” incluem Minion Blast; nenhum dos três combos citados garante as duas atrações do Nintendo World ao mesmo tempo",
+    wizardingWorld: "Incluso só nos combos “Race & Minecart Special” e “Race & Minion Special”",
+    faixaPrecoReferenciaBRL: "Sem preço de revenda confirmado — preço interno é estimativa, ver aviso na calculadora",
+    observacao:
+      "Tier intermediário entre o 4 e o 7 — preço ainda não confirmado oficialmente (ver ⚠️ na calculadora).",
+  },
+  {
+    tier: "7",
+    atracoesTipicas: [
+      "Super Nintendo World completo: Mine-Cart Madness (Mario Kart) + Yoshi's Adventure",
+      "Jurassic Park The Flying Dinosaur",
+      "The Wizarding World of Harry Potter (Forbidden Journey ou Flight of the Hippogriff)",
+      "+ 2–3 atrações à escolha do cliente (Minion Mayhem, Space Fantasy etc.)",
+    ],
+    nintendoWorld: "Incluso — acesso garantido às duas atrações do Super Nintendo World",
+    wizardingWorld: "Incluso — pelo menos uma atração do Wizarding World",
+    faixaPrecoReferenciaBRL: "R$ 843 – 912/pessoa (revenda) — também vendido como “Express 8” quando soma 1 atração extra",
+    observacao: "É o tier de referência para quem quer Nintendo World + Harry Potter garantidos sem pagar o Premium.",
+  },
+  {
+    tier: "8",
+    atracoesTipicas: [
+      "Tudo do Express 7 (Super Nintendo World completo + Jurassic Park The Flying Dinosaur + Wizarding World)",
+      "+ Illumination's Villain-Con Minion Blast (a atração extra que diferencia do Express 7)",
+      "+ escolha 1 entre Flying Dinosaur / Despicable Me: Minion Mayhem / Hollywood Dream – The Ride",
+      "+ escolha 1 entre Jurassic Park The Ride / JAWS",
+    ],
+    nintendoWorld: "Incluso — acesso garantido às atrações do Super Nintendo World + Minion Blast",
+    wizardingWorld: "Incluso — Harry Potter and the Forbidden Journey garantido",
+    faixaPrecoReferenciaBRL: "Sem preço de revenda confirmado — preço interno é estimativa, ver aviso na calculadora",
+    observacao:
+      "É basicamente o Express 7 + Minion Blast — mesma base do 7, preço ainda não confirmado oficialmente (ver ⚠️ na calculadora).",
+  },
+  {
+    tier: "premium",
+    atracoesTipicas: [
+      "Todo o Super Nintendo World",
+      "Todo o Wizarding World of Harry Potter",
+      "Praticamente toda a linha principal do parque — até 13-16 atrações, sem necessidade de horário marcado",
+    ],
+    nintendoWorld: "Incluso — entrada garantida, sem depender da senha grátis do app",
+    wizardingWorld: "Incluso",
+    faixaPrecoReferenciaBRL: "R$ 1.569 – 3.235/pessoa (revenda) — Premium limitado x Premium Unlimited",
+    observacao: "Existe uma versão “Unlimited” (sem limite de repetições nas atrações) bem mais cara que a Premium padrão.",
+  },
+];
+
+// Tabela comparativa completa dos combos de Express Pass do USJ — dados
+// vindos de prints do Klook enviados pelo Wilson (04/set/2026), cobrindo
+// os principais combos vendidos hoje pra cada tier (a USJ e revendedores
+// trocam esses combos por temporada, então isso é uma fotografia do que
+// estava disponível na data acima — confirmar disponibilidade e nome
+// exato do combo antes de vender). "Escolha 1" = o cliente escolhe uma
+// atração entre as marcadas com o mesmo grupo, dentro daquele combo.
+type UsjComboCelula = true | undefined | { grupo: string } | { texto: string };
+
+type UsjTabelaComparativa = {
+  titulo: string;
+  colunas: string[];
+  linhas: { atracao: string; valores: UsjComboCelula[] }[];
+  notas: string[];
+};
+
+const USJ_TABELAS_COMPARATIVAS: UsjTabelaComparativa[] = [
+  {
+    titulo: "Express 7 & 8",
+    colunas: [
+      "Express 7 — Minecart & Selection",
+      "Express 8 — Minion & Minecart Special",
+      "Express 8 — Minicart & Flying Dinosaur Special",
+    ],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [true, true, true] },
+      { atracao: "Yoshi's Adventure", valores: [true, true, true] },
+      { atracao: "Mine Cart Madness", valores: [true, true, true] },
+      { atracao: "Illumination's Villain-Con Minion Blast", valores: [undefined, true, true] },
+      { atracao: "The Flying Dinosaur", valores: [{ grupo: "A" }, { grupo: "A" }, { grupo: "A" }] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [{ grupo: "A" }, { grupo: "A" }, { grupo: "A" }] },
+      { atracao: "Hollywood Dream – The Ride", valores: [{ grupo: "A" }, { grupo: "A" }, { grupo: "A" }] },
+      { atracao: "Jurassic Park – The Ride", valores: [{ grupo: "B" }, { grupo: "B" }, { grupo: "B" }] },
+      { atracao: "JAWS", valores: [{ grupo: "B" }, { grupo: "B" }, { grupo: "B" }] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [true, true, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo A): The Flying Dinosaur, Despicable Me: Minion Mayhem ou Hollywood Dream – The Ride.",
+      "Escolha 1 (grupo B): Jurassic Park – The Ride ou JAWS.",
+      "Express 8 = Express 7 + Illumination's Villain-Con Minion Blast.",
+    ],
+  },
+  {
+    titulo: "Express 5",
+    colunas: ["Adventure Special", "Race & Minecart Special", "Race & Minion Special"],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [true, true, true] },
+      { atracao: "Yoshi's Adventure", valores: [true, undefined, undefined] },
+      { atracao: "Mine Cart Madness", valores: [undefined, true, undefined] },
+      { atracao: "Illumination's Villain-Con Minion Blast", valores: [undefined, true, true] },
+      { atracao: "The Flying Dinosaur", valores: [true, true, undefined] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [true, undefined, true] },
+      { atracao: "Hollywood Dream – The Ride", valores: [true, undefined, undefined] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [undefined, true, true] },
+      { atracao: "JAWS", valores: [undefined, undefined, { grupo: "C" }] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, undefined, { grupo: "C" }] },
+    ],
+    notas: ["Escolha 1 (grupo C): JAWS ou Jurassic Park – The Ride (só no combo Race & Minion Special)."],
+  },
+  {
+    titulo: "Express 4 — inclusive Area Timed Entry (Parte 1)",
+    colunas: ["Minion & Theatre", "Race & Theatre", "Race & JAWS"],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true] },
+      { atracao: "Yoshi's Adventure", valores: [true, true, undefined] },
+      { atracao: "Illumination's Villain-Con Minion Blast", valores: [true, undefined, undefined] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [undefined, true, true] },
+      { atracao: "JAWS", valores: [{ grupo: "D" }, undefined, { grupo: "E" }] },
+      { atracao: "Detective Conan 4-D Live Show: Jewel Under the Starry Sky", valores: [{ grupo: "D" }, undefined, undefined] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, undefined, { grupo: "E" }] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [true, undefined, true] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [undefined, true, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo D): JAWS ou Detective Conan 4-D Live Show: Jewel Under the Starry Sky (combo Minion & Theatre).",
+      "Escolha 1 (grupo E): JAWS ou Jurassic Park – The Ride (combo Race & JAWS).",
+    ],
+  },
+  {
+    titulo: "Express 4 — inclusive Area Timed Entry (Parte 2)",
+    colunas: [
+      "Minecart & JAWS",
+      "Minecart & Jurassic Park",
+      "Minion & Hollywood Dream The Ride",
+      "One More Race & Flying Dinosaur",
+      "Theatre & Flying Dinosaur",
+    ],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true, true, true] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [true, undefined, undefined, { texto: "✓ 2x" }, true] },
+      { atracao: "Mine Cart Madness", valores: [true, true, true, undefined, undefined] },
+      { atracao: "Yoshi's Adventure", valores: [undefined, true, undefined, undefined, undefined] },
+      { atracao: "Hollywood Dream – The Ride: Backdrop", valores: [undefined, undefined, undefined, undefined, true] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [{ grupo: "F" }, { grupo: "G" }, true, true, { grupo: "H" }] },
+      { atracao: "JAWS", valores: [{ grupo: "F" }, undefined, undefined, undefined, undefined] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, { grupo: "G" }, undefined, undefined, undefined] },
+      { atracao: "The Flying Dinosaur", valores: [undefined, undefined, undefined, true, undefined] },
+      { atracao: "Hollywood Dream – The Ride", valores: [undefined, undefined, undefined, undefined, { grupo: "H" }] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [undefined, true, true, undefined, undefined] },
+      { atracao: "Detective Conan 4-D Live Show: Jewel Under the Starry Sky", valores: [undefined, undefined, undefined, undefined, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo F): Harry Potter and the Forbidden Journey ou JAWS (combo Minecart & JAWS).",
+      "Escolha 1 (grupo G): Harry Potter and the Forbidden Journey ou Jurassic Park – The Ride (combo Minecart & Jurassic Park).",
+      "Escolha 1 (grupo H): Harry Potter and the Forbidden Journey ou Hollywood Dream – The Ride (combo Theatre & Flying Dinosaur).",
+      "No combo One More Race & Flying Dinosaur, Mario Kart: Koopa's Challenge vale 2 corridas.",
+    ],
+  },
+  {
+    titulo: "Express 4 — sem Area Timed Entry",
+    colunas: ["Backdrop & Flying Dinosaur", "Thrills MAX", "Classic & Show"],
+    linhas: [
+      { atracao: "Flight of the Hippogriff", valores: [true, undefined, undefined] },
+      { atracao: "Hollywood Dream – The Ride: Backdrop", valores: [true, true, undefined] },
+      { atracao: "The Flying Dinosaur", valores: [true, true, undefined] },
+      { atracao: "Hollywood Dream – The Ride", valores: [undefined, true, undefined] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [true, undefined, { grupo: "I" }] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, undefined, { grupo: "I" }] },
+      { atracao: "JAWS", valores: [undefined, undefined, true] },
+      { atracao: "Universal Monsters Live: Rock and Roll Show", valores: [undefined, undefined, true] },
+      { atracao: "WaterWorld", valores: [undefined, undefined, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo I): Harry Potter and the Forbidden Journey ou Jurassic Park – The Ride (combo Classic & Show).",
+      "Este tier não inclui a entrada com horário marcado no Super Nintendo World — é vendido separadamente.",
+      "No combo Thrills MAX, depois das atrações acima o cliente ainda escolhe mais 1 entre Jurassic Park – The Ride, The Flying Dinosaur e Hollywood Dream – The Ride.",
+    ],
+  },
+  {
+    titulo: "Express 4 — Halloween Horror Nights",
+    colunas: [
+      "Halloween Set — Chainsaw Man: The Chaos 4-D",
+      "Halloween Set — Resident Evil Requiem: The Dive",
+      "Halloween Set — Factory of Fear: Zombie Tour",
+    ],
+    linhas: [
+      { atracao: "Jurassic Park – The Ride: In the Dark", valores: [true, true, undefined] },
+      { atracao: "Factory of Fear: Zombie Tour", valores: [true, undefined, true] },
+      { atracao: "Resident Evil Requiem: The Dive", valores: [undefined, true, true] },
+      { atracao: "Hollywood Dream – The Ride", valores: [true, true, undefined] },
+      { atracao: "Chainsaw Man: The Chaos 4-D", valores: [true, undefined, undefined] },
+      { atracao: "Sadako's Curse: Dark Horror Ride", valores: [undefined, true, undefined] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [undefined, undefined, true] },
+      { atracao: "JAWS: Red Alert", valores: [undefined, undefined, true] },
+    ],
+    notas: ["Disponível só durante o evento sazonal Halloween Horror Nights (geralmente set–nov)."],
+  },
+];
+
+function CelulaUsjTabela({ celula }: { celula: UsjComboCelula }) {
+  if (celula === true) {
+    return <span className="font-semibold text-emerald-600">✓</span>;
+  }
+  if (celula && "texto" in celula) {
+    return <span className="font-semibold text-emerald-600">{celula.texto}</span>;
+  }
+  if (celula && "grupo" in celula) {
+    return (
+      <span className="inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800">
+        Escolha 1 · {celula.grupo}
+      </span>
+    );
+  }
+  return <span className="text-black/20">—</span>;
+}
+
+type DestinoKey = (typeof DESTINOS)[number]["key"];
+
+type TemporadaKey = "sakura" | "primavera" | "julho" | "outono" | "inverno" | "baixa";
+
+// 6 janelas de temporada — 4 pedidas originalmente (08/set/2026) + 2 novas
+// (Primavera e Inverno, pedidas no mesmo dia, com o antigo card
+// "Primavera" renomeado pra "Sakura (Cerejeiras)" pra não confundir com o
+// novo). "Baixa" é o baseline (multiplicador 1.0 em toda cidade
+// pesquisada) — os outros multiplicadores são o quanto a diária média sobe
+// em relação a esse baseline.
+const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: string }[] = [
+  {
+    key: "sakura",
+    nome: "Sakura (Cerejeiras)",
+    // Pedido do Wilson, 14/set/2026: "somente os meses, nada de descricao
+    // excessiva" — tirado o texto explicativo ("florada das cerejeiras",
+    // "flores + Golden Week" etc.), fica só a janela de meses.
+    periodo: "final de mar. a início de abr.",
+    icone: "/images/temporada/01-primavera.png",
+  },
+  {
+    key: "primavera",
+    nome: "Primavera",
+    periodo: "meados de abr. a fim de mai.",
+    icone: "/images/temporada/05-primavera.png",
+  },
+  {
+    key: "julho",
+    nome: "Férias Escolares (Julho)",
+    periodo: "julho",
+    icone: "/images/temporada/02-julho.png",
+  },
+  {
+    key: "outono",
+    nome: "Outono",
+    periodo: "meados de out. a meados de nov.",
+    icone: "/images/temporada/03-outono.png",
+  },
+  {
+    key: "inverno",
+    nome: "Inverno",
+    periodo: "dez. a fev.",
+    icone: "/images/temporada/06-inverno.png",
+  },
+  {
+    key: "baixa",
+    nome: "Fora de alta temporada",
+    periodo: "restante do ano",
+    icone: "/images/temporada/04-baixa.png",
+  },
+];
+
+// Multiplicador de diária de hotel por cidade e temporada — pesquisa de
+// mercado real (ADR/RevPAR de cadeias e agregadores, JNTO/STR/HotelBank,
+// comparações Golden Week 2026 etc.). "sakura", "julho", "outono" e
+// "baixa" foram pesquisados em 08/set/2026; "primavera" e "inverno" foram
+// adicionados no mesmo dia (ver comentário no topo do patch que introduziu
+// isso, com as fontes). Cobre as 10 maiores cidades da lista de destinos +
+// Niseko (destino de inverno caro, citado explicitamente pelo Wilson).
+// Cidades fora dessa tabela (Nara, Hakone, Nikko etc.) usam 1.0 em
+// qualquer temporada — mercados pequenos/pouco usados, que o Wilson pediu
+// pra não pesquisar agora.
+//
+// "primavera" (novo) = resto da primavera + Golden Week (meados de abr. a
+// fim de mai.), DEPOIS da janela de "sakura". Dado de mercado (HotelBank,
+// Golden Week 2026): abril/maio como um todo sobem mais que a própria
+// semana de feriado, e o efeito é mais forte em destinos de turismo
+// doméstico (Okinawa, Hokkaido) do que na semana da sakura, que puxa mais
+// turista internacional pra Kyoto/Tokyo/Osaka — por isso Okinawa e
+// Hokkaido aqui ficam ACIMA do valor de "sakura", ao contrário das cidades
+// de sakura clássica.
+//
+// "inverno" (novo) = dez.–fev. Pra a maioria das cidades é temporada mais
+// fraca (jan. pós-Ano-Novo é citado como o mês mais barato do ano no
+// mercado japonês), com uma leve alta média por causa do pico de
+// Natal/Ano Novo — por isso ficou só um pouco acima de 1.0 na maioria das
+// cidades. Exceção: Hokkaido/Niseko, onde dez.–fev. é a temporada de neve
+// e a alta temporada REAL (turismo de esqui) — Niseko usa um valor bem
+// mais alto, dentro da faixa de 2×–4× sobre a temporada verde já
+// sinalizada neste arquivo; o Ano Novo especificamente em Niseko pode
+// passar disso ainda mais.
+const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<TemporadaKey, number>>> = {
+  tokyo: { sakura: 1.45, primavera: 1.35, julho: 1.1, outono: 1.3, inverno: 1.1, baixa: 1.0 },
+  yokohama: { sakura: 1.25, primavera: 1.2, julho: 1.05, outono: 1.15, inverno: 1.05, baixa: 1.0 },
+  kyoto: { sakura: 1.85, primavera: 1.6, julho: 1.15, outono: 1.75, inverno: 1.15, baixa: 1.0 },
+  osaka: { sakura: 1.4, primavera: 1.3, julho: 1.1, outono: 1.2, inverno: 1.05, baixa: 1.0 },
+  nagoya: { sakura: 1.1, primavera: 1.1, julho: 1.05, outono: 1.12, inverno: 1.0, baixa: 1.0 },
+  kobe: { sakura: 1.08, primavera: 1.08, julho: 1.05, outono: 1.1, inverno: 1.0, baixa: 1.0 },
+  hiroshima: { sakura: 1.15, primavera: 1.15, julho: 1.1, outono: 1.2, inverno: 1.0, baixa: 1.0 },
+  fukuoka: { sakura: 1.12, primavera: 1.15, julho: 1.1, outono: 1.12, inverno: 1.0, baixa: 1.0 },
+  hokkaido: { sakura: 1.12, primavera: 1.2, julho: 1.15, outono: 1.05, inverno: 1.55, baixa: 1.0 },
+  okinawa: { sakura: 1.1, primavera: 1.35, julho: 1.4, outono: 1.03, inverno: 0.85, baixa: 1.0 },
+  niseko: { sakura: 0.85, primavera: 0.85, julho: 1.08, outono: 1.1, inverno: 2.8, baixa: 1.0 },
+};
+
+type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
+
+// Categorias de hotel selecionáveis para uma extensão internacional —
+// pacotes de 3/4/5 estrelas (pedido do Wilson, 10/set/2026). Sem "Elite":
+// as extensões são um add-on ao pacote principal do Japão, não o destino
+// central da proposta, então o teto de categoria fica em 5 estrelas.
+const CATEGORIAS_HOTEL_EXTENSAO = ["3 estrelas", "4 estrelas", "5 estrelas"] as const;
+type CategoriaHotelExtensao = (typeof CATEGORIAS_HOTEL_EXTENSAO)[number];
+
+// Bagagem — pedido do Wilson, 14/set/2026: "falta um campo importante:
+// bagagem [...] pode alterar passagem, transporte e takkyubin". Inicialmente
+// só informativo; a pedido do Wilson, 16/set/2026 ("o modal de malas não
+// está mexendo nos valores de preço total, ajustar"), passou a somar um
+// ajuste estimado (por pessoa) ao preço do aéreo. ⚠️ ESTIMATIVA — a franquia
+// de bagagem já costuma cobrir a 1ª mala despachada na maioria das tarifas
+// internacionais, então "uma" fica sem ajuste; "duas"/"grande" somam um
+// valor aproximado de taxa de mala extra/item grande, que varia por
+// companhia aérea — confirmar com a tarifa real antes de fechar.
+const BAGAGEM_OPCOES = [
+  { key: "cabine", nome: "Somente bagagem de mão", ajusteBRL: 0 },
+  { key: "uma", nome: "1 mala despachada", ajusteBRL: 0 },
+  { key: "duas", nome: "2 malas despachadas", ajusteBRL: 400 },
+  { key: "grande", nome: "2 malas + item grande/especial", ajusteBRL: 750 },
+] as const;
+type BagagemKey = (typeof BAGAGEM_OPCOES)[number]["key"];
+
+// Flexibilidade das datas — pedido do Wilson, 14/set/2026: "algo muito
+// simples: Datas fixas | ±3 dias | ±7 dias | Flexível [...] permite
+// informar ao cliente algo como 'com ±3 dias conseguimos reduzir
+// aproximadamente R$ X no aéreo'". Não muda o cálculo real — é só uma
+// nota consultiva pro vendedor, com percentual ⚠️ ESTIMADO de variação
+// tarifária observada ao redor de datas fixas vs. flexíveis (não é uma
+// cotação real; confirmar/ajustar com o Wilson).
+const FLEXIBILIDADE_DATAS = [
+  { key: "fixas", nome: "Datas fixas" },
+  { key: "tres", nome: "± 3 dias" },
+  { key: "sete", nome: "± 7 dias" },
+  { key: "flexivel", nome: "Flexível" },
+] as const;
+type FlexibilidadeDatasKey = (typeof FLEXIBILIDADE_DATAS)[number]["key"];
+const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = {
+  fixas: 0,
+  tres: 0.08,
+  sete: 0.15,
+  flexivel: 0.22,
+};
+
+// Seguro Viagem por faixa etária — pedido do Wilson, 16/set/2026: "seguro
+// viagem limitado até 82 anos, até 60 anos usamos o valor atual, 60-65 é
+// o dobro, 66 a 70 é 2,5, 70 a 75 é o triplo, 75 a 80 é quatro vezes, 81 a
+// 84 é vezes cinco". Faixas tratadas sem sobreposição (o limite de cada
+// faixa abaixo é o teto real da faixa, o multiplicador seguinte já vale a
+// partir do ano seguinte) e limitadas a 82 anos — o "84" citado por ele no
+// fim do pedido parece inconsistente com o limite de 82 que ele mesmo
+// definiu; usando 82 como teto real. Ajustar com o Wilson se o critério de
+// faixa for outro. Acima do limite, o seguro não é precificado aqui — fica
+// sob consulta direta com a seguradora.
+const IDADE_LIMITE_SEGURO = 82;
+const FAIXAS_SEGURO_IDADE: { idadeMax: number; multiplicador: number }[] = [
+  { idadeMax: 60, multiplicador: 1 },
+  { idadeMax: 65, multiplicador: 2 },
+  { idadeMax: 70, multiplicador: 2.5 },
+  { idadeMax: 75, multiplicador: 3 },
+  { idadeMax: 80, multiplicador: 4 },
+  { idadeMax: IDADE_LIMITE_SEGURO, multiplicador: 5 },
+];
+function multiplicadorSeguroPorIdade(idade: number): number | null {
+  if (idade > IDADE_LIMITE_SEGURO) return null;
+  return FAIXAS_SEGURO_IDADE.find((f) => idade <= f.idadeMax)?.multiplicador ?? null;
+}
+
+// Ajisai Shopping — serviço novo, pedido do Wilson, 16/set/2026: "criar na
+// pagina de calculadora reversa e produtos um card novo de serviço chamado
+// Ajisai Shopping, será um serviço de compra durante a viagem no japao".
+// Precificação definida pelo Wilson: comissão de 20% sobre o valor das
+// compras acompanhadas pelo serviço — não há diária nem valor fixo, já que
+// o preço real só existe depois de o cliente comprar. O vendedor informa um
+// orçamento estimado de compras (campo próprio na seção 16) só pra ter um
+// valor de referência na proposta; o valor final é sempre "sob consulta"
+// até a viagem acontecer. Constante COMISSAO_AJISAI_SHOPPING_PCT importada
+// de CustomPackageCard.tsx — compartilhada com o card/popup em
+// produtos/page.tsx.
+
+// Mês estimado → sugestão de Temporada — pedido do Wilson, 14/set/2026:
+// "temporada também deveria ser derivada das datas [...] quanto menos o
+// atendente precisar informar duas vezes a mesma informação, melhor".
+// Mapeamento mês-a-mês (granularidade grosseira, já que o campo é só
+// "mês", não uma data exata) a partir das janelas já definidas em
+// TEMPORADAS acima. Continua 100% editável depois — isso só pré-seleciona.
+const MESES_NOME = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+] as const;
+const MES_PARA_TEMPORADA: Record<number, TemporadaKey> = {
+  1: "inverno",
+  2: "inverno",
+  3: "sakura",
+  4: "sakura",
+  5: "primavera",
+  6: "baixa",
+  7: "julho",
+  8: "baixa",
+  9: "baixa",
+  10: "outono",
+  11: "outono",
+  12: "inverno",
+};
+
+// Origem do voo — pedido do Wilson, 14/set/2026: "provavelmente o campo
+// mais importante que está faltando [...] altera muito o aéreo. Se 90%
+// dos clientes saem de GRU, deixe São Paulo / GRU pré-selecionado."
+// Lista de cidades ampliada a pedido do Wilson, 16/set/2026 (print com as
+// origens mais comuns dos clientes). Modelo de ajuste trocado de percentual
+// pra valor fixo em reais (por pessoa, ida e volta) no mesmo dia — pedido
+// do Wilson, 16/set/2026: "quando origem for diferente de São Paulo GRU,
+// tem que adicionar 2000 reais para o valor da passagem ida e volta, para
+// destinos como Belém 3500, Foz do Iguaçu 3000 e Manaus 4000". Regra: toda
+// origem fora de GRU soma R$ 2.000, exceto as 3 exceções informadas por
+// ele. Ajustar com o Wilson se houver valor específico pras demais cidades.
+const ORIGENS_VOO = [
+  { key: "saoPaulo", nome: "São Paulo / GRU", ajusteBRL: 0 },
+  { key: "rio", nome: "Rio de Janeiro / GIG", ajusteBRL: 2000 },
+  { key: "belem", nome: "Belém / BEL", ajusteBRL: 3500 },
+  { key: "beloHorizonte", nome: "Belo Horizonte / CNF", ajusteBRL: 2000 },
+  { key: "brasilia", nome: "Brasília / BSB", ajusteBRL: 2000 },
+  { key: "campoGrande", nome: "Campo Grande / CGR", ajusteBRL: 2000 },
+  { key: "cuiaba", nome: "Cuiabá / CGB", ajusteBRL: 2000 },
+  { key: "curitiba", nome: "Curitiba / CWB", ajusteBRL: 2000 },
+  { key: "fozDoIguacu", nome: "Foz do Iguaçu / IGU", ajusteBRL: 3000 },
+  { key: "goiania", nome: "Goiânia / GYN", ajusteBRL: 2000 },
+  { key: "londrina", nome: "Londrina / LDB", ajusteBRL: 2000 },
+  { key: "manaus", nome: "Manaus / MAO", ajusteBRL: 4000 },
+  { key: "maringa", nome: "Maringá / MGF", ajusteBRL: 2000 },
+  { key: "portoAlegre", nome: "Porto Alegre / POA", ajusteBRL: 2000 },
+  { key: "salvador", nome: "Salvador / SSA", ajusteBRL: 2000 },
+  { key: "outra", nome: "Outra cidade", ajusteBRL: 2000 },
+] as const;
+type OrigemVooKey = (typeof ORIGENS_VOO)[number]["key"];
+
+// Aeroporto de chegada no Japão — pedido do Wilson, 25/set/2026:
+// "selecionar qual a cidade de chegada no japao e aeroporto, Tokyo, Osaka,
+// Nagoya etc". Só informativo (sem ajuste de preço, diferente de
+// ORIGENS_VOO) — entra no resumo da proposta/CRM pra equipe planejar
+// receptivo/transfer de acordo com o aeroporto certo. Principais portas
+// de entrada internacionais do Japão.
+const AEROPORTOS_CHEGADA_JAPAO = [
+  { key: "tokyoNarita", nome: "Tóquio — Narita (NRT)" },
+  { key: "tokyoHaneda", nome: "Tóquio — Haneda (HND)" },
+  { key: "osaka", nome: "Osaka — Kansai (KIX)" },
+  { key: "nagoya", nome: "Nagoya — Chubu Centrair (NGO)" },
+  { key: "fukuoka", nome: "Fukuoka (FUK)" },
+  { key: "sapporo", nome: "Sapporo — New Chitose (CTS)" },
+  { key: "okinawa", nome: "Okinawa — Naha (OKA)" },
+] as const;
+type AeroportoChegadaKey = (typeof AEROPORTOS_CHEGADA_JAPAO)[number]["key"];
+
+// Deslocamento (voo/trem) entre o Japão e/ou entre as cidades de uma
+// extensão internacional. Preços de referência em classe econômica,
+// pesquisados em 10/set/2026 (Kayak/Skyscanner/Momondo/Trip.com/
+// TravelChinaGuide, trecho de ida): Tóquio → Seoul ≈ US$ 210/pax (faixa
+// US$ 115–350 conforme cia aérea e antecedência); Tóquio → Pequim ≈
+// US$ 280/pax (faixa US$ 160–450); Pequim → Xangai de trem-bala 2ª
+// classe ≈ US$ 85/pax (CNY 576) — preferido ao voo doméstico (≈
+// US$ 180/pax) por ser mais previsível, central-a-central e com menos
+// tempo de deslocamento até o aeroporto. Confiança média (tarifa aérea
+// varia bastante por antecedência/temporada) — revisar quando houver
+// cotação real de emissão.
+const PRECO_VOO_TOQUIO_SEOUL_USD_PAX = comMargemEImposto(210);
+const PRECO_VOO_TOQUIO_PEQUIM_USD_PAX = comMargemEImposto(280);
+const PRECO_TREM_PEQUIM_XANGAI_USD_PAX = comMargemEImposto(85);
+
+type ExtensaoCidadeKey = "seoul" | "beijing" | "shanghai";
+
+// Diária de hotel por categoria, pesquisada DIRETAMENTE por cidade de
+// extensão (Seoul/Beijing/Shanghai) — substitui a abordagem anterior de
+// "multiplicador relativo a Tóquio", que só tinha sido calibrada contra
+// ADR de hotéis flagship 5 estrelas e, aplicada aos outros tiers,
+// subestimava fortemente o 4 estrelas de Seoul. Pedido do Wilson,
+// 10/set/2026 ("preços não estão baratos demais?"). Valores em US$/noite,
+// pesquisados em 10/set/2026 (Booking/Trip.com/HotelsCombined/Kayak/
+// Momondo/Agoda), convertidos pra reais pela cotação do dia
+// (cambioCotacao), não por uma cotação fixa: Seoul — 3★ ~US$55–90 (ex.:
+// Lotte City Hotel Guro, uso US$75); 4★ ~US$200–450 (ex.: Westin Josun
+// Seoul ~US$377–445, uso US$350 pra evitar picos de data); 5★ ~US$500–800
+// (ex.: Four Seasons Seoul ~US$567+, uso US$600). Beijing — 3★ ~US$35–90
+// (uso US$65); 4★ ~US$120–250 (ex.: JW Marriott Beijing ~US$162, uso
+// US$170); 5★ ~US$500–700 (ex.: Bulgari Beijing ~US$604, uso US$600).
+// Shanghai — 3★ ~US$30–110 (uso US$70); 4★ ~US$110–200 (ex.: The Westin
+// Bund Center ~US$106–199, uso US$150); 5★ ~US$300–500 (ex.: The
+// Peninsula Shanghai ~US$334, uso US$380 — mais perto do Mandarin
+// Oriental Pudong, mesma categoria). Confiança média (tarifa hoteleira
+// varia por antecedência/temporada) — revisar quando houver dado de
+// reserva real ou tabela de parceiros.
+const DIARIA_HOTEL_EXTENSAO_USD: Record<ExtensaoCidadeKey, Record<CategoriaHotelExtensao, number>> = {
+  seoul: {
+    "3 estrelas": comMargemEImposto(75),
+    "4 estrelas": comMargemEImposto(350),
+    "5 estrelas": comMargemEImposto(600),
+  },
+  beijing: {
+    "3 estrelas": comMargemEImposto(65),
+    "4 estrelas": comMargemEImposto(170),
+    "5 estrelas": comMargemEImposto(600),
+  },
+  shanghai: {
+    "3 estrelas": comMargemEImposto(70),
+    "4 estrelas": comMargemEImposto(150),
+    "5 estrelas": comMargemEImposto(380),
+  },
+};
+
+// Extensões internacionais — dias adicionais FORA do Japão, somados ao
+// total da viagem quando o vendedor ativa o card (não dividem os dias já
+// definidos no roteiro do Japão). Categoria de hotel é selecionável por
+// extensão (3/4/5 estrelas, independente da categoria do resto do
+// pacote) — ver extensaoCategoriaHotel. O deslocamento (voo/trem) de cada
+// trecho entra no cálculo somado ao hotel; assume-se trecho ONE-WAY (o
+// cliente segue viagem/retorna direto da última cidade da extensão, sem
+// voltar ao Japão antes do voo internacional de volta). Seguro e guia
+// dessa extensão ainda não entram no cálculo — cotados à parte por
+// enquanto.
+// Roteiro dia a dia de cada dia de uma extensão internacional — vira os
+// cards com imagem que aparecem ao marcar o país em "10. Extensão
+// internacional" (pedido do Wilson, 10/set/2026, no mesmo espírito visual
+// dos cards de Temas/Cidades recomendadas). `imagem: null` quando ainda
+// não temos uma foto própria pra esse dia — o card mostra um placeholder
+// em vez de imagem até a foto entrar.
+type DiaRoteiroExtensao = {
+  cidade: string;
+  dia: number;
+  titulo: string;
+  imagem: string | null;
+  // Ponto focal do corte (object-position em CSS) — só precisa ser
+  // definido quando o padrão "center" corta o assunto principal da foto
+  // de um jeito ruim (ex.: uma torre alta virando só uma faixa de luz
+  // desfocada quando o card é baixo e largo). Padrão: "center".
+  posicaoImagem?: string;
+  pontos: string[];
+  conceito: string;
+  observacao?: string;
+};
+
+type TrechoDeslocamentoExtensao = { label: string; precoUSDPax: number };
+
+const EXTENSOES_INTERNACIONAIS: {
+  key: ExtensaoInternacionalKey;
+  nome: string;
+  icone: string;
+  dias: number;
+  cidades: { key: ExtensaoCidadeKey; nome: string; dias: number }[];
+  deslocamento: TrechoDeslocamentoExtensao[];
+  roteiro: DiaRoteiroExtensao[];
+}[] = [
+  {
+    key: "coreiaDoSul",
+    nome: "Coréia do Sul",
+    icone: "/images/paises/coreia-do-sul.png",
+    dias: 3,
+    cidades: [{ key: "seoul", nome: "Seoul", dias: 3 }],
+    deslocamento: [{ label: "Voo Tóquio → Seoul (econômica)", precoUSDPax: PRECO_VOO_TOQUIO_SEOUL_USD_PAX }],
+    roteiro: [
+      {
+        cidade: "Seoul",
+        dia: 1,
+        titulo: "Seoul Histórica",
+        imagem: "/images/paises/roteiro/seoul-dia1-gyeongbokgung.jpg",
+        pontos: [
+          "Gwanghwamun Square",
+          "Gyeongbokgung Palace",
+          "Bukchon Hanok Village",
+          "Insadong",
+          "Ikseon-dong",
+          "Gwangjang Market",
+          "Cheonggyecheon",
+        ],
+        conceito: "Palácios, arquitetura tradicional coreana, bairros históricos e gastronomia local.",
+      },
+      {
+        cidade: "Seoul",
+        dia: 2,
+        titulo: "Centro + Skyline",
+        imagem: "/images/paises/roteiro/seoul-dia2-nseoultower.jpg",
+        // Foto original é vertical (torre + beiral de telhado tradicional) —
+        // testado com recortes reais: "top" puro cortava a torre no meio
+        // do mirante. 35% verticaliza melhor, mostrando a torre inteira
+        // (base ao mirante/antena) como assunto principal, com o telhado
+        // como elemento secundário à direita.
+        posicaoImagem: "center 35%",
+        pontos: ["Namdaemun Market", "Myeongdong", "Namsan Park", "N Seoul Tower", "Itaewon ou Euljiro à noite"],
+        conceito: "Centro de Seoul, mercados, vida urbana e uma das melhores vistas panorâmicas da cidade.",
+      },
+      {
+        cidade: "Seoul",
+        dia: 3,
+        titulo: "Seoul Moderna",
+        imagem: "/images/paises/roteiro/seoul-dia3-starfield.jpg",
+        // Puxa pro topo pra manter o letreiro em coreano "별마당 도서관"
+        // (Starfield Library) visível — o corte central cortava o nome
+        // fora e mostrava só prateleiras + escada rolante.
+        posicaoImagem: "center 10%",
+        pontos: ["Bongeunsa Temple", "COEX", "Starfield Library", "Gangnam", "Seongsu-dong", "Seoul Forest", "Han River"],
+        conceito: "O contraste entre templos tradicionais e a Seoul contemporânea, criativa e tecnológica.",
+      },
+    ],
+  },
+  {
+    key: "china",
+    nome: "China",
+    icone: "/images/paises/china.png",
+    dias: 4,
+    cidades: [
+      { key: "beijing", nome: "Beijing", dias: 2 },
+      { key: "shanghai", nome: "Shanghai", dias: 2 },
+    ],
+    deslocamento: [
+      { label: "Voo Tóquio → Pequim (econômica)", precoUSDPax: PRECO_VOO_TOQUIO_PEQUIM_USD_PAX },
+      { label: "Trem-bala Pequim → Xangai (2ª classe)", precoUSDPax: PRECO_TREM_PEQUIM_XANGAI_USD_PAX },
+    ],
+    roteiro: [
+      {
+        cidade: "Beijing",
+        dia: 1,
+        titulo: "China Imperial",
+        imagem: "/images/paises/roteiro/beijing-dia1-temple-of-heaven.jpg",
+        pontos: [
+          "Temple of Heaven",
+          "Tiananmen Square",
+          "Forbidden City",
+          "Jingshan Park",
+          "Shichahai / Houhai",
+          "Hutongs",
+          "Jantar de Peking Duck",
+        ],
+        conceito: "O coração histórico e imperial da China.",
+      },
+      {
+        cidade: "Beijing",
+        dia: 2,
+        titulo: "Grande Muralha",
+        imagem: "/images/paises/roteiro/beijing-dia2-great-wall.jpg",
+        pontos: ["Mutianyu Great Wall", "Summer Palace", "Wangfujing à noite"],
+        conceito:
+          "Grande Muralha pela manhã e um dos mais importantes complexos imperiais de Beijing à tarde.",
+        observacao: "Recomendar motorista/transfer privado para o dia da Grande Muralha.",
+      },
+      {
+        cidade: "Shanghai",
+        dia: 1,
+        titulo: "Shanghai Clássica + Futurista",
+        imagem: "/images/paises/roteiro/shanghai-dia1-the-bund.jpg",
+        // Foto original tinha marca d'água de um site concorrente
+        // (chinadiscovery.com) no canto inferior direito — recortada pra
+        // remover a marca, mantendo o skyline completo (Oriental Pearl
+        // Tower, WFC, Shanghai Tower, Garden Bridge) enquadrado.
+        // Enquadramento ajustado (10/set/2026): "center" cortava a ponta
+        // da antena da Oriental Pearl Tower; puxado um pouco pra cima
+        // mantém a torre inteira com o skyline completo no quadro.
+        posicaoImagem: "center 15%",
+        pontos: ["Yu Garden", "Old City", "Nanjing Road", "The Bund", "Lujiazui", "Shanghai Tower", "Bund iluminado à noite"],
+        conceito: "Da Shanghai tradicional ao skyline futurista de Pudong.",
+      },
+      {
+        cidade: "Shanghai",
+        dia: 2,
+        titulo: "French Concession",
+        imagem: "/images/paises/roteiro/shanghai-dia2-wukang-road.jpg",
+        // Foto vertical do prédio (Wukang Mansion/Normandie Apartments) —
+        // puxa pro topo pra manter a fachada arredondada característica
+        // visível em vez de cortar só o nível da rua. Ajustado de novo
+        // (11/set/2026): "center 20%" ainda sobrava céu vazio demais
+        // acima do prédio (Wilson apontou que o enquadramento continuava
+        // ruim); em 30% o céu quase desaparece e a fachada arredondada +
+        // varandas aparecem inteiras, sem entrar na rua/carros embaixo.
+        posicaoImagem: "center 30%",
+        pontos: [
+          "Wukang Road",
+          "Former French Concession",
+          "Anfu Road",
+          "Jing'an Temple",
+          "Xintiandi",
+          "Huangpu River Cruise à noite",
+        ],
+        conceito: "Arquitetura histórica, ruas arborizadas, cafés, bairros sofisticados e Shanghai vista do rio.",
+      },
+    ],
+  },
+];
+
+type TemaKey =
+  | "roteiroClassico"
+  | "automobilismo"
+  | "gastronomia"
+  | "animeGames"
+  | "japaoTradicional"
+  | "naturezaPaisagens"
+  | "onsenRyokan"
+  | "luxoCompras"
+  | "esportesEventos"
+  | "parquesEntretenimento"
+  | "neveInverno"
+  | "praias";
+
+type TemaCidade = {
+  key: DestinoKey;
+  /** Texto de destaque mostrado ao lado da cidade quando o tema está
+   * selecionado — descreve o motivo da cidade estar nesse tema. */
+  destaque: string;
+  /** Vem marcada por padrão quando o tema é selecionado — cidades
+   * principais/multiuso do tema; as demais (secundárias, mais distantes
+   * ou de proposito único) ficam desmarcadas até o vendedor confirmar. */
+  padrao: boolean;
+  /** Aviso de que ingresso é obrigatório para assistir provas ao vivo
+   * nesse circuito, com as principais datas do ano e a dificuldade de
+   * compra do ingresso em uma escala de 0 (fácil, sempre disponível) a
+   * 10 (extremamente concorrido, esgota em minutas/horas). Fontes:
+   * suzukacircuit.jp/eng, mr-motegi.jp/eng, honda.racing (calendários
+   * oficiais Super Formula/MotoGP 2026), fiawec.com (WEC 2026),
+   * total-motorsport.com (demanda de ingressos F1 2026). Pesquisado
+   * 04/set/2026. */
+  notaIngresso?: string;
+};
+
+// Catálogo de Temas — cada um sugere um grupo de cidades (com destaque
+// próprio) pra montar rapidamente o roteiro e a cidade de referência do
+// hotel. Selecionar um tema marca as cidades "padrao" dele em
+// destinosSelecionados (o vendedor pode ajustar cidade por cidade depois);
+// "Sem Tema" limpa a seleção. Pedido do Wilson, 04/set/2026.
+// Máximo de temas que podem ficar ativos ao mesmo tempo (misturar temas
+// pra montar a viagem do cliente). Pedido do Wilson, 04/set/2026.
+const MAX_TEMAS_SIMULTANEOS = 3;
+const MAX_CIDADES_ROTEIRO = 5;
+// Câmbio de ienes — spread da Alpinea sobre a cotação de papel-moeda do
+// melhorcambio.com, e piso mínimo pedido pelo Wilson (08/set/2026).
+const SPREAD_CAMBIO_IENE = 1.15;
+const CAMBIO_IENES_MINIMO = 100000;
+
+const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
+  {
+    key: "roteiroClassico",
+    nome: "Roteiro Clássico (Recomendado)",
+    icone: "/images/temas/00-roteiro-classico.png",
+    cidades: [
+      { key: "tokyo", destaque: "Capital e porta de entrada do Japão — base clássica de qualquer primeira viagem", padrao: true },
+      { key: "osaka", destaque: "Gastronomia informal, Dotonbori e proximidade com Kyoto", padrao: true },
+      { key: "kyoto", destaque: "Templos, tradição e cultura japonesa clássica", padrao: true },
+      { key: "fuji", destaque: "Vista do Monte Fuji — entra automaticamente em roteiros de mais de 10 dias", padrao: false },
+      { key: "hakone", destaque: "Onsen e vistas do Fuji a caminho de Tokyo — entra automaticamente em roteiros de mais de 10 dias", padrao: false },
+    ],
+  },
+  {
+    key: "automobilismo",
+    nome: "Automobilismo",
+    icone: "/images/temas/02-automobilismo.png",
+    cidades: [
+      { key: "tokyo", destaque: "Cultura JDM e encontros automotivos — A PIT Autobacs · Nissan Crossing · Daikoku PA", padrao: true },
+      { key: "fuji", destaque: "Circuito e história do automobilismo — Fuji Speedway · Fuji Motorsports Museum", padrao: true, notaIngresso: "Ingresso obrigatório para assistir às provas. 2026: WEC 6 Hours of Fuji (25–27/set — dificuldade de compra 4/10) · Super Formula (18–19/jul e 10–11/out — dificuldade 2/10). Super GT e Super Taikyu também correm em Fuji; datas variam a cada ano — confirmar no calendário oficial (fujispeedway.co.jp)." },
+      { key: "nagoya", destaque: "História da indústria automobilística japonesa — Toyota Automobile Museum · Toyota Commemorative Museum", padrao: true },
+      { key: "motegi", destaque: "Honda e motorsports — Honda Collection Hall · Mobility Resort Motegi", padrao: false, notaIngresso: "Ingresso obrigatório para assistir às provas. 2026: MotoGP Japão (2–4/out — dificuldade de compra 5/10) · Super Formula (4–5/abr — dificuldade 2/10). Super GT também corre em Motegi; data varia a cada ano — confirmar no calendário oficial (mr-motegi.jp)." },
+      { key: "suzuka", destaque: "Um dos circuitos mais emblemáticos do Japão — Suzuka Circuit", padrao: false, notaIngresso: "Ingresso obrigatório para assistir às provas. 2026: F1 GP do Japão (27–29/mar — dificuldade de compra 8/10, ingressos premium esgotam meses antes) · Suzuka 8 Hours (3–5/jul — dificuldade 6/10) · Suzuka 1000km/Super GT (11–13/set — dificuldade 3/10) · Super Formula (23–24/mai e 21–22/nov — dificuldade 2/10)." },
+    ],
+  },
+  {
+    key: "gastronomia",
+    nome: "Gastronomia",
+    icone: "/images/temas/03-gastronomia.png",
+    cidades: [
+      { key: "tokyo", destaque: "Omakase, sushi, yakiniku, alta gastronomia e enorme variedade regional japonesa", padrao: true },
+      { key: "kyoto", destaque: "Kaiseki, cozinha Kyo-ryori, chá, tofu e restaurantes tradicionais", padrao: true },
+      { key: "osaka", destaque: "Cultura gastronômica mais informal — Dotonbori, takoyaki, okonomiyaki, kushikatsu e mercados", padrao: true },
+    ],
+  },
+  {
+    key: "animeGames",
+    nome: "Anime, Games & Cultura Pop",
+    icone: "/images/temas/04-anime-games-cultura-pop.png",
+    cidades: [
+      { key: "tokyo", destaque: "Akihabara, Ikebukuro, Nakano Broadway, Pokémon Centers e lojas especializadas", padrao: true },
+      { key: "osaka", destaque: "Den Den Town, Nipponbashi e cultura pop concentrada em Namba", padrao: true },
+      { key: "nagoya", destaque: "Ghibli Park e grandes lojas de anime/games", padrao: false },
+      { key: "kyoto", destaque: "Nintendo Museum e Kyoto International Manga Museum", padrao: false },
+    ],
+  },
+  {
+    key: "japaoTradicional",
+    nome: "Japão Tradicional",
+    icone: "/images/temas/05-japao-tradicional.png",
+    cidades: [
+      { key: "kyoto", destaque: "Templos, jardins, Gion, cerimônia do chá e arquitetura histórica", padrao: true },
+      { key: "nara", destaque: "Tōdai-ji, Kasuga Taisha, parque e patrimônio do período clássico japonês", padrao: true },
+      { key: "kanazawa", destaque: "Kenroku-en, bairros de gueixas e samurais, artesanato tradicional", padrao: false },
+      { key: "takayama", destaque: "Centro histórico, casas tradicionais e cultura de Hida", padrao: false },
+      { key: "koyasan", destaque: "Complexo monástico, Okunoin e hospedagem em templo", padrao: false },
+    ],
+  },
+  {
+    key: "naturezaPaisagens",
+    nome: "Natureza & Paisagens",
+    icone: "/images/temas/06-natureza-paisagens.png",
+    cidades: [
+      { key: "fuji", destaque: "Vistas do Monte Fuji, Chureito, Lago Kawaguchi e Oishi Park", padrao: true },
+      { key: "hakone", destaque: "Lago Ashi, Owakudani e paisagem montanhosa", padrao: true },
+      { key: "nikko", destaque: "Florestas, montanhas, lago Chuzenji e Kegon Falls", padrao: false },
+      { key: "kamikochi", destaque: "Alpes Japoneses, trilhas e paisagens de montanha", padrao: false },
+    ],
+  },
+  {
+    key: "onsenRyokan",
+    nome: "Onsen & Ryokan",
+    icone: "/images/temas/07-onsen-ryokan.png",
+    cidades: [
+      { key: "hakone", destaque: "Grande variedade de ryokans premium e onsen privados perto de Tokyo", padrao: true },
+      { key: "kinosaki", destaque: "Cidade termal tradicional com circuito de sete banhos públicos", padrao: false },
+      { key: "kusatsu", destaque: "Uma das águas termais mais famosas do Japão e o Yubatake", padrao: false },
+      { key: "fuji", destaque: "Ryokans e onsen com vistas para o Monte Fuji", padrao: false },
+    ],
+  },
+  {
+    key: "luxoCompras",
+    nome: "Luxo & Compras",
+    icone: "/images/temas/08-luxo-compras.png",
+    cidades: [
+      { key: "tokyo", destaque: "Ginza, Omotesando, Aoyama e departamentos de luxo; moda, relojoaria e design japonês", padrao: true },
+      { key: "kyoto", destaque: "Artesanato, cerâmica, quimonos, chá e produtos tradicionais de alto padrão", padrao: true },
+      { key: "osaka", destaque: "Shinsaibashi, Umeda e grandes lojas de luxo e departamentos", padrao: true },
+    ],
+  },
+  {
+    key: "esportesEventos",
+    nome: "Esportes & Eventos",
+    icone: "/images/temas/09-esportes-eventos.png",
+    cidades: [
+      { key: "tokyo", destaque: "Sumô, baseball, futebol e grandes eventos em arenas e estádios", padrao: true },
+      { key: "osaka", destaque: "Baseball, futebol e eventos esportivos de grande porte", padrao: false },
+      { key: "nagoya", destaque: "Sumô, baseball e eventos no eixo Aichi/Nagoya", padrao: false },
+    ],
+  },
+  {
+    key: "parquesEntretenimento",
+    nome: "Parques & Entretenimento",
+    icone: "/images/temas/10-parques-entretenimento.png",
+    cidades: [
+      { key: "tokyo", destaque: "Tokyo Disneyland, Tokyo DisneySea e experiências de entretenimento imersivo", padrao: true },
+      { key: "osaka", destaque: "Universal Studios Japan e Super Nintendo World", padrao: true },
+      { key: "nagoya", destaque: "Ghibli Park", padrao: true },
+    ],
+  },
+  {
+    key: "neveInverno",
+    nome: "Neve & Inverno",
+    icone: "/images/temas/11-neve-inverno.png",
+    cidades: [
+      { key: "niseko", destaque: "Powder snow, resorts internacionais, ski e hotéis premium", padrao: true },
+      { key: "hakuba", destaque: "Grande área esquiável nos Alpes Japoneses, fácil combinação com Tokyo", padrao: false },
+      { key: "nozawa", destaque: "Ski combinado com vila tradicional e cultura de onsen", padrao: false },
+    ],
+  },
+  {
+    // Pedido do Wilson, 25/set/2026: "adicionar tema praias, okinawa e
+    // alguma outra cidade de praia importante". Ícone reaproveita a foto
+    // de Okinawa (não há ícone ilustrado dedicado ainda, ao contrário dos
+    // outros temas 00-11 — trocar por /images/temas/12-praias.png quando
+    // o Wilson tiver a arte).
+    key: "praias",
+    nome: "Praias",
+    icone: "/images/okinawa.jpg",
+    cidades: [
+      { key: "okinawa", destaque: "Praias de água clara em Naha e no norte da ilha (Churaumi), com boa infraestrutura turística", padrao: true },
+      { key: "ishigaki", destaque: "Ilha remota do arquipélago Yaeyama — praias e mar turquesa entre os mais bonitos do Japão (Kabira Bay)", padrao: true },
+    ],
+  },
+];
+
+// Cidades onde o transporte público (trem/ônibus) não dá conta sozinho do
+// roteiro — pesquisa 04/set/2026, a pedido do Wilson ("avaliar quais
+// cidades precisam de motorista particular obrigatório devido a logística
+// de trem e ônibus ser insuficiente"). "obrigatorio" = sem carro/motorista
+// o roteiro não fecha (ilha com ônibus raro, resort de ski disperso,
+// acesso restrito etc.); "recomendado" = dá pra fazer de transporte
+// público, mas com bagagem/tempo/conforto prejudicados. Cidades fora
+// dessa lista têm trem/ônibus/metrô que cobrem bem o roteiro sozinhos
+// (inclusive Koyasan e Kinosaki, que apesar de remotas/pequenas têm
+// trem+funicular ou trem-bala dedicados e são andáveis por dentro).
+const CIDADE_MOTORISTA_NOTA: Partial<
+  Record<DestinoKey, { nivel: "obrigatorio" | "recomendado"; motivo: string }>
+> = {
+  yakushima: {
+    nivel: "obrigatorio",
+    motivo: "Ônibus local roda poucas vezes ao dia; trilhas e atrações ficam espalhadas pela ilha.",
+  },
+  motegi: {
+    nivel: "obrigatorio",
+    motivo: "Ônibus até o circuito só é confiável em dia de evento — fora disso o transporte público é muito limitado.",
+  },
+  kamikochi: {
+    nivel: "obrigatorio",
+    motivo: "Carro particular é proibido dentro do vale — mesmo com motorista contratado, o trecho final é de ônibus/táxi lançadeira a partir do portão (Sawando/Nakanoyu).",
+  },
+  ishigaki: {
+    nivel: "recomendado",
+    motivo: "Praias e pontos turísticos ficam espalhados pela ilha, com ônibus infrequente.",
+  },
+  fuji: {
+    nivel: "recomendado",
+    motivo: "Ônibus da Fujikyu cobrem os principais pontos, mas com frequência baixa entre os mirantes.",
+  },
+  suzuka: {
+    nivel: "recomendado",
+    motivo: "Shuttle até o circuito existe, mas com frequência reduzida fora de dias de evento.",
+  },
+  kusatsu: {
+    nivel: "recomendado",
+    motivo: "Acesso via ônibus a partir da estação de trem-bala, com frequência limitada — motorista facilita bastante com bagagem.",
+  },
+  niseko: {
+    nivel: "recomendado",
+    motivo: "Shuttle entre as vilas do resort funciona bem na temporada de neve; fora dela, transporte público é escasso e o aeroporto fica a ~2h30.",
+  },
+  hakuba: {
+    nivel: "recomendado",
+    motivo: "As vilas do resort ficam espalhadas, com ônibus local limitado — ~70 min de ônibus desde a estação de Nagano.",
+  },
+  okinawa: {
+    nivel: "recomendado",
+    motivo: "Monotrilho e ônibus cobrem Naha, mas as atrações do norte da ilha (Churaumi etc.) têm pouca cobertura de transporte público.",
+  },
+};
+
+const display = bodoniModa;
+
+// Mês/quinzena de referência da tabela de preços do JR Pass usada em
+// JR_PASS_PRECO_USD / JR_PASS_PRECO_USD_GREEN (CustomPackageCard.tsx) —
+// atualizar aqui junto com os valores toda vez que o fornecedor mandar uma
+// tabela nova (tabela é renovada quinzenalmente).
+const JR_PASS_TABELA_VALIDADE = "01–15/set/2026";
+
+const MIN_DIAS = 3;
+const MAX_DIAS = 30;
+const MIN_PESSOAS = 1;
+const MAX_PESSOAS = 20;
+const MIN_ORCAMENTO_BRL = 5000;
+const MAX_ORCAMENTO_BRL = 2000000;
+
+// Simulação de parcelamento (cartão e PIX) — pedido do Wilson, 10/set/2026.
+// Confirmado com ele (11/set/2026): usar a fórmula de amortização Price
+// (juros compostos), não multiplicação simples — PMT = PV × i / (1 − (1+i)⁻ⁿ).
+const TAXA_MAQUINA_CARTAO = 0.0355; // 3.55% fixo da maquininha, sobre o valor financiado
+const TAXA_JUROS_CARTAO_MES = 0.0169; // 1,69% a.m. — custo de parcelar no cartão
+const OPCOES_PARCELAS_CARTAO = [1, 4, 10, 12] as const;
+
+const ENTRADA_PIX_PCT = 0.3; // 30% de entrada no PIX parcelado
+const TAXA_JUROS_PIX_MES = 0.0149; // 1,49% a.m.
+const OPCOES_PARCELAS_PIX = [4, 10, 12] as const;
+
+// Valor de cada parcela pela Tabela Price (juros compostos), dado o valor
+// financiado, a taxa mensal e a quantidade de parcelas. Com 1 parcela não
+// há período de financiamento, então o valor não é composto.
+function calcularParcelaPrice(valorFinanciado: number, taxaMensal: number, parcelas: number) {
+  if (parcelas <= 1) return valorFinanciado;
+  return (valorFinanciado * taxaMensal) / (1 - Math.pow(1 + taxaMensal, -parcelas));
+}
+
+type ItemPacote = {
+  label: string;
+  detalhe: string[];
+  precoBRL: number;
+  /** Chave estável de identificação do item - usada em vez do label nos
+   * controles de selecao e ajuste manual, porque o label de alguns itens
+   * muda (categoria de hotel, classe do aereo, dias/classe do JR Pass,
+   * tipo de wi-fi) e nao pode servir de chave. Itens com label fixo nao
+   * precisam declarar chave (o codigo usa o label como chave nesse caso). */
+  chave?: string;
+  /** Se o item coube no orçamento pela regra automática (prioridade
+   * greedy) no momento em que a proposta foi calculada. Itens
+   * configurados pelo vendedor (JR Pass, wi-fi, ingressos, motorista
+   * etc.) SEMPRE aparecem na lista, mesmo quando não cabem — ficam
+   * desmarcados por padrão (não somem mais), e o vendedor pode marcar
+   * manualmente pra forçar a inclusão. Ausente = sempre recomendado
+   * (itens fixos: Roteiro, Aéreo, Hotel). */
+  recomendado?: boolean;
+};
+
+function chaveDoItem(item: ItemPacote) {
+  return item.chave ?? item.label;
+}
+
+// "Botão de volume" — desliza entre um teto mínimo (nível base) e máximo
+// (nível mais alto) de uma lista de opções ordenadas. Usado pra limitar até
+// onde o preenchimento automático por orçamento pode subir a categoria do
+// hotel ou a classe do voo, sem precisar de um dropdown (pedido do Wilson:
+// "isso deve vir como se fosse um botão de volume").
+// "Botão de volume" — barra horizontal de segmentos clicáveis, como o
+// controle de volume de uma TV/som (não um slider nativo, que passava
+// despercebido). Clicar em qualquer segmento define o teto naquele nível;
+// os segmentos até ali (inclusive) acendem, os seguintes ficam apagados —
+// leitura visual imediata de "quanto está liberado".
+function VolumeSlider<T extends string>({
+  label,
+  opcoes,
+  value,
+  onChange,
+  nota,
+  oculto,
+  onToggleOculto,
+}: {
+  label: string;
+  opcoes: readonly T[];
+  value: T;
+  onChange: (v: T) => void;
+  nota?: string;
+  oculto?: boolean;
+  onToggleOculto?: () => void;
+}) {
+  const indice = Math.max(0, opcoes.indexOf(value));
+  // Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o campo
+  // inteiro sumir (rótulo incluso), não só a barra — por isso, se estiver
+  // oculto, o componente inteiro não renderiza nada. Restaurar volta a
+  // ser feito pelo botão mestre "Mostrar todos".
+  if (oculto) return null;
+  return (
+    <div className="flex h-full flex-col">
+      <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+        <LabelNumerado texto={label} />
+        {onToggleOculto && <BotaoOcultarCampo oculto={oculto} onToggle={onToggleOculto} />}
+      </span>
+      <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/60">
+          −
+        </span>
+        <div className="flex flex-1 items-center gap-1">
+          {opcoes.map((o, i) => (
+            <button
+              key={o}
+              type="button"
+              onClick={() => onChange(o)}
+              aria-label={o}
+              aria-pressed={i <= indice}
+              className={`h-6 flex-1 rounded-sm transition ${
+                i <= indice ? "bg-[#2f80c9]" : "bg-black/10 hover:bg-black/20"
+              }`}
+              style={{ height: `${14 + i * 6}px` }}
+            />
+          ))}
+        </div>
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/60">
+          +
+        </span>
+      </div>
+      <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/60">
+        {opcoes.map((o) => (
+          <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
+            {o}
+          </span>
+        ))}
+      </div>
+      {nota && <span className="mt-1 text-[11px] leading-4 text-black/60">{nota}</span>}
+    </div>
+  );
+}
+
+// Combobox de cidade — input de texto com busca + lista filtrada, em vez de
+// um <select> nativo (a lista de DESTINOS passa de 30 cidades e rolar um
+// dropdown pra achar uma é ruim; digitar e filtrar é bem mais rápido).
+// onMouseDown com preventDefault nas opções evita que o blur do input feche
+// a lista antes do clique registrar (truque padrão de combobox).
+function CidadeCombobox({
+  value,
+  onChange,
+  todasSelecionadas,
+}: {
+  value: DestinoKey;
+  onChange: (key: DestinoKey) => void;
+  /** Cidades já usadas por outras linhas do roteiro — ficam de fora das
+   * opções, exceto a da própria linha (senão ela sumiria da lista). */
+  todasSelecionadas: DestinoKey[];
+}) {
+  const [aberto, setAberto] = useState(false);
+  const [busca, setBusca] = useState("");
+  const nomeAtual = DESTINOS.find((d) => d.key === value)?.nome ?? value;
+  const opcoes = DESTINOS.filter(
+    (d) =>
+      (d.key === value || !todasSelecionadas.includes(d.key)) &&
+      d.nome.toLowerCase().includes(busca.trim().toLowerCase()),
+  );
+
+  return (
+    <div className="relative w-full">
+      <input
+        type="text"
+        value={aberto ? busca : nomeAtual}
+        onChange={(e) => setBusca(e.target.value)}
+        onFocus={(e) => {
+          setBusca("");
+          setAberto(true);
+          e.target.select();
+        }}
+        onBlur={() => setTimeout(() => setAberto(false), 120)}
+        placeholder="Digite pra buscar uma cidade…"
+        title="Clique para trocar a cidade"
+        className="h-10 w-full cursor-pointer rounded-lg border border-black/15 bg-black/[0.03] px-3 pr-7 text-center text-sm outline-none focus:border-black/30"
+      />
+      {/* Pedido do Wilson, 11/set/2026: o "▾" antigo (9px, cinza claro)
+          não deixava claro que esse campo abre uma lista — trocado por um
+          chevron SVG maior e mais escuro, igual afordance de um <select>. */}
+      <svg
+        aria-hidden
+        viewBox="0 0 20 20"
+        fill="none"
+        className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/55"
+      >
+        <path
+          d="M5.5 7.5L10 12l4.5-4.5"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {aberto && (
+        // Pedido do Wilson, 12/set/2026: a lista tinha só a largura do
+        // próprio cartão de cidade (128px) — ao abrir por cima do campo
+        // seguinte ("10. Extensão internacional", logo abaixo), cobria só
+        // uma parte do texto e deixava um pedaço "cortado" aparecendo do
+        // lado. Lista mais larga (min 14rem) e z-index mais alto cobrem o
+        // texto por baixo de forma limpa, sem pedaço sobrando à mostra.
+        <div className="absolute left-0 top-full z-30 mt-1 max-h-56 w-56 max-w-[80vw] overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
+          {opcoes.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-black/60">Nenhuma cidade encontrada</p>
+          ) : (
+            opcoes.map((d) => (
+              <button
+                key={d.key}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onChange(d.key);
+                  setBusca("");
+                  setAberto(false);
+                }}
+                className={`block w-full px-3 py-2 text-left text-sm transition hover:bg-[#2f80c9]/10 ${
+                  d.key === value ? "bg-[#2f80c9]/10 font-medium text-[#2f80c9]" : "text-black/70"
+                }`}
+              >
+                {d.nome}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Ordem em que os itens entram no pacote sugerido, depois dos itens fixos
+// (Roteiro + Aéreo Economy + Hotel 3 estrelas). Cada passo só é aplicado se
+// couber no saldo restante do orçamento — greedy, nessa ordem de prioridade.
+// Upgrades de categoria de hotel e classe do voo são os itens de maior
+// impacto na experiência (perfil de cliente de alta/altíssima renda), por
+// isso entram antes dos complementares.
+function IconPdf({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M6 2.75h8.379a1 1 0 0 1 .707.293l3.871 3.871a1 1 0 0 1 .293.707V19.5A1.75 1.75 0 0 1 17.5 21.25h-11.5A1.75 1.75 0 0 1 4.25 19.5v-15A1.75 1.75 0 0 1 6 2.75Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path d="M14 2.75V6.5a1 1 0 0 0 1 1h3.75" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <text x="12" y="16.5" textAnchor="middle" fontSize="6.2" fontWeight="700" fill="currentColor" stroke="none">
+        PDF
+      </text>
+    </svg>
+  );
+}
+
+// Ícone do arquivo de texto editável (.doc) — mesmo desenho de página do
+// IconPdf, só troca o rótulo, pra ficar visualmente parelho ao botão de
+// PDF. Pedido do Wilson, 10/set/2026.
+function IconDoc({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M6 2.75h8.379a1 1 0 0 1 .707.293l3.871 3.871a1 1 0 0 1 .293.707V19.5A1.75 1.75 0 0 1 17.5 21.25h-11.5A1.75 1.75 0 0 1 4.25 19.5v-15A1.75 1.75 0 0 1 6 2.75Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path d="M14 2.75V6.5a1 1 0 0 0 1 1h3.75" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <text x="12" y="16.5" textAnchor="middle" fontSize="5.6" fontWeight="700" fill="currentColor" stroke="none">
+        DOC
+      </text>
+    </svg>
+  );
+}
+
+// Ícone de mala (linha simples, mesmo peso de traço dos outros ícones
+// inline da página) — usado no card de "Transporte de Malas
+// Inter-Municipal" enquanto não existe um ícone próprio no mesmo estilo
+// dos demais em /public/images/icone-*.png. Trocar por um ícone da
+// mesma identidade visual quando o Wilson tiver um pronto.
+function IconMala({ className = "h-9 w-9" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <rect x="3.5" y="8" width="17" height="12.5" rx="2" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M9 8V5.75A1.75 1.75 0 0 1 10.75 4h2.5A1.75 1.75 0 0 1 15 5.75V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M9.5 11v6.5M14.5 11v6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M3.5 13h17" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` dos campos de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "mesma regra para todos" os calendários
+ * do site (mesmo padrão já usado em app/produtos/page.tsx). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+export default function CalculadoraReversaPage() {
+  const cambio = useCambioUSD();
+  const cambioCotacao = cambio?.cotacao ?? 5.3;
+
+  const [orcamento, setOrcamento] = useState(60000);
+  const [dias, setDias] = useState(10);
+  const [pessoas, setPessoas] = useState(2);
+  // Idade por passageiro — pedido do Wilson, 10/set/2026: o seguro viagem
+  // deveria custar diferente por faixa etária (principalmente 60+). Por
+  // enquanto isso é só a interface de captura das idades; o cálculo do
+  // seguro (precoSeguro, mais abaixo) continua no valor fixo atual até o
+  // Wilson passar a tabela real de multiplicadores por faixa da
+  // seguradora — decisão dele, pra não inventar preço num caso real.
+  const [idadesPassageiros, setIdadesPassageiros] = useState<number[]>([35, 35]);
+  function alterarPessoasEIdades(novoValor: number) {
+    setPessoas(novoValor);
+    setIdadesPassageiros((atual) =>
+      novoValor > atual.length
+        ? [...atual, ...Array(novoValor - atual.length).fill(35)]
+        : atual.slice(0, novoValor),
+    );
+  }
+  function alterarIdadePassageiro(indice: number, idade: number) {
+    setIdadesPassageiros((atual) => atual.map((v, i) => (i === indice ? idade : v)));
+  }
+
+  // Data estimada da viagem — pedido do Wilson, 10/set/2026: precisa saber
+  // a data pra limitar o parcelamento do PIX (não passar do prazo até a
+  // viagem). Formato yyyy-mm-dd (input type="date"); vazio = sem limite
+  // (mostra até 12x).
+  const [dataViagemEstimada, setDataViagemEstimada] = useState("");
+
+  // Forma de pagamento escolhida na simulação — pedido do Wilson,
+  // 11/set/2026: um tickbox pra marcar qual opção o cliente prefere, com
+  // uma confirmação escrita embaixo (útil na apresentação: fecha a
+  // reunião já com a forma de pagamento registrada, sem ambiguidade).
+  const [formaPagamentoEscolhida, setFormaPagamentoEscolhida] = useState<{
+    metodo: "cartao" | "pixVista" | "pixParcelado";
+    parcelas: number;
+  } | null>(null);
+  const [tipoQuarto, setTipoQuarto] =
+    useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
+  // Quantos quartos o grupo precisa, dado o tipo de quarto escolhido — só
+  // para exibição (o preço do hotel usa "pessoas" diretamente via
+  // FATOR_QUARTO, não a quantidade de quartos). Mesmo cálculo já usado em
+  // CustomPackageCard.tsx (quartosNecessarios).
+  const quartosNecessarios = Math.max(1, Math.ceil(pessoas / CAPACIDADE_QUARTO[tipoQuarto]));
+  // Café da manhã incluso ou não — pedido do Wilson, 14/set/2026: "gerar
+  // variavel de hotel com refeicao e sem (café da manha)". Padrão ligado
+  // (perfil de cliente alto/altíssima renda costuma esperar o café da
+  // manhã incluso); o vendedor desliga pra cotar "room only" e ver a
+  // economia. Adicional por pessoa/dia varia por categoria de hotel — ver
+  // ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA.
+  const [comCafeDaManha, setComCafeDaManha] = useState(true);
+  // Cidades do roteiro — multi-seleção (média dos multiplicadores de
+  // hotel das cidades marcadas, mesmo critério do calculador do
+  // Personalizado). "Temas" abaixo é um atalho que pré-marca esse set;
+  // o vendedor pode sempre ajustar cidade por cidade depois.
+  const [destinosSelecionados, setDestinosSelecionados] = useState<DestinoKey[]>(
+    () => ["tokyo"],
+  );
+  // Temporada da viagem — ajusta a diária de hotel por cidade (pesquisa de
+  // mercado). Pedido do Wilson, 08/set/2026.
+  const [temporada, setTemporada] = useState<TemporadaKey>("baixa");
+  const [perfilViajante, setPerfilViajante] = useState<PerfilViajanteKey>(PERFIL_VIAJANTE_PADRAO);
+  // Extensões internacionais (Coréia do Sul / China) — pedido do Wilson,
+  // 08/set/2026. Independentes do roteiro do Japão: podem ficar ativas
+  // junto com qualquer Tema/seleção de cidades.
+  const [extensoesSelecionadas, setExtensoesSelecionadas] = useState<Set<ExtensaoInternacionalKey>>(
+    () => new Set(),
+  );
+  // Categoria de hotel de cada extensão (pacote 3/4/5 estrelas), escolhida
+  // de forma independente da categoria do resto do pacote. Pedido do
+  // Wilson, 10/set/2026. Padrão em "4 estrelas" — meio-termo.
+  const [extensaoCategoriaHotel, setExtensaoCategoriaHotel] = useState<
+    Record<ExtensaoInternacionalKey, CategoriaHotelExtensao>
+  >({ coreiaDoSul: "4 estrelas", china: "4 estrelas" });
+  const [cambioIeneCidade, setCambioIeneCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
+  const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO);
+  const cambioIene = useCambioIene(cambioIeneCidade);
+  // Moeda de exibição — pedido do Wilson, 14/set/2026: "criar botões para
+  // transformar tudo em BRL, USD ou IENE". Afeta todos os valores
+  // mostrados pro vendedor (tela, PDF, Word, mensagem de WhatsApp) — o
+  // valor de referência interno de cada preço continua sempre em reais;
+  // os campos que o vendedor digita (orçamento, ajustes manuais de
+  // item/total) também continuam sempre em reais, é só a exibição que
+  // muda. brlPorJPY reaproveita a cotação de iene já buscada pra seção
+  // "Câmbio no Brasil" (useCambioIene) como referência de conversão.
+  const [moedaExibicao, setMoedaExibicao] = useState<MoedaExibicao>("BRL");
+  const brlPorJPY = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
+  function formatMoeda(valorBRL: number): string {
+    return formatValor(valorBRL, moedaExibicao, cambioCotacao, brlPorJPY);
+  }
+  function formatMoedaDeUSD(valorUSD: number): string {
+    return formatMoeda(valorUSD * cambioCotacao);
+  }
+  // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
+  // permite montar uma viagem misturando temas (ex.: Automobilismo +
+  // Gastronomia). Pedido do Wilson, 04/set/2026.
+  const [temasSelecionados, setTemasSelecionados] = useState<Set<TemaKey>>(() => new Set());
+
+  // Valor manual — sobrescreve o cálculo automático quando o time já tem
+  // uma cotação real (hotel negociado, tarifa aérea específica etc.),
+  // em vez de usar a tabela de referência de mercado.
+  const [hotelManual, setHotelManual] = useState(false);
+  const [hotelDiariaManual, setHotelDiariaManual] = useState(0);
+  // Categoria do hotel quando a diária é manual — a diária não varia por
+  // categoria nesse modo (é o valor real que o vendedor já tem), mas a
+  // categoria ainda entra no rótulo da proposta e na mensagem final.
+  const [hotelCategoriaManual, setHotelCategoriaManual] =
+    useState<(typeof CATEGORIAS_HOTEL)[number]>("3 estrelas");
+  const [aereoManual, setAereoManual] = useState(false);
+  const [aereoValorManual, setAereoValorManual] = useState(0);
+  // Origem do voo — pedido do Wilson, 14/set/2026. São Paulo/GRU
+  // pré-selecionado (maioria dos clientes). Não se aplica quando o aéreo
+  // é valor manual (o vendedor já digita o preço real cotado).
+  const [origemVoo, setOrigemVoo] = useState<OrigemVooKey>("saoPaulo");
+  const [aeroportoChegada, setAeroportoChegada] = useState<AeroportoChegadaKey>("tokyoNarita");
+  const [bagagem, setBagagem] = useState<BagagemKey>("uma");
+  const [flexibilidadeDatas, setFlexibilidadeDatas] = useState<FlexibilidadeDatasKey>("fixas");
+  const [mesEstimado, setMesEstimado] = useState<number | null>(null);
+  // Bloco administrativo da proposta — pedido do Wilson, 14/set/2026.
+  // nomeCliente/consultorResponsavel/validadeProposta são client-facing
+  // (entram no PDF/Word); observacoesInternas/margemNota são só desta
+  // tela — nunca passados pro PacotePdfProps.
+  const [nomeCliente, setNomeCliente] = useState("");
+  // Identificação do lead (telefone/e-mail) — vai pro CRM em "Registrar no CRM".
+  const [telefoneCliente, setTelefoneCliente] = useState("");
+  const [emailCliente, setEmailCliente] = useState("");
+  const [consultorResponsavel, setConsultorResponsavel] = useState("");
+  // E-mail do consultor — só vai para o CRM (origem do lead), não entra no
+  // PDF/Word (Wilson, 21/out/2026).
+  const [consultorEmail, setConsultorEmail] = useState("");
+  const [validadeProposta, setValidadeProposta] = useState("");
+  const [observacoesInternas, setObservacoesInternas] = useState("");
+  const [margemNota, setMargemNota] = useState("");
+  // Progressive disclosure do Câmbio de Ienes — pedido do Wilson,
+  // 14/set/2026 (ver comentário na seção 14 abaixo).
+  const [cambioIeneExpandido, setCambioIeneExpandido] = useState(false);
+
+  // Teto manual de upgrade — "botão de volume" que limita até onde o
+  // preenchimento automático por orçamento pode subir a categoria do
+  // hotel / a classe do voo. Por padrão fica no máximo (Elite / First
+  // Class), ou seja, comportamento idêntico ao anterior; o vendedor só
+  // mexe quando quer reservar orçamento pra outros itens (ex.: JR Pass)
+  // mesmo sobrando dinheiro pra um upgrade de hotel ou aéreo.
+  const [hotelCategoriaMaxima, setHotelCategoriaMaxima] =
+    useState<(typeof CATEGORIAS_HOTEL)[number]>("Elite");
+  const [classeAereoMaxima, setClasseAereoMaxima] =
+    useState<(typeof CLASSES_AEREO)[number]>("First Class");
+
+  // Alteração manual da seleção padrão dos itens do pacote sugerido: cada
+  // chave presente no set INVERTE o padrão automático (item.recomendado)
+  // daquele item — assim o vendedor tanto pode tirar um item recomendado
+  // quanto adicionar de volta um item que não coube no orçamento (JR
+  // Pass, wi-fi, ingressos, motorista etc. continuam sempre visíveis na
+  // lista, mesmo quando não recomendados — só ficam desmarcados por
+  // padrão). Também guarda o timestamp de quando a proposta foi montada,
+  // pra constar na mensagem enviada.
+  const [itensAlterados, setItensAlterados] = useState<Set<string>>(new Set());
+  const [geradoEm] = useState(() => new Date());
+  const [gerandoPdf, setGerandoPdf] = useState(false);
+  // "REGISTRAR NO CRM" — pedido do Wilson, 16/set/2026: cria uma entrada
+  // de cliente/lead no CRM (Supabase) direto a partir dos dados já
+  // preenchidos aqui, sem duplicar digitação. Ver handleRegistrarCrm e
+  // /api/calculadora-reversa-crm/route.ts.
+  const [registrandoCrm, setRegistrandoCrm] = useState(false);
+  const [crmResultado, setCrmResultado] = useState<{ tipo: "sucesso" | "erro"; mensagem: string } | null>(
+    null,
+  );
+  // Pedido do Wilson, 10/set/2026: "Orçamento de Referência" no PDF/Word
+  // gerava confusão na apresentação pro cliente — inicialmente um
+  // checkbox opcional pra ocultar. Pedido do Wilson, 14/set/2026: "valor
+  // do orçamento nao deve aparecer em nenhum documento como pdf e word
+  // editavel" — virou comportamento fixo (ver PacotePdf.tsx/
+  // PacoteTexto.ts), então o checkbox saiu daqui.
+
+  // Ajuste manual de valor - sobrescreve o preco calculado de um item
+  // especifico (ex.: negociacao pontual) sem perder o calculo automatico
+  // dos demais, que continua reagindo a orcamento/dias/pessoas. Chave por
+  // chaveDoItem(item), nao pelo objeto em si.
+  const [itemAjustes, setItemAjustes] = useState<Record<string, number>>({});
+  // Ajuste manual do total final - sobrescreve a soma dos itens
+  // selecionados quando o vendedor precisa fechar num valor redondo ou
+  // negociado, sem precisar editar item por item.
+  const [totalManual, setTotalManual] = useState(false);
+  const [totalValorManual, setTotalValorManual] = useState(0);
+
+  // JR Pass - faixa de dias e classe (Comum/Green) escolhidas; preco vem
+  // da tabela do fornecedor (AjisaiWork), nao escala com ctx.dias.
+  const [jrPassDias, setJrPassDias] =
+    useState<(typeof JR_PASS_DIAS_OPCOES)[number]>(7);
+  const [jrPassClasse, setJrPassClasse] = useState<"comum" | "green">("comum");
+  // Quantas pessoas do grupo efetivamente compram o JR Pass — começa igual
+  // a `pessoas`, mas é editável separadamente (ex.: crianças pequenas ou
+  // quem já tem passe não entram na conta).
+  const [jrPassPessoas, setJrPassPessoas] = useState(pessoas);
+  // Default SEM GUIA — pedido do Wilson, 25/set/2026: "colocar default
+  // SEM GUIA". Antes começava já reservando o guia pra viagem inteira.
+  const [guiaDias, setGuiaDias] = useState(0);
+  // Dias de guia no Monte Fuji: +US$100 por guia/dia (Wilson, 29/out/2026).
+  const [guiaDiasFujiBruto, setGuiaDiasFuji] = useState(0);
+  const guiaDiasFuji = Math.min(guiaDiasFujiBruto, guiaDias);
+  // Tipo de guia — pedido do Wilson, 16/set/2026: "deixar duas opções de
+  // guia, guia brasileiro e guia estrangeiro (Português limitado ou
+  // Inglês)".
+  const [guiaTipo, setGuiaTipo] = useState<"brasileiro" | "estrangeiro">("brasileiro");
+
+  // Motorista Privado — catálogo de rotas exatas do fornecedor
+  // DAIKICHI/HK TOURIST (ver app/lib/motoristaPrivadoRotas.ts). Pedido do
+  // Wilson, 25/set/2026: "enriquecer nossa pagina de motorista privado
+  // tanto na /produtos quanto calculadora reversa e self-service [...] os
+  // preços na tabela anexa são preço de custo" — depois de perguntado,
+  // Wilson confirmou trocar a antiga estimativa de diária fixa
+  // (DIARIA_MOTORISTA_PRIVADO_USD × dias × grupo, sempre incluída
+  // automaticamente na proposta) pelo catálogo de rotas exatas, igual ao
+  // usado em /produtos e no self-service. Diferença importante: como não
+  // existe uma seleção padrão sensata de rotas (o vendedor precisa
+  // escolher veículo e trechos reais), o item só entra na proposta quando
+  // há pelo menos 1 rota/tour selecionado — antes entrava sempre, mesmo
+  // sem nenhuma ação do vendedor.
+  const [selecaoMotorista, setSelecaoMotorista] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
+  const [motoristaExpandido, setMotoristaExpandido] = useState(false);
+
+  // Wi-fi - eSIM (por pessoa), escala com a quantidade de dias. Pocket
+  // Wi-Fi foi removido — pedido do Wilson, 16/set/2026: "não vamos mais
+  // trabalhar com pocket wifi, pode remover da calculadora, pagina de
+  // produtos e roteiros".
+  // Quantas pessoas usam eSIM próprio. Começa em `pessoas`, mas é
+  // editável — o vendedor pode ajustar se nem todo mundo precisa.
+  const [wifiPessoasOuUnidades, setWifiPessoasOuUnidades] = useState(pessoas);
+
+  // Ingressos e experiências - o vendedor marca quais parques/experiências
+  // o cliente quer (nenhum vem pré-selecionado); cada um marcado entra como
+  // candidato do preenchimento por orçamento, igual aos outros
+  // complementares. Premier Access (Disney) e Express Pass (USJ) são
+  // acréscimos opcionais sobre o ingresso base.
+  const [ingressosSelecionados, setIngressosSelecionados] = useState<Set<IngressoKey>>(new Set());
+  // Premier Access é vendido por atração (preço médio ponderado das
+  // faixas reais ¥1.000-3.500/atração) — o vendedor escolhe a quantidade,
+  // não um pacote fechado. Express Pass da USJ tem 3 produtos oficiais
+  // com preços bem diferentes entre si.
+  const [premierAccessAtracoes, setPremierAccessAtracoes] = useState(0);
+  const [usjExpressPassTier, setUsjExpressPassTier] = useState<
+    "nenhum" | "4" | "5" | "7" | "8" | "premium"
+  >("nenhum");
+  const [mostrarDetalhesUsjExpressPass, setMostrarDetalhesUsjExpressPass] = useState(false);
+  const [mostrarTabelaComparativaUsj, setMostrarTabelaComparativaUsj] = useState(false);
+  // Serviços adicionais (ex.: transporte de malas inter-municipal) — mesmo
+  // padrão de seleção dos ingressos. Pedido do Wilson, 10/set/2026.
+  const [servicosAdicionaisSelecionados, setServicosAdicionaisSelecionados] = useState<
+    Set<ServicoAdicionalKey>
+  >(new Set());
+  // Orçamento estimado de compras do Ajisai Shopping — só usado pra dar um
+  // valor de referência na proposta (comissão de 20% sobre esse número);
+  // ver COMISSAO_AJISAI_SHOPPING_PCT.
+  const [comprasOrcamentoEstimado, setComprasOrcamentoEstimado] = useState(0);
+
+  function alternarIngresso(key: IngressoKey) {
+    setIngressosSelecionados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
+    });
+  }
+
+  function alternarServicoAdicional(key: ServicoAdicionalKey) {
+    setServicosAdicionaisSelecionados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
+    });
+  }
+
+  // Campos ocultos (colapsados) por número de seção — pedido do Wilson,
+  // 10/set/2026: cada campo/seção ganha um botão de olho que esconde o
+  // conteúdo, pra facilitar tirar prints de tela sem expor seções
+  // irrelevantes ou sensíveis pro cliente. O cabeçalho numerado continua
+  // visível (é onde fica o botão pra reverter), só o corpo da seção some.
+  const [camposOcultos, setCamposOcultos] = useState<Set<number>>(new Set());
+  function alternarCampoOculto(numero: number) {
+    setCamposOcultos((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(numero)) novo.delete(numero);
+      else novo.add(numero);
+      return novo;
+    });
+  }
+
+  // Todos os números de campo com botão de olho individual (1 por seção;
+  // o 10 é usado pelas duas variações — com/sem temas — mas é um só campo).
+  // Renumerados em 14/set/2026 pra ficar sequencial na ordem visual da
+  // página (o campo "Café da manhã" entrou como 7, entre a categoria de
+  // hotel/classe do voo e "Temporada" — todo o resto que vinha depois
+  // subiu 1 número).
+  // Pedido do Wilson, 11/set/2026: botão mestre no topo da página pra
+  // ocultar/mostrar todos de uma vez, já que ocultar um campo agora o faz
+  // desaparecer por completo (sem botão de olho individual pra restaurar).
+  const TODOS_CAMPOS_OCULTAVEIS = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+  ];
+  const todosCamposOcultos = TODOS_CAMPOS_OCULTAVEIS.every((n) => camposOcultos.has(n));
+  function alternarTodosCamposOcultos() {
+    setCamposOcultos((atual) => {
+      if (TODOS_CAMPOS_OCULTAVEIS.every((n) => atual.has(n))) {
+        return new Set();
+      }
+      return new Set(TODOS_CAMPOS_OCULTAVEIS);
+    });
+  }
+
+  // Nome de cada campo pro painel "Campos ocultos" (ver abaixo) — pedido
+  // do Wilson, 14/set/2026: "ao dar hide o campo desaparece, precisa ter
+  // alguma coisa facil de ativar novamente fora do formulario" +
+  // "coloque algo para reativar os campos do lado desse botao" (o botão
+  // mestre). Como o campo some por completo (rótulo incluso, sem botão
+  // de olho individual), o único jeito de saber o que está oculto e
+  // restaurar um de cada vez é por aqui.
+  const NOME_CAMPO_OCULTAVEL: Record<number, string> = {
+    1: "Orçamento máximo (R$)",
+    2: "Quantidade de dias",
+    3: "Número de pessoas",
+    4: "Tipo de quarto",
+    5: "Categoria máxima de hotel",
+    6: "Classe desejada do voo",
+    7: "Café da manhã",
+    8: "Temporada",
+    9: "Temas",
+    10: "Cidades do roteiro",
+    11: "Extensão internacional",
+    12: "JR Pass — validade e classe",
+    13: "Guia Turístico",
+    14: "Câmbio de ienes",
+    15: "Conexão de internet",
+    16: "Ingressos e experiências",
+    17: "Serviços adicionais",
+    18: "Seguro viagem — idade dos passageiros",
+    19: "Data estimada da viagem",
+    20: "Perfil do viajante",
+    21: "Motorista Privado",
+  };
+  const [painelCamposOcultosAberto, setPainelCamposOcultosAberto] = useState(false);
+  const camposOcultosOrdenados = Array.from(camposOcultos).sort((a, b) => a - b);
+
+  function alternarDestino(key: DestinoKey) {
+    setDestinosSelecionados((atual) =>
+      atual.includes(key) ? atual.filter((k) => k !== key) : [...atual, key],
+    );
+  }
+
+  // Seletor manual de cidades (sem Tema ativo) — até MAX_CIDADES_ROTEIRO
+  // slots posicionais, cada um com seu próprio <select>.
+  function substituirDestinoManual(indice: number, novaCidade: DestinoKey) {
+    setDestinosSelecionados((atual) => atual.map((k, i) => (i === indice ? novaCidade : k)));
+  }
+
+  function removerDestinoManual(indice: number) {
+    setDestinosSelecionados((atual) => atual.filter((_, i) => i !== indice));
+  }
+
+  function adicionarDestinoManual() {
+    setDestinosSelecionados((atual) => {
+      if (atual.length >= MAX_CIDADES_ROTEIRO) return atual;
+      const proxima = DESTINOS.find((d) => !atual.includes(d.key))?.key;
+      return proxima ? [...atual, proxima] : atual;
+    });
+  }
+
+  function alternarExtensao(key: ExtensaoInternacionalKey) {
+    setExtensoesSelecionadas((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
+    });
+  }
+
+  function definirCategoriaExtensao(key: ExtensaoInternacionalKey, categoria: CategoriaHotelExtensao) {
+    setExtensaoCategoriaHotel((atual) => ({ ...atual, [key]: categoria }));
+  }
+
+  // Até 3 temas podem ficar ativos ao mesmo tempo (misturar Automobilismo +
+  // Gastronomia, por exemplo). Cada clique liga/desliga um tema; ao atingir
+  // o limite, um 4º clique é ignorado. As cidades marcadas viram a união
+  // das cidades "padrao" de todos os temas ativos — perde ajustes manuais
+  // de cidade feitos antes, igual já acontecia com 1 tema só. "Sem Tema"
+  // (temaKey null) limpa tudo e volta pra Tokyo, igual ao estado inicial.
+  // "Parques & Entretenimento" continua auto-marcando os ingressos
+  // correspondentes quando entra no conjunto de temas ativos.
+  function alternarTema(temaKey: TemaKey | null) {
+    if (temaKey === null) {
+      setTemasSelecionados(new Set());
+      setDestinosSelecionados(["tokyo"]);
+      return;
+    }
+
+    const novo = new Set(temasSelecionados);
+    if (novo.has(temaKey)) {
+      novo.delete(temaKey);
+    } else if (novo.size < MAX_TEMAS_SIMULTANEOS) {
+      novo.add(temaKey);
+    } else {
+      return; // já tem 3 temas ativos — ignora até o vendedor desmarcar algum
+    }
+    setTemasSelecionados(novo);
+
+    const cidadesUniao: DestinoKey[] = [];
+    novo.forEach((key) => {
+      const tema = TEMAS.find((t) => t.key === key);
+      // Roteiro Clássico soma Fuji e Hakone automaticamente quando o
+      // roteiro passa de 10 dias — pedido do Wilson, 08/set/2026.
+      const ehRoteiroClassicoLongo = key === "roteiroClassico" && dias > 10;
+      tema?.cidades
+        .filter((c) => c.padrao || (ehRoteiroClassicoLongo && (c.key === "fuji" || c.key === "hakone")))
+        .forEach((c) => {
+          if (!cidadesUniao.includes(c.key)) cidadesUniao.push(c.key);
+        });
+    });
+    setDestinosSelecionados(cidadesUniao.length > 0 ? cidadesUniao : ["tokyo"]);
+
+    if (novo.has("parquesEntretenimento")) {
+      setIngressosSelecionados((atual) => {
+        const novoIngressos = new Set(atual);
+        novoIngressos.add("disneyland");
+        novoIngressos.add("disneysea");
+        novoIngressos.add("usj");
+        return novoIngressos;
+      });
+    }
+  }
+
+  // Média dos multiplicadores das cidades marcadas — mesmo critério do
+  // calculador do Personalizado (multiplicadorCidadeHotel, em
+  // CustomPackageCard.tsx); 1 (sem ajuste) se nenhuma cidade estiver marcada.
+  const multiplicadorCidade =
+    destinosSelecionados.length === 0
+      ? 1
+      : destinosSelecionados.reduce(
+          (soma, key) => soma + CIDADE_MULTIPLICADOR_HOTEL[key],
+          0,
+        ) / destinosSelecionados.length;
+  const nomesDestinos = destinosSelecionados
+    .map((key) => DESTINOS.find((d) => d.key === key)?.nome ?? key)
+    .join(" · ");
+
+  // Média dos multiplicadores de temporada das cidades marcadas — cidades
+  // fora de TEMPORADA_MULTIPLICADOR_HOTEL entram como 1.0 (sem pesquisa).
+  const multiplicadorTemporada =
+    destinosSelecionados.length === 0
+      ? 1
+      : destinosSelecionados.reduce(
+          (soma, key) => soma + (TEMPORADA_MULTIPLICADOR_HOTEL[key]?.[temporada] ?? 1),
+          0,
+        ) / destinosSelecionados.length;
+
+  // União das cidades de todos os temas ativos, com os destaques de cada
+  // tema que recomenda aquela cidade (uma cidade recomendada por 2 temas
+  // mostra os 2 destaques). notaIngresso vem do primeiro tema ativo que
+  // define esse aviso pra cidade (hoje só existe em Automobilismo).
+  const cidadesTemasAtivos = useMemo(() => {
+    const mapa = new Map<
+      DestinoKey,
+      { key: DestinoKey; destaques: { tema: string; texto: string }[]; notaIngresso?: string }
+    >();
+    temasSelecionados.forEach((temaKey) => {
+      const tema = TEMAS.find((t) => t.key === temaKey);
+      if (!tema) return;
+      tema.cidades.forEach((c) => {
+        const atual = mapa.get(c.key);
+        if (atual) {
+          atual.destaques.push({ tema: tema.nome, texto: c.destaque });
+          if (c.notaIngresso && !atual.notaIngresso) atual.notaIngresso = c.notaIngresso;
+        } else {
+          mapa.set(c.key, {
+            key: c.key,
+            destaques: [{ tema: tema.nome, texto: c.destaque }],
+            notaIngresso: c.notaIngresso,
+          });
+        }
+      });
+    });
+    return Array.from(mapa.values());
+  }, [temasSelecionados]);
+
+  // Estimativa de dias mínimos pra dar tempo de fazer tudo: 1 dia por
+  // cidade selecionada (base de deslocamento/city sightseeing) + 1 dia
+  // extra por parque de dia inteiro (Disney/USJ — teamLab é meio período
+  // e cabe dentro de um dia de cidade). É uma estimativa pra alertar o
+  // vendedor, não um cálculo de roteiro dia a dia.
+  const diasParquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) =>
+    ingressosSelecionados.has(k),
+  ).length;
+  const diasMinimosSugeridos = diasMinimosPorPerfil(perfilViajante, destinosSelecionados.length, diasParquesDiaInteiro);
+  const diasInsuficientes = dias < diasMinimosSugeridos;
+
+  const resultado = useMemo(() => {
+    // Fee de planejamento = preço-base do roteiro × complexidade de cidades ×
+    // complexidade do ritmo (perfil do viajante) — ver app/lib/precificacaoPerfil.ts.
+    const precoRoteiro = calcularFeePlanejamento(
+      ROTEIRO_PRECO_BASE + Math.max(0, dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA,
+      perfilViajante,
+      destinosSelecionados.length,
+    );
+    // Custos variáveis por ritmo (ingressos gerais, transporte urbano,
+    // experiências/reservas, complexidade operacional). Itens já
+    // precificados um a um (parques, guia, motorista, JR Pass…) mantêm o
+    // preço real e não passam por multiplicador.
+    const ritmo = calcularComponentesRitmo({
+      perfil: perfilViajante,
+      dias,
+      pessoas,
+      cidadesQtd: destinosSelecionados.length,
+      parquesDiaInteiro: diasParquesDiaInteiro,
+      cotacaoUSD: cambioCotacao,
+    });
+    // Ajuste por origem do voo — pedido do Wilson, 14/set/2026, valor fixo
+    // por pessoa (ida e volta) a partir do pedido de 16/set/2026 (ver
+    // comentário em ORIGENS_VOO). Não se aplica no modo manual (o valor já
+    // é o preço real cotado pra aquela origem específica).
+    const ajusteOrigemVooBRL = aereoManual
+      ? 0
+      : Math.round((ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0) * pessoas);
+    // Ajuste de bagagem — pedido do Wilson, 16/set/2026. Não se aplica no
+    // modo manual (o valor já é o preço real cotado, presumivelmente já
+    // considerando a bagagem combinada com o cliente/companhia aérea).
+    const ajusteBagagemBRL = aereoManual
+      ? 0
+      : Math.round((BAGAGEM_OPCOES.find((b) => b.key === bagagem)?.ajusteBRL ?? 0) * pessoas);
+    const precoAereoEconomy = aereoManual
+      ? Math.round(aereoValorManual * pessoas)
+      : Math.round(PRECO_AEREO_ECONOMY_BRL * pessoas) + ajusteOrigemVooBRL + ajusteBagagemBRL;
+    const precoAereoPremiumEconomy = aereoManual
+      ? precoAereoEconomy
+      : Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * cambioCotacao * pessoas) +
+        ajusteOrigemVooBRL +
+        ajusteBagagemBRL;
+    const precoAereoBusiness = aereoManual
+      ? precoAereoEconomy
+      : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas) + ajusteOrigemVooBRL + ajusteBagagemBRL;
+    const precoAereoFirst = aereoManual
+      ? precoAereoEconomy
+      : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas) + ajusteOrigemVooBRL + ajusteBagagemBRL;
+
+    function precoClasseAereo(classe: (typeof CLASSES_AEREO)[number]) {
+      if (classe === "First Class") return precoAereoFirst;
+      if (classe === "Business") return precoAereoBusiness;
+      if (classe === "Premium Economy") return precoAereoPremiumEconomy;
+      return precoAereoEconomy;
+    }
+
+    function precoHotel(
+      categoria: (typeof CATEGORIAS_HOTEL)[number],
+      multTemporada: number = multiplicadorTemporada,
+    ) {
+      if (hotelManual) return Math.round(hotelDiariaManual * dias);
+      return Math.round(
+        DIARIA_HOTEL[categoria] * dias * FATOR_QUARTO[tipoQuarto] * multiplicadorCidade * multTemporada * pessoas,
+      );
+    }
+
+    // Simula em qual categoria de hotel o preenchimento automático pararia
+    // com um multiplicador de temporada diferente do real — usado só pra
+    // comparar com "fora de alta temporada" (multiplicador 1) e avisar
+    // quando a alta temporada obriga a rebaixar a categoria pra caber no
+    // orçamento.
+    function categoriaHotelComMultiplicador(multTemporada: number) {
+      if (hotelManual) return hotelCategoriaManual;
+      let categoria: (typeof CATEGORIAS_HOTEL)[number] = "3 estrelas";
+      let gastoSimulado = precoRoteiro + ritmo.total + precoAereoEconomy + precoHotel("3 estrelas", multTemporada);
+      const indiceMaximoHotel = CATEGORIAS_HOTEL.indexOf(hotelCategoriaMaxima);
+      for (const cat of ["4 estrelas", "5 estrelas", "Elite"] as const) {
+        if (CATEGORIAS_HOTEL.indexOf(cat) > indiceMaximoHotel) break;
+        const precoAtual = precoHotel(categoria, multTemporada);
+        const precoNovo = precoHotel(cat, multTemporada);
+        const diferenca = precoNovo - precoAtual;
+        if (gastoSimulado + diferenca <= orcamento) {
+          gastoSimulado += diferenca;
+          categoria = cat;
+        } else break;
+      }
+      return categoria;
+    }
+
+    // Seguro Viagem é item fixo/obrigatório no pacote — igual Roteiro,
+    // Aéreo e Hotel — pedido do Wilson, 08/set/2026: "no pacote final,
+    // seguro viagem deve ser obrigatorio igual roteiro personalizado".
+    // Preço por faixa etária (idadesPassageiros) — pedido do Wilson,
+    // 10/set/2026, tabela real de multiplicadores recebida em 16/set/2026
+    // (ver FAIXAS_SEGURO_IDADE acima). Cada passageiro paga
+    // DIARIA_SEGURO_VIAGEM × seu multiplicador de idade; passageiros acima
+    // do limite (82 anos) não entram na soma — ver avisoSeguroIdade abaixo.
+    const idadesConsideradas = Array.from({ length: pessoas }, (_, i) => idadesPassageiros[i] ?? 35);
+    const passageirosForaDeCobertura = idadesConsideradas.filter(
+      (idade) => idade > IDADE_LIMITE_SEGURO,
+    ).length;
+    const precoSeguro = Math.round(
+      idadesConsideradas.reduce(
+        (soma, idade) => soma + DIARIA_SEGURO_VIAGEM * dias * (multiplicadorSeguroPorIdade(idade) ?? 0),
+        0,
+      ),
+    );
+    const avisoSeguroIdade =
+      passageirosForaDeCobertura > 0
+        ? `${passageirosForaDeCobertura} ${passageirosForaDeCobertura === 1 ? "passageiro está" : "passageiros estão"} acima do limite de ${IDADE_LIMITE_SEGURO} anos do seguro viagem — não incluído no preço, cotar sob consulta direta com a seguradora.`
+        : null;
+
+    const incluidos: ItemPacote[] = [
+      {
+        chave: "roteiro",
+        label: "Roteiro Personalizado",
+        detalhe: [
+          "Painel digital Ajisai com o roteiro dia a dia.",
+          "Atrações, deslocamentos, refeições e informações práticas dos aeroportos.",
+          "Sob medida para o grupo e acessível pelo celular durante toda a viagem.",
+        ],
+        precoBRL: precoRoteiro,
+      },
+      {
+        chave: "aereo",
+        label: "Aéreo — Economy",
+        detalhe: [
+          `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+          "Bagagem despachada incluída conforme a franquia da companhia aérea.",
+        ],
+        precoBRL: precoAereoEconomy,
+      },
+      {
+        chave: "hotel",
+        label: "Hotel — 3 estrelas",
+        detalhe: [`${dias} diárias`, tipoQuarto, "Categoria mínima"],
+        precoBRL: precoHotel("3 estrelas"),
+      },
+      {
+        chave: "seguro",
+        label: "Seguro Viagem",
+        detalhe: [
+          // Removida a menção a upgrade pra US$ 60 mil (10/set/2026,
+          // pedido do Wilson) — não é garantido e geralmente sai mais
+          // caro; mantém só o padrão de US$ 20 mil, deixando espaço pra
+          // surpreender o cliente com cobertura melhor na emissão.
+          "Cobertura médico-hospitalar (US$ 20 mil).",
+          "Bagagem extraviada, cancelamento de viagem e assistência 24h em português.",
+          `${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+          // Pedido do Wilson, 16/set/2026: preço agora escala por faixa
+          // etária de cada passageiro (ver FAIXAS_SEGURO_IDADE).
+          idadesConsideradas.some((idade) => (multiplicadorSeguroPorIdade(idade) ?? 1) > 1)
+            ? "Preço já ajustado pela idade de cada passageiro (faixas 60+ pagam mais)."
+            : "Valor padrão — nenhum passageiro em faixa etária com ajuste (60+).",
+        ],
+        precoBRL: precoSeguro,
+      },
+      ...ritmo.linhas.map((l) => ({
+        chave: l.chave,
+        label: l.label,
+        detalhe: [
+          `Perfil ${PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome ?? perfilViajante}: ${EXPLICACAO_CLIENTE_PERFIL[perfilViajante]}`,
+        ],
+        precoBRL: l.precoBRL,
+      })),
+    ];
+
+    let gasto = incluidos.reduce((soma, item) => soma + item.precoBRL, 0);
+    // No modo manual a diária não varia por categoria — a categoria final é
+    // a que o vendedor escolheu manualmente (hotelCategoriaManual), não
+    // necessariamente "3 estrelas".
+    let categoriaHotelFinal: (typeof CATEGORIAS_HOTEL)[number] = hotelManual
+      ? hotelCategoriaManual
+      : "3 estrelas";
+    let classeAereoFinal: (typeof CLASSES_AEREO)[number] = "Economy";
+
+    function cabe(valor: number) {
+      return gasto + valor <= orcamento;
+    }
+
+    // 1) Upgrade de hotel, categoria por categoria (não pula nível) — pulado
+    // quando a diária é manual, já que o valor não varia por categoria.
+    if (!hotelManual) {
+      const indiceMaximoHotel = CATEGORIAS_HOTEL.indexOf(hotelCategoriaMaxima);
+      for (const categoria of ["4 estrelas", "5 estrelas", "Elite"] as const) {
+        if (CATEGORIAS_HOTEL.indexOf(categoria) > indiceMaximoHotel) break;
+        const precoAtual = precoHotel(categoriaHotelFinal);
+        const precoNovo = precoHotel(categoria);
+        const diferenca = precoNovo - precoAtual;
+        if (cabe(diferenca)) {
+          gasto += diferenca;
+          categoriaHotelFinal = categoria;
+        } else break;
+      }
+    }
+
+    // 1.5) Café da manhã — adicional por pessoa/dia, varia conforme a
+    // categoria final do hotel (por isso calculado só depois do upgrade
+    // de hotel acima). Pedido do Wilson, 14/set/2026. Segue o mesmo
+    // padrão dos outros itens configurados pelo vendedor (motorista,
+    // ingressos etc.): sempre aparece na lista quando o toggle "7. Café
+    // da manhã" está ligado, mesmo se não couber no orçamento — fica
+    // desmarcado por padrão nesse caso, e o vendedor pode forçar a
+    // inclusão manualmente.
+    if (comCafeDaManha) {
+      const precoCafeDaManha = Math.round(
+        ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA[categoriaHotelFinal] * dias * pessoas,
+      );
+      const cafeDaManhaRecomendado = cabe(precoCafeDaManha);
+      if (cafeDaManhaRecomendado) gasto += precoCafeDaManha;
+      incluidos.push({
+        chave: "cafeDaManha",
+        label: `Café da manhã incluso — Hotel ${categoriaHotelFinal}`,
+        detalhe: [
+          "Buffet de café da manhã servido no próprio hotel.",
+          `${dias} diárias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+        ],
+        precoBRL: precoCafeDaManha,
+        recomendado: cafeDaManhaRecomendado,
+      });
+    }
+
+    // Categoria que o preenchimento automático alcançaria fora de alta
+    // temporada (multiplicador 1), pro mesmo orçamento — só calculado
+    // quando faz diferença (fora do modo manual, e fora de "baixa", já que
+    // aí o multiplicador real já é 1).
+    const categoriaHotelForaDeTemporada =
+      !hotelManual && temporada !== "baixa" ? categoriaHotelComMultiplicador(1) : categoriaHotelFinal;
+    const avisoCategoriaTemporada =
+      !hotelManual &&
+      temporada !== "baixa" &&
+      CATEGORIAS_HOTEL.indexOf(categoriaHotelFinal) < CATEGORIAS_HOTEL.indexOf(categoriaHotelForaDeTemporada)
+        ? `Categoria de hotel ajustada de ${categoriaHotelForaDeTemporada} para ${categoriaHotelFinal} para caber no orçamento nesta temporada.`
+        : null;
+
+    // Alerta de origem do voo fora de São Paulo/GRU — pedido do Wilson,
+    // 16/set/2026: "inserir alerta de origem fora de São Paulo quando
+    // ocorrer". Mesmo padrão visual do aviso de categoria de hotel acima.
+    const avisoOrigemVoo =
+      !aereoManual && ajusteOrigemVooBRL > 0
+        ? `Origem do voo: ${ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? origemVoo} — aéreo já inclui +${formatBRL(
+            Math.round(ajusteOrigemVooBRL / pessoas),
+          )}/pessoa (+${formatBRL(ajusteOrigemVooBRL)} no total) por não sair de São Paulo/GRU.`
+        : null;
+
+    // 1.5) Extensões internacionais (Coréia do Sul / China) — dias somam
+    // ao total da viagem. Categoria de hotel (3/4/5 estrelas) escolhida de
+    // forma independente por extensão, mais o deslocamento (voo/trem) de
+    // cada trecho. Item fixo assim que o card é ativado (não passa pelo
+    // preenchimento automático por orçamento). precosExtensaoPorCategoria
+    // guarda o preço das 3 categorias pra cada extensão selecionada, pra
+    // UI mostrar os 3 pacotes lado a lado antes do vendedor escolher.
+    function precoHotelExtensao(
+      extensao: (typeof EXTENSOES_INTERNACIONAIS)[number],
+      categoria: CategoriaHotelExtensao,
+    ) {
+      return extensao.cidades.reduce(
+        (soma, cidade) =>
+          soma +
+          Math.round(
+            DIARIA_HOTEL_EXTENSAO_USD[cidade.key][categoria] *
+              cidade.dias *
+              FATOR_QUARTO[tipoQuarto] *
+              pessoas *
+              cambioCotacao,
+          ),
+        0,
+      );
+    }
+    function precoDeslocamentoExtensao(extensao: (typeof EXTENSOES_INTERNACIONAIS)[number]) {
+      return extensao.deslocamento.reduce(
+        (soma, trecho) => soma + Math.round(trecho.precoUSDPax * cambioCotacao * pessoas),
+        0,
+      );
+    }
+
+    const precosExtensaoPorCategoria = {} as Record<
+      ExtensaoInternacionalKey,
+      Record<CategoriaHotelExtensao, { hotel: number; deslocamento: number; total: number }>
+    >;
+
+    extensoesSelecionadas.forEach((key) => {
+      const extensao = EXTENSOES_INTERNACIONAIS.find((e) => e.key === key);
+      if (!extensao) return;
+      const deslocamento = precoDeslocamentoExtensao(extensao);
+      const porCategoria = {} as Record<CategoriaHotelExtensao, { hotel: number; deslocamento: number; total: number }>;
+      CATEGORIAS_HOTEL_EXTENSAO.forEach((categoria) => {
+        const hotel = precoHotelExtensao(extensao, categoria);
+        porCategoria[categoria] = { hotel, deslocamento, total: hotel + deslocamento };
+      });
+      precosExtensaoPorCategoria[key] = porCategoria;
+
+      const categoriaEscolhida = extensaoCategoriaHotel[key];
+      const precoExtensao = porCategoria[categoriaEscolhida].total;
+      gasto += precoExtensao;
+      incluidos.push({
+        chave: `extensao-${extensao.key}`,
+        label: `Extensão ${extensao.nome} — ${categoriaEscolhida} (${extensao.cidades.map((c) => c.nome).join(" + ")})`,
+        detalhe: [
+          `Hotel ${categoriaEscolhida} · +${extensao.dias} dias · ${tipoQuarto} — ${formatMoeda(porCategoria[categoriaEscolhida].hotel)}`,
+          ...extensao.deslocamento.map(
+            (trecho) => `${trecho.label} — ${formatMoeda(Math.round(trecho.precoUSDPax * cambioCotacao * pessoas))}`,
+          ),
+          "Seguro e guia dessa extensão cotados à parte, por enquanto.",
+        ],
+        precoBRL: precoExtensao,
+      });
+    });
+
+    // 2) Complementares essenciais (motorista privado, seguro, guia)
+    //
+    // Pedido do Wilson, 16/set/2026: "todo campo de transporte deve ser
+    // chamado de motorista privado [...] renomear e remover a
+    // duplicidade" — antes havia 2 itens (o "Transporte" base, sempre
+    // incluso, com preço em DIARIA_TRANSPORTE, e um upgrade opcional
+    // separado "Motorista Privado" com preço em DIARIA_MOTORISTA_PRIVADO_USD)
+    // que apareceriam com nomes iguais e preços diferentes se só o label
+    // fosse trocado. O item base "Transporte" foi removido; o único item
+    // de transporte que resta é "Motorista Privado" (mais abaixo, chave
+    // "motorista", mesmo preço já usado em /produtos no card "Transporte
+    // Privado" — TransportePrivadoCalculator.tsx).
+    const diariaGuiaUSD = guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD;
+    const guiasPorDia = Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO));
+    const precoGuia = Math.round(
+      ((diariaGuiaUSD * guiasPorDia + GORJETA_GUIA_USD_PAX_DIA * pessoas) * guiaDias +
+        ADICIONAL_GUIA_MONTE_FUJI_USD * guiasPorDia * guiaDiasFuji) *
+        cambioCotacao,
+    );
+    if (guiaDias > 0) {
+      const guiaRecomendado = cabe(precoGuia);
+      if (guiaRecomendado) gasto += precoGuia;
+      incluidos.push({
+        chave: "guia",
+        label: guiaTipo === "brasileiro" ? "Guia Turístico — Brasileiro" : "Guia Turístico — Estrangeiro",
+        detalhe: [
+          guiaTipo === "brasileiro"
+            ? "Guia particular brasileiro, fluente em português, acompanhando o roteiro."
+            : "Guia particular estrangeiro (português limitado ou inglês) acompanhando o roteiro.",
+          "Ajuda com trajetos, horários e filas.",
+          `US$ ${diariaGuiaUSD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+          `Gorjeta do guia: US$ ${GORJETA_GUIA_USD_PAX_DIA} por pessoa/dia (incluída)`,
+          `${guiaDias} de ${dias} dia${dias === 1 ? "" : "s"} da viagem`,
+          ...(guiaDiasFuji > 0 ? [`Monte Fuji (Fujikawaguchiko): ${guiaDiasFuji} dia${guiaDiasFuji === 1 ? "" : "s"} · + US$ ${ADICIONAL_GUIA_MONTE_FUJI_USD} por guia/dia`] : []),
+          AVISO_DESLOCAMENTO_GUIA,
+        ],
+        precoBRL: precoGuia,
+        recomendado: guiaRecomendado,
+      });
+    }
+
+    // 3) JR Pass — faixa de dias e classe escolhidas pelo vendedor; só
+    // entra quantidade de gente que realmente compra o passe (editável,
+    // pode ser menor que `pessoas`).
+    const tabelaJrPass = jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD;
+    const precoJrPass = Math.round(tabelaJrPass[jrPassDias] * cambioCotacao * jrPassPessoas);
+    if (jrPassPessoas > 0) {
+      const jrPassRecomendado = cabe(precoJrPass);
+      if (jrPassRecomendado) gasto += precoJrPass;
+      incluidos.push({
+        chave: "jrpass",
+        label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
+        detalhe: [
+          "Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR.",
+          `Incluindo a maioria dos trens-bala (Shinkansen)${jrPassClasse === "green" ? ", classe Green Car" : ""}.`,
+          `Durante ${jrPassDias} dias corridos de validade.`,
+          `${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
+        ],
+        precoBRL: precoJrPass,
+        recomendado: jrPassRecomendado,
+      });
+    }
+
+    // 4) Wi-fi — eSIM (por pessoa). Pocket Wi-Fi foi removido, pedido do
+    // Wilson, 16/set/2026.
+    const precoWifi = Math.round(DIARIA_ESIM_USD_PAX * dias * wifiPessoasOuUnidades * cambioCotacao);
+    if (wifiPessoasOuUnidades > 0) {
+      const wifiRecomendado = cabe(precoWifi);
+      if (wifiRecomendado) gasto += precoWifi;
+      incluidos.push({
+        chave: "wifi",
+        label: "eSIM",
+        detalhe: [
+          "eSIM com conexão 5G direto no celular de cada viajante.",
+          "Sem aparelho extra pra carregar.",
+          `${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`,
+        ],
+        precoBRL: precoWifi,
+        recomendado: wifiRecomendado,
+      });
+    }
+
+    // 5) Upgrade de classe do voo — pulado quando o valor da passagem é manual.
+    if (!aereoManual) {
+      const indiceMaximoAereo = CLASSES_AEREO.indexOf(classeAereoMaxima);
+      for (const classe of ["Premium Economy", "Business", "First Class"] as const) {
+        if (CLASSES_AEREO.indexOf(classe) > indiceMaximoAereo) break;
+        const precoAtual = precoClasseAereo(classeAereoFinal);
+        const precoNovo = precoClasseAereo(classe);
+        const diferenca = precoNovo - precoAtual;
+        if (cabe(diferenca)) {
+          gasto += diferenca;
+          classeAereoFinal = classe;
+        } else break;
+      }
+    }
+
+    // 6) Motorista Privado (único item de transporte da calculadora —
+    // ver comentário acima, na seção 2, sobre a fusão com o antigo item
+    // "Transporte"). Preço exato por rota/tour selecionado pelo vendedor
+    // (ver comentário na declaração de `selecaoMotorista`, acima) — só
+    // entra na proposta quando há pelo menos 1 serviço escolhido.
+    if (selecaoMotorista.itens.length > 0) {
+      const precoMotorista = Math.round(calcularTotalMotoristaUSD(selecaoMotorista) * cambioCotacao);
+      const motoristaRecomendado = cabe(precoMotorista);
+      if (motoristaRecomendado) gasto += precoMotorista;
+      incluidos.push({
+        chave: "motorista",
+        label: "Motorista Privado",
+        detalhe: [
+          "Motorista particular à disposição do grupo, sem compartilhar veículo.",
+          "Mais privacidade e flexibilidade de horário/roteiro do que transporte compartilhado — não inclui o transfer aeroporto ↔ hotel (item à parte).",
+          resumoSelecaoMotorista(selecaoMotorista),
+        ],
+        precoBRL: precoMotorista,
+        recomendado: motoristaRecomendado,
+      });
+    }
+
+    // 8) Ingressos e experiências — só entram os parques marcados pelo
+    // vendedor (nenhum vem por padrão). Premier Access (Disney, por
+    // atração) e Express Pass (USJ, por tier — cada um com preço
+    // diferente) somam ao ingresso base do parque correspondente.
+    for (const ingresso of CATALOGO_INGRESSOS) {
+      if (!ingressosSelecionados.has(ingresso.key)) continue;
+      const ehDisney = ingresso.key === "disneyland" || ingresso.key === "disneysea";
+      let precoFastPassUSD = 0;
+      let nomeFastPass = "";
+      if (ehDisney && premierAccessAtracoes > 0) {
+        precoFastPassUSD = PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX * premierAccessAtracoes;
+        nomeFastPass = `Premier Access (${premierAccessAtracoes} ${premierAccessAtracoes === 1 ? "atração" : "atrações"})`;
+      } else if (ingresso.key === "usj" && usjExpressPassTier !== "nenhum") {
+        precoFastPassUSD =
+          usjExpressPassTier === "4"
+            ? PRECO_EXPRESS_PASS_USJ_4_USD_PAX
+            : usjExpressPassTier === "5"
+              ? PRECO_EXPRESS_PASS_USJ_5_USD_PAX
+              : usjExpressPassTier === "7"
+                ? PRECO_EXPRESS_PASS_USJ_7_USD_PAX
+                : usjExpressPassTier === "8"
+                  ? PRECO_EXPRESS_PASS_USJ_8_USD_PAX
+                  : PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX;
+        nomeFastPass = `Express Pass ${usjExpressPassTier === "premium" ? "Premium" : usjExpressPassTier}`;
+      }
+      const temFastPass = precoFastPassUSD > 0;
+      const precoIngresso = Math.round(
+        (ingresso.precoUSD + precoFastPassUSD) * pessoas * cambioCotacao,
+      );
+      const ingressoRecomendado = cabe(precoIngresso);
+      if (ingressoRecomendado) gasto += precoIngresso;
+      incluidos.push({
+        chave: `ingresso-${ingresso.key}`,
+        label: `Ingresso — ${ingresso.nome}${temFastPass ? ` + ${nomeFastPass}` : ""}`,
+        detalhe: [
+          "Ingresso de 1 dia, por pessoa.",
+          ...(temFastPass
+            ? [`+ ${nomeFastPass} — fast pass pago à parte.`, "Pula fila nas atrações participantes."]
+            : []),
+        ],
+        precoBRL: precoIngresso,
+        recomendado: ingressoRecomendado,
+      });
+    }
+
+    // 8.5) Serviços adicionais opcionais (seção 16) — marcados pelo
+    // vendedor, cada um vira candidato do preenchimento por orçamento.
+    // Câmbio no Brasil e Reserva de Restaurantes High-End eram itens
+    // automáticos (entravam em todo pacote) e viraram opcionais aqui a
+    // pedido do Wilson, 10/set/2026. Cada um tem sua própria fórmula de
+    // preço, calculada aqui (formatos diferentes demais pra generalizar
+    // num loop único, ao contrário de Ingressos acima).
+    if (servicosAdicionaisSelecionados.has("malasIntermunicipal")) {
+      const trechosEntreCidades = Math.max(1, destinosSelecionados.length - 1);
+      const precoMalas = Math.round(
+        PRECO_MALA_INTERMUNICIPAL_USD * pessoas * trechosEntreCidades * cambioCotacao,
+      );
+      const malasRecomendado = cabe(precoMalas);
+      if (malasRecomendado) gasto += precoMalas;
+      incluidos.push({
+        chave: "servico-malasIntermunicipal",
+        label: "Transporte de Malas Inter-Municipal",
+        detalhe: [
+          "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen.",
+          `${pessoas} ${pessoas === 1 ? "mala" : "malas"} × ${trechosEntreCidades} ${trechosEntreCidades === 1 ? "trecho" : "trechos"} entre cidades.`,
+        ],
+        precoBRL: precoMalas,
+        recomendado: malasRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("cambioBrasil")) {
+      const cotacaoIeneAtual = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
+      const precoIenes = Math.round(quantidadeIenes * cotacaoIeneAtual * SPREAD_CAMBIO_IENE);
+      const nomeCidadeCambio =
+        CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIeneCidade)?.nome ?? cambioIeneCidade;
+      const precoCambioTotal = PRECO_CAMBIO_BRASIL + precoIenes;
+      const cambioRecomendado = cabe(precoCambioTotal);
+      if (cambioRecomendado) gasto += precoCambioTotal;
+      incluidos.push({
+        chave: "servico-cambioBrasil",
+        label: "Câmbio no Brasil",
+        detalhe: [
+          `¥ ${quantidadeIenes.toLocaleString("pt-BR")} em espécie — cotação de ${nomeCidadeCambio} + spread de 15%.`,
+          "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque.",
+          "Evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
+        ],
+        precoBRL: precoCambioTotal,
+        recomendado: cambioRecomendado,
+      });
+    }
+
+    if (
+      servicosAdicionaisSelecionados.has("restaurantesHighEnd") &&
+      pessoas <= RESTAURANTES_HIGHEND_LIMITE_PESSOAS
+    ) {
+      const precoRestaurantes = Math.round(PRECO_RESTAURANTES_HIGHEND_USD * cambioCotacao);
+      const restaurantesRecomendado = cabe(precoRestaurantes);
+      if (restaurantesRecomendado) gasto += precoRestaurantes;
+      incluidos.push({
+        chave: "servico-restaurantesHighEnd",
+        label: "Reserva de Restaurantes High-End",
+        detalhe: [
+          `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente.`,
+          `Até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
+        ],
+        precoBRL: precoRestaurantes,
+        recomendado: restaurantesRecomendado,
+      });
+    }
+
+    // 4 itens abaixo — pedido do Wilson, 14/set/2026: "é pra incluir os
+    // preços e discriminar nas linhas deles dentro do valor final" (ver
+    // comentário no catálogo, acima, e nas constantes em
+    // CustomPackageCard.tsx). Transfer de ônibus escala por pessoa (ida e
+    // volta); concierge escala por dia do roteiro; reserva de restaurante
+    // e experiência sob medida entram como 1 unidade de referência — o
+    // vendedor ajusta manualmente o valor final do item quando o pedido
+    // real do cliente tiver uma quantidade diferente (mesmo recurso usado
+    // em qualquer item da lista).
+    if (servicosAdicionaisSelecionados.has("transferOnibus")) {
+      const precoTransferOnibus = Math.round(PRECO_TRANSFER_ONIBUS_USD_PAX * pessoas * cambioCotacao);
+      const transferOnibusRecomendado = cabe(precoTransferOnibus);
+      if (transferOnibusRecomendado) gasto += precoTransferOnibus;
+      incluidos.push({
+        chave: "servico-transferOnibus",
+        label: "Transfer de Ônibus (Limousine Bus)",
+        detalhe: [
+          "Aeroporto ↔ hotel em Tóquio, ida e volta — não incluso no item “Motorista Privado” (van privada).",
+          `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+        ],
+        precoBRL: precoTransferOnibus,
+        recomendado: transferOnibusRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("reservaRestaurante")) {
+      const precoReservaRestaurante = Math.round(PRECO_RESERVA_RESTAURANTE_USD * cambioCotacao);
+      const reservaRestauranteRecomendado = cabe(precoReservaRestaurante);
+      if (reservaRestauranteRecomendado) gasto += precoReservaRestaurante;
+      incluidos.push({
+        chave: "servico-reservaRestaurante",
+        label: "Reserva de Restaurante",
+        detalhe: [
+          "Reserva avulsa fora do pacote High-End — 1 reserva de referência.",
+          "Ajuste o valor manualmente se o cliente pedir mais de uma reserva.",
+        ],
+        precoBRL: precoReservaRestaurante,
+        recomendado: reservaRestauranteRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("experienciaSobMedida")) {
+      const precoExperienciaSobMedida = Math.round(PRECO_EXPERIENCIA_SOB_MEDIDA_USD * cambioCotacao);
+      const experienciaSobMedidaRecomendado = cabe(precoExperienciaSobMedida);
+      if (experienciaSobMedidaRecomendado) gasto += precoExperienciaSobMedida;
+      incluidos.push({
+        chave: "servico-experienciaSobMedida",
+        label: "Experiência Sob Medida",
+        detalhe: [
+          "Taxa de curadoria (pesquisa, negociação e agendamento) — 1 experiência de referência.",
+          "Custo da experiência em si (entrada, guia especializado etc.) cotado à parte.",
+        ],
+        precoBRL: precoExperienciaSobMedida,
+        recomendado: experienciaSobMedidaRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("concierge")) {
+      const precoConcierge = Math.round(DIARIA_CONCIERGE_USD * dias * cambioCotacao);
+      const conciergeRecomendado = cabe(precoConcierge);
+      if (conciergeRecomendado) gasto += precoConcierge;
+      incluidos.push({
+        chave: "servico-concierge",
+        label: "Concierge Dedicado",
+        detalhe: [
+          "Suporte e tradução sob demanda por WhatsApp/telefone durante toda a viagem.",
+          `${dias} ${dias === 1 ? "dia" : "dias"}.`,
+        ],
+        precoBRL: precoConcierge,
+        recomendado: conciergeRecomendado,
+      });
+    }
+
+    // Ajisai Shopping — comissão de 20% sobre o orçamento estimado de
+    // compras informado pelo vendedor (ver comentário em
+    // COMISSAO_AJISAI_SHOPPING_PCT). Sem orçamento informado, o item entra
+    // com valor de referência R$ 0 — "sob consulta" no detalhe.
+    if (servicosAdicionaisSelecionados.has("ajisaiShopping")) {
+      const precoAjisaiShopping = Math.round(comprasOrcamentoEstimado * COMISSAO_AJISAI_SHOPPING_PCT);
+      const ajisaiShoppingRecomendado = cabe(precoAjisaiShopping);
+      if (ajisaiShoppingRecomendado) gasto += precoAjisaiShopping;
+      incluidos.push({
+        chave: "servico-ajisaiShopping",
+        label: "Ajisai Shopping",
+        detalhe: [
+          "Acompanhamento pessoal em compras durante a viagem — negociação, tradução e apoio logístico nas lojas.",
+          comprasOrcamentoEstimado > 0
+            ? `Comissão de ${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre orçamento estimado de compras de ${formatMoeda(comprasOrcamentoEstimado)}.`
+            : `Comissão de ${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre o valor das compras — valor final sob consulta, conforme o que for efetivamente gasto na viagem.`,
+        ],
+        precoBRL: precoAjisaiShopping,
+        recomendado: ajisaiShoppingRecomendado,
+      });
+    }
+
+    // Atualiza os itens fixos de hotel/aéreo com a categoria/classe final
+    incluidos[1] = {
+      chave: "aereo",
+      label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
+      detalhe: [
+        `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, saindo de ${ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? "São Paulo / GRU"}, chegando em ${AEROPORTOS_CHEGADA_JAPAO.find((a) => a.key === aeroportoChegada)?.nome ?? "Tóquio / Narita (NRT)"}.`,
+        bagagem === "cabine"
+          ? "Somente bagagem de mão — sem despacho de mala."
+          : bagagem === "uma"
+            ? "1 mala despachada incluída na franquia padrão da companhia aérea."
+            : bagagem === "duas"
+              ? `2 malas despachadas — já inclui ajuste estimado de ${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === "duas")!.ajusteBRL)}/pessoa de taxa de 2ª mala (⚠️ estimativa, confirmar com a companhia aérea).`
+              : `2 malas despachadas + item grande/especial — já inclui ajuste estimado de ${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === "grande")!.ajusteBRL)}/pessoa (⚠️ estimativa, confirmar com a companhia aérea).`,
+      ],
+      precoBRL: precoClasseAereo(classeAereoFinal),
+    };
+    incluidos[2] = {
+      chave: "hotel",
+      label: hotelManual
+        ? `Hotel — ${categoriaHotelFinal} (valor manual)`
+        : `Hotel — ${categoriaHotelFinal}`,
+      detalhe: [`${dias} diárias`, tipoQuarto, nomesDestinos || "—"],
+      precoBRL: precoHotel(categoriaHotelFinal),
+    };
+
+    const precoMinimo = precoRoteiro + ritmo.total + precoAereoEconomy + precoHotel("3 estrelas") + precoSeguro;
+    const saldo = orcamento - gasto;
+
+    return {
+      incluidos,
+      gasto,
+      saldo,
+      categoriaHotelFinal,
+      classeAereoFinal,
+      avisoCategoriaTemporada,
+      avisoOrigemVoo,
+      avisoSeguroIdade,
+      cabeNoOrcamento: orcamento >= precoMinimo,
+      precoMinimo,
+      precosExtensaoPorCategoria,
+      ritmoAdmin: ritmo.resultado,
+    };
+  }, [
+    perfilViajante,
+    destinosSelecionados,
+    diasParquesDiaInteiro,
+    orcamento,
+    dias,
+    pessoas,
+    idadesPassageiros,
+    tipoQuarto,
+    multiplicadorCidade,
+    multiplicadorTemporada,
+    temporada,
+    nomesDestinos,
+    extensoesSelecionadas,
+    extensaoCategoriaHotel,
+    guiaDias,
+    guiaDiasFuji,
+    guiaTipo,
+    selecaoMotorista,
+    cambioIene,
+    cambioIeneCidade,
+    quantidadeIenes,
+    cambioCotacao,
+    moedaExibicao,
+    origemVoo,
+    bagagem,
+    hotelManual,
+    hotelDiariaManual,
+    hotelCategoriaManual,
+    hotelCategoriaMaxima,
+    comCafeDaManha,
+    classeAereoMaxima,
+    aereoManual,
+    aereoValorManual,
+    jrPassDias,
+    jrPassClasse,
+    jrPassPessoas,
+    wifiPessoasOuUnidades,
+    ingressosSelecionados,
+    premierAccessAtracoes,
+    usjExpressPassTier,
+    servicosAdicionaisSelecionados,
+    comprasOrcamentoEstimado,
+    destinosSelecionados,
+  ]);
+
+  const extensoesLabel = EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key))
+    .map((extensao) => `+ ${extensao.dias} dias ${extensao.nome}`)
+    .join(" · ");
+  // Pedido do Wilson, 14/set/2026: "valor do orçamento nao deve aparecer em
+  // nenhum documento como pdf e word editavel" — esse label vira o título
+  // do PDF, do Word e da mensagem de WhatsApp (todos client-facing), então
+  // o valor do orçamento não pode entrar aqui, nem escondido dentro do
+  // título. Achado em 14/set/2026: o bloco "Orçamento de referência"/"Saldo"
+  // já tinha sido removido do corpo do PDF/Word, mas esse título continuava
+  // vazando o orçamento (" · orçamento R$ X") — bug separado, corrigido
+  // agora removendo o trecho do template em vez de só ocultar no render.
+  const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}${extensoesLabel ? ` · ${extensoesLabel}` : ""}`;
+
+  function alternarItem(chave: string) {
+    setItensAlterados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(chave)) novo.delete(chave);
+      else novo.add(chave);
+      return novo;
+    });
+  }
+
+  // item.recomendado ausente = sempre recomendado (itens fixos: Roteiro,
+  // Aéreo, Hotel). Um item está selecionado quando seu padrão
+  // (recomendado) não foi invertido pelo vendedor em itensAlterados —
+  // é assim que um item fora do orçamento (motorista, JR Pass etc.) pode
+  // ser marcado manualmente sem nunca sumir da lista.
+  function itemRecomendado(item: ItemPacote) {
+    return item.recomendado !== false;
+  }
+  function itemSelecionado(item: ItemPacote) {
+    return itemRecomendado(item) !== itensAlterados.has(chaveDoItem(item));
+  }
+
+  // Valor efetivo de um item: o ajuste manual, quando existir, sobrescreve
+  // o preco calculado automaticamente.
+  function valorItem(item: ItemPacote) {
+    const ajuste = itemAjustes[chaveDoItem(item)];
+    return ajuste ?? item.precoBRL;
+  }
+
+  function ajustarValorItem(item: ItemPacote, valor: number) {
+    setItemAjustes((atual) => ({ ...atual, [chaveDoItem(item)]: valor }));
+  }
+
+  function restaurarValorItem(item: ItemPacote) {
+    setItemAjustes((atual) => {
+      const novo = { ...atual };
+      delete novo[chaveDoItem(item)];
+      return novo;
+    });
+  }
+
+  const itensSelecionados = resultado.incluidos.filter(itemSelecionado);
+  const totalCalculado = itensSelecionados.reduce((soma, item) => soma + valorItem(item), 0);
+  const totalSelecionado = totalManual ? totalValorManual : totalCalculado;
+  const saldoSelecionado = orcamento - totalSelecionado;
+
+  // Simulação de parcelamento — cartão (1x/4x/10x/12x, Tabela Price) e PIX
+  // (à vista, ou parcelado com 30% de entrada + parcelas iguais, limitado
+  // pelos meses até a data estimada da viagem). Pedido do Wilson,
+  // 10/set/2026 — só para simulação/apresentação, o checkout real de
+  // pagamento é etapa futura.
+  const simulacaoCartao = useMemo(() => {
+    const valorFinanciado = totalSelecionado * (1 + TAXA_MAQUINA_CARTAO);
+    return OPCOES_PARCELAS_CARTAO.map((parcelas) => {
+      const valorParcela = calcularParcelaPrice(valorFinanciado, TAXA_JUROS_CARTAO_MES, parcelas);
+      return { parcelas, valorParcela, valorTotal: valorParcela * parcelas };
+    });
+  }, [totalSelecionado]);
+
+  const mesesAteViagem = useMemo(() => {
+    if (!dataViagemEstimada) return null;
+    const viagem = new Date(`${dataViagemEstimada}T00:00:00`);
+    if (Number.isNaN(viagem.getTime())) return null;
+    const diffDias = (viagem.getTime() - geradoEm.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDias / 30.44;
+  }, [dataViagemEstimada, geradoEm]);
+
+  const parcelasMaxPix =
+    mesesAteViagem === null ? 12 : Math.max(0, Math.min(12, Math.floor(mesesAteViagem)));
+
+  const simulacaoPix = useMemo(() => {
+    const entrada = totalSelecionado * ENTRADA_PIX_PCT;
+    const valorFinanciado = totalSelecionado - entrada;
+    return OPCOES_PARCELAS_PIX.filter((parcelas) => parcelas <= parcelasMaxPix).map((parcelas) => {
+      const valorParcela = calcularParcelaPrice(valorFinanciado, TAXA_JUROS_PIX_MES, parcelas);
+      return { parcelas, entrada, valorParcela, valorTotal: entrada + valorParcela * parcelas };
+    });
+  }, [totalSelecionado, parcelasMaxPix]);
+
+  // Texto da confirmação da forma de pagamento escolhida (tickbox acima).
+  const descricaoFormaPagamentoEscolhida = useMemo(() => {
+    if (!formaPagamentoEscolhida) return null;
+    if (formaPagamentoEscolhida.metodo === "cartao") {
+      const op = simulacaoCartao.find((o) => o.parcelas === formaPagamentoEscolhida.parcelas);
+      if (!op) return null;
+      return op.parcelas === 1
+        ? `Cartão de crédito à vista (1x) de ${formatMoeda(op.valorParcela)}.`
+        : `Cartão de crédito em ${op.parcelas}x de ${formatMoeda(op.valorParcela)} — total ${formatMoeda(op.valorTotal)}.`;
+    }
+    if (formaPagamentoEscolhida.metodo === "pixVista") {
+      return `PIX à vista de ${formatMoeda(totalSelecionado)}.`;
+    }
+    const op = simulacaoPix.find((o) => o.parcelas === formaPagamentoEscolhida.parcelas);
+    if (!op) return null;
+    return `PIX parcelado — entrada de ${formatMoeda(op.entrada)} (30%) + ${op.parcelas}x de ${formatMoeda(op.valorParcela)} — total ${formatMoeda(op.valorTotal)}.`;
+  }, [formaPagamentoEscolhida, simulacaoCartao, simulacaoPix, totalSelecionado, moedaExibicao, cambioCotacao, brlPorJPY]);
+
+  // Cidades marcadas que exigem motorista particular (transporte público
+  // insuficiente) mas cujo item "Motorista Privado" não está na proposta
+  // final — alerta pro vendedor não fechar um pacote sem transporte viável.
+  const motoristaNaProposta = itensSelecionados.some((item) => chaveDoItem(item) === "motorista");
+  const cidadesSemMotoristaObrigatorio = motoristaNaProposta
+    ? []
+    : destinosSelecionados
+        .map((key) => ({ key, nota: CIDADE_MOTORISTA_NOTA[key] }))
+        .filter((c): c is { key: DestinoKey; nota: NonNullable<(typeof CIDADE_MOTORISTA_NOTA)[DestinoKey]> } =>
+          c.nota?.nivel === "obrigatorio",
+        );
+
+  const geradoEmLabel = `${geradoEm.toLocaleDateString("pt-BR")} às ${geradoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+
+  async function handleGerarPdf() {
+    setGerandoPdf(true);
+    try {
+      // Roteiro básico sugerido (com fotos) no PDF — pedido do Wilson,
+      // 25/set/2026: "adicionar roteiro basico sugerido com imagens".
+      // @react-pdf/renderer não resolve caminho relativo de arquivo
+      // estático do Next (ex.: "/images/tokyo.jpg"), precisa de uma URL
+      // completa pra buscar a imagem — daí o prefixo do domínio do site.
+      const cidadesRoteiroPdf = destinosSelecionados
+        .map((key) => DESTINOS.find((d) => d.key === key))
+        .filter((d): d is (typeof DESTINOS)[number] => !!d)
+        .map((d) => ({
+          nome: d.nome,
+          imagemUrl: d.imagem ? `https://www.alpinea.io${d.imagem}` : null,
+        }));
+
+      await gerarEBaixarPdf({
+        tituloPacote: pacoteSugeridoLabel,
+        cidadesRoteiro: cidadesRoteiroPdf,
+        dias,
+        tipoQuarto,
+        pessoas,
+        geradoEmLabel,
+        cambioLabel: cambio
+          ? cambio.fallback
+            ? `Câmbio estimado: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")} — cotação do Banco Central indisponível no momento.`
+            : `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : " (PTAX Banco Central)"}`
+          : "Cotação do dia indisponível",
+        itens: itensSelecionados.map((item) => ({
+          chave: chaveDoItem(item),
+          label: item.label,
+          detalhe: item.detalhe,
+          precoBRL: valorItem(item),
+        })),
+        totalBRL: totalSelecionado,
+        orcamentoBRL: orcamento,
+        saldoBRL: saldoSelecionado,
+        moedaExibicao,
+        cambioCotacao,
+        brlPorJPY,
+        nomeCliente: nomeCliente.trim() || undefined,
+        consultor: consultorResponsavel.trim() || undefined,
+        validadeLabel: validadeProposta
+          ? new Date(`${validadeProposta}T00:00:00`).toLocaleDateString("pt-BR")
+          : undefined,
+      });
+    } catch (erro) {
+      console.error("Falha ao gerar PDF da proposta:", erro);
+      window.alert("Não foi possível gerar o PDF agora. Tente novamente em alguns segundos.");
+    } finally {
+      setGerandoPdf(false);
+    }
+  }
+
+  // Arquivo de texto editável (.doc) da proposta — mesmos dados do PDF,
+  // pra quando o vendedor precisa editar o texto antes de mandar pro
+  // cliente (ajustar valor negociado, remover item, mudar o tom).
+  function handleGerarTexto() {
+    try {
+      gerarEBaixarTexto({
+        tituloPacote: pacoteSugeridoLabel,
+        dias,
+        tipoQuarto,
+        pessoas,
+        geradoEmLabel,
+        cambioLabel: cambio
+          ? cambio.fallback
+            ? `Câmbio estimado: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")} — cotação do Banco Central indisponível no momento.`
+            : `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : " (PTAX Banco Central)"}`
+          : "Cotação do dia indisponível",
+        itens: itensSelecionados.map((item) => ({
+          chave: chaveDoItem(item),
+          label: item.label,
+          detalhe: item.detalhe,
+          precoBRL: valorItem(item),
+        })),
+        totalBRL: totalSelecionado,
+        orcamentoBRL: orcamento,
+        saldoBRL: saldoSelecionado,
+        moedaExibicao,
+        cambioCotacao,
+        brlPorJPY,
+        nomeCliente: nomeCliente.trim() || undefined,
+        consultor: consultorResponsavel.trim() || undefined,
+        validadeLabel: validadeProposta
+          ? new Date(`${validadeProposta}T00:00:00`).toLocaleDateString("pt-BR")
+          : undefined,
+      });
+    } catch (erro) {
+      console.error("Falha ao gerar arquivo de texto da proposta:", erro);
+      window.alert("Não foi possível gerar o arquivo de texto agora. Tente novamente em alguns segundos.");
+    }
+  }
+
+  // Mapa chave-do-item → produto_secundario do CRM (ver lib/crm/produtos.ts
+  // no repo do Wilson — CHECK constraint da coluna produto_secundario).
+  // Só itens com correspondência clara entram; o resto (aéreo, hotel,
+  // seguro sempre presente, ingressos, wifi etc.) não tem produto do CRM
+  // equivalente e fica de fora.
+  function produtoSecundarioDoCrm(): string[] {
+    const mapa: Record<string, string> = {
+      jrpass: "jr_pass",
+      seguro: "seguro_viagem",
+      guia: "guia",
+      motorista: "transporte_privado",
+      "servico-restaurantesHighEnd": "reserva_restaurantes",
+      "servico-reservaRestaurante": "reserva_restaurantes",
+      "servico-ajisaiShopping": "ajisai_shopping",
+    };
+    const produtos = new Set<string>();
+    for (const item of itensSelecionados) {
+      const produto = mapa[chaveDoItem(item)];
+      if (produto) produtos.add(produto);
+    }
+    return Array.from(produtos);
+  }
+
+  // Resumo em texto de tudo que está na proposta — vira o campo
+  // "observações"/histórico do cliente no CRM (pedido do Wilson,
+  // 16/set/2026: "ajustar o CRM para que ele possua todos os dados que
+  // temos aqui na pagina de calculadora reversa"). Pedido do Wilson,
+  // 18/set/2026 ("você replicou todas as seções dessa calculadora no
+  // CRM?"): faltavam cidades do roteiro, forma de pagamento escolhida e
+  // validade da proposta — as extensões internacionais (Coreia/China) já
+  // entravam via pacoteSugeridoLabel, que reaproveita extensoesLabel.
+  function construirResumoCrm(): string {
+    const nomeTemporada = TEMPORADAS.find((t) => t.key === temporada)?.nome ?? temporada;
+    const nomeOrigem = ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? origemVoo;
+    const nomeAeroportoChegada =
+      AEROPORTOS_CHEGADA_JAPAO.find((a) => a.key === aeroportoChegada)?.nome ?? aeroportoChegada;
+    const nomeBagagem = BAGAGEM_OPCOES.find((b) => b.key === bagagem)?.nome ?? bagagem;
+    const idadesLabel = idadesPassageiros.slice(0, pessoas).join(", ");
+    const validadeLabel = validadeProposta
+      ? new Date(`${validadeProposta}T00:00:00`).toLocaleDateString("pt-BR")
+      : "";
+
+    return [
+      `Proposta Ajisai — ${pacoteSugeridoLabel}`,
+      "",
+      "— Dados da viagem —",
+      `Duração: ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      idadesLabel ? `Idades: ${idadesLabel}` : "",
+      `Quarto: ${tipoQuarto}`,
+      `Hotel: ${resultado.categoriaHotelFinal} · Aéreo: ${resultado.classeAereoFinal}`,
+      nomesDestinos ? `Cidades do roteiro: ${nomesDestinos}` : "",
+      `Perfil do viajante: ${PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome ?? perfilViajante}`,
+      `Temporada: ${nomeTemporada}`,
+      `Origem do voo: ${nomeOrigem}`,
+      `Chegada no Japão: ${nomeAeroportoChegada}`,
+      `Bagagem: ${nomeBagagem}`,
+      `Guia: ${guiaTipo === "brasileiro" ? "Brasileiro" : "Estrangeiro"} (${guiaDias} ${guiaDias === 1 ? "dia" : "dias"})`,
+      selecaoMotorista.itens.length > 0 ? `Motorista privado: ${resumoSelecaoMotorista(selecaoMotorista)}` : "",
+      dataViagemEstimada
+        ? `Data estimada da viagem: ${new Date(`${dataViagemEstimada}T00:00:00`).toLocaleDateString("pt-BR")}`
+        : "",
+      validadeLabel ? `Proposta válida até: ${validadeLabel}` : "",
+      "",
+      "— Itens da proposta —",
+      ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
+      "",
+      `Total: ${formatMoeda(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
+      `Orçamento informado: ${formatMoeda(orcamento)}`,
+      `Saldo: ${formatMoeda(saldoSelecionado)}`,
+      descricaoFormaPagamentoEscolhida ? `Forma de pagamento: ${descricaoFormaPagamentoEscolhida}` : "",
+      margemNota.trim() ? `Nota de margem: ${margemNota.trim()}` : "",
+      observacoesInternas.trim() ? `Observações internas: ${observacoesInternas.trim()}` : "",
+      `Gerado em ${geradoEmLabel} — Ajisai`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  async function handleRegistrarCrm() {
+    if (!nomeCliente.trim()) {
+      setCrmResultado({
+        tipo: "erro",
+        mensagem: "Preencha o nome do cliente em \"Dados da proposta\" antes de registrar no CRM.",
+      });
+      return;
+    }
+    if (!telefoneCliente.trim() && !emailCliente.trim()) {
+      setCrmResultado({
+        tipo: "erro",
+        mensagem: "Informe pelo menos o telefone ou o e-mail do lead antes de registrar no CRM.",
+      });
+      return;
+    }
+    if (emailCliente.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailCliente.trim())) {
+      setCrmResultado({ tipo: "erro", mensagem: "E-mail inválido." });
+      return;
+    }
+    setRegistrandoCrm(true);
+    setCrmResultado(null);
+    try {
+      const resposta = await fetch("/api/calculadora-reversa-crm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: nomeCliente.trim(),
+          telefone: telefoneCliente.trim(),
+          email: emailCliente.trim(),
+          consultor: consultorResponsavel.trim(),
+          consultorEmail: consultorEmail.trim(),
+          valorProposta: totalSelecionado,
+          dataViagem: dataViagemEstimada || null,
+          produtoSecundario: produtoSecundarioDoCrm(),
+          resumoTexto: construirResumoCrm(),
+        }),
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok || !dados.success) {
+        throw new Error(dados.error || "Não foi possível registrar no CRM agora.");
+      }
+      setCrmResultado({ tipo: "sucesso", mensagem: "Cliente registrado no CRM com sucesso." });
+    } catch (erro) {
+      console.error("Falha ao registrar no CRM (calculadora reversa):", erro);
+      setCrmResultado({
+        tipo: "erro",
+        mensagem: erro instanceof Error ? erro.message : "Não foi possível registrar no CRM agora.",
+      });
+    } finally {
+      setRegistrandoCrm(false);
+    }
+  }
+
+  const mensagemWhatsapp = [
+    `Proposta Ajisai — ${pacoteSugeridoLabel}`,
+    nomeCliente.trim() ? `Para: ${nomeCliente.trim()}` : "",
+    telefoneCliente.trim() ? `Telefone: ${telefoneCliente.trim()}` : "",
+    emailCliente.trim() ? `E-mail: ${emailCliente.trim()}` : "",
+    "",
+    ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
+    "",
+    `Total: ${formatMoeda(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
+    cambio
+      ? `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : ""}`
+      : "",
+    `Gerado em ${geradoEmLabel} — Ajisai`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return (
+    <main className="min-h-screen bg-white px-5 pt-12 pb-32 text-[#0A2540] sm:px-8 md:px-16 md:pt-16 md:pb-36">
+      <div className="mx-auto max-w-4xl">
+        <div className="flex items-center justify-between gap-4">
+          <img
+            src="/images/AJISAI-LOGO.avif"
+            alt="Ajisai · Alpinea"
+            className="h-12 w-auto object-contain invert md:h-16"
+          />
+          <Link
+            href="/produtos"
+            className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-700 transition hover:bg-emerald-100"
+          >
+            ← Voltar para Produtos
+          </Link>
+        </div>
+
+        <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+          Ferramenta interna — não listada no site
+        </p>
+        <h1 className={`${display.className} mt-2 text-3xl font-medium md:text-4xl`}>
+          Calculadora Reversa
+        </h1>
+        <p className="mt-3 max-w-2xl text-sm font-light leading-6 text-black/55">
+          Informe o orçamento máximo do cliente e a calculadora monta, dentro
+          desse valor, a melhor combinação possível de hotel, aéreo e
+          serviços — começando pelo essencial e priorizando os upgrades de
+          maior impacto na experiência.
+        </p>
+
+        {/* Pedido do Wilson, 11/set/2026: função master "Hide Todos /
+            Mostrar Todos os Campos" no começo da página (12/set: ícone e
+            botão reduzidos e com preenchimento azul da marca em vez de
+            cinza), já que ocultar um campo agora o faz desaparecer por
+            completo (sem botão de olho individual pra restaurar) — o
+            mestre é o único jeito de trazer os campos ocultos de volta.
+            O aviso de quantos campos estão ocultos mora na barra fixa
+            inferior (pedido do Wilson, 12/set/2026), não aqui.
+            14/set/2026: "precisa ter alguma coisa facil de ativar
+            novamente fora do formulario" + "coloque algo para reativar
+            os campos do lado desse botao" — botão "Campos ocultos" ao
+            lado do mestre, abre um painel listando cada campo oculto com
+            um botão pra restaurar só aquele um (sem precisar mostrar
+            todos de novo). */}
+        <div className="mt-8 flex flex-col gap-3">
+          {/* Pedido do Wilson, 16/set/2026: "ajustar esses cards para ter o
+              mesmo tamanho e que tenha o mesmo tamanho horizontal com o
+              restante da página" — antes os 2 cards ficavam num flex-wrap
+              sem largura definida (cada um do tamanho do próprio
+              conteúdo, sobrando espaço vazio à direita). Agora um grid de
+              2 colunas iguais, mesma largura total da caixa "ENTRADAS"
+              logo abaixo — e como grid estica as células pra mesma altura
+              por padrão, os 2 cards ficam com o mesmo tamanho
+              automaticamente. */}
+          <div className="grid gap-3 sm:grid-cols-2">
+          {/* Pedido do Wilson, 14/set/2026: "criar botões para transformar
+              tudo em BRL, USD ou IENE" — controla a moeda de exibição de
+              todos os valores da calculadora (tela, PDF, Word, WhatsApp).
+              Os campos que o vendedor digita (orçamento, ajustes manuais)
+              continuam sempre em reais. Mesmo padrão visual do botão
+              "Ocultar Todos os Campos" ao lado. */}
+          <div className="flex h-full items-center gap-4 rounded-2xl border border-black/15 bg-black/[0.02] px-5 py-3">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#2f80c9]/25 bg-[#2f80c9]/10 text-lg font-bold text-[#2f80c9]">
+              {moedaExibicao === "BRL" ? "R$" : moedaExibicao === "USD" ? "US$" : "¥"}
+            </span>
+            <span className="flex-1">
+              <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
+                Moeda de exibição
+              </span>
+              {/* Pedido do Wilson, 16/set/2026: "os botões de moeda devem
+                  ocupar todo o espaço do card, distribuir melhor" — antes
+                  os 3 botões só tinham o tamanho do próprio texto e
+                  sobrava bastante espaço vazio à direita, principalmente
+                  agora que o card ficou mais largo (mesma largura do
+                  resto da página). flex-1 em cada botão faz os 3
+                  dividirem igualmente a largura disponível. */}
+              <span className="mt-1.5 flex gap-1.5">
+                {(
+                  [
+                    { key: "BRL", label: "R$" },
+                    { key: "USD", label: "US$" },
+                    { key: "JPY", label: "¥" },
+                  ] as const
+                ).map((m) => (
+                  <button
+                    key={m.key}
+                    type="button"
+                    onClick={() => setMoedaExibicao(m.key)}
+                    className={`flex-1 rounded-full border px-2.5 py-1.5 text-center text-[11px] font-semibold transition ${
+                      moedaExibicao === m.key
+                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                        : "border-black/15 bg-white text-black/55 hover:border-black/30"
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={alternarTodosCamposOcultos}
+            className={`flex h-full items-center gap-4 rounded-2xl border px-5 py-3 text-left transition ${
+              todosCamposOcultos
+                ? "border-[#2f80c9]/40 bg-[#2f80c9]/10"
+                : "border-black/15 bg-white hover:border-black/30"
+            }`}
+          >
+            <span
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border ${
+                todosCamposOcultos
+                  ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                  : "border-[#2f80c9]/25 bg-[#2f80c9]/10 text-[#2f80c9]"
+              }`}
+            >
+              {todosCamposOcultos ? (
+                <IconEyeOff className="h-8 w-8" />
+              ) : (
+                <IconEye className="h-8 w-8" />
+              )}
+            </span>
+            <span>
+              <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
+                {todosCamposOcultos ? "Mostrar Todos os Campos" : "Ocultar Todos os Campos"}
+              </span>
+              <span className="mt-0.5 block text-[11px] leading-4 text-black/60">
+                {todosCamposOcultos
+                  ? "Restaura todos os campos ocultos de uma vez"
+                  : "Oculta todos os campos de uma vez — útil pra print de tela"}
+              </span>
+            </span>
+          </button>
+          </div>
+
+          {camposOcultos.size > 0 && (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setPainelCamposOcultosAberto((v) => !v)}
+                className={`flex h-14 w-full items-center gap-2 rounded-2xl border px-4 text-left transition ${
+                  painelCamposOcultosAberto
+                    ? "border-amber-400 bg-amber-50"
+                    : "border-amber-300 bg-amber-50/60 hover:border-amber-400"
+                }`}
+              >
+                <span aria-hidden className="text-base leading-none">⚠️</span>
+                <span>
+                  <span className="block text-xs font-semibold uppercase tracking-[0.08em] text-amber-800">
+                    {camposOcultos.size} campo{camposOcultos.size === 1 ? "" : "s"} oculto
+                    {camposOcultos.size === 1 ? "" : "s"}
+                  </span>
+                  <span className="mt-0.5 block text-[10px] text-amber-700/70">
+                    clique pra restaurar um por um
+                  </span>
+                </span>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className={`ml-auto h-3.5 w-3.5 shrink-0 text-amber-700/60 transition-transform ${
+                    painelCamposOcultosAberto ? "rotate-180" : ""
+                  }`}
+                >
+                  <path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              {painelCamposOcultosAberto && (
+                <div className="absolute left-0 top-full z-30 mt-1.5 w-72 max-w-[85vw] overflow-hidden rounded-xl border border-black/10 bg-white shadow-xl">
+                  <div className="flex items-center justify-between border-b border-black/10 bg-black/[0.02] px-3 py-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
+                      Campos ocultos
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCamposOcultos(new Set());
+                        setPainelCamposOcultosAberto(false);
+                      }}
+                      className="text-[10px] font-medium uppercase tracking-[0.08em] text-[#2f80c9] hover:underline"
+                    >
+                      Mostrar todos
+                    </button>
+                  </div>
+                  <ul className="max-h-72 overflow-y-auto py-1">
+                    {camposOcultosOrdenados.map((n) => (
+                      <li key={n}>
+                        <button
+                          type="button"
+                          onClick={() => alternarCampoOculto(n)}
+                          className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-xs text-black/70 transition hover:bg-[#2f80c9]/5"
+                        >
+                          <IconEyeOff className="h-4 w-4 shrink-0 text-black/60" />
+                          <span className="flex-1 truncate">{NOME_CAMPO_OCULTAVEL[n] ?? `Campo ${n}`}</span>
+                          <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-[#2f80c9]">
+                            mostrar
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ── ENTRADAS ── */}
+        <div className="mt-8 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
+          <label className="flex h-full flex-col sm:col-span-2">
+            {/* Pedido do Wilson, 11/set/2026: ao ocultar, o campo inteiro
+                (rótulo + botão de olho incluídos) some — não só o input.
+                Restaurar é só pelo botão mestre "Mostrar todos" no topo. */}
+            {!camposOcultos.has(1) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="1. Orçamento máximo (R$)" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(1)} />
+              </span>
+            )}
+            {!camposOcultos.has(1) && (
+              <>
+                <input
+                  type="number"
+                  min={MIN_ORCAMENTO_BRL}
+                  max={MAX_ORCAMENTO_BRL}
+                  step={500}
+                  value={orcamento}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isNaN(v)) setOrcamento(v);
+                  }}
+                  className="h-12 w-full rounded-lg border border-black/15 bg-black/[0.03] px-4 text-lg font-medium outline-none focus:border-black/30"
+                />
+                {cambio && (
+                  <span className="mt-1.5 text-[11px] text-black/60">
+                    ≈ {moedaExibicao === "BRL" ? formatUSD(orcamento / cambioCotacao) : formatMoeda(orcamento)}
+                  </span>
+                )}
+              </>
+            )}
+          </label>
+
+          <NumberStepper
+            label="2. Quantidade de dias"
+            value={dias}
+            onChange={setDias}
+            min={MIN_DIAS}
+            max={MAX_DIAS}
+            formatValue={(v) => `${v} dias`}
+            oculto={camposOcultos.has(2)}
+            onToggleOculto={() => alternarCampoOculto(2)}
+          />
+
+          <NumberStepper
+            label="3. Número de pessoas"
+            value={pessoas}
+            onChange={alterarPessoasEIdades}
+            min={MIN_PESSOAS}
+            max={MAX_PESSOAS}
+            formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
+            oculto={camposOcultos.has(3)}
+            onToggleOculto={() => alternarCampoOculto(3)}
+          />
+
+          {/* Pedido do Wilson, 14/set/2026: "adicionar flexibilidade das
+              datas". Sem número próprio — vive junto da seção 2 (dias).
+              Puramente consultivo: não altera gasto/saldo, só mostra uma
+              estimativa de economia no aéreo. */}
+          {!camposOcultos.has(2) && (
+            <div className="sm:col-span-2 -mt-2">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                  Flexibilidade das datas
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {FLEXIBILIDADE_DATAS.map((f) => (
+                    <button
+                      key={f.key}
+                      type="button"
+                      onClick={() => setFlexibilidadeDatas(f.key)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                        flexibilidadeDatas === f.key
+                          ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                          : "border-black/15 bg-white text-black/55 hover:border-black/30"
+                      }`}
+                    >
+                      {f.nome}
+                    </button>
+                  ))}
+                </div>
+                {flexibilidadeDatas !== "fixas" &&
+                  (() => {
+                    const precoAereoAtual = resultado.incluidos.find((i) => i.chave === "aereo")?.precoBRL ?? 0;
+                    const economia = Math.round(precoAereoAtual * ECONOMIA_FLEXIBILIDADE_PCT[flexibilidadeDatas]);
+                    if (economia <= 0) return null;
+                    return (
+                      <span className="mt-1.5 text-[11px] text-black/60">
+                        Com {FLEXIBILIDADE_DATAS.find((f) => f.key === flexibilidadeDatas)?.nome.toLowerCase()}, o
+                        aéreo pode reduzir em até ~{formatMoeda(economia)} — estimativa, sujeita à
+                        disponibilidade real nas datas.
+                      </span>
+                    );
+                  })()}
+              </label>
+            </div>
+          )}
+
+          <label className="flex h-full flex-col">
+            {!camposOcultos.has(4) && (
+              <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="4. Tipo de quarto" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(4)} />
+              </span>
+            )}
+            {!camposOcultos.has(4) && (
+              <select
+                value={tipoQuarto}
+                onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+              >
+                {TIPOS_QUARTO.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            )}
+            {/* Pedido do Wilson, 16/set/2026: "adicionar... quantidade de
+                quartos e tipo de quarto". O preço do hotel já usa pessoas
+                diretamente (não quartos — ver FATOR_QUARTO no useMemo
+                "resultado"), então isto é só informativo, mesmo padrão já
+                usado em CustomPackageCard.tsx (quartosNecessarios) — não
+                mexe na fórmula de preço em si. */}
+            {!camposOcultos.has(4) && (
+              <span className="mt-1.5 text-[11px] leading-4 text-black/60">
+                → {quartosNecessarios} {quartosNecessarios === 1 ? "quarto" : "quartos"} para{" "}
+                {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
+              </span>
+            )}
+          </label>
+
+          {/* Pedido do Wilson, 11/set/2026: subir esse campo pro espaço em
+              branco ao lado do Tipo de quarto — antes só existia dentro do
+              card de PIX na simulação de pagamento lá embaixo. Mesmo
+              estado (dataViagemEstimada), então os dois campos ficam
+              sincronizados. Input nativo type="date": dá pra clicar no
+              calendário ou digitar a data direto. Reordenado (11/set/2026)
+              pra ficar ao lado de "Tipo de quarto" em vez de "Classe do
+              voo", deixando os dois sliders de volume (5 e 6) juntos na
+              linha de baixo. */}
+          <div className="flex h-full flex-col">
+            {!camposOcultos.has(19) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                Data estimada da viagem
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(19)} />
+              </span>
+            )}
+            {!camposOcultos.has(19) && (
+              <>
+                <input
+                  type="date"
+                  value={dataViagemEstimada}
+                  min={hojeISO()}
+                  onChange={(e) => setDataViagemEstimada(e.target.value)}
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                />
+                <span className="mt-1.5 text-[11px] text-black/60">
+                  Usada pra limitar o parcelamento do PIX até a data da viagem.
+                </span>
+              </>
+            )}
+          </div>
+
+          <VolumeSlider
+            label="5. Categoria máxima de hotel"
+            opcoes={CATEGORIAS_HOTEL}
+            value={hotelCategoriaMaxima}
+            onChange={setHotelCategoriaMaxima}
+            nota={
+              hotelManual
+                ? "Diária manual — este teto não se aplica"
+                : hotelCategoriaMaxima === "Elite"
+                  ? "Sem limite — sobe o máximo que o orçamento permitir"
+                  : `Preenchimento automático não passa de ${hotelCategoriaMaxima}, mesmo sobrando orçamento`
+            }
+            oculto={camposOcultos.has(5)}
+            onToggleOculto={() => alternarCampoOculto(5)}
+          />
+
+          <VolumeSlider
+            label="6. Classe desejada do voo"
+            opcoes={CLASSES_AEREO}
+            value={classeAereoMaxima}
+            onChange={setClasseAereoMaxima}
+            nota={
+              aereoManual
+                ? "Valor manual — este teto não se aplica"
+                : classeAereoMaxima === "First Class"
+                  ? "Sem limite — sobe o máximo que o orçamento permitir"
+                  : `Preenchimento automático não passa de ${classeAereoMaxima}, mesmo sobrando orçamento`
+            }
+            oculto={camposOcultos.has(6)}
+            onToggleOculto={() => alternarCampoOculto(6)}
+          />
+
+          {/* Pedido do Wilson, 14/set/2026: "adicionar Origem do voo [...]
+              provavelmente o campo mais importante que está faltando [...]
+              altera muito o aéreo". Campo simples, sem número próprio
+              (evita renumerar as seções 7-19) — vive junto da seção 6,
+              já que só afeta o preço do aéreo. */}
+          {!camposOcultos.has(6) && (
+            <div className="sm:col-span-2 -mt-2">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                  Origem do voo
+                </span>
+                <select
+                  value={origemVoo}
+                  onChange={(e) => setOrigemVoo(e.target.value as OrigemVooKey)}
+                  disabled={aereoManual}
+                  className="h-10 w-56 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30 disabled:opacity-50"
+                >
+                  {ORIGENS_VOO.map((o) => (
+                    <option key={o.key} value={o.key}>
+                      {o.nome}
+                    </option>
+                  ))}
+                </select>
+                <span className="mt-1 text-[11px] text-black/60">
+                  {aereoManual
+                    ? "Valor manual — origem não se aplica"
+                    : (ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0) === 0
+                      ? "Referência — sem ajuste no aéreo"
+                      : `+ ${formatBRL(ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0)}/pessoa no aéreo (trecho doméstico até um hub internacional).`}
+                </span>
+              </label>
+            </div>
+          )}
+
+          {/* Campo "Bagagem" removido da UI — pedido do Wilson,
+              25/set/2026: "remover esse campo". A opção fica travada em
+              "uma" (1 mala despachada, sem ajuste de preço — franquia
+              padrão), que era o valor default mesmo quando o campo
+              existia. Lógica/estado (`bagagem`, `BAGAGEM_OPCOES`,
+              `ajusteBagagemBRL`) mantidos, só sem seleção manual — mais
+              simples reverter se precisar no futuro. */}
+
+          {/* Chegada no Japão — pedido do Wilson, 25/set/2026:
+              "selecionar qual a cidade de chegada no japao e aeroporto,
+              Tokyo, Osaka, Nagoya etc". Só informativo (não afeta o
+              preço) — mesmo padrão do campo Origem do voo acima, sem
+              número próprio, vive junto da seção 6 (aéreo). */}
+          {!camposOcultos.has(6) && (
+            <div className="sm:col-span-2 -mt-2">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                  Chegada no Japão
+                </span>
+                <select
+                  value={aeroportoChegada}
+                  onChange={(e) => setAeroportoChegada(e.target.value as AeroportoChegadaKey)}
+                  className="h-10 w-64 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                >
+                  {AEROPORTOS_CHEGADA_JAPAO.map((a) => (
+                    <option key={a.key} value={a.key}>
+                      {a.nome}
+                    </option>
+                  ))}
+                </select>
+                <span className="mt-1 text-[11px] text-black/60">
+                  Define o aeroporto do transfer de chegada — confirmar com a companhia aérea real.
+                </span>
+              </label>
+            </div>
+          )}
+
+          {/* Pedido do Wilson, 14/set/2026: "gerar variavel de hotel com
+              refeicao e sem (café da manha)". Toggle de duas opções, no
+              mesmo padrão visual do resto da calculadora — adicional por
+              pessoa/dia varia por categoria de hotel (ver
+              ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA). */}
+          {!camposOcultos.has(7) && (
+            <div className="sm:col-span-2">
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="7. Café da manhã" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(7)} />
+              </span>
+              {/* Pedido do Wilson, 14/set/2026: "todos os cards no 7, 8 e 9
+                  devem ter o mesmo tamanho de icone, de card e de texto
+                  [...] usar o 9 como referencia" — trocado o layout de
+                  botão horizontal (flex-1, ícone de 36px inline) pelo
+                  mesmo card vertical w-32 com ícone de 80px usado em
+                  Temporada (8) e Temas (9). O ícone "Sem" deixou de ser um
+                  risco desenhado à mão sobre o ícone acinzentado (Wilson,
+                  mesma data, sobre a versão anterior: "esse risco em cima
+                  ficou péssimo") — agora é um ícone próprio, sinal de
+                  proibido de verdade (círculo + diagonal), mesmo padrão
+                  visual do "Sem tema" em Temas. */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setComCafeDaManha(true)}
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    comCafeDaManha
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/com-cafe-da-manha.png" alt="" className="h-20 w-20 shrink-0" />
+                  <span>Com café da manhã</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
+                    Buffet incluso — adicional varia por categoria
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setComCafeDaManha(false)}
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    !comCafeDaManha
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/sem-cafe-da-manha.png" alt="" className="h-20 w-20 shrink-0" />
+                  <span>Sem café da manhã</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
+                    Diária &quot;room only&quot;
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(8) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="8. Temporada" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(8)} />
+              </span>
+            )}
+            {!camposOcultos.has(8) && (
+            <>
+            {/* Pedido do Wilson, 14/set/2026: "temporada também deveria
+                ser derivada das datas". Campo opcional — quando
+                preenchido, só pré-seleciona a Temporada abaixo (que
+                continua 100% editável na mão). */}
+            <label className="mb-3 flex max-w-xs flex-col">
+              <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                Mês estimado da viagem (opcional — sugere a temporada abaixo)
+              </span>
+              <select
+                value={mesEstimado ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value ? Number(e.target.value) : null;
+                  setMesEstimado(v);
+                  if (v) setTemporada(MES_PARA_TEMPORADA[v]);
+                }}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+              >
+                <option value="">Ainda não definido</option>
+                {MESES_NOME.map((nome, i) => (
+                  <option key={nome} value={i + 1}>
+                    {nome}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {TEMPORADAS.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setTemporada(t.key)}
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    temporada === t.key
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={t.icone} alt="" className="h-20 w-20 shrink-0" />
+                  <span>{t.nome}</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
+                    {t.periodo}
+                  </span>
+                </button>
+              ))}
+            </div>
+            {destinosSelecionados.includes("niseko") && temporada !== "inverno" && (
+              <p className="mt-1.5 max-w-md text-[11px] leading-4 text-amber-600">
+                ⚠️ Niseko é destino de esqui — dez.–fev. é a alta temporada real (turismo de
+                neve), com diárias bem acima da temporada verde (Ano Novo pode passar disso
+                ainda mais). Selecione o card &quot;Inverno&quot; para refletir isso no preço, ou
+                ajuste a diária de hotel manualmente.
+              </p>
+            )}
+            </>
+            )}
+
+            {!camposOcultos.has(9) && (
+              <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="9. Temas" /> <span className="normal-case tracking-normal text-black/60">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(9)} />
+              </span>
+            )}
+            {!camposOcultos.has(9) && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => alternarTema(null)}
+                className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                  temasSelecionados.size === 0
+                    ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                    : "border-red-200 bg-red-50 text-red-700/70 hover:border-red-300"
+                }`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/temas/01-sem-tema.png" alt="" className="h-20 w-20 shrink-0" />
+                Sem tema
+              </button>
+              {TEMAS.map((tema) => {
+                const marcado = temasSelecionados.has(tema.key);
+                const desabilitado = !marcado && temasSelecionados.size >= MAX_TEMAS_SIMULTANEOS;
+                return (
+                  <button
+                    key={tema.key}
+                    type="button"
+                    onClick={() => alternarTema(tema.key)}
+                    disabled={desabilitado}
+                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : desabilitado
+                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
+                          : tema.key === "roteiroClassico"
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700/80 hover:border-emerald-300"
+                            : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={tema.icone}
+                      alt=""
+                      className={`h-20 w-20 shrink-0 ${desabilitado ? "opacity-40" : ""}`}
+                    />
+                    {tema.nome}
+                  </button>
+                );
+              })}
+            </div>
+            )}
+
+            {/* Corrigido 25/set/2026, pedido do Wilson: "o campo 20 nao
+                está colapsando ao clicar em ocultar campos e renumerar" —
+                o campo 20 nunca tinha sido ligado ao sistema de
+                ocultar/restaurar (faltava o guard `!camposOcultos.has(20)`
+                e o botão de olho — por isso "ocultar todos" sempre dizia
+                "19 campos ocultos", nunca contava esse). */}
+            {!camposOcultos.has(20) && (
+            <div className="mt-4">
+              <span className="mb-2 flex items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="20. Perfil do viajante" />{" "}
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(20)} />
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">
+                  (define o ritmo do roteiro — não altera o preço)
+                </span>
+              </span>
+              <PerfilViajanteSeletor value={perfilViajante} onChange={setPerfilViajante} />
+              <details className="mt-3 rounded-lg border border-amber-300 bg-amber-50/40 p-3 text-[11px] text-black/70">
+                <summary className="cursor-pointer text-[10px] uppercase tracking-[0.15em] text-amber-800">
+                  Detalhamento do perfil — só admin (não vai pro cliente)
+                </summary>
+                <pre className="mt-2 overflow-x-auto whitespace-pre-wrap font-mono text-[10px] leading-4">
+                  {JSON.stringify(
+                    {
+                      travel_pace_index: resultado.ritmoAdmin.travel_pace_index,
+                      dias_ativos: resultado.ritmoAdmin.dias_ativos,
+                      atracoes_estimadas: resultado.ritmoAdmin.atracoes_estimadas,
+                      ...resultado.ritmoAdmin.admin,
+                    },
+                    (_k, v) => (typeof v === "number" ? Math.round(v * 100) / 100 : v),
+                    2,
+                  )}
+                </pre>
+                <p className="mt-2 text-black/50">
+                  Custos em USD (sem margem/imposto), base provisória em app/lib/precificacaoPerfil.ts. O fee de
+                  planejamento aparece já no item &quot;Roteiro Personalizado&quot;.
+                </p>
+              </details>
+            </div>
+            )}
+
+            {/* Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o
+                campo inteiro sumir (rótulo incluso), não só o conteúdo —
+                por isso o campo 10 inteiro (as duas variações, com/sem
+                temas selecionados) fica dentro desse `!camposOcultos.has(10)`
+                em vez de só a lista de cidades. Restaurar volta a ser feito
+                pelo botão mestre "Mostrar todos", já que o próprio botão de
+                olho some junto com o campo. */}
+            {!camposOcultos.has(10) && (
+            temasSelecionados.size === 0 ? (
+              <div className="mt-4">
+                <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+                  <LabelNumerado texto="10. Cidades do roteiro" />{" "}
+                  <span className="normal-case tracking-normal text-black/60">
+                    (até {MAX_CIDADES_ROTEIRO})
+                  </span>
+                  <BotaoOcultarCampo
+                    oculto={camposOcultos.has(10)}
+                    onToggle={() => alternarCampoOculto(10)}
+                  />
+                </span>
+                {!camposOcultos.has(10) && (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                  {DESTINOS.map((destino) => {
+                    const marcado = destinosSelecionados.includes(destino.key);
+                    const limiteAtingido = !marcado && destinosSelecionados.length >= MAX_CIDADES_ROTEIRO;
+                    const ultimaSelecionada = marcado && destinosSelecionados.length === 1;
+                    return (
+                      <button
+                        key={destino.key}
+                        type="button"
+                        disabled={limiteAtingido || ultimaSelecionada}
+                        title={
+                          limiteAtingido
+                            ? `Limite de ${MAX_CIDADES_ROTEIRO} cidades`
+                            : ultimaSelecionada
+                              ? "Mantenha ao menos 1 cidade"
+                              : undefined
+                        }
+                        onClick={() => alternarDestino(destino.key)}
+                        aria-pressed={marcado}
+                        className={`overflow-hidden rounded-xl border text-left transition disabled:cursor-not-allowed ${
+                          marcado
+                            ? "border-[#2f80c9] bg-[#2f80c9]/10 ring-1 ring-[#2f80c9]"
+                            : "border-black/10 bg-white hover:border-black/30 disabled:opacity-40"
+                        }`}
+                      >
+                        <div className="relative h-24 w-full bg-black/[0.06]">
+                          {destino.imagem ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            // Pedido do Wilson, 25/set/2026: "deixar
+                            // colorido só as selecionadas, as nao
+                            // selecionadas deixar em escala de cinza".
+                            <img
+                              src={destino.imagem}
+                              alt={destino.nome}
+                              loading="lazy"
+                              className={`h-full w-full object-cover transition duration-300 ${
+                                marcado ? "" : "grayscale hover:grayscale-0"
+                              }`}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-2xl text-black/25">⛩</div>
+                          )}
+                          {marcado && (
+                            <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2f80c9] text-[11px] text-white">
+                              ✓
+                            </span>
+                          )}
+                        </div>
+                        <div className={`px-2 py-2 text-xs ${marcado ? "font-medium text-[#2f80c9]" : "text-black/70"}`}>
+                          {destino.nome}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+                )}
+              </div>
+            ) : (
+              <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
+                <div className="grid grid-cols-[minmax(140px,auto)_1fr_7.5rem] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
+                  <span className="flex items-center">
+                    <LabelNumerado texto="10. Cidades recomendadas" />
+                    <BotaoOcultarCampo
+                      oculto={camposOcultos.has(10)}
+                      onToggle={() => alternarCampoOculto(10)}
+                    />
+                  </span>
+                  <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
+                  <span aria-hidden />
+                </div>
+                {!camposOcultos.has(10) && cidadesTemasAtivos.map((c) => {
+                  const destino = DESTINOS.find((d) => d.key === c.key);
+                  const marcado = destinosSelecionados.includes(c.key);
+                  const notaMotorista = CIDADE_MOTORISTA_NOTA[c.key];
+                  return (
+                    <label
+                      key={c.key}
+                      className="grid cursor-pointer grid-cols-[minmax(140px,auto)_1fr_7.5rem] items-center gap-x-6 gap-y-1 border-t border-black/10 px-4 py-3"
+                    >
+                      <span className="flex flex-wrap items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={marcado}
+                          onChange={() => alternarDestino(c.key)}
+                          className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                        />
+                        {destino?.nome ?? c.key}
+                        {notaMotorista && (
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide ${
+                              notaMotorista.nivel === "obrigatorio"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {notaMotorista.nivel === "obrigatorio" ? "Motorista obrigatório" : "Motorista recomendado"}
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-xs leading-5 text-black/55">
+                        {c.destaques.map((d, i) => (
+                          <span key={i} className={i > 0 ? "mt-1 block" : "block"}>
+                            <strong className="font-medium text-[#0A2540]">
+                              {destino?.nome ?? c.key}
+                            </strong>
+                            {temasSelecionados.size > 1 && (
+                              <span className="text-black/60"> ({d.tema})</span>
+                            )}{" "}
+                            — {d.texto}
+                          </span>
+                        ))}
+                        {notaMotorista && (
+                          <span className="mt-0.5 block text-[11px] font-medium text-red-600">
+                            🚗 {notaMotorista.motivo}
+                          </span>
+                        )}
+                        {c.notaIngresso && (
+                          <span className="mt-0.5 block text-[11px] font-medium text-red-600">
+                            🎫 {c.notaIngresso}
+                          </span>
+                        )}
+                      </span>
+                      <div className="h-16 w-full overflow-hidden rounded-lg bg-black/[0.06]">
+                        {destino?.imagem ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={destino.imagem} alt={destino.nome} loading="lazy" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xl text-black/25">⛩</div>
+                        )}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )
+            )}
+            {!camposOcultos.has(11) && (
+              <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="11. Extensão internacional" />{" "}
+                <span className="normal-case tracking-normal text-black/60">(opcional — soma dias ao total da viagem)</span>
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(11)} />
+              </span>
+            )}
+            {!camposOcultos.has(11) && (
+            <>
+            <div className="flex flex-wrap gap-2">
+              {EXTENSOES_INTERNACIONAIS.map((extensao) => {
+                const marcado = extensoesSelecionadas.has(extensao.key);
+                return (
+                  <button
+                    key={extensao.key}
+                    type="button"
+                    onClick={() => alternarExtensao(extensao.key)}
+                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-1 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={extensao.icone} alt="" className="h-24 w-28 shrink-0 object-contain" />
+                    <span>{extensao.nome}</span>
+                    <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
+                      +{extensao.dias} dias · {extensao.cidades.map((c) => c.nome).join(" + ")}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {extensoesSelecionadas.size > 0 && (
+              <div className="mt-4 space-y-5">
+                {EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key)).map(
+                  (extensao) => (
+                    <div key={extensao.key}>
+                      <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={extensao.icone} alt="" className="h-5 w-6 shrink-0 object-contain" />
+                        <span>Roteiro dia a dia — {extensao.nome}</span>
+                      </div>
+
+                      <span className="mb-1.5 block text-[9px] uppercase tracking-[0.15em] text-black/60">
+                        Pacote da extensão — hotel {tipoQuarto} + deslocamento
+                        {extensao.cidades.map((c) => ` · ${c.nome}`).join("")}
+                      </span>
+                      <div className="mb-4 grid gap-2 sm:grid-cols-3">
+                        {CATEGORIAS_HOTEL_EXTENSAO.map((categoria) => {
+                          const precos = resultado.precosExtensaoPorCategoria[extensao.key]?.[categoria];
+                          const selecionado = extensaoCategoriaHotel[extensao.key] === categoria;
+                          return (
+                            <button
+                              key={categoria}
+                              type="button"
+                              onClick={() => definirCategoriaExtensao(extensao.key, categoria)}
+                              className={`rounded-xl border px-3 py-2.5 text-left transition ${
+                                selecionado
+                                  ? "border-[#2f80c9] bg-[#2f80c9]/10"
+                                  : "border-black/15 bg-white hover:border-black/30"
+                              }`}
+                            >
+                              <span aria-hidden className="block text-base leading-none tracking-[1.5px] text-[#2f80c9]">
+                                {"★".repeat(parseInt(categoria, 10))}
+                              </span>
+                              <span
+                                className={`mt-1 block text-xs font-medium ${
+                                  selecionado ? "text-[#2f80c9]" : "text-black/70"
+                                }`}
+                              >
+                                {categoria}
+                              </span>
+                              <span className="mt-0.5 block text-sm font-semibold text-black">
+                                {precos ? formatMoeda(precos.total) : "—"}
+                              </span>
+                              <span className="mt-0.5 block text-[10px] text-black/60">
+                                {precos
+                                  ? `Hotel ${formatMoeda(precos.hotel)} + deslocamento ${formatMoeda(precos.deslocamento)}`
+                                  : ""}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/60">
+                        {extensao.deslocamento.map((trecho) => (
+                          <span key={trecho.label}>✈ {trecho.label}</span>
+                        ))}
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {extensao.roteiro.map((diaInfo) => (
+                          <div
+                            key={`${extensao.key}-${diaInfo.cidade}-${diaInfo.dia}`}
+                            className="overflow-hidden rounded-xl border border-black/10 bg-white"
+                          >
+                            {diaInfo.imagem ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={diaInfo.imagem}
+                                alt=""
+                                className="h-36 w-full rounded-t-xl object-cover"
+                                style={{ objectPosition: diaInfo.posicaoImagem ?? "center" }}
+                              />
+                            ) : (
+                              <div className="flex h-36 w-full items-center justify-center rounded-t-xl bg-black/5 text-center text-[10px] uppercase tracking-wide text-black/60">
+                                Imagem pendente
+                              </div>
+                            )}
+                            <div className="p-3">
+                              <p className="text-[9px] uppercase tracking-[0.15em] text-[#2f80c9]">
+                                {extensao.cidades.length > 1 ? `${diaInfo.cidade} · ` : ""}Dia {diaInfo.dia}
+                              </p>
+                              <p className="mt-0.5 text-sm font-medium text-black">{diaInfo.titulo}</p>
+                              <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/60">
+                                {diaInfo.pontos.map((ponto) => (
+                                  <li key={ponto}>• {ponto}</li>
+                                ))}
+                              </ul>
+                              <p className="mt-2 text-[11px] italic leading-4 text-black/60">{diaInfo.conceito}</p>
+                              {diaInfo.observacao && (
+                                <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-medium leading-4 text-amber-700">
+                                  ⚠️ {diaInfo.observacao}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+            )}
+
+            <span className="mt-1.5 block text-[11px] text-black/60">
+              {destinosSelecionados.length === 0
+                ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
+                : `Ajuste de mercado do hotel: ${nomesDestinos} · cidade ${multiplicadorCidade.toFixed(2)}× · temporada ${multiplicadorTemporada.toFixed(2)}×`}
+            </span>
+
+            {diasInsuficientes && (
+              <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-[11px] font-medium leading-4 text-red-700">
+                ⚠️ Com {destinosSelecionados.length} cidade{destinosSelecionados.length === 1 ? "" : "s"}
+                {diasParquesDiaInteiro > 0
+                  ? ` e ${diasParquesDiaInteiro} parque${diasParquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
+                  : ""}{" "}
+                selecionados, o roteiro atual de {dias} dia{dias === 1 ? "" : "s"} tende a ficar
+                corrido no perfil {PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome}. Sugestão: pelo menos {diasMinimosSugeridos} dias (estimativa) — considere
+                aumentar a duração da viagem ou reduzir cidades/atrações.
+              </p>
+            )}
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(12) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="12. JR Pass — validade e classe" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(12)} />
+              </span>
+            )}
+            {!camposOcultos.has(12) && (
+            <>
+            <div className="flex flex-wrap gap-4">
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/60">
+                  Validade
+                </span>
+                {/* Pedido do Wilson, 16/set/2026 ("problema de centralização"
+                    no mobile): os 3 botões de 112px cada não cabiam na
+                    largura da tela sem quebrar linha (sem flex-wrap, a
+                    linha inteira — e a página — estourava e ficava
+                    deslocada/scrollável na horizontal). */}
+                <div className="flex flex-wrap gap-2">
+                  {JR_PASS_DIAS_OPCOES.map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setJrPassDias(d)}
+                      className={`flex h-24 w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 text-center text-sm transition ${
+                        jrPassDias === d
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                      }`}
+                    >
+                      {d} dias
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/60">
+                  Classe
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {(
+                    [
+                      { key: "comum", label: "Comum (Ordinary)", icone: "/images/ingressos/shinkansen-ordinary.png" },
+                      { key: "green", label: "Green Car", icone: "/images/ingressos/jr-green-car.png" },
+                    ] as const
+                  ).map((c) => (
+                    <button
+                      key={c.key}
+                      type="button"
+                      onClick={() => setJrPassClasse(c.key)}
+                      className={`flex h-24 w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 text-center text-xs transition ${
+                        jrPassClasse === c.key
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={c.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
+                      <span>{c.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/60">
+              {formatMoedaDeUSD(
+                (jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrPassDias],
+              )}{" "}
+              por pessoa · tabela do fornecedor válida {JR_PASS_TABELA_VALIDADE}
+            </span>
+            <div className="mt-2 max-w-xs">
+              <NumberStepper
+                label="Quantas pessoas usam o JR Pass"
+                value={jrPassPessoas}
+                onChange={setJrPassPessoas}
+                min={0}
+                max={pessoas}
+                formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
+              />
+            </div>
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(13) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="13. Guia Turístico" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(13)} />
+              </span>
+            )}
+            {!camposOcultos.has(13) && (
+            <>
+            {/* Pedido do Wilson, 16/set/2026: "deixar duas opções de guia,
+                guia brasileiro e guia estrangeiro (Português limitado ou
+                Inglês)". Mesmo padrão de pílulas usado no tipo de
+                internet (seção 15). */}
+            <div className="flex flex-wrap gap-2">
+              {(["brasileiro", "estrangeiro"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setGuiaTipo(t)}
+                  className={`h-10 rounded-lg border px-4 text-sm transition ${
+                    guiaTipo === t
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {t === "brasileiro" ? "Guia brasileiro" : "Guia estrangeiro"}
+                </button>
+              ))}
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/60">
+              {guiaTipo === "brasileiro"
+                ? "Fluente em português."
+                : "Português limitado ou inglês."}
+            </span>
+            <div className="mt-3 flex flex-wrap items-end gap-2">
+              <div className="max-w-xs flex-1">
+                <NumberStepper
+                  label="Quantos dias o cliente quer guia"
+                  value={guiaDias}
+                  onChange={setGuiaDias}
+                  min={0}
+                  max={dias}
+                  formatValue={(v) => (v === 0 ? "Sem guia" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
+                />
+              </div>
+              {/* Pedido do Wilson, 16/set/2026: "deixar uma opção sem guia
+                  fácil de selecionar" — antes só dava pra zerar clicando
+                  no "−" do stepper várias vezes até chegar em 0. Este
+                  botão zera direto, num clique só. */}
+              <button
+                type="button"
+                onClick={() => setGuiaDias(0)}
+                aria-pressed={guiaDias === 0}
+                className={`h-10 shrink-0 rounded-lg border px-3 text-xs font-medium transition ${
+                  guiaDias === 0
+                    ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#2f80c9]"
+                    : "border-black/15 text-black/55 hover:border-black/30"
+                }`}
+              >
+                Sem guia
+              </button>
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/60">
+              US$ {guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD}/dia a cada{" "}
+              {GUIA_TAMANHO_GRUPO} pessoas + gorjeta US$ {GORJETA_GUIA_USD_PAX_DIA}/pessoa/dia
+            </span>
+            {guiaDias > 0 && (
+              <div className="mt-3 max-w-xs">
+                <NumberStepper
+                  label="Desses, quantos dias no Monte Fuji"
+                  value={guiaDiasFuji}
+                  onChange={setGuiaDiasFuji}
+                  min={0}
+                  max={guiaDias}
+                  formatValue={(v) => (v === 0 ? "Nenhum" : `${v} de ${guiaDias} dia${guiaDias === 1 ? "" : "s"}`)}
+                />
+                <span className="mt-1 block text-[11px] text-black/60">+ US$ {ADICIONAL_GUIA_MONTE_FUJI_USD} por guia, por dia em Fujikawaguchiko.</span>
+              </div>
+            )}
+            {guiaDias > 0 && (
+              <span className="mt-1 block text-[11px] text-black/50">{AVISO_DESLOCAMENTO_GUIA}</span>
+            )}
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(14) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="14. Câmbio de ienes" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(14)} />
+              </span>
+            )}
+            {!camposOcultos.has(14) && (
+            <>
+            {/* Pedido do Wilson, 14/set/2026: "câmbio de ienes deveria ir
+                pra 'Serviços opcionais' [...] não deveria interromper o
+                fluxo principal [...] use progressive disclosure". Fica
+                colapsado por padrão — abre sozinho se o serviço "Câmbio
+                no Brasil" (seção 17) já estiver marcado, ou se o vendedor
+                clicar pra configurar. */}
+            {!(cambioIeneExpandido || servicosAdicionaisSelecionados.has("cambioBrasil")) ? (
+              <button
+                type="button"
+                onClick={() => setCambioIeneExpandido(true)}
+                className="flex items-center gap-2 rounded-lg border border-dashed border-black/20 px-3 py-2 text-xs text-black/60 transition hover:border-black/35 hover:text-black/60"
+              >
+                <span aria-hidden className="text-sm leading-none">+</span>
+                Configurar câmbio de ienes (opcional)
+              </button>
+            ) : (
+              <>
+              <div className="flex flex-wrap items-end gap-3">
+                <label className="flex flex-col">
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Cidade</span>
+                  <select
+                    value={cambioIeneCidade}
+                    onChange={(e) => setCambioIeneCidade(e.target.value as CidadeCambioIeneSlug)}
+                    className="h-10 w-40 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                  >
+                    {CIDADES_CAMBIO_IENE.map((c) => (
+                      <option key={c.slug} value={c.slug}>
+                        {c.nome}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col">
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                    Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-black/60">¥</span>
+                    <input
+                      type="number"
+                      value={quantidadeIenes}
+                      step={10000}
+                      min={CAMBIO_IENES_MINIMO}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (!Number.isNaN(v)) setQuantidadeIenes(v);
+                      }}
+                      onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO, v))}
+                      className="h-10 w-32 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </div>
+                </label>
+              </div>
+              <span className="mt-1.5 block text-[11px] text-black/60">
+                {!cambioIene
+                  ? "Buscando cotação do iene…"
+                  : cambioIene.fallback
+                    ? `Cotação estimada: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene — melhorcambio.com indisponível no momento.`
+                    : `Cotação: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene em ${CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIene.cidade)?.nome} (melhorcambio.com, papel moeda) + spread de 15%.`}
+              </span>
+              </>
+            )}
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(15) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="15. Conexão de internet" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(15)} />
+              </span>
+            )}
+            {!camposOcultos.has(15) && (
+            <>
+            {/* Pocket Wi-Fi removido — pedido do Wilson, 16/set/2026: "não
+                vamos mais trabalhar com pocket wifi". Só eSIM agora. */}
+            <span className="mt-1.5 block text-[11px] text-black/60">
+              Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado
+            </span>
+            <div className="mt-2 max-w-xs">
+              <NumberStepper
+                label="Quantas pessoas usam eSIM"
+                value={wifiPessoasOuUnidades}
+                onChange={setWifiPessoasOuUnidades}
+                min={0}
+                max={pessoas}
+                formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
+              />
+            </div>
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(16) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="16. Ingressos e experiências" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(16)} />
+              </span>
+            )}
+            {!camposOcultos.has(16) && (
+            <>
+            {/* items-stretch força todos os cards da linha a terem a mesma
+                altura; dentro de cada card, o bloco de ícone+nome cresce
+                (flex-1) e empurra o preço pra base — assim o preço fica
+                sempre na mesma altura em todos os cards, independente do
+                nome ter 1 ou 2 linhas. Pedido do Wilson, 14/set/2026:
+                "cards devem todos ter o mesmo tamanho e os preços devem
+                sempre estar alinhados horizontalmente". */}
+            <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
+              {CATALOGO_INGRESSOS.map((ingresso) => {
+                const marcado = ingressosSelecionados.has(ingresso.key);
+                return (
+                  <label
+                    key={ingresso.key}
+                    className={`flex h-[13.5rem] w-32 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={marcado}
+                      onChange={() => alternarIngresso(ingresso.key)}
+                      className="sr-only"
+                    />
+                    <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+                      {/* Alinhamento — pedido do Wilson, 11/set/2026: os logos têm
+                          proporções bem diferentes entre si (retrato, redondo,
+                          faixa larga), então sem uma caixa de altura fixa cada
+                          ícone empurrava nome/preço pra uma altura diferente.
+                          Essa caixa fixa centraliza qualquer logo no mesmo
+                          espaço, alinhando todos os cards. */}
+                      <div className="flex h-20 w-full shrink-0 items-center justify-center">
+                        {ingresso.icone ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={ingresso.icone}
+                            alt=""
+                            className="max-h-16 w-auto max-w-full object-contain"
+                          />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src="/images/icone-ingressos.png"
+                            alt=""
+                            className="h-14 w-14 object-contain"
+                          />
+                        )}
+                      </div>
+                      <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
+                        {ingresso.nome}
+                      </span>
+                    </div>
+                    {/* Pedido do Wilson, 14/set/2026: "cada preço está de
+                        um jeito, e mal dá pra ler o preço" — preço em
+                        texto cinza-claro 10px era pouco legível e
+                        destoava do badge âmbar usado em "Serviços
+                        adicionais". Unificado num badge com o mesmo
+                        formato/peso, cor azul da marca (preço fixo, sem
+                        variação — por isso sem asterisco). */}
+                    <span className="flex min-h-[2.5rem] w-full items-center justify-center rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
+                      {formatMoedaDeUSD(ingresso.precoUSD)}/pessoa
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            {(ingressosSelecionados.has("disneyland") || ingressosSelecionados.has("disneysea")) && (
+              <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-10 w-auto max-w-[7rem] shrink-0 object-contain" />
+                  + Disney Premier Access (fast pass pago)
+                </p>
+                <p className="mt-0.5 text-[10px] text-black/60">
+                  Vendido por atração (¥1.000 a ¥3.500 cada, conforme popularidade) — escolha
+                  quantas o cliente quer, não é um pacote fechado.
+                </p>
+                <div className="mt-2 max-w-xs">
+                  <NumberStepper
+                    label="Quantidade de atrações"
+                    value={premierAccessAtracoes}
+                    onChange={setPremierAccessAtracoes}
+                    min={0}
+                    max={8}
+                    formatValue={(v) =>
+                      v === 0
+                        ? "Sem Premier Access"
+                        : `${v} ${v === 1 ? "atração" : "atrações"} · ${formatMoedaDeUSD(
+                            v * PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
+                          )}/pessoa`
+                    }
+                  />
+                </div>
+              </div>
+            )}
+            {ingressosSelecionados.has("usj") && (
+              <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/ingressos/usj-logo.png" alt="" className="h-10 w-auto max-w-[7rem] shrink-0 object-contain" />
+                  + USJ Express Pass (fast pass pago)
+                </p>
+                <p className="mt-0.5 text-xs leading-5 text-black/60">
+                  <strong className="font-medium text-black/55">Express 4</strong> — fura-fila em 4 atrações (mix de clássicos, ex.: Jurassic World, Minion Mayhem, Harry Potter, Flying Dinosaur — o combo exato varia por temporada).{" "}
+                  <strong className="font-medium text-black/55">Express 5</strong> — fura-fila em 5 atrações, meio-termo entre o 4 e o 7.{" "}
+                  <strong className="font-medium text-black/55">Express 7</strong> — fura-fila em 7 atrações, cobrindo mais opções do Wizarding World e headliners.{" "}
+                  <strong className="font-medium text-black/55">Express 8</strong> — o Express 7 + 1 atração extra (geralmente Minion Blast).{" "}
+                  <strong className="font-medium text-black/55">Premium</strong> — fura-fila em praticamente toda a linha de atrações do parque (13 a 16, dependendo da versão vendida no dia).
+                </p>
+                <p className="mt-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-xs leading-5 text-amber-800">
+                  ⚠️ Super Nintendo World (Mario Kart: Koopa&apos;s Challenge, Yoshi&apos;s Adventure) e o Wizarding World (Harry Potter) <strong>variam por combo específico</strong> dentro de cada tier — a entrada garantida na área do Nintendo World sem depender da senha grátis do app da USJ só vem em combos que citam isso explicitamente. Veja a tabela comparativa completa abaixo pra confirmar exatamente o que entra em cada combo antes de vender.
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {(
+                    [
+                      { key: "nenhum", label: "Sem Express Pass", preco: 0, nintendoWorld: false, wizardingWorld: false, estimado: false },
+                      { key: "4", label: "Express 4", preco: PRECO_EXPRESS_PASS_USJ_4_USD_PAX, nintendoWorld: false, wizardingWorld: false, estimado: false },
+                      { key: "5", label: "Express 5", preco: PRECO_EXPRESS_PASS_USJ_5_USD_PAX, nintendoWorld: false, wizardingWorld: false, estimado: true },
+                      { key: "7", label: "Express 7", preco: PRECO_EXPRESS_PASS_USJ_7_USD_PAX, nintendoWorld: true, wizardingWorld: true, estimado: false },
+                      { key: "8", label: "Express 8", preco: PRECO_EXPRESS_PASS_USJ_8_USD_PAX, nintendoWorld: true, wizardingWorld: true, estimado: true },
+                      { key: "premium", label: "Premium", preco: PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX, nintendoWorld: true, wizardingWorld: true, estimado: false },
+                    ] as const
+                  ).map((tier) => (
+                    <button
+                      key={tier.key}
+                      type="button"
+                      onClick={() => setUsjExpressPassTier(tier.key)}
+                      className={`flex w-36 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                        usjExpressPassTier === tier.key
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                      }`}
+                    >
+                      {(tier.nintendoWorld || tier.wizardingWorld) ? (
+                        <span className="flex h-16 items-center justify-center gap-1.5">
+                          {tier.nintendoWorld && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src="/images/ingressos/super-nintendo-world-logo.png"
+                              alt=""
+                              className="h-14 w-14 shrink-0 rounded object-contain"
+                            />
+                          )}
+                          {tier.wizardingWorld && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src="/images/ingressos/harry-potter-logo.png"
+                              alt=""
+                              className="h-11 w-20 shrink-0 object-contain"
+                            />
+                          )}
+                        </span>
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src="/images/icone-ingressos.png"
+                          alt=""
+                          className="h-16 w-16 shrink-0 object-contain"
+                        />
+                      )}
+                      <span>{tier.label}</span>
+                      {tier.preco > 0 && (
+                        <span className="rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
+                          {formatMoedaDeUSD(tier.preco)}/pessoa
+                        </span>
+                      )}
+                      {tier.estimado && (
+                        <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-red-700">
+                          confirmar preço
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                {(usjExpressPassTier === "5" || usjExpressPassTier === "8") && (
+                  <p className="mt-1.5 rounded-md bg-red-50 px-2 py-1.5 text-xs leading-5 text-red-700">
+                    ⚠️ Preço deste tier ainda é uma estimativa (Express 5 e Express 8 não têm custo
+                    oficial confirmado) — confirme o valor antes de fechar com o cliente.
+                  </p>
+                )}
+                {(usjExpressPassTier === "7" || usjExpressPassTier === "8" || usjExpressPassTier === "premium") && (
+                  <p className="mt-1.5 flex items-center gap-2 text-xs leading-5 text-emerald-700">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/ingressos/super-nintendo-world-logo.png"
+                      alt=""
+                      className="h-6 w-6 shrink-0 rounded object-contain"
+                    />
+                    ✅ Este tier inclui entrada garantida na Super Nintendo World.
+                  </p>
+                )}
+                {(usjExpressPassTier === "7" || usjExpressPassTier === "8" || usjExpressPassTier === "premium") && (
+                  <p className="mt-1.5 flex items-center gap-2 text-xs leading-5 text-emerald-700">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/ingressos/harry-potter-logo.png"
+                      alt=""
+                      className="h-6 w-10 shrink-0 object-contain"
+                    />
+                    ✅ Este tier inclui atrações do The Wizarding World of Harry Potter.
+                  </p>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setMostrarDetalhesUsjExpressPass((v) => !v)}
+                  className={`mt-3 flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    mostrarDetalhesUsjExpressPass
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#2f80c9]"
+                      : "border-[#2f80c9]/40 text-[#2f80c9] hover:bg-[#2f80c9]/5"
+                  }`}
+                >
+                  {mostrarDetalhesUsjExpressPass ? "Ocultar" : "Ver"} informação completa de cada pass
+                  <span
+                    aria-hidden
+                    className={`transition-transform ${mostrarDetalhesUsjExpressPass ? "rotate-180" : ""}`}
+                  >
+                    ▾
+                  </span>
+                </button>
+
+                {mostrarDetalhesUsjExpressPass && (
+                  <div className="mt-3 space-y-3">
+                    {USJ_EXPRESS_PASS_DETALHES.map((d) => (
+                      <div key={d.tier} className="rounded-lg border border-black/10 bg-white p-4">
+                        <p className="text-sm font-semibold text-[#0A2540]">
+                          Express {d.tier === "premium" ? "Premium" : d.tier}
+                        </p>
+                        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs leading-5 text-black/60">
+                          {d.atracoesTipicas.map((a, i) => (
+                            <li key={i}>{a}</li>
+                          ))}
+                        </ul>
+                        <p className="mt-2 text-xs leading-5 text-black/60">
+                          🎮 Super Nintendo World: {d.nintendoWorld}
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-black/60">
+                          🪄 Wizarding World: {d.wizardingWorld}
+                        </p>
+                        <p className="mt-2 text-xs font-medium text-black/55">
+                          Preço de referência (revenda): {d.faixaPrecoReferenciaBRL}
+                        </p>
+                        <p className="mt-1 text-xs italic leading-5 text-black/60">
+                          {d.observacao}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setMostrarTabelaComparativaUsj((v) => !v)}
+                  className={`mt-3 flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    mostrarTabelaComparativaUsj
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#2f80c9]"
+                      : "border-[#2f80c9]/40 text-[#2f80c9] hover:bg-[#2f80c9]/5"
+                  }`}
+                >
+                  {mostrarTabelaComparativaUsj ? "Ocultar" : "Ver"} tabela comparativa completa (atração por combo)
+                  <span
+                    aria-hidden
+                    className={`transition-transform ${mostrarTabelaComparativaUsj ? "rotate-180" : ""}`}
+                  >
+                    ▾
+                  </span>
+                </button>
+
+                {mostrarTabelaComparativaUsj && (
+                  <div className="mt-3 space-y-5">
+                    {USJ_TABELAS_COMPARATIVAS.map((tabela) => (
+                      <div key={tabela.titulo} className="rounded-lg border border-black/10 bg-white p-4">
+                        <p className="text-sm font-semibold text-[#0A2540]">{tabela.titulo}</p>
+                        <div className="mt-2 overflow-x-auto">
+                          <table className="w-full min-w-[560px] border-collapse text-xs">
+                            <thead>
+                              <tr>
+                                <th className="border-b border-black/10 py-1.5 pr-2 text-left font-medium text-black/50">
+                                  Atração / área
+                                </th>
+                                {tabela.colunas.map((coluna) => (
+                                  <th
+                                    key={coluna}
+                                    className="border-b border-black/10 px-2 py-1.5 text-center font-medium text-black/50"
+                                  >
+                                    {coluna}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {tabela.linhas.map((linha) => (
+                                <tr key={linha.atracao} className="border-b border-black/5">
+                                  <td className="py-1.5 pr-2 text-black/70">{linha.atracao}</td>
+                                  {linha.valores.map((valor, i) => (
+                                    <td key={i} className="px-2 py-1.5 text-center">
+                                      <CelulaUsjTabela celula={valor} />
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        {tabela.notas.length > 0 && (
+                          <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/60">
+                            {tabela.notas.map((nota, i) => (
+                              <li key={i}>· {nota}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                    <p className="text-[11px] italic leading-4 text-black/60">
+                      Fonte: prints do Klook enviados pelo Wilson (04/set/2026) — combos e nomes mudam por
+                      temporada e operadora, confirmar disponibilidade exata antes de vender.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(17) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="17. Serviços adicionais" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(17)} />
+              </span>
+            )}
+            {!camposOcultos.has(17) && (
+            <>
+            {/* items-stretch força todos os cards da linha a terem a mesma
+                altura; dentro de cada card, o bloco de ícone+nome cresce
+                (flex-1) e empurra o preço pra base — assim o preço fica
+                sempre na mesma altura em todos os cards, independente do
+                nome ter 1 ou 2 linhas. Pedido do Wilson, 14/set/2026:
+                "cards devem todos ter o mesmo tamanho e os preços devem
+                sempre estar alinhados horizontalmente". */}
+            <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
+              {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
+                const marcado = servicosAdicionaisSelecionados.has(servico.key);
+                const desabilitado =
+                  servico.key === "restaurantesHighEnd" &&
+                  pessoas > RESTAURANTES_HIGHEND_LIMITE_PESSOAS;
+                // Pedido do Wilson, 14/set/2026: os 4 itens novos (antes
+                // descritos como "sem preço fixo" no aviso do rodapé)
+                // agora também mostram preço de referência no card, igual
+                // aos 3 que já existiam.
+                const precoLabel =
+                  servico.key === "malasIntermunicipal"
+                    ? `${formatMoedaDeUSD(PRECO_MALA_INTERMUNICIPAL_USD)}/mala/trecho`
+                    : servico.key === "cambioBrasil"
+                      ? `${formatMoeda(PRECO_CAMBIO_BRASIL)} + valor dos ienes`
+                      : servico.key === "restaurantesHighEnd"
+                        ? `${formatMoedaDeUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`
+                        : servico.key === "transferOnibus"
+                          ? `${formatMoedaDeUSD(PRECO_TRANSFER_ONIBUS_USD_PAX)}/pessoa · ida e volta`
+                          : servico.key === "reservaRestaurante"
+                            ? `${formatMoedaDeUSD(PRECO_RESERVA_RESTAURANTE_USD)}/reserva`
+                            : servico.key === "experienciaSobMedida"
+                              ? `${formatMoedaDeUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)}/experiência`
+                              : servico.key === "concierge"
+                                ? `${formatMoedaDeUSD(DIARIA_CONCIERGE_USD)}/dia`
+                                : `${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre compras`;
+                return (
+                  <label
+                    key={servico.key}
+                    className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      desabilitado
+                        ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
+                        : marcado
+                          ? "cursor-pointer border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "cursor-pointer border-black/15 bg-white text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={marcado && !desabilitado}
+                      disabled={desabilitado}
+                      onChange={() => alternarServicoAdicional(servico.key)}
+                      className="sr-only"
+                    />
+                    <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+                      {servico.icone ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={servico.icone}
+                          alt=""
+                          className={`h-20 w-20 shrink-0 object-contain ${desabilitado ? "opacity-40" : ""}`}
+                        />
+                      ) : (
+                        <IconMala
+                          className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/60"}`}
+                        />
+                      )}
+                      {/* Reserva altura de 2 linhas — pedido do Wilson,
+                          11/set/2026: nomes de 1 linha ("Câmbio no Brasil")
+                          deixavam o preço abaixo em altura diferente dos de
+                          2 linhas ("Reserva de Restaurantes High-End"). */}
+                      <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
+                        {servico.nome}
+                      </span>
+                    </div>
+                    {/* Mini card de preço — cor própria (âmbar) pra se
+                        destacar do card em volta, com asterisco de "preço
+                        inicial" (nota completa no rodapé da seção).
+                        Pedido do Wilson, 10/set/2026. */}
+                    <span
+                      className={`flex min-h-[2.5rem] w-full items-center justify-center rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
+                        desabilitado ? "bg-black/5 text-black/60" : "bg-amber-50 text-amber-700"
+                      }`}
+                    >
+                      *{precoLabel}
+                    </span>
+                    {desabilitado && (
+                      <span className="text-[9px] font-medium uppercase tracking-wide text-red-500">
+                        Grupo grande — consultar
+                      </span>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+            <p className="mt-2 text-[10px] leading-4 text-black/60">* preço inicial — pode variar conforme grupo, trecho e disponibilidade.</p>
+            {servicosAdicionaisSelecionados.has("ajisaiShopping") && (
+              <div className="mt-3 max-w-xs">
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-black/60">
+                    Ajisai Shopping — orçamento estimado de compras (R$)
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={comprasOrcamentoEstimado || ""}
+                    onChange={(e) =>
+                      setComprasOrcamentoEstimado(Math.max(0, Number(e.target.value) || 0))
+                    }
+                    placeholder="ex.: 10000"
+                    className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2 text-sm text-black placeholder:text-black/25 outline-none focus:border-[#2f80c9]/60"
+                  />
+                </label>
+                <p className="mt-1 text-[10px] leading-4 text-black/60">
+                  Comissão de {(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre esse valor — só
+                  uma referência pra proposta. Valor final sob consulta, conforme o que for
+                  efetivamente gasto na viagem.
+                </p>
+              </div>
+            )}
+            {servicosAdicionaisSelecionados.size > 0 && (
+              <p className="mt-1 text-[11px] leading-4 text-black/60">
+                {CATALOGO_SERVICOS_ADICIONAIS.filter((s) => servicosAdicionaisSelecionados.has(s.key)).map(
+                  (s) => s.descricao,
+                ).join(" ")}
+              </p>
+            )}
+            </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(18) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="18. Seguro viagem — idade dos passageiros" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(18)} />
+              </span>
+            )}
+            {!camposOcultos.has(18) && (
+              <>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-6">
+                  {idadesPassageiros.map((idade, i) => (
+                    <div key={i} className="rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2.5">
+                      <span className="mb-1 block text-[9px] uppercase tracking-wide text-black/60">
+                        Passageiro {i + 1}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={0}
+                          max={110}
+                          value={idade}
+                          onChange={(e) => {
+                            const v = Number(e.target.value);
+                            if (!Number.isNaN(v)) alterarIdadePassageiro(i, v);
+                          }}
+                          className="h-9 w-14 rounded-md border border-black/15 bg-white px-2 text-sm outline-none focus:border-black/30"
+                        />
+                        <span className="text-xs text-black/60">
+                          {idade === 1 ? "ano" : "anos"}
+                        </span>
+                      </div>
+                      {/* Pedido do Wilson, 11/set/2026: além de digitar, dá pra
+                          selecionar a idade arrastando numa barra de rolagem. */}
+                      <input
+                        type="range"
+                        min={0}
+                        max={110}
+                        value={idade}
+                        onChange={(e) => alterarIdadePassageiro(i, Number(e.target.value))}
+                        className="mt-2 h-1.5 w-full accent-[#2f80c9]"
+                        aria-label={`Idade do passageiro ${i + 1}`}
+                      />
+                      {/* Pedido do Wilson, 16/set/2026: tabela real de
+                          multiplicadores por faixa etária do seguro viagem. */}
+                      <span
+                        className={`mt-1.5 block text-[10px] font-medium ${
+                          multiplicadorSeguroPorIdade(idade) === null ? "text-red-600" : "text-black/60"
+                        }`}
+                      >
+                        {multiplicadorSeguroPorIdade(idade) === null
+                          ? `Acima de ${IDADE_LIMITE_SEGURO} anos — sob consulta`
+                          : multiplicadorSeguroPorIdade(idade) === 1
+                            ? "Seguro — valor padrão"
+                            : `Seguro — ${multiplicadorSeguroPorIdade(idade)}x o valor padrão`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-4 text-black/60">
+                  Usado pra faixa etária do seguro viagem — até 60 anos, valor padrão; 61–65, 2x;
+                  66–70, 2,5x; 71–75, 3x; 76–80, 4x; 81–{IDADE_LIMITE_SEGURO}, 5x. Acima de{" "}
+                  {IDADE_LIMITE_SEGURO} anos não entra no preço automático — cotar sob consulta.
+                </p>
+              </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(21) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="21. Motorista Privado" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(21)} />
+              </span>
+            )}
+            {!camposOcultos.has(21) && (
+              <>
+              {/* Catálogo de rotas exatas do fornecedor DAIKICHI/HK
+                  TOURIST — mesmo componente usado em /produtos e no
+                  self-service (ver comentário na declaração de
+                  `selecaoMotorista`, acima). Progressive disclosure igual
+                  ao câmbio de ienes (seção 14): fica colapsado até o
+                  vendedor clicar ou já haver alguma rota escolhida. */}
+              {!(motoristaExpandido || selecaoMotorista.itens.length > 0) ? (
+                <button
+                  type="button"
+                  onClick={() => setMotoristaExpandido(true)}
+                  className="flex items-center gap-2 rounded-lg border border-dashed border-black/20 px-3 py-2 text-xs text-black/60 transition hover:border-black/35 hover:text-black/60"
+                >
+                  <span aria-hidden className="text-sm leading-none">+</span>
+                  Configurar motorista privado (opcional)
+                </button>
+              ) : (
+                <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+                  <MotoristaPrivadoPicker
+                    selecao={selecaoMotorista}
+                    onChange={setSelecaoMotorista}
+                    cambioCotacao={cambioCotacao}
+                  />
+                  {selecaoMotorista.itens.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setMotoristaExpandido(false)}
+                      className="mt-3 text-[11px] text-black/40 underline decoration-black/20 underline-offset-2 hover:text-black/60"
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              )}
+              <p className="mt-1.5 text-[11px] leading-4 text-black/60">
+                Preço exato por veículo e rota/tour, direto da tabela do fornecedor — não inclui o
+                transfer aeroporto ↔ hotel (item à parte). Só entra na proposta quando há pelo
+                menos 1 serviço selecionado.
+              </p>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── VALORES MANUAIS (OPCIONAL) ── */}
+        <div className="mt-4 grid gap-4 rounded-2xl border border-red-200 bg-red-50/50 p-6 sm:grid-cols-2 md:p-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-red-700 sm:col-span-2">
+            Valores manuais (opcional) — use quando já tiver uma cotação real de hotel ou aéreo,
+            em vez do valor de referência de mercado
+          </p>
+
+          <div>
+            <label className="flex items-center gap-3 text-xs font-medium text-red-900">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/icone-hotel2.png"
+                alt=""
+                className="h-10 w-10 shrink-0 object-contain"
+              />
+              <span className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={hotelManual}
+                  onChange={(e) => setHotelManual(e.target.checked)}
+                  className="h-4 w-4 rounded border-red-300 accent-red-600"
+                />
+                Informar diária do hotel manualmente
+              </span>
+            </label>
+            {hotelManual && (
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                <label className="flex flex-1 flex-col">
+                  <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-red-700/70">
+                    Diária do hotel (R$)
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={50}
+                    value={hotelDiariaManual}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      if (!Number.isNaN(v)) setHotelDiariaManual(v);
+                    }}
+                    className="h-10 w-full rounded-lg border border-red-200 bg-white px-3 text-sm outline-none focus:border-red-400"
+                  />
+                </label>
+                <label className="flex flex-1 flex-col">
+                  <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-red-700/70">
+                    Categoria do hotel
+                  </span>
+                  <select
+                    value={hotelCategoriaManual}
+                    onChange={(e) =>
+                      setHotelCategoriaManual(
+                        e.target.value as (typeof CATEGORIAS_HOTEL)[number],
+                      )
+                    }
+                    className="h-10 w-full rounded-lg border border-red-200 bg-white px-3 text-sm outline-none focus:border-red-400"
+                  >
+                    {CATEGORIAS_HOTEL.map((categoria) => (
+                      <option key={categoria} value={categoria}>
+                        {categoria}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="flex items-center gap-3 text-xs font-medium text-red-900">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/icone-passagem-aerea.png"
+                alt=""
+                className="h-10 w-10 shrink-0 object-contain"
+              />
+              <span className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={aereoManual}
+                  onChange={(e) => setAereoManual(e.target.checked)}
+                  className="h-4 w-4 rounded border-red-300 accent-red-600"
+                />
+                Informar valor da passagem manualmente
+              </span>
+            </label>
+            {aereoManual && (
+              <label className="mt-2 flex flex-col">
+                <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-red-700/70">
+                  Passagem por pessoa (R$)
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={aereoValorManual}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isNaN(v)) setAereoValorManual(v);
+                  }}
+                  className="h-10 w-full rounded-lg border border-red-200 bg-white px-3 text-sm outline-none focus:border-red-400"
+                />
+              </label>
+            )}
+          </div>
+        </div>
+
+        {/* ── RESULTADO ── */}
+        <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.02] p-6 md:p-8">
+          {!resultado.cabeNoOrcamento ? (
+            <div className="text-center">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-red-700">
+                Orçamento insuficiente
+              </p>
+              <p className={`${display.className} mt-2 text-2xl font-medium`}>
+                Itens essenciais mínimos custam {formatMoeda(resultado.precoMinimo)}
+              </p>
+              <p className="mx-auto mt-3 max-w-md text-sm text-black/55">
+                Com {formatMoeda(orcamento)}, ainda falta {formatMoeda(resultado.precoMinimo - orcamento)}{" "}
+                para cobrir Roteiro Personalizado + Aéreo Economy + Hotel 3 estrelas + Seguro Viagem{" "}
+                para{" "}
+                {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"} em {dias} dias. Aumente o
+                orçamento ou reduza dias/pessoas.
+              </p>
+            </div>
+          ) : (
+            <>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">
+                Pacote sugerido
+              </p>
+              <h2 className={`${display.className} mt-2 text-2xl font-medium md:text-3xl`}>
+                Hotel {resultado.categoriaHotelFinal} · Aéreo {resultado.classeAereoFinal}
+              </h2>
+
+              {resultado.avisoCategoriaTemporada && (
+                <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
+                  ⚠️ {resultado.avisoCategoriaTemporada}
+                </p>
+              )}
+
+              {resultado.avisoOrigemVoo && (
+                <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
+                  ⚠️ {resultado.avisoOrigemVoo}
+                </p>
+              )}
+
+              {resultado.avisoSeguroIdade && (
+                <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
+                  ⚠️ {resultado.avisoSeguroIdade}
+                </p>
+              )}
+
+              <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+                {[
+                  { label: "Duração", valor: `${dias} ${dias === 1 ? "dia" : "dias"}` },
+                  { label: "Acomodação", valor: tipoQuarto },
+                  {
+                    label: "Viajantes",
+                    valor: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.label}
+                    className="rounded-xl border border-black/10 bg-white px-2.5 py-3.5 text-center shadow-[0_1px_2px_rgba(10,37,64,0.04)] sm:px-4"
+                  >
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-black/55">{item.label}</p>
+                    <p className="mt-1.5 text-sm font-semibold text-[#0A2540] sm:text-base">{item.valor}</p>
+                  </div>
+                ))}
+              </div>
+
+              {extensoesSelecionadas.size > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key)).map(
+                    (extensao) => (
+                      <span
+                        key={extensao.key}
+                        className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 py-1 pl-1.5 pr-3 text-[11px] font-medium text-emerald-700"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={extensao.icone} alt="" className="h-4 w-5 shrink-0 rounded-sm object-contain" />
+                        Extensão {extensao.nome} · +{extensao.dias} dias
+                      </span>
+                    ),
+                  )}
+                </div>
+              )}
+
+              <p className="mt-3 text-[11px] text-black/60">
+                Ajisai · proposta gerada em {geradoEmLabel}
+              </p>
+
+              {cidadesSemMotoristaObrigatorio.length > 0 && (
+                <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-red-700">
+                    ⚠ Motorista particular obrigatório
+                  </p>
+                  <ul className="mt-1.5 space-y-1 text-xs leading-5 text-red-800">
+                    {cidadesSemMotoristaObrigatorio.map(({ key, nota }) => (
+                      <li key={key}>
+                        <strong>{DESTINOS.find((d) => d.key === key)?.nome ?? key}</strong> — {nota.motivo}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1.5 text-[11px] text-red-700/80">
+                    O item &quot;Motorista Privado&quot; não está nessa proposta — marque manualmente
+                    ou ajuste o orçamento pra incluir.
+                  </p>
+                </div>
+              )}
+
+              {Object.keys(itemAjustes).length > 0 && (
+                <p className="mt-4 flex items-center gap-1.5 text-[11px] text-emerald-700">
+                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                  Valores em verde foram alterados manualmente
+                </p>
+              )}
+
+              <div className="mt-6 space-y-2.5">
+                {resultado.incluidos.map((item) => {
+                  const chave = chaveDoItem(item);
+                  const removido = !itemSelecionado(item);
+                  const ajustado = itemAjustes[chave] !== undefined;
+                  const valor = valorItem(item);
+                  return (
+                    <div
+                      key={chave}
+                      className={`flex items-start justify-between gap-4 border-b border-black/10 pb-2.5 transition ${
+                        removido ? "opacity-40" : ""
+                      }`}
+                    >
+                      <label className="flex flex-1 cursor-pointer items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={!removido}
+                          onChange={() => alternarItem(chave)}
+                          className="mt-1 h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                        />
+                        <div>
+                          <p className={`text-sm font-medium ${removido ? "line-through" : ""}`}>
+                            {item.label}
+                          </p>
+                          {item.detalhe.map((linha, i) => (
+                            <p key={i} className="mt-0.5 text-xs text-black/50">
+                              {linha}
+                            </p>
+                          ))}
+                          {removido && !itemRecomendado(item) && (
+                            <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-600">
+                              Fora do orçamento — marque a caixa para incluir mesmo assim
+                            </p>
+                          )}
+                        </div>
+                      </label>
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-black/60">R$</span>
+                          <input
+                            type="number"
+                            disabled={removido}
+                            value={Math.round(valor)}
+                            onChange={(e) => {
+                              const v = Number(e.target.value);
+                              if (!Number.isNaN(v)) ajustarValorItem(item, v);
+                            }}
+                            className={`h-8 w-28 rounded-md border px-2 text-right text-sm font-semibold outline-none focus:border-[#2f80c9]/60 disabled:opacity-40 ${
+                              removido ? "line-through" : ""
+                            } ${
+                              ajustado
+                                ? "border-emerald-500/50 bg-emerald-500/5 text-emerald-700"
+                                : "border-black/15 bg-transparent"
+                            }`}
+                          />
+                        </div>
+                        <span className="text-[10px] text-black/60">
+                          {brlParaUSDLabel(valor, cambio)}
+                        </span>
+                        {ajustado && (
+                          <button
+                            type="button"
+                            onClick={() => restaurarValorItem(item)}
+                            className="text-[10px] uppercase tracking-wide text-emerald-600 underline underline-offset-2"
+                          >
+                            restaurar automático
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-black/10 pt-6">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">
+                    Total do pacote sugerido
+                  </p>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className={`${display.className} text-4xl font-medium text-[#2f80c9]`}>
+                      R$
+                    </span>
+                    <input
+                      type="number"
+                      value={Math.round(totalManual ? totalValorManual : totalCalculado)}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (!Number.isNaN(v)) {
+                          setTotalValorManual(v);
+                          setTotalManual(true);
+                        }
+                      }}
+                      className={`${display.className} h-12 w-44 rounded-lg border px-2 text-3xl font-medium text-[#2f80c9] outline-none focus:border-[#2f80c9]/60 ${
+                        totalManual
+                          ? "border-[#2f80c9]/40 bg-[#2f80c9]/5"
+                          : "border-black/15 bg-transparent"
+                      }`}
+                    />
+                  </div>
+                  <p className="text-sm text-black/60">
+                    {moedaExibicao === "BRL" ? brlParaUSDLabel(totalSelecionado, cambio) : formatBRL(totalSelecionado)}
+                  </p>
+                  <p className="mt-0.5 text-xs text-black/60">
+                    {formatMoeda(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)} por
+                    passageiro ({pessoas} {pessoas === 1 ? "pessoa" : "pessoas"})
+                  </p>
+                  {totalManual && (
+                    <button
+                      type="button"
+                      onClick={() => setTotalManual(false)}
+                      className="mt-1 text-[10px] uppercase tracking-wide text-black/60 underline underline-offset-2 hover:text-black/60"
+                    >
+                      usar total calculado automaticamente
+                    </button>
+                  )}
+                  <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/60" />
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">
+                    Saldo restante do orçamento
+                  </p>
+                  <p
+                    className={`${display.className} mt-1 text-2xl font-medium ${
+                      saldoSelecionado > 0 ? "text-black" : "text-black/60"
+                    }`}
+                  >
+                    {formatMoeda(saldoSelecionado)}
+                  </p>
+                  <p className="text-xs text-black/60">
+                    {moedaExibicao === "BRL" ? brlParaUSDLabel(saldoSelecionado, cambio) : formatBRL(saldoSelecionado)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Pedido do Wilson, 14/set/2026, sobre a versão antiga desse
+                  aviso ("itens sem preço fixo... não entram nesse
+                  cálculo"): "quem disse que nao tem preço? [...] é pra
+                  incluir os preços e discriminar nas linhas deles dentro
+                  do valor final" — concierge, experiência sob medida,
+                  transfer de ônibus e reserva de restaurante agora são
+                  cards precificados na seção 17 (Serviços adicionais), com
+                  o mesmo preço de referência usado no cálculo. */}
+              <p className="mt-4 text-[11px] leading-5 text-black/60">
+                Concierge, experiências sob medida, transfer de ônibus e reservas de restaurante
+                avulsas já têm preço de referência e entram no total quando marcados em
+                &quot;Serviços adicionais&quot; — ajuste o valor manualmente se o pedido do
+                cliente for diferente do padrão. Valor final sujeito a confirmação da Ajisai.
+              </p>
+
+              {/* Simulação de parcelamento — pedido do Wilson, 10/set/2026: mostrar
+                  1x/4x/10x/12x no cartão (Tabela Price, juros compostos) e o PIX
+                  à vista/parcelado (30% de entrada + parcelas, limitado pela data
+                  da viagem). É só simulação pra apresentação — o checkout real de
+                  pagamento é etapa futura, ainda não existe. */}
+              <div className="mt-5 rounded-2xl border border-[#0A2540]/15 bg-[#0A2540]/[0.035] p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0A2540]">
+                  Simulação de pagamento
+                </p>
+                <p className="mt-1 text-[11px] leading-5 text-black/60">
+                  Simulação pra apresentação ao cliente — não é um checkout, valores sujeitos
+                  a confirmação na emissão.
+                </p>
+
+                <div className="mt-5 flex flex-col gap-4">
+                  {/* Cartão de crédito */}
+                  <div className="rounded-xl border border-[#0A2540]/10 bg-white p-4 shadow-[0_1px_2px_rgba(10,37,64,0.04)] sm:p-5">
+                    <div className="flex items-center gap-3.5">
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/images/icone-cartao-credito.png"
+                          alt=""
+                          className="h-10 w-10 object-contain"
+                        />
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-[#0A2540]">Cartão de crédito</p>
+                        <p className="mt-0.5 text-[10px] text-black/60">
+                          taxa de cartão {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
+                          juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
+                          a.m. por parcela
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 divide-y divide-black/[0.06] border-t border-black/[0.06]">
+                      {simulacaoCartao.map((op) => {
+                        const selecionado =
+                          formaPagamentoEscolhida?.metodo === "cartao" &&
+                          formaPagamentoEscolhida.parcelas === op.parcelas;
+                        return (
+                          <label
+                            key={op.parcelas}
+                            className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                              selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="formaPagamento"
+                              checked={selecionado}
+                              onChange={() =>
+                                setFormaPagamentoEscolhida({ metodo: "cartao", parcelas: op.parcelas })
+                              }
+                              className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                            />
+                            <span className="w-9 shrink-0 text-sm text-black/60">{op.parcelas}x</span>
+                            <span className="flex-1 text-base font-semibold text-[#0A2540]">
+                              {formatMoeda(op.valorParcela)}
+                            </span>
+                            <span className="shrink-0 text-[11px] text-black/60">
+                              total {formatMoeda(op.valorTotal)}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* PIX */}
+                  <div className="rounded-xl border border-[#0A2540]/10 bg-white p-4 shadow-[0_1px_2px_rgba(10,37,64,0.04)] sm:p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-3.5">
+                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/images/icone-pix.png" alt="" className="h-10 w-10 object-contain" />
+                        </span>
+                        <p className="text-sm font-semibold text-[#0A2540]">PIX</p>
+                      </div>
+                      <label className="flex items-center gap-2 text-[11px] text-black/60">
+                        Data estimada da viagem
+                        <input
+                          type="date"
+                          value={dataViagemEstimada}
+                          min={hojeISO()}
+                          onChange={(e) => setDataViagemEstimada(e.target.value)}
+                          className="h-8 rounded-md border border-black/15 bg-black/[0.03] px-2 text-[11px] outline-none focus:border-black/30"
+                        />
+                      </label>
+                    </div>
+
+                    <label
+                      className={`mt-4 flex cursor-pointer items-center gap-3 rounded-lg px-3.5 py-3 transition ${
+                        formaPagamentoEscolhida?.metodo === "pixVista"
+                          ? "bg-[#2f80c9]/[0.12]"
+                          : "bg-[#2f80c9]/5 hover:bg-[#2f80c9]/[0.08]"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="formaPagamento"
+                        checked={formaPagamentoEscolhida?.metodo === "pixVista"}
+                        onChange={() => setFormaPagamentoEscolhida({ metodo: "pixVista", parcelas: 1 })}
+                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                      />
+                      <span className="flex-1 text-sm text-[#0A2540]/70">à vista</span>
+                      <span className="text-base font-semibold text-[#0A2540]">
+                        {formatMoeda(totalSelecionado)}
+                      </span>
+                    </label>
+
+                    {simulacaoPix.length > 0 ? (
+                      <div className="mt-3">
+                        <p className="text-[10px] text-black/60">
+                          parcelado — entrada de {formatMoeda(simulacaoPix[0].entrada)} (30%) +
+                          parcelas a {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}%
+                          a.m.
+                        </p>
+                        <div className="mt-1.5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
+                          {simulacaoPix.map((op) => {
+                            const selecionado =
+                              formaPagamentoEscolhida?.metodo === "pixParcelado" &&
+                              formaPagamentoEscolhida.parcelas === op.parcelas;
+                            return (
+                              <label
+                                key={op.parcelas}
+                                className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                                  selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="formaPagamento"
+                                  checked={selecionado}
+                                  onChange={() =>
+                                    setFormaPagamentoEscolhida({
+                                      metodo: "pixParcelado",
+                                      parcelas: op.parcelas,
+                                    })
+                                  }
+                                  className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                                />
+                                <span className="w-9 shrink-0 text-sm text-black/60">{op.parcelas}x</span>
+                                <span className="flex-1 text-base font-semibold text-[#0A2540]">
+                                  {formatMoeda(op.valorParcela)}
+                                </span>
+                                <span className="shrink-0 text-[11px] text-black/60">
+                                  total {formatMoeda(op.valorTotal)}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      dataViagemEstimada && (
+                        <p className="mt-3 text-[11px] text-black/60">
+                          Viagem muito próxima — sem prazo pra parcelar no PIX, só à vista.
+                        </p>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {/* Confirmação escrita da forma de pagamento marcada acima —
+                    pedido do Wilson, 11/set/2026: fecha a apresentação com
+                    a opção escolhida já registrada por escrito, sem
+                    ambiguidade de qual das simulações valeu. */}
+                <div
+                  className={`mt-4 rounded-lg border px-3.5 py-3 text-xs ${
+                    formaPagamentoEscolhida
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                      : "border-black/10 bg-black/[0.02] text-black/60"
+                  }`}
+                >
+                  {formaPagamentoEscolhida && descricaoFormaPagamentoEscolhida ? (
+                    <>
+                      <span className="font-semibold">Forma de pagamento selecionada: </span>
+                      {descricaoFormaPagamentoEscolhida}
+                    </>
+                  ) : (
+                    "Nenhuma forma de pagamento marcada ainda — selecione uma opção acima."
+                  )}
+                </div>
+              </div>
+
+              {/* Pedido do Wilson, 14/set/2026: "valor do orçamento nao
+                  deve aparecer em nenhum documento como pdf e word
+                  editavel" — o checkbox opcional saiu; agora o PDF e o
+                  Word nunca mostram "Orçamento de referência"/"Saldo",
+                  sempre (ver PacotePdf.tsx e PacoteTexto.ts). */}
+
+              {/* Pedido do Wilson, 14/set/2026: "falta um pequeno bloco
+                  administrativo da proposta [...] Nome do cliente,
+                  Consultor, Validade da proposta, Observações internas e
+                  talvez Margem. O cliente não precisa ver margem; mas
+                  para a operação de vocês isso é fundamental." Nome do
+                  cliente/consultor/validade entram no PDF/Word (comuns
+                  numa proposta comercial); Observações internas e Margem
+                  ficam só nesta tela — nunca são passados pro PDF/Word/
+                  WhatsApp (ver PacotePdfProps: esses 2 campos nem existem
+                  lá). Sem backend próprio ainda — como todo o resto dessa
+                  calculadora, esses campos vivem só nesta sessão do
+                  navegador, não são salvos em banco de dados. */}
+              <div className="mt-6 rounded-xl border border-sky-200 bg-sky-50 p-4">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-sky-800/70">
+                  Identificação do lead{" "}
+                  <span className="normal-case tracking-normal text-sky-800/50">
+                    — nome obrigatório + telefone ou e-mail (pelo menos um) pra registrar no CRM
+                  </span>
+                </p>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Nome *</span>
+                    <input type="text" value={nomeCliente} onChange={(e) => setNomeCliente(e.target.value)} placeholder="ex.: Família Almeida" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Telefone / WhatsApp (ou e-mail)</span>
+                    <input type="tel" value={telefoneCliente} onChange={(e) => setTelefoneCliente(e.target.value)} placeholder="ex.: +55 11 91234-5678" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">E-mail (ou telefone)</span>
+                    <input type="email" value={emailCliente} onChange={(e) => setEmailCliente(e.target.value)} placeholder="ex.: cliente@email.com" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-black/10 bg-black/[0.02] p-4">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-black/50">
+                  Dados da proposta (opcional)
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                      Consultor responsável
+                    </span>
+                    <input
+                      type="text"
+                      value={consultorResponsavel}
+                      onChange={(e) => setConsultorResponsavel(e.target.value)}
+                      placeholder="ex.: Wilson"
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                      E-mail do consultor (só CRM)
+                    </span>
+                    <input
+                      type="email"
+                      value={consultorEmail}
+                      onChange={(e) => setConsultorEmail(e.target.value)}
+                      placeholder="consultor@alpinea.io"
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                      Validade da proposta
+                    </span>
+                    <input
+                      type="date"
+                      value={validadeProposta}
+                      min={hojeISO()}
+                      onChange={(e) => setValidadeProposta(e.target.value)}
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                      Margem/observação de negociação{" "}
+                      <span className="normal-case tracking-normal text-black/60">— interno, não aparece no PDF/Word</span>
+                    </span>
+                    <input
+                      type="text"
+                      value={margemNota}
+                      onChange={(e) => setMargemNota(e.target.value)}
+                      placeholder="ex.: margem reduzida 5% pra fechar"
+                      className="h-10 w-full rounded-lg border border-amber-300 bg-amber-50/40 px-3 text-sm outline-none focus:border-amber-400"
+                    />
+                  </label>
+                  <label className="flex flex-col sm:col-span-2">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                      Observações internas{" "}
+                      <span className="normal-case tracking-normal text-black/60">— interno, não aparece no PDF/Word</span>
+                    </span>
+                    <textarea
+                      value={observacoesInternas}
+                      onChange={(e) => setObservacoesInternas(e.target.value)}
+                      rows={2}
+                      placeholder="ex.: cliente sensível a preço, já negociou 2x antes"
+                      className="w-full resize-none rounded-lg border border-amber-300 bg-amber-50/40 px-3 py-2 text-sm outline-none focus:border-amber-400"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
+                      "_blank",
+                    )
+                  }
+                  className="w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+                >
+                  Falar sobre esse pacote no WhatsApp
+                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={handleGerarPdf}
+                    disabled={gerandoPdf}
+                    className="flex items-center justify-center gap-2 rounded-full border border-[#2f80c9]/40 px-4 py-3.5 text-center text-[11px] font-medium uppercase tracking-[0.15em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <IconPdf className="h-4 w-4 shrink-0" />
+                    <span>{gerandoPdf ? "Gerando…" : "PDF da proposta"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGerarTexto}
+                    className="flex items-center justify-center gap-2 rounded-full border border-[#2f80c9]/40 px-4 py-3.5 text-center text-[11px] font-medium uppercase tracking-[0.15em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5"
+                  >
+                    <IconDoc className="h-4 w-4 shrink-0" />
+                    <span>Texto editável (Word)</span>
+                  </button>
+                </div>
+
+                {/* Pedido do Wilson, 16/set/2026: "criar um campo novo na
+                    cor verde chamado REGISTRAR NO CRM [...] para que isso
+                    crie uma entrada no CRM de registro de novo cliente". */}
+                <button
+                  type="button"
+                  onClick={handleRegistrarCrm}
+                  disabled={registrandoCrm}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <span>{registrandoCrm ? "Registrando…" : "Registrar no CRM"}</span>
+                </button>
+                {crmResultado && (
+                  <p
+                    className={`text-center text-xs font-medium ${
+                      crmResultado.tipo === "sucesso" ? "text-emerald-600" : "text-red-600"
+                    }`}
+                  >
+                    {crmResultado.mensagem}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* ── BARRA FIXA: total + saldo sempre visíveis ── */}
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0a0a0a]/97 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.35)] backdrop-blur sm:px-8">
+        {/* Pedido do Wilson, 12/set/2026: o aviso de campos ocultos mora
+            aqui, dentro da barra fixa, não solto no topo da página. */}
+        {camposOcultos.size > 0 && (
+          <div className="mx-auto mb-2 flex max-w-4xl">
+            <p className="flex items-center gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-[11px] font-medium text-amber-300">
+              <span aria-hidden>⚠️</span>
+              {camposOcultos.size} campo{camposOcultos.size === 1 ? "" : "s"} oculto
+              {camposOcultos.size === 1 ? "" : "s"}
+            </p>
+          </div>
+        )}
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
+          <div>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">
+              Total do pacote sugerido
+            </p>
+            <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
+              {resultado.cabeNoOrcamento ? formatMoeda(totalSelecionado) : "—"}
+            </p>
+            {resultado.cabeNoOrcamento && (
+              <p className="text-[10px] text-white/35">
+                {formatMoeda(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)}/pessoa
+              </p>
+            )}
+          </div>
+          <div className="text-right">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">
+              Saldo restante
+            </p>
+            <p
+              className={`${display.className} text-lg font-medium sm:text-xl ${
+                !resultado.cabeNoOrcamento || saldoSelecionado > 0 ? "text-white" : "text-white/40"
+              }`}
+            >
+              {resultado.cabeNoOrcamento ? formatMoeda(saldoSelecionado) : "—"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Pedido do Wilson, 14/set/2026: "os icones sao bons, mas
+                como saber qual é txt e qual pdf?" — os dois botões eram
+                círculos só com ícone (o "PDF"/"DOC" desenhado dentro do
+                ícone é pequeno demais pra ler nesse tamanho). Virou
+                pílula com rótulo de texto ao lado do ícone, sem depender
+                de hover/tooltip pra diferenciar. */}
+            <button
+              type="button"
+              disabled={!resultado.cabeNoOrcamento || gerandoPdf}
+              onClick={handleGerarPdf}
+              aria-label="Gerar PDF da proposta"
+              title="Gerar PDF da proposta"
+              className="flex h-9 items-center gap-1.5 rounded-full border border-[#5b9bd9]/50 px-3 text-[10px] font-medium uppercase tracking-[0.1em] text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <IconPdf className="h-4 w-4 shrink-0" />
+              <span>PDF</span>
+            </button>
+            <button
+              type="button"
+              disabled={!resultado.cabeNoOrcamento}
+              onClick={handleGerarTexto}
+              aria-label="Gerar texto editável (Word) da proposta"
+              title="Gerar texto editável (Word) da proposta"
+              className="flex h-9 items-center gap-1.5 rounded-full border border-[#5b9bd9]/50 px-3 text-[10px] font-medium uppercase tracking-[0.1em] text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <IconDoc className="h-4 w-4 shrink-0" />
+              <span>Word</span>
+            </button>
+            <button
+              type="button"
+              disabled={!resultado.cabeNoOrcamento}
+              onClick={() =>
+                window.open(
+                  `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
+                  "_blank",
+                )
+              }
+              className="rounded-full bg-[#2f80c9] px-5 py-2.5 text-[10px] font-medium uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              WhatsApp
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

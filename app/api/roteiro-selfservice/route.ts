@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA } from "../../lib/precoRoteiro";
+import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA, ROTEIRO_PESSOAS_SEM_TAXA, ROTEIRO_TAXA_USD_A_CADA_2 } from "../../lib/precoRoteiro";
 import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
@@ -66,8 +66,8 @@ const inteiro = (v: unknown, min: number, max: number) => Math.max(min, Math.min
 const BASE_DIAS = ROTEIRO_BASE_DIAS;
 const PRECO_BASE = ROTEIRO_PRECO_BASE; // fonte única: app/lib/precoRoteiro.ts
 const PRECO_DIA_EXTRA = ROTEIRO_PRECO_DIA_EXTRA;
-const PESSOAS_SEM_TAXA = 3;
-const TAXA_USD_A_CADA_2 = 80;
+const PESSOAS_SEM_TAXA = ROTEIRO_PESSOAS_SEM_TAXA;
+const TAXA_USD_A_CADA_2 = ROTEIRO_TAXA_USD_A_CADA_2;
 
 export async function POST(req: Request) {
   try {

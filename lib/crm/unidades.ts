@@ -54,7 +54,8 @@ export function unidadeDoHost(host: string | null | undefined): UnidadeCrm | nul
 }
 
 // Rotas compartilhadas (servem a todas as unidades).
-const ROTAS_COMPARTILHADAS = ["/crm/login", "/crm/acessos", "/crm/sem-acesso", "/crm/unidades"];
+// /crm/precos: preços e margens do site — só admin (Wilson, 04/nov/2026).
+const ROTAS_COMPARTILHADAS = ["/crm/login", "/crm/acessos", "/crm/precos", "/crm/sem-acesso", "/crm/unidades"];
 
 export function unidadeDaRota(pathname: string): UnidadeCrm | "compartilhada" {
   if (ROTAS_COMPARTILHADAS.some((r) => pathname === r || pathname.startsWith(`${r}/`))) return "compartilhada";
@@ -122,6 +123,7 @@ export function rotaPermitida(papel: PapelCrm | null, pathname: string, crms: Un
   if (papel === "admin") return true;
   if (papel === "consultor") {
     if (pathname === "/crm/acessos" || pathname.startsWith("/crm/acessos/")) return false;
+    if (pathname === "/crm/precos" || pathname.startsWith("/crm/precos/")) return false;
     if (pathname === "/crm/unidades" || pathname.startsWith("/crm/esqueci") || pathname.startsWith("/crm/redefinir")) return true;
     if (pathname.startsWith("/crm/parceiro") || pathname.startsWith("/crm/empreiteira") || pathname.startsWith("/crm/despachante")) return false;
     // Só as listas e fichas dos registros dele — sem painéis, agenda,

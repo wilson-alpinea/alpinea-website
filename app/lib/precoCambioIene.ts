@@ -1,4 +1,5 @@
 import { comMargemEImposto } from "./margemPadrao";
+import { P } from "./parametrosPreco";
 import type { CidadeCambioIeneSlug, DirecaoCambioIene } from "./cambioIene";
 
 // Motor de preço do Câmbio de ienes da página pública — módulo "puro"
@@ -13,23 +14,23 @@ import type { CidadeCambioIeneSlug, DirecaoCambioIene } from "./cambioIene";
 
 // Taxa de serviço do câmbio (logística de entrega/recolhimento em
 // espécie) — custo R$ 150 com imposto+margem padrão.
-export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
+export const PRECO_CAMBIO_BRASIL = comMargemEImposto(P("cambio.taxaServicoCusto", 150));
 // Entrega no Aeroporto de Guarulhos — pedido do Wilson, 25/set/2026:
 // "custo de entrega para entrega no aeroporto de guarulhos de R$ 190.00
 // caso cliente opte por isso". Valor final já em reais.
-export const CUSTO_ENTREGA_AEROPORTO_CAMBIO = 190;
+export const CUSTO_ENTREGA_AEROPORTO_CAMBIO = P("cambio.entregaAeroporto", 190);
 
 // Margem pública (exclusiva da página pública, nunca exibida) — pedido do
 // Wilson, 25/set/2026. Compra: cotação de rua × 1,20. Venda: × 0,80.
-export const SPREAD_CAMBIO_IENE_PUBLICO_COMPRA = 1.2;
-export const SPREAD_CAMBIO_IENE_PUBLICO_VENDA = 0.8;
+export const SPREAD_CAMBIO_IENE_PUBLICO_COMPRA = P("cambio.spreadIeneCompra", 1.2);
+export const SPREAD_CAMBIO_IENE_PUBLICO_VENDA = P("cambio.spreadIeneVenda", 0.8);
 
 // Piso mínimo (Wilson, 08/set/2026) — mesmo da Calculadora Reversa.
-export const CAMBIO_IENES_MINIMO = 100000;
+export const CAMBIO_IENES_MINIMO = P("cambio.minimoIenes", 100000);
 export const CAMBIO_IENES_MINIMO_PUBLICO = CAMBIO_IENES_MINIMO;
 // Entrega/retirada no aeroporto: mínimo maior (Wilson, 06/out/2026: "valor
 // mínimo de aeroporto sobe para 300,000 ienes").
-export const CAMBIO_IENES_MINIMO_AEROPORTO = 300000;
+export const CAMBIO_IENES_MINIMO_AEROPORTO = P("cambio.minimoIenesAeroporto", 300000);
 export function minimoIenesPorCidade(cidade: string): number {
   return cidade === "aeroporto-guarulhos" ? CAMBIO_IENES_MINIMO_AEROPORTO : CAMBIO_IENES_MINIMO_PUBLICO;
 }

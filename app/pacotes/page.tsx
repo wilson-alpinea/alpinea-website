@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { PRECOS_PACOTES_USD } from "../lib/precosPacotesProntos";
 import Link from "next/link";
 import { bodoniModaItalico } from "@/app/fonts/bodoni";
 import { ContactCTA } from "../components/ContactCTA";
@@ -141,9 +142,9 @@ const pacotesCaravana = [
     accent: "#e6a6c7",
     selo: "🌸 Alta procura",
     variantes: variantesUSD(
-      4550,
+      PRECOS_PACOTES_USD.caravanaCerejeiras.d7,
       "28 mar — 03 abr 2027",
-      8280,
+      PRECOS_PACOTES_USD.caravanaCerejeiras.d14,
       "24 mar — 07 abr 2027",
     ),
   },
@@ -162,9 +163,9 @@ const pacotesCaravana = [
     imagemAlt: BANNER_CARAVANA.alt,
     accent: "#7fbf6e",
     variantes: variantesUSD(
-      4280,
+      PRECOS_PACOTES_USD.caravanaMaio.d7,
       "08 — 14 mai 2027",
-      7980,
+      PRECOS_PACOTES_USD.caravanaMaio.d14,
       "08 — 22 mai 2027",
     ),
   },
@@ -185,9 +186,9 @@ const pacotesIndividuais = [
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#e6a6c7",
     variantes: variantesIndividualUSD(
-      2790,
+      PRECOS_PACOTES_USD.individualCerejeiras.d7,
       "Datas flexíveis · mar–abr 2027",
-      4980,
+      PRECOS_PACOTES_USD.individualCerejeiras.d14,
       "Datas flexíveis · mar–abr 2027",
     ),
   },
@@ -205,9 +206,9 @@ const pacotesIndividuais = [
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#7fbf6e",
     variantes: variantesIndividualUSD(
-      2490,
+      PRECOS_PACOTES_USD.individualMaio.d7,
       "Datas flexíveis · maio 2027",
-      4480,
+      PRECOS_PACOTES_USD.individualMaio.d14,
       "Datas flexíveis · maio 2027",
     ),
   },

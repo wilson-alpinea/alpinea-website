@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# parâmetros de preço gerados no build (scripts/gerar-parametros-preco.mjs)
+app/lib/parametrosPreco.valores.ts
