@@ -10,6 +10,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import "./guia-crm.css";
 import Image from "next/image";
 import { ContentCard, IconStar as IconStarKit, IconWarning, TrajetoArrow, TrajetoArrowHead } from "../components/AirportGuideKit";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
@@ -1957,6 +1958,25 @@ const DIA_SEMANA: Record<string, string> = {
   "11 Mai": "Terça",
   "12 Mai": "Quarta",
 };
+
+function CabecalhoGuia({ titulo, subtitulo, onVoltar }: { titulo: string; subtitulo: string; onVoltar: () => void }) {
+  return (
+    <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+      <div className="min-w-0">
+        <p className="text-[13px] font-medium text-[#24476B]">Informações detalhadas</p>
+        <h3 className="text-xl font-semibold text-[#20252B]">{titulo}</h3>
+        <p className="mt-0.5 text-[13px] text-[#626B75]">{subtitulo}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onVoltar}
+        className="shrink-0 rounded-xl border border-[#D5DAE0] bg-white px-3.5 py-2 text-[13px] font-medium text-[#20252B] transition hover:border-[#24476B]/50"
+      >
+        ← Voltar ao menu
+      </button>
+    </div>
+  );
+}
 
 function IconLock({ className }: { className?: string }) {
   return (
@@ -6519,15 +6539,15 @@ function IconWhatsapp({ className }: { className?: string }) {
 
 // Demonstração (Wilson, 04/nov/2026): só Ônibus e Trem Bala abrem; os
 // demais cards aparecem, com cadeado, sem clique.
-const INFO_CARDS: { label: string; Icon: (p: { className?: string }) => ReactElement; view?: "onibus" | "shinkansen"; subLabel?: string }[] = [
-  { label: "Aeroporto HND (Haneda)", Icon: IconPlane, subLabel: "Chegada e retorno" },
-  { label: "Aeroporto NRT (Narita)", Icon: IconPlane },
-  { label: "Metrô", Icon: IconMetro },
-  { label: "Ônibus", Icon: IconBus, view: "onibus" },
-  { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" },
-  { label: "Câmbio", Icon: IconExchange },
-  { label: "Costumes", Icon: IconCustoms },
-  { label: "Palavras Comuns", Icon: IconWords },
+const INFO_CARDS: { label: string; descricao: string; Icon: (p: { className?: string }) => ReactElement; view?: "onibus" | "shinkansen"; subLabel?: string }[] = [
+  { label: "Aeroporto de Haneda", descricao: "Chegada, imigração e saída do aeroporto até o hotel.", Icon: IconPlane, subLabel: "Chegada e retorno" },
+  { label: "Aeroporto de Narita", descricao: "Terminais, trens e ônibus para o centro.", Icon: IconPlane },
+  { label: "Metrô", descricao: "Linhas, cartões e baldeações em Tóquio.", Icon: IconMetro },
+  { label: "Ônibus", descricao: "Como achar o ponto e a linha certos em Kyoto.", Icon: IconBus, view: "onibus" },
+  { label: "Trem bala (Shinkansen)", descricao: "Comprar, embarcar e onde levar as malas.", Icon: IconShinkansen, view: "shinkansen" },
+  { label: "Câmbio", descricao: "Onde trocar dinheiro e quanto levar.", Icon: IconExchange },
+  { label: "Costumes", descricao: "Etiqueta em templos, restaurantes e transporte.", Icon: IconCustoms },
+  { label: "Palavras comuns", descricao: "Frases úteis com pronúncia.", Icon: IconWords },
 ];
 
 // Demonstração: sem número de apólice, sem voucher e sem contato do sinistro
@@ -7727,29 +7747,32 @@ export function ApprovalPanel({
             Informações detalhadas
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 border-b border-[#E3E6EA] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {INFO_CARDS.map(({ label, Icon, view, subLabel }) => {
-            const cardClassName =
-              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#D5DAE0] bg-white px-3 py-4 text-center text-xs leading-5 text-[#20252B]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#24476B]/35 hover:bg-[#E9F1FA] hover:text-[#20252B] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
-            const content = (
+        <div className="grid grid-cols-1 gap-3 border-b border-[#E3E6EA] px-6 pb-6 pt-3 sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
+          {INFO_CARDS.map(({ label, descricao, Icon, view, subLabel }) => {
+            // Guias de apoio (Wilson, 04/nov/2026: cards "feios, perdidos,
+            // difícil entender o que precisa ser feito"): ícone, nome, para
+            // que serve e a ação — "Abrir guia" ou "No roteiro completo".
+            const corpo = (
               <>
-                <Icon
-                  className={
-                    label === "Trem Bala (Shinkansen)"
-                      ? "h-20 w-20"
-                      : label === "Ônibus"
-                        ? "h-[4.5rem] w-[4.5rem]"
-                        : "h-14 w-14"
-                  }
-                />
-                <span>
-                  {label}
-                  {subLabel ? (
-                    <span className="mt-0.5 block text-[11px] font-semibold text-[#C0392B]">
-                      {subLabel}
-                    </span>
-                  ) : null}
+                <span className="flex items-start gap-3">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-black/10 bg-white">
+                    <Icon className="h-8 w-8" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[15px] font-semibold leading-snug text-[#20252B]">{label}</span>
+                    {subLabel && <span className="mt-0.5 block text-[12px] font-medium text-[#24476B]">{subLabel}</span>}
+                    <span className="mt-1 block text-[13px] leading-5 text-[#626B75]">{descricao}</span>
+                  </span>
                 </span>
+                {view ? (
+                  <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-[#24476B] group-hover:underline">
+                    Abrir guia <span aria-hidden="true">→</span>
+                  </span>
+                ) : (
+                  <span className="mt-3 inline-flex items-center gap-1.5 text-[12px] text-[#8A939C]">
+                    <IconLock className="h-3 w-3" /> No roteiro completo
+                  </span>
+                )}
               </>
             );
             return view ? (
@@ -7760,22 +7783,17 @@ export function ApprovalPanel({
                   setViewMode(view);
                   scrollToContent();
                 }}
-                className={cardClassName}
+                className="group flex flex-col justify-between rounded-xl border border-[#D5DAE0] bg-white p-4 text-left transition hover:-translate-y-0.5 hover:border-[#24476B]/40 hover:shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24476B]/30"
               >
-                {content}
+                {corpo}
               </button>
             ) : (
               <div
                 key={label}
                 aria-disabled="true"
-                title="Disponível no roteiro completo"
-                className="relative flex min-h-[112px] cursor-default select-none flex-col items-center justify-center gap-2.5 rounded-xl border border-[#E3E6EA] bg-[#F6F8FA] px-3 py-4 text-center text-xs leading-5 text-[#20252B]/45"
+                className="flex cursor-default select-none flex-col justify-between rounded-xl border border-black/[0.06] bg-[#F6F8FA] p-4 opacity-60"
               >
-                <span className="absolute right-2.5 top-2.5 text-[#20252B]/40" aria-hidden="true">
-                  <IconLock className="h-3.5 w-3.5" />
-                </span>
-                <span className="flex flex-col items-center gap-2.5 opacity-45">{content}</span>
-                <span className="sr-only">Disponível no roteiro completo</span>
+                {corpo}
               </div>
             );
           })}
@@ -7873,7 +7891,7 @@ export function ApprovalPanel({
           </div>
         )}
 
-        <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
+        <div ref={contentRef} className="scroll-mt-24 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "dxb" ? (
             <>
               <p className="mb-4 text-lg font-semibold text-[#20252B]">
@@ -7885,10 +7903,8 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "onibus" ? (
             <>
-              <p className="mb-4 text-lg font-semibold text-[#20252B]">
-                Ônibus em Kyoto
-              </p>
-              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+              <CabecalhoGuia titulo="Ônibus em Kyoto" subtitulo="Guia de apoio · leia antes de pegar o primeiro ônibus" onVoltar={scrollToDaysMenu} />
+              <div className="guia-crm -mx-6 overflow-hidden border-t border-black/[0.06] sm:-mx-10">
                 <OnibusGuideContent displayClassName={displayClassName} internal={false} semMarca />
               </div>
             </>
@@ -7952,10 +7968,8 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "shinkansen" ? (
             <>
-              <p className="mb-4 text-lg font-semibold text-[#20252B]">
-                Trem Bala (Shinkansen)
-              </p>
-              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+              <CabecalhoGuia titulo="Trem bala (Shinkansen)" subtitulo="Guia de apoio · leia antes do dia da viagem entre cidades" onVoltar={scrollToDaysMenu} />
+              <div className="guia-crm -mx-6 overflow-hidden border-t border-black/[0.06] sm:-mx-10">
                 <ShinkansenGuideContent displayClassName={displayClassName} internal={false} semMarca />
               </div>
             </>

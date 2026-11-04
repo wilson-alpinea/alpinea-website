@@ -3,8 +3,10 @@
 // Roteiro Personalizado — página de produto no template novo de /produtos
 // (Wilson, 03/nov/2026: "os cards roteiro personalizado e viagem
 // personalizada estão no template antigo, altere para o novo"). Substitui o
-// pop-up antigo de /produtos. Sem pagamento no site: o pedido cai no CRM
-// (tag SELF-SERVICE, /api/roteiro-selfservice) e segue pelo WhatsApp.
+// pop-up antigo de /produtos. O pedido cai no CRM (tag SELF-SERVICE,
+// /api/roteiro-selfservice) e, desde 04/nov/2026, é pago online pela Stone
+// (Pix ou cartão) em nova aba — o servidor recalcula o total. Se o link da
+// Stone não abrir, a equipe envia o pagamento pelo WhatsApp.
 // Preço = mesma regra da calculadora do pop-up antigo (PriceCalculator).
 
 import { useEffect, useRef, useState } from "react";
@@ -14,6 +16,8 @@ import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
 import { inter, mascararWhatsapp, Campo, classeInput } from "../../components/transporte/compartilhado";
 import { EscopoServico } from "../../components/EscopoServico";
 import { RodapeCheckout } from "../RodapeCheckout";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 import { BarraProduto, ComoFunciona, Contador, TelaEnviado, TituloPasso, type PassoComoFunciona } from "../templateProduto";
 import {
   BASE_DAYS,
@@ -58,6 +62,7 @@ export default function RoteiroPersonalizadoPage() {
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const rodapeRef = useRef<HTMLDivElement | null>(null);
   const [alturaRodape, setAlturaRodape] = useState(0);
   useEffect(() => {
@@ -99,18 +104,28 @@ export default function RoteiroPersonalizadoPage() {
     if (!formValido || status === "enviando") return;
     setStatus("enviando");
     setErro("");
+    // Pagamento Stone em nova aba, aberta no clique (antes do fetch, senão o
+    // navegador bloqueia o pop-up) — mesmo fluxo do Guia Turístico.
+    const janelaPagamento = abrirAbaPagamento();
     try {
       const resposta = await fetch("/api/roteiro-selfservice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, whatsapp, dias, pessoas, dataViagem, cidades, observacoes, totalBRL, totalUSD, cotacao: cambio?.cotacao ?? null, escopoCiente, termosAceitos }),
+        body: JSON.stringify({ nome, email, whatsapp, dias, pessoas, dataViagem, cidades, observacoes, totalBRL, totalUSD, cotacao: cambio?.cotacao ?? null, escopoCiente, termosAceitos, pagarOnline: true }),
       });
       const dados = await resposta.json().catch(() => ({}));
       if (!resposta.ok) throw new Error(dados?.error || "Não foi possível enviar seu pedido agora. Tente de novo.");
       window.gtag?.("event", "generate_lead", { form_name: "roteiro_personalizado", contact_channel: "site" });
+      if (dados?.checkoutUrl) {
+        if (!enviarParaPagamento(janelaPagamento, dados.checkoutUrl)) return; // a página atual foi para a Stone
+        setLinkPagamento(dados.checkoutUrl);
+      } else {
+        fecharAba(janelaPagamento);
+      }
       setStatus("enviado");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) {
+      fecharAba(janelaPagamento);
       setErro(e instanceof Error ? e.message : "Não foi possível enviar seu pedido agora.");
       setStatus("erro");
     }
@@ -124,13 +139,25 @@ export default function RoteiroPersonalizadoPage() {
       <BarraProduto titulo="Roteiro Personalizado" />
 
       {status === "enviado" ? (
-        <TelaEnviado
-          titulo="Recebemos seu pedido"
-          texto="Nossa equipe fala com você pelo WhatsApp para o briefing — em geral no mesmo dia útil. O pagamento é combinado nessa conversa; nada foi cobrado no site."
-          linkWhatsapp={linkWhatsapp}
-        />
+        <>
+          {linkPagamento && (
+            <div className="px-5 pt-10">
+              <BlocoPagamentoNovaAba url={linkPagamento} />
+            </div>
+          )}
+          <TelaEnviado
+            titulo="Recebemos seu pedido"
+            texto={
+              linkPagamento
+                ? "Conclua o pagamento na aba da Stone. Depois da confirmação, nossa equipe fala com você pelo WhatsApp para o briefing — em geral no mesmo dia útil."
+                : "Não conseguimos abrir o pagamento online agora. Nossa equipe envia o link de pagamento e marca o briefing com você pelo WhatsApp — em geral no mesmo dia útil."
+            }
+            linkWhatsapp={linkWhatsapp}
+          />
+        </>
       ) : (
         <div className="mx-auto max-w-5xl px-5 pt-5 md:px-8 md:pt-8">
+          <AvisoPagamentoConcluido />
           {/* Banner */}
           <section className="relative -mx-5 overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
             <div className="relative h-72 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[50%]">
@@ -212,7 +239,7 @@ export default function RoteiroPersonalizadoPage() {
           {/* 2 — Dados */}
           <div className="mt-8 border-t border-black/10 pt-6">
             <TituloPasso numero={2} titulo="Seus dados" />
-            <p className="mt-1 text-sm text-black/70">Nossa equipe entra em contato por este WhatsApp para o briefing.</p>
+            <p className="mt-1 text-sm text-black/70">O comprovante chega por e-mail; nossa equipe entra em contato por este WhatsApp para o briefing.</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <Campo rotulo="Nome completo">
                 <input value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" className={classeInput(false)} />
@@ -264,7 +291,10 @@ export default function RoteiroPersonalizadoPage() {
                 .
               </span>
             </label>
-            <p className="mt-4 text-xs leading-5 text-black/55">Nada é cobrado no site: o pagamento é combinado com a equipe pelo WhatsApp.</p>
+            <p className="mt-4 text-xs leading-5 text-black/55">
+              Ao continuar, o pagamento abre em uma nova aba, pela Stone (Pix ou cartão). Depois da confirmação, nossa equipe fala com você pelo
+              WhatsApp para o briefing.
+            </p>
             {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
           </div>
         </div>
@@ -282,8 +312,8 @@ export default function RoteiroPersonalizadoPage() {
           detalhe={`${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}${totalUSD !== null ? ` · ${formatUSD(totalUSD)}` : ""}`}
           semValor="Carregando a cotação do dia…"
           semValorAviso={false}
-          rotuloBotao="Enviar pedido"
-          mostrarStone={false}
+          rotuloBotao="Ir para o pagamento"
+          mostrarStone
           sentinelaId="checkout-ultimo-passo"
           classeValor={inter.className}
         />

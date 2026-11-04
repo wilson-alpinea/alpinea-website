@@ -3,6 +3,8 @@ import { ROTEIRO_BASE_DIAS, ROTEIRO_PRECO_BASE, ROTEIRO_PRECO_DIA_EXTRA, ROTEIRO
 import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
+import { criarCheckoutParaCliente } from "../../../lib/pagarme/checkoutPedido";
+import { buscarCotacaoUSD } from "../../lib/cotacaoUSDServidor";
 
 export const runtime = "nodejs";
 
@@ -88,11 +90,20 @@ export async function POST(req: Request) {
     const dataViagem = /^\d{4}-\d{2}-\d{2}$/.test(String(body.dataViagem ?? "")) ? String(body.dataViagem) : "";
     const cidades = texto(body.cidades, 300);
     const observacoesCliente = texto(body.observacoes, 2000);
-    const cotacao = Number(body.cotacao) > 0 ? Number(body.cotacao) : null;
-
+    // Compra online pela Stone (Wilson, 04/nov/2026: "roteiro pode ter
+    // compra online self-service via Stone"). O total é RECALCULADO aqui —
+    // preço do roteiro (app/lib/precoRoteiro.ts) + taxa de grupo em dólar na
+    // cotação do servidor; o valor enviado pela página só vai para o log.
+    const pagarOnline = body.pagarOnline === true;
     const baseBRL = PRECO_BASE + Math.max(0, dias - BASE_DIAS) * PRECO_DIA_EXTRA;
     const taxaUSD = Math.ceil(Math.max(0, pessoas - PESSOAS_SEM_TAXA) / 2) * TAXA_USD_A_CADA_2;
+    const cotacaoServidor = taxaUSD > 0 ? await buscarCotacaoUSD() : null;
+    const cotacao = cotacaoServidor?.cotacao ?? null;
     const totalBRL = cotacao ? Math.round((baseBRL + taxaUSD * cotacao) * 100) / 100 : baseBRL;
+    const totalEnviado = Number(body.totalBRL) || 0;
+    if (totalEnviado && Math.abs(totalEnviado - totalBRL) > Math.max(5, totalBRL * 0.02)) {
+      console.warn(`Valor divergente no Roteiro (cliente R$ ${totalEnviado} × servidor R$ ${totalBRL}) — usando o do servidor.`);
+    }
 
     const linhasResumo: [string, string][] = [
       ["Produto", "Roteiro Personalizado"],
@@ -102,8 +113,8 @@ export async function POST(req: Request) {
       ["Cidades de interesse", cidades || "Não informadas"],
       ["Preço-base", `R$ ${baseBRL.toLocaleString("pt-BR")}`],
       ["Taxa de grupo", taxaUSD ? `US$ ${taxaUSD} (${pessoas} pessoas)` : "Não se aplica"],
-      ["Total mostrado ao cliente", `R$ ${totalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}${cotacao ? ` (US$ 1 = R$ ${cotacao.toLocaleString("pt-BR")})` : ""}`],
-      ["Forma de pagamento", "A combinar pelo WhatsApp"],
+      ["Total (calculado no servidor)", `R$ ${totalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}${cotacao ? ` (US$ 1 = R$ ${cotacao.toFixed(4)}${cotacaoServidor?.fallback ? " — ESTIMATIVA, PTAX indisponível" : ""})` : ""}`],
+      ["Forma de pagamento", pagarOnline ? "Online pela Stone (Pix ou cartão)" : "A combinar pelo WhatsApp"],
       ["Escopo (planejamento; reservas por conta do cliente)", "Confirmado"],
       ["Política de Privacidade", "Aceita"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
@@ -160,9 +171,23 @@ export async function POST(req: Request) {
     });
     if (erroInteracao) console.error("Erro ao gravar interação (roteiro-selfservice):", erroInteracao);
 
+    let checkoutUrl: string | null = null;
+    if (pagarOnline && totalBRL > 0) {
+      checkoutUrl = await criarCheckoutParaCliente({
+        supabase,
+        clienteId: cliente.id,
+        valorBRL: totalBRL,
+        itemNome: "Roteiro Personalizado — Ajisai",
+        itemDescricao: `Roteiro Personalizado, ${dias} dias, ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+        observacoes: `Roteiro Personalizado — ${dias} dias, ${pessoas} pessoa(s)`,
+        urlSucesso: `${new URL(req.url).origin}/produtos/roteiro-personalizado?pagamento=concluido`,
+        rotuloLog: "roteiro-selfservice",
+      });
+    }
+
     await notificarPorEmail({ nome, email, resumoTexto, resumoHtml });
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl, totalBRL }, { status: 200 });
   } catch (error) {
     console.error("Erro no pedido de Roteiro Personalizado:", error);
     return NextResponse.json({ error: "Erro interno do servidor. Fale com a Ajisai pelo WhatsApp." }, { status: 500 });

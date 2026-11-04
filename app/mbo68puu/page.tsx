@@ -44,13 +44,14 @@ const RADAR_DIMENSIONS: RadarDimension[] = [
   },
 ];
 
+// Ícones de traço azul-marinho do perfil do viajante (Wilson, 04/nov/2026).
 const DIMENSION_ICON_SRC: Record<DimensionIconKind, string> = {
-  cultura: "/images/icone-cultura.webp",
-  gastronomia: "/images/icone-gastronomia.webp",
-  natureza: "/images/icone-natureza.webp",
-  entretenimento: "/images/icone-entretenimento.webp",
-  compras: "/images/icone-compras.webp",
-  bemestar: "/images/icone-bemestar-relaxamento.webp",
+  cultura: "/images/icone-perfil-cultura.png",
+  gastronomia: "/images/icone-perfil-gastronomia.png",
+  natureza: "/images/icone-perfil-natureza.png",
+  entretenimento: "/images/icone-perfil-entretenimento.png",
+  compras: "/images/icone-perfil-compras.png",
+  bemestar: "/images/icone-perfil-bemestar.png",
 };
 
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
@@ -120,7 +121,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 
       {dimensions.map((d, i) => {
         const p = point(radius + 34, i);
-        const size = 57;
+        const size = 44;
         return (
           <image
             key={i}
