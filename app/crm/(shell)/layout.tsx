@@ -14,6 +14,7 @@ const NAV_AGENCIA = [
   { href: "/crm/fornecedores", label: "Fornecedores" },
   { href: "/crm/pipeline", label: "Pipeline" },
   { href: "/crm/acessos", label: "Acessos" },
+  { href: "/crm/comissoes", label: "Comissões" },
   { href: "/crm/precos", label: "Preços" },
 ];
 const NAV_EMPREGOS = [

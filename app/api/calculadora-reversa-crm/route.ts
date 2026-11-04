@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
+import { lerQuantidades } from "../../lib/comissaoTabela";
 
 export const runtime = "nodejs";
 
@@ -115,6 +116,16 @@ export async function POST(req: Request) {
 
     if (erroInteracao) {
       console.error("Erro ao gravar interação (calculadora-reversa-crm):", erroInteracao);
+    }
+
+    // Comissão: rascunho com as quantidades da calculadora (migração 038).
+    // Não conta como comissão até a equipe revisar e aprovar no cliente.
+    const quantidades = lerQuantidades(body.comissaoQuantidades);
+    if (Object.keys(quantidades).length) {
+      const { error: erroComissao } = await supabase
+        .from("comissoes_vendas")
+        .insert({ cliente_id: cliente.id, quantidades, origem: "calculadora", status: "rascunho", updated_by_email: consultorEmail || null });
+      if (erroComissao) console.error("Erro ao gravar rascunho de comissão (calculadora-reversa-crm):", erroComissao.message);
     }
 
     return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });

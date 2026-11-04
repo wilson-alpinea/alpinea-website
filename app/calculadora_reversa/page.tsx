@@ -1,5 +1,6 @@
 "use client";
 
+import { quantidadesDaCalculadora } from "../lib/comissaoTabela";
 import Link from "next/link";
 import { bodoniModa } from "@/app/fonts/bodoni";
 import { useMemo, useState } from "react";
@@ -3013,6 +3014,21 @@ export default function CalculadoraReversaPage() {
           dataViagem: dataViagemEstimada || null,
           produtoSecundario: produtoSecundarioDoCrm(),
           resumoTexto: construirResumoCrm(),
+          // Quantidades para a comissão (Wilson, 04/nov/2026) — só sugestão:
+          // a equipe revisa e aprova no cliente do CRM.
+          comissaoQuantidades: quantidadesDaCalculadora({
+            chaves: itensSelecionados.map(chaveDoItem),
+            pessoas,
+            dias,
+            quartos: quartosNecessarios,
+            classeAereo: resultado.classeAereoFinal,
+            categoriaHotel: resultado.categoriaHotelFinal,
+            guiaDias,
+            jrPassPessoas,
+            esimPessoas: wifiPessoasOuUnidades,
+            trechosMotorista: selecaoMotorista.itens.length,
+            ienesCambio: quantidadeIenes,
+          }),
         }),
       });
       const dados = await resposta.json();

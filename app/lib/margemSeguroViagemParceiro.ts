@@ -25,6 +25,11 @@ export const MARGEM_ATE_60_ANOS = P("seguroParceiro.margemAte60", 50);
 export type CanalSeguro = "site" | "direto";
 export const MARGEM_CANAL_DIRETO = P("seguroParceiro.margemCanalDireto", 300);
 export const MARGEM_80_ANOS = P("seguroParceiro.margem80", 100);
+// Link de venda do vendedor (parceiro/consultor — Wilson, 04/nov/2026):
+// "padrão de Preço Final = Custo × 250%", configurável por usuário em
+// /crm/comissoes. Aqui fica o padrão de quem não tem valor próprio.
+// Em % DO CUSTO (250 = custo × 2,5 → margem de 150%).
+export const MULT_SEGURO_VENDEDOR = P("seguroParceiro.multVendedor", 250);
 export const IDADE_MAXIMA_ONLINE = 80;
 
 export function margemPorIdade(idade: number): number {
@@ -41,7 +46,9 @@ export function margemDoGrupo(idades: number[]): number {
 
 /** Margem final do plano: a do grupo, limitada para o preço não passar do
  * balcão do fornecedor e, se configurado, ao teto da agência. */
-export function margemDoPlano(params: { idades: number[]; custo: number; balcao: number; teto?: number | null; canal?: CanalSeguro }): number {
+export function margemDoPlano(params: { idades: number[]; custo: number; balcao: number; teto?: number | null; canal?: CanalSeguro; margemFixa?: number | null }): number {
+  // Link do vendedor: margem fixa do vendedor (sem teto de balcão).
+  if (params.margemFixa != null && params.margemFixa >= 0) return params.margemFixa;
   if (params.canal === "direto") return MARGEM_CANAL_DIRETO;
   let m = margemDoGrupo(params.idades);
   if (params.custo > 0 && params.balcao > params.custo) {

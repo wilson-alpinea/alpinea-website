@@ -115,6 +115,7 @@ const FIXOS: Record<string, Fixo> = {
   "seguroParceiro.margemAte60": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Margem até 60 anos", unidade: "pct", nota: "Nunca passa do preço de balcão do plano." },
   "seguroParceiro.margem80": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Margem aos 80 anos (sobe em linha reta a partir dos 61)", unidade: "pct" },
   "seguroParceiro.margemCanalDireto": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Margem do canal direto (/seguro-viagem/direto)", unidade: "pct" },
+  "seguroParceiro.multVendedor": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Preço final no link do vendedor (% do custo — 250 = custo × 2,5)", unidade: "pct", nota: "Padrão de quem não tem valor próprio em Comissões." },
   // Hotel
   "transporte.diariaCusto": { grupo: "transporte", secao: "Diárias e adicionais", rotulo: "Transporte privado durante o roteiro — diária (custo)", unidade: "BRL", aplica: "padrao" },
   "motorista.diariaCustoUSD": { grupo: "transporte", secao: "Diárias e adicionais", rotulo: "Motorista à disposição — diária até 4 pessoas (custo)", unidade: "USD", aplica: "motorista" },

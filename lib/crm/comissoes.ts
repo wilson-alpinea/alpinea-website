@@ -11,6 +11,10 @@
 // Só servidor (usa service role).
 import { createAdminClient } from "@/lib/supabase/admin";
 import { lerRemuneracaoProdutos, type RemuneracaoProdutos } from "./permissoes";
+import { vendasAprovadas } from "./comissaoVendas";
+// + Comissão por serviço em ienes (migração 038, Wilson 04/nov/2026): venda
+// com comissão APROVADA no card do cliente entra pelo valor aprovado (em R$,
+// câmbio comercial), no mês da aprovação, e deixa de usar as regras antigas.
 // + Regra por produto (migração 032): se o cliente tem um produto com regra
 // própria na empresa/usuário, vale ela; senão, a remuneração padrão.
 
@@ -18,7 +22,9 @@ export type Beneficiario = {
   chave: string;
   nome: string;
   tipo: "empresa" | "usuario";
-  regra: "percentual" | "fixo" | "por_produto";
+  regra: "percentual" | "fixo" | "por_produto" | "tabela";
+  /** Vendas com comissão aprovada pela tabela de serviços (migração 038). */
+  vendasTabela?: number;
   valorRegra: number;
   vendas: number;
   recebidoC: number;
@@ -57,6 +63,9 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
     db.from("recebimentos").select("pagamento_id, tipo, valor, data"),
   ]);
   if (rPar.error || rPerf.error || rCli.error) return { erro: "Não foi possível carregar os dados (rodou a migração 030?)." };
+  const aprovadas = await vendasAprovadas(db);
+  const clientesComTabela = new Set(aprovadas.map((v) => v.cliente_id));
+  const mesSP = (iso: string) => new Date(Date.parse(iso) - 3 * 3600_000).toISOString().slice(0, 7);
 
   type Regra = { nome: string; tipo: "percentual" | "fixo" | "por_produto"; valor: number; porProduto: RemuneracaoProdutos };
   const regra = (x: { remuneracao_tipo?: string | null; remuneracao_valor?: unknown }) =>
@@ -98,7 +107,7 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
     // Cada dono do cliente + a regra que vale para ESTE cliente.
     const donos = (clienteId: string) => {
       const c = clientes.get(clienteId) as Record<string, unknown> | undefined;
-      if (!c) return [];
+      if (!c || clientesComTabela.has(clienteId)) return [];
       const out: { b: Beneficiario; r: { tipo: "percentual" | "fixo"; valor: number } | null }[] = [];
       const pid = c.parceiro_id as string | null;
       const rid = c.responsavel_id as string | null;
@@ -128,9 +137,20 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
         if (r?.tipo === "percentual") b.comissaoC += Math.round((v * r.valor) / 100);
       }
     }
+    // Comissões aprovadas pela tabela de serviços, no mês da aprovação.
+    for (const v of aprovadas) {
+      if (mesSP(v.aprovado_em) !== mes) continue;
+      for (const sb of v.snapshot.beneficiarios ?? []) {
+        const chave = sb.chave;
+        let b = acc.get(chave);
+        if (!b) acc.set(chave, (b = { chave, nome: sb.nome, tipo: sb.tipo, regra: "tabela", valorRegra: 0, vendas: 0, recebidoC: 0, comissaoC: 0 }));
+        b.vendasTabela = (b.vendasTabela ?? 0) + 1;
+        b.comissaoC += Math.round(Number(sb.totalBRL) * 100);
+      }
+    }
     const beneficiarios = [...acc.values()]
       .map((b) => ({ ...b, comissaoC: Math.max(0, b.comissaoC) }))
-      .filter((b) => b.comissaoC > 0 || b.vendas > 0 || b.recebidoC > 0)
+      .filter((b) => b.comissaoC > 0 || b.vendas > 0 || b.recebidoC > 0 || (b.vendasTabela ?? 0) > 0)
       .sort((a, b) => b.comissaoC - a.comissaoC);
     return { mes, rotuloMes: rotulo(mes), prazo: prazoComissao(mes), beneficiarios, totalC: beneficiarios.reduce((s, b) => s + b.comissaoC, 0) };
   });

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { vendedorSeguro } from "../../../../lib/seguroviagem/vendedor";
 import { atribuicaoDaRequisicao } from "../../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../../lib/crm/origem";
@@ -73,7 +74,8 @@ export async function POST(req: Request) {
     }
 
     const idades = dados.nasc.map((n) => idadeNaData(n, dados.partida) ?? 0);
-    const margem = margemDoPlano({ idades, custo: dados.custo, balcao: dados.balcao, teto: tetoAgencia(), canal: dados.k === "direto" ? "direto" : "site" });
+    // Link do vendedor: a margem dele, gravada (e assinada) no token da cotação.
+    const margem = margemDoPlano({ idades, custo: dados.custo, balcao: dados.balcao, teto: tetoAgencia(), canal: dados.k === "direto" ? "direto" : "site", margemFixa: typeof dados.m === "number" ? dados.m : null });
     const valorEstimado = comMargem(dados.custo, margem);
 
     let checkout: { url: string; aviso: string | null };
@@ -114,12 +116,15 @@ export async function POST(req: Request) {
     try {
       const supabase = createAdminClient();
       const atribuicao = await atribuicaoDaRequisicao(req, supabase);
+      const vendedor = dados.v ? await vendedorSeguro(dados.v) : null;
       const agora = new Date().toISOString();
       const { error } = await supabase.from("seguro_pedidos").insert({
-        parceiro_id: atribuicao.parceiro_id,
+        parceiro_id: vendedor?.parceiroId ?? atribuicao.parceiro_id,
+        // Vendedor do link (migração 038) vira o responsável do pedido.
+        ...(vendedor?.perfilId ? { responsavel_id: vendedor.perfilId } : {}),
         // Link de venda direta → canal WhatsApp (Wilson, 29/out/2026).
         canal: dados.k === "direto" ? "whatsapp" : atribuicao.canal,
-        canal_detalhe: dados.k === "direto" ? "Venda direta (link /seguro-viagem/direto)" : atribuicao.canal_detalhe,
+        canal_detalhe: dados.k === "direto" ? `Venda direta (link /seguro-viagem/direto)${vendedor ? ` — vendedor: ${vendedor.nome}` : ""}` : atribuicao.canal_detalhe,
         utm: atribuicao.utm,
         etapa: "link_enviado",
         nome,

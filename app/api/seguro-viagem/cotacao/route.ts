@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { criarCotacao, ErroSeguroViagem, seguroViagemConfigurado } from "../../../../lib/seguroviagem/client";
 import { montarNiveis } from "../../../../lib/seguroviagem/niveis";
+import { vendedorSeguro } from "../../../../lib/seguroviagem/vendedor";
 import { IDADE_MAXIMA_ONLINE, idadeNaData } from "../../../lib/margemSeguroViagemParceiro";
 
 export const runtime = "nodejs";
@@ -59,6 +60,8 @@ export async function POST(req: Request) {
       retorno,
       emViagem: travelling === "1",
       canal: body.canal === "direto" ? "direto" : "site",
+      // Link do vendedor (migração 038): só no canal direto.
+      vendedor: body.canal === "direto" ? await vendedorSeguro(body.vendedor) : null,
     });
     if (niveis.length === 0) {
       return NextResponse.json({ error: "Não encontramos planos para esse grupo. Fale com a nossa equipe pelo WhatsApp." }, { status: 404 });

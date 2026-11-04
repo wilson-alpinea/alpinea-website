@@ -122,7 +122,15 @@ export default function SeguroViagemPage() {
       const r = await fetch("/api/seguro-viagem/cotacao", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ partida, retorno, travelling, nascimentos: viajantes.map((v) => v.nascimento), canal: canalDireto ? "direto" : "site" }),
+        body: JSON.stringify({
+          partida,
+          retorno,
+          travelling,
+          nascimentos: viajantes.map((v) => v.nascimento),
+          canal: canalDireto ? "direto" : "site",
+          // Link do vendedor (?vendedor=...) — preço do vendedor, conferido no servidor.
+          vendedor: canalDireto ? new URLSearchParams(window.location.search).get("vendedor") : null,
+        }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok || !Array.isArray(d.niveis)) {

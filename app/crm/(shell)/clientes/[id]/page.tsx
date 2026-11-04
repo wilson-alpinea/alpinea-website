@@ -38,6 +38,7 @@ import {
   type EventoHistorico,
 } from "@/lib/crm/processo";
 import { FinanceiroSection } from "./financeiro/FinanceiroSection";
+import { ComissaoVendaCard } from "./ComissaoVendaCard";
 import { NotasFiscaisServico } from "../../components/NotasFiscaisServico";
 import { carregarFinanceiro } from "./financeiro/carregar";
 import { ConfirmacaoCadastro } from "./ConfirmacaoCadastro";
@@ -56,7 +57,7 @@ export default async function ClienteDetalhePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ erro?: string; criado?: string; receber?: string }>;
+  searchParams: Promise<{ erro?: string; criado?: string; receber?: string; comissaoOk?: string; comissaoErro?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -461,6 +462,7 @@ export default async function ClienteDetalhePage({
       <div className="mt-6">
         <FinanceiroSection clienteId={id} {...financeiro} abrirRecebimento={sp.receber ?? null} />
         <NotasFiscaisServico origem="agencia" registroId={id} concluido={cliente.estagio_entrega === "concluida"} />
+        <ComissaoVendaCard clienteId={id} cliente={cliente} mensagem={{ ok: sp.comissaoOk === "1", erro: sp.comissaoErro }} />
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
