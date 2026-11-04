@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { exigirSomenteAdmin } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { valoresNoAr } from "@/app/lib/parametrosPreco";
-import { GRUPOS, listarParametros, descrever } from "./catalogo";
+import { CATEGORIAS, PRODUTOS, listarParametros, descrever } from "./catalogo";
 import { PrecosPagina, type HistoricoPreco, type ParametroTela } from "./PrecosPagina";
 
 // Preços e margens de todos os cálculos do site (Wilson, 04/nov/2026):
@@ -39,7 +39,7 @@ export default async function PrecosPage() {
   const historico: HistoricoPreco[] = (rHist.data ?? []).map((h) => {
     const d = descrever(h.parametro_id as string);
     return {
-      rotulo: d ? [d.secao, d.rotulo, d.coluna].filter(Boolean).join(" · ") : (h.parametro_id as string),
+      rotulo: d ? [PRODUTOS.find((g) => g.id === d.grupo)?.nome, d.secao, d.rotulo, d.coluna].filter(Boolean).join(" · ") : (h.parametro_id as string),
       unidade: d?.unidade ?? "num",
       anterior: h.valor_anterior == null ? null : Number(h.valor_anterior),
       novo: h.valor_novo == null ? null : Number(h.valor_novo),
@@ -50,7 +50,8 @@ export default async function PrecosPage() {
 
   return (
     <PrecosPagina
-      grupos={GRUPOS.map((g) => ({ id: g.id, nome: g.nome, descricao: g.descricao }))}
+      categorias={CATEGORIAS}
+      produtos={PRODUTOS.map((g) => ({ ...g }))}
       parametros={parametros}
       historico={historico}
       erroBanco={erroBanco}

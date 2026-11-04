@@ -24,27 +24,72 @@ export type DescricaoParametro = {
   nota?: string;
 };
 
-export const GRUPOS = [
-  { id: "margens", nome: "Margens e impostos", descricao: "Multiplicadores aplicados sobre o custo. Mudar a margem padrão recalcula todos os itens marcados com “margem padrão”." },
-  { id: "hotel", nome: "Hotel", descricao: "Diárias e ajustes do calculador do Pacote/Viagem Personalizada e da Calculadora Reversa." },
-  { id: "aereo", nome: "Aéreo e extensões", descricao: "Aéreo internacional e extensões para Coreia do Sul e China." },
-  { id: "transporte", nome: "Transporte e motorista", descricao: "Transporte do roteiro, motorista à disposição e adicionais." },
-  { id: "rotas", nome: "Transporte Privado — rotas", descricao: "Custo do fornecedor por rota e veículo (US$). Transfers de aeroporto usam a margem de transfer; o resto, a margem do motorista." },
-  { id: "guia", nome: "Guia turístico", descricao: "Guia brasileiro e estrangeiro (página do guia, pacote e Calculadora Reversa)." },
-  { id: "jrpass", nome: "JR Pass", descricao: "Custo do passe (US$) — o preço de venda é custo × margem do JR Pass." },
-  { id: "roteiro", nome: "Roteiro e taxa de grupo", descricao: "Roteiro Personalizado (avulso e no pacote) e taxa por passageiro extra." },
-  { id: "ingressos", nome: "Ingressos", descricao: "Custo por pessoa (US$), com a margem padrão." },
-  { id: "servicos", nome: "Serviços e conectividade", descricao: "Serviços avulsos do calculador, eSIM/Wi-fi do pacote, Ajisai Shopping e Limousine Bus." },
-  { id: "cambio", nome: "Câmbio", descricao: "Câmbio de ienes (página pública e calculadoras) e dólar turismo." },
-  { id: "seguro", nome: "Seguro viagem", descricao: "Seguro do calculador (diária × faixa etária) e margens do seguro do parceiro (venda online)." },
-  { id: "pagamento", nome: "Parcelamento", descricao: "Simulação de cartão e Pix parcelado nas calculadoras." },
-  { id: "perfil", nome: "Perfil do viajante", descricao: "Ritmo da viagem (cadenciado / equilibrado / acelerado) nas calculadoras." },
-  { id: "pacotes", nome: "Pacotes prontos", descricao: "Preço final (US$) dos pacotes de /pacotes. O “a partir de” em /produtos acompanha." },
-  { id: "documentacao", nome: "Documentação (Ajisai)", descricao: "Visto específico e Certificado de Elegibilidade — valores do parceiro, antes do adicional Ajisai por pessoa." },
-  { id: "empregos", nome: "Empregos — financiamento", descricao: "Valores da proposta de financiamento dos candidatos." },
-  { id: "frete", nome: "Frete SEDEX (JR Pass)", descricao: "Frete do voucher do JR Pass por região." },
-] as const;
-export type GrupoId = (typeof GRUPOS)[number]["id"];
+// Menu da tela /crm/precos (Wilson, 04/nov/2026: "separe os produtos num
+// menu mais fácil de entender"): um item por produto, agrupado por unidade.
+// Cada parâmetro cai no produto que ele afeta (produtoDe, abaixo) — a margem
+// própria de cada produto fica no próprio produto; "Margens e impostos" só
+// tem o que vale para o site inteiro.
+export type CategoriaId = "geral" | "agencia" | "cambio" | "seguro" | "documentacao" | "empregos";
+export const CATEGORIAS: { id: CategoriaId; nome: string; cor: string }[] = [
+  { id: "geral", nome: "Base do site", cor: "#20252B" },
+  { id: "agencia", nome: "Viagens — Agência", cor: "#24476B" },
+  { id: "cambio", nome: "Câmbio", cor: "#9A6B12" },
+  { id: "seguro", nome: "Seguro viagem & eSIM", cor: "#75608B" },
+  { id: "documentacao", nome: "Documentação", cor: "#8A5A3C" },
+  { id: "empregos", nome: "Empregos", cor: "#27675B" },
+];
+
+export const PRODUTOS = [
+  { id: "margens", categoria: "geral", nome: "Margens e impostos", icone: "svg:percent", onde: "Vale para todos os itens marcados com “margem padrão”.", descricao: "Imposto e margem padrão do site: preço de venda = custo × imposto × margem." },
+  { id: "pagamento", categoria: "geral", nome: "Parcelamento", icone: "/images/icone-cartao-credito.png", onde: "Viagem Personalizada e Calculadora Reversa.", descricao: "Taxas do cartão e do Pix parcelado usadas na simulação de pagamento." },
+  { id: "roteiro", categoria: "agencia", nome: "Roteiro Personalizado", icone: "/images/produtos/roteiro-personalizado.png", onde: "/produtos/roteiro-personalizado, /ajisairoteiros, Viagem Personalizada e Calculadora Reversa.", descricao: "Preço do roteiro até 15 dias, dia extra e taxa de grupo do roteiro avulso." },
+  { id: "viagemPersonalizada", categoria: "agencia", nome: "Viagem Personalizada", icone: "/images/produtos/viagem-personalizada-icone-v2.png", onde: "Simulador /viagem_personalizada_selfservice e Calculadora Reversa.", descricao: "Taxa de grupo, extensões internacionais e ritmo do viajante." },
+  { id: "pacotes", categoria: "agencia", nome: "Pacotes prontos", icone: "/images/produtos/pacote-de-viagem.png", onde: "/pacotes e “a partir de” em /produtos.", descricao: "Preço final dos pacotes Caravana e Individual." },
+  { id: "hotel", categoria: "agencia", nome: "Hotéis", icone: "/images/produtos/hoteis.png", onde: "Viagem Personalizada, Calculadora Reversa e /produtos/hoteis.", descricao: "Diária por categoria, café da manhã, tipo de quarto, cidade e temporada." },
+  { id: "aereo", categoria: "agencia", nome: "Passagem aérea", icone: "/images/produtos/passagem-aerea.png", onde: "Viagem Personalizada, Calculadora Reversa e /produtos/passagens-aereas.", descricao: "Aéreo internacional por classe." },
+  { id: "transporte", categoria: "agencia", nome: "Transporte Privado", icone: "/images/produtos/transporte-privado.png", onde: "/produtos/transporte-privado, Viagem Personalizada e Calculadora Reversa.", descricao: "Motorista à disposição, tours de 10 h e rotas dentro da cidade." },
+  { id: "transfer", categoria: "agencia", nome: "Transfer Aeroporto", icone: "/images/icone-transfer-aeroporto.png", onde: "/produtos/transfer-aeroporto e calculadoras.", descricao: "Rotas aeroporto ↔ hotel por veículo." },
+  { id: "guia", categoria: "agencia", nome: "Guia Turístico", icone: "/images/produtos/guia-turistico.png", onde: "/produtos/guia-turistico, Viagem Personalizada e Calculadora Reversa.", descricao: "Guia brasileiro e estrangeiro." },
+  { id: "jrpass", categoria: "agencia", nome: "JR Pass", icone: "/images/icone-trem-bala-shinkansen.png", onde: "/produtos/jrpass e calculadoras.", descricao: "Custo do passe, margem, dólar turismo e frete SEDEX do voucher." },
+  { id: "ingressos", categoria: "agencia", nome: "Ingressos", icone: "/images/icone-ingressos.png", onde: "Viagem Personalizada e Calculadora Reversa.", descricao: "Disney, Universal, Express Pass e teamLab." },
+  { id: "servicos", categoria: "agencia", nome: "Restaurantes e serviços", icone: "/images/icone-servico-restaurantes-highend.png", onde: "/produtos/reserva-restaurantes, Viagem Personalizada e Calculadora Reversa.", descricao: "Reservas de restaurantes, concierge, malas e experiências." },
+  { id: "shopping", categoria: "agencia", nome: "Ajisai Shopping", icone: "/images/icone-servico-ajisai-shopping.png", onde: "/produtos/ajisai-shopping e Calculadora Reversa.", descricao: "Comissão sobre as compras acompanhadas." },
+  { id: "limousine", categoria: "agencia", nome: "Limousine Bus", icone: "/images/icone-onibus-v2.png", onde: "Serviços adicionais (self-checkout).", descricao: "Ônibus aeroporto ↔ Tóquio." },
+  { id: "cambio", categoria: "cambio", nome: "Câmbio de ienes", icone: "/images/icone-cambio-dinheiro.png", onde: "/produtos/cambio, Viagem Personalizada e Calculadora Reversa.", descricao: "Spread sobre a cotação, taxa de entrega e pedido mínimo." },
+  { id: "seguro", categoria: "seguro", nome: "Seguro viagem", icone: "/images/icone-seguro-viagem-v2.png", onde: "/produtos/seguro-viagem (parceiro) e calculadoras.", descricao: "Margens do seguro do parceiro e diária do seguro das calculadoras." },
+  { id: "esim", categoria: "seguro", nome: "eSIM e Wi-fi", icone: "/images/icone-esim-v2.png", onde: "Viagem Personalizada e Calculadora Reversa.", descricao: "Conectividade dentro do pacote. O eSIM avulso usa o custo da Simpremium × margem padrão." },
+  { id: "documentacao", categoria: "documentacao", nome: "Visto e COE", icone: "/images/icone-documentacao-visto.png", onde: "/documentacao (visto específico e Certificado de Elegibilidade).", descricao: "Valores do parceiro por consulado e adicional Ajisai por pessoa." },
+  { id: "empregos", categoria: "empregos", nome: "Financiamento de candidatos", icone: "/images/icone-crm-empregos.png", onde: "Proposta de financiamento em /empregos.", descricao: "Visto, certificado, passagem e cesta de serviços." },
+] as const satisfies readonly { id: string; categoria: CategoriaId; nome: string; icone: string; onde: string; descricao: string }[];
+export type GrupoId = (typeof PRODUTOS)[number]["id"];
+
+/** Produto (item do menu) de cada parâmetro. */
+function produtoDe(id: string, rotaTransfer: boolean): GrupoId {
+  if (id.startsWith("motorista.rota.")) return rotaTransfer ? "transfer" : "transporte";
+  const regras: [RegExp, GrupoId][] = [
+    [/^geral\./, "margens"],
+    [/^pagamento\./, "pagamento"],
+    [/^roteiro\./, "roteiro"],
+    [/^(perfil|extensao|grupo)\./, "viagemPersonalizada"],
+    [/^pacotes\./, "pacotes"],
+    [/^hotel\./, "hotel"],
+    [/^aereo\./, "aereo"],
+    [/^(motorista|transporte)\./, "transporte"],
+    [/^transfer\./, "transfer"],
+    [/^guia\./, "guia"],
+    [/^(jrpass|frete)\.|^cambio\.spreadDolarTurismo$/, "jrpass"],
+    [/^ingressos\./, "ingressos"],
+    [/^servicos\./, "servicos"],
+    [/^shopping\./, "shopping"],
+    [/^limousine\./, "limousine"],
+    [/^cambio\./, "cambio"],
+    [/^seguro(Parceiro)?\./, "seguro"],
+    [/^conectividade\./, "esim"],
+    [/^doc\./, "documentacao"],
+    [/^empregos\./, "empregos"],
+  ];
+  return regras.find(([r]) => r.test(id))?.[1] ?? "margens";
+}
 
 const CIDADES: Record<string, string> = {
   tokyo: "Tokyo", kyoto: "Kyoto", osaka: "Osaka", hokkaido: "Hokkaido (Sapporo)", okinawa: "Okinawa", hiroshima: "Hiroshima", nara: "Nara", hakone: "Hakone", nikko: "Nikko", kanazawa: "Kanazawa", takayama: "Takayama", kamakura: "Kamakura", nagoya: "Nagoya", fukuoka: "Fukuoka", kobe: "Kobe", yokohama: "Yokohama", miyajima: "Miyajima", nagano: "Nagano", ishigaki: "Ishigaki", yakushima: "Yakushima", fuji: "Fuji / Kawaguchiko", motegi: "Motegi", suzuka: "Suzuka", koyasan: "Koyasan", kamikochi: "Kamikochi", kinosaki: "Kinosaki Onsen", kusatsu: "Kusatsu Onsen", niseko: "Niseko", hakuba: "Hakuba", nozawa: "Nozawa Onsen",
@@ -52,29 +97,29 @@ const CIDADES: Record<string, string> = {
 const PERFIS: Record<string, string> = { cadenciado: "Cadenciado", equilibrado: "Equilibrado", acelerado: "Acelerado" };
 const CATEGORIAS_RITMO: Record<string, string> = { ingressos: "Ingressos", transporteUrbano: "Transporte urbano", experienciasReservas: "Experiências e reservas", complexidadeOperacional: "Complexidade operacional" };
 
-type Fixo = Omit<DescricaoParametro, "grupo" | "secao"> & { grupo: GrupoId; secao?: string };
+type Fixo = Omit<DescricaoParametro, "grupo" | "secao"> & { grupo: string; secao?: string };
 const FIXOS: Record<string, Fixo> = {
   // Margens
   "geral.imposto": { grupo: "margens", secao: "Padrão do site", rotulo: "Imposto sobre o lucro", unidade: "mult", nota: "Lucro Presumido — 1,15 = +15%. Entra antes da margem." },
   "geral.margemPadrao": { grupo: "margens", secao: "Padrão do site", rotulo: "Margem padrão (sobre o valor com imposto)", unidade: "mult", nota: "Preço = custo × imposto × margem. Também calibra o Perfil do viajante." },
-  "motorista.margem": { grupo: "margens", secao: "Margens próprias", rotulo: "Motorista privado e tours", unidade: "mult" },
-  "transfer.margem": { grupo: "margens", secao: "Margens próprias", rotulo: "Transfer aeroporto ↔ hotel", unidade: "mult" },
-  "jrpass.margem": { grupo: "margens", secao: "Margens próprias", rotulo: "JR Pass", unidade: "mult" },
-  "guia.margemBrasileiro": { grupo: "margens", secao: "Margens próprias", rotulo: "Guia brasileiro", unidade: "mult" },
-  "limousine.margem": { grupo: "margens", secao: "Margens próprias", rotulo: "Limousine Bus", unidade: "mult" },
-  "shopping.comissao": { grupo: "margens", secao: "Margens próprias", rotulo: "Ajisai Shopping — comissão sobre compras", unidade: "fracao" },
-  "cambio.spreadIeneCompra": { grupo: "margens", secao: "Câmbio", rotulo: "Iene — venda ao cliente (página Câmbio)", unidade: "mult", nota: "Cotação de rua × este fator." },
-  "cambio.spreadIeneVenda": { grupo: "margens", secao: "Câmbio", rotulo: "Iene — compra do cliente (página Câmbio)", unidade: "mult", nota: "Cotação de rua × este fator (abaixo de 1)." },
-  "cambio.fatorIeneCalculadoras": { grupo: "margens", secao: "Câmbio", rotulo: "Iene — Viagem Personalizada e Calculadora Reversa", unidade: "mult" },
-  "cambio.spreadDolarTurismo": { grupo: "margens", secao: "Câmbio", rotulo: "Dólar turismo (JR Pass)", unidade: "mult" },
+  "motorista.margem": { grupo: "margens", secao: "Margem", rotulo: "Motorista privado e tours", unidade: "mult" },
+  "transfer.margem": { grupo: "margens", secao: "Margem", rotulo: "Transfer aeroporto ↔ hotel", unidade: "mult" },
+  "jrpass.margem": { grupo: "margens", secao: "Margem", rotulo: "JR Pass", unidade: "mult" },
+  "guia.margemBrasileiro": { grupo: "margens", secao: "Margem", rotulo: "Guia brasileiro", unidade: "mult" },
+  "limousine.margem": { grupo: "margens", secao: "Margem", rotulo: "Limousine Bus", unidade: "mult" },
+  "shopping.comissao": { grupo: "margens", secao: "Margem", rotulo: "Ajisai Shopping — comissão sobre compras", unidade: "fracao" },
+  "cambio.spreadIeneCompra": { grupo: "margens", secao: "Spread sobre a cotação", rotulo: "Iene — venda ao cliente (página Câmbio)", unidade: "mult", nota: "Cotação de rua × este fator." },
+  "cambio.spreadIeneVenda": { grupo: "margens", secao: "Spread sobre a cotação", rotulo: "Iene — compra do cliente (página Câmbio)", unidade: "mult", nota: "Cotação de rua × este fator (abaixo de 1)." },
+  "cambio.fatorIeneCalculadoras": { grupo: "margens", secao: "Spread sobre a cotação", rotulo: "Iene — Viagem Personalizada e Calculadora Reversa", unidade: "mult" },
+  "cambio.spreadDolarTurismo": { grupo: "margens", secao: "Dólar turismo (cotação usada no JR Pass)", rotulo: "Dólar turismo (JR Pass)", unidade: "mult" },
   "seguroParceiro.margemAte60": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Margem até 60 anos", unidade: "pct", nota: "Nunca passa do preço de balcão do plano." },
   "seguroParceiro.margem80": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Margem aos 80 anos (sobe em linha reta a partir dos 61)", unidade: "pct" },
   "seguroParceiro.margemCanalDireto": { grupo: "margens", secao: "Seguro viagem do parceiro (venda online)", rotulo: "Margem do canal direto (/seguro-viagem/direto)", unidade: "pct" },
   // Hotel
-  "transporte.diariaCusto": { grupo: "transporte", rotulo: "Transporte privado durante o roteiro — diária (custo)", unidade: "BRL", aplica: "padrao" },
-  "motorista.diariaCustoUSD": { grupo: "transporte", rotulo: "Motorista à disposição — diária até 4 pessoas (custo)", unidade: "USD", aplica: "motorista" },
-  "motorista.meetGreetCustoUSD": { grupo: "transporte", rotulo: "Adicional meet & greet (custo)", unidade: "USD", aplica: "motorista" },
-  "motorista.cadeirinhaCustoUSD": { grupo: "transporte", rotulo: "Adicional cadeirinha (custo)", unidade: "USD", aplica: "motorista" },
+  "transporte.diariaCusto": { grupo: "transporte", secao: "Diárias e adicionais", rotulo: "Transporte privado durante o roteiro — diária (custo)", unidade: "BRL", aplica: "padrao" },
+  "motorista.diariaCustoUSD": { grupo: "transporte", secao: "Diárias e adicionais", rotulo: "Motorista à disposição — diária até 4 pessoas (custo)", unidade: "USD", aplica: "motorista" },
+  "motorista.meetGreetCustoUSD": { grupo: "transporte", secao: "Diárias e adicionais", rotulo: "Adicional meet & greet (custo)", unidade: "USD", aplica: "motorista" },
+  "motorista.cadeirinhaCustoUSD": { grupo: "transporte", secao: "Diárias e adicionais", rotulo: "Adicional cadeirinha (custo)", unidade: "USD", aplica: "motorista" },
   // Aéreo
   "aereo.economyCustoBRL": { grupo: "aereo", secao: "Aéreo internacional (por pessoa)", rotulo: "Economy (custo)", unidade: "BRL", aplica: "padrao" },
   "aereo.premiumEconomyCustoUSD": { grupo: "aereo", secao: "Aéreo internacional (por pessoa)", rotulo: "Premium Economy (custo)", unidade: "USD", aplica: "padrao" },
@@ -84,29 +129,29 @@ const FIXOS: Record<string, Fixo> = {
   "extensao.vooToquioPequimUSD": { grupo: "aereo", secao: "Extensões — deslocamentos (por pessoa)", rotulo: "Voo Tóquio → Pequim (custo)", unidade: "USD", aplica: "padrao" },
   "extensao.tremPequimXangaiUSD": { grupo: "aereo", secao: "Extensões — deslocamentos (por pessoa)", rotulo: "Trem-bala Pequim → Xangai (custo)", unidade: "USD", aplica: "padrao" },
   // Guia
-  "guia.brasileiroCustoUSD": { grupo: "guia", rotulo: "Guia brasileiro — diária (custo)", unidade: "USD", aplica: "guiaBr" },
-  "guia.estrangeiroCustoJPY": { grupo: "guia", rotulo: "Guia estrangeiro — diária (custo HK Tourist)", unidade: "JPY", aplica: "guiaEstr" },
-  "guia.gorjetaUSD": { grupo: "guia", rotulo: "Gorjeta por pessoa/dia (repasse, sem margem)", unidade: "USD" },
-  "guia.adicionalFujiUSD": { grupo: "guia", rotulo: "Adicional Monte Fuji por guia/dia (valor final)", unidade: "USD" },
-  "geral.jpyPorUsdReferencia": { grupo: "guia", rotulo: "Cotação de referência ¥ por US$ (guia estrangeiro e Limousine)", unidade: "num" },
+  "guia.brasileiroCustoUSD": { grupo: "guia", secao: "Diárias", rotulo: "Guia brasileiro — diária (custo)", unidade: "USD", aplica: "guiaBr" },
+  "guia.estrangeiroCustoJPY": { grupo: "guia", secao: "Diárias", rotulo: "Guia estrangeiro — diária (custo HK Tourist)", unidade: "JPY", aplica: "guiaEstr" },
+  "guia.gorjetaUSD": { grupo: "guia", secao: "Diárias", rotulo: "Gorjeta por pessoa/dia (repasse, sem margem)", unidade: "USD" },
+  "guia.adicionalFujiUSD": { grupo: "guia", secao: "Diárias", rotulo: "Adicional Monte Fuji por guia/dia (valor final)", unidade: "USD" },
+  "geral.jpyPorUsdReferencia": { grupo: "guia", secao: "Cotação de referência", rotulo: "Iene por dólar (¥/US$) — usada no guia estrangeiro e na Limousine", unidade: "num" },
   // Roteiro
-  "roteiro.baseCusto": { grupo: "roteiro", rotulo: "Roteiro Personalizado — até 15 dias (custo)", unidade: "BRL", aplica: "padrao" },
-  "roteiro.diaExtraCusto": { grupo: "roteiro", rotulo: "Roteiro Personalizado — por dia extra (custo)", unidade: "BRL", aplica: "padrao" },
-  "roteiro.taxaUSDCada2Pessoas": { grupo: "roteiro", rotulo: "Roteiro avulso — taxa a cada 2 pessoas acima de 3 (valor final)", unidade: "USD" },
-  "grupo.taxaPassageiroExtraCusto": { grupo: "roteiro", rotulo: "Pacote — taxa por passageiro acima de 3 (custo)", unidade: "BRL", aplica: "padrao" },
+  "roteiro.baseCusto": { grupo: "roteiro", secao: "Preço do roteiro", rotulo: "Roteiro Personalizado — até 15 dias (custo)", unidade: "BRL", aplica: "padrao" },
+  "roteiro.diaExtraCusto": { grupo: "roteiro", secao: "Preço do roteiro", rotulo: "Roteiro Personalizado — por dia extra (custo)", unidade: "BRL", aplica: "padrao" },
+  "roteiro.taxaUSDCada2Pessoas": { grupo: "roteiro", secao: "Preço do roteiro", rotulo: "Roteiro avulso — taxa a cada 2 pessoas acima de 3 (valor final)", unidade: "USD" },
+  "grupo.taxaPassageiroExtraCusto": { grupo: "roteiro", secao: "Taxa de grupo", rotulo: "Pacote — taxa por passageiro acima de 3 (custo)", unidade: "BRL", aplica: "padrao" },
   // Ingressos
-  "ingressos.disneyUniversal": { grupo: "ingressos", rotulo: "Disney/Universal — ingresso avulso (Viagem Personalizada)", unidade: "USD", aplica: "padrao" },
-  "ingressos.disneyland": { grupo: "ingressos", rotulo: "Tokyo Disneyland", unidade: "USD", aplica: "padrao" },
-  "ingressos.disneysea": { grupo: "ingressos", rotulo: "Tokyo DisneySea", unidade: "USD", aplica: "padrao" },
-  "ingressos.disneyPremierAccess": { grupo: "ingressos", rotulo: "Disney Premier Access — por atração", unidade: "USD", aplica: "padrao" },
-  "ingressos.usj": { grupo: "ingressos", rotulo: "Universal Studios Japan", unidade: "USD", aplica: "padrao" },
-  "ingressos.usjExpress4": { grupo: "ingressos", rotulo: "USJ Express Pass 4", unidade: "USD", aplica: "padrao" },
-  "ingressos.usjExpress5": { grupo: "ingressos", rotulo: "USJ Express Pass 5", unidade: "USD", aplica: "padrao" },
-  "ingressos.usjExpress7": { grupo: "ingressos", rotulo: "USJ Express Pass 7", unidade: "USD", aplica: "padrao" },
-  "ingressos.usjExpress8": { grupo: "ingressos", rotulo: "USJ Express Pass 8", unidade: "USD", aplica: "padrao" },
-  "ingressos.usjExpressPremium": { grupo: "ingressos", rotulo: "USJ Express Pass Premium", unidade: "USD", aplica: "padrao" },
-  "ingressos.teamlabTokyo": { grupo: "ingressos", rotulo: "teamLab Tokyo", unidade: "USD", aplica: "padrao" },
-  "ingressos.teamlabKyoto": { grupo: "ingressos", rotulo: "teamLab Kyoto", unidade: "USD", aplica: "padrao" },
+  "ingressos.disneyUniversal": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "Disney/Universal — ingresso avulso (Viagem Personalizada)", unidade: "USD", aplica: "padrao" },
+  "ingressos.disneyland": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "Tokyo Disneyland", unidade: "USD", aplica: "padrao" },
+  "ingressos.disneysea": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "Tokyo DisneySea", unidade: "USD", aplica: "padrao" },
+  "ingressos.disneyPremierAccess": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "Disney Premier Access — por atração", unidade: "USD", aplica: "padrao" },
+  "ingressos.usj": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "Universal Studios Japan", unidade: "USD", aplica: "padrao" },
+  "ingressos.usjExpress4": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "USJ Express Pass 4", unidade: "USD", aplica: "padrao" },
+  "ingressos.usjExpress5": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "USJ Express Pass 5", unidade: "USD", aplica: "padrao" },
+  "ingressos.usjExpress7": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "USJ Express Pass 7", unidade: "USD", aplica: "padrao" },
+  "ingressos.usjExpress8": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "USJ Express Pass 8", unidade: "USD", aplica: "padrao" },
+  "ingressos.usjExpressPremium": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "USJ Express Pass Premium", unidade: "USD", aplica: "padrao" },
+  "ingressos.teamlabTokyo": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "teamLab Tokyo", unidade: "USD", aplica: "padrao" },
+  "ingressos.teamlabKyoto": { grupo: "ingressos", secao: "Custo por pessoa", rotulo: "teamLab Kyoto", unidade: "USD", aplica: "padrao" },
   // Serviços
   "servicos.malaIntermunicipal": { grupo: "servicos", secao: "Serviços do calculador", rotulo: "Envio de mala entre cidades (custo)", unidade: "USD", aplica: "padrao" },
   "servicos.restaurantesHighEnd": { grupo: "servicos", secao: "Serviços do calculador", rotulo: "Pacote de restaurantes high-end (custo)", unidade: "USD", aplica: "padrao" },
@@ -119,18 +164,18 @@ const FIXOS: Record<string, Fixo> = {
   "limousine.tarifaJPY.narita": { grupo: "servicos", secao: "Limousine Bus (tarifa adulto por trecho)", rotulo: "Narita", unidade: "JPY", aplica: "limousine" },
   "limousine.tarifaJPY.haneda": { grupo: "servicos", secao: "Limousine Bus (tarifa adulto por trecho)", rotulo: "Haneda", unidade: "JPY", aplica: "limousine" },
   // Câmbio
-  "cambio.taxaServicoCusto": { grupo: "cambio", rotulo: "Taxa de serviço/entrega dos ienes (custo)", unidade: "BRL", aplica: "padrao" },
-  "cambio.entregaAeroporto": { grupo: "cambio", rotulo: "Entrega no Aeroporto de Guarulhos (valor final)", unidade: "BRL" },
-  "cambio.minimoIenes": { grupo: "cambio", rotulo: "Pedido mínimo (ienes)", unidade: "JPY" },
-  "cambio.minimoIenesAeroporto": { grupo: "cambio", rotulo: "Pedido mínimo com entrega/retirada no aeroporto (ienes)", unidade: "JPY" },
+  "cambio.taxaServicoCusto": { grupo: "cambio", secao: "Taxas e pedido mínimo", rotulo: "Taxa de serviço/entrega dos ienes (custo)", unidade: "BRL", aplica: "padrao" },
+  "cambio.entregaAeroporto": { grupo: "cambio", secao: "Taxas e pedido mínimo", rotulo: "Entrega no Aeroporto de Guarulhos (valor final)", unidade: "BRL" },
+  "cambio.minimoIenes": { grupo: "cambio", secao: "Taxas e pedido mínimo", rotulo: "Pedido mínimo (ienes)", unidade: "JPY" },
+  "cambio.minimoIenesAeroporto": { grupo: "cambio", secao: "Taxas e pedido mínimo", rotulo: "Pedido mínimo com entrega/retirada no aeroporto (ienes)", unidade: "JPY" },
   // Seguro
   "seguro.diariaCusto": { grupo: "seguro", secao: "Seguro das calculadoras", rotulo: "Diária por pessoa até 60 anos (custo)", unidade: "BRL", aplica: "padrao" },
   "seguro.multidestino": { grupo: "seguro", secao: "Seguro das calculadoras", rotulo: "Ajuste para roteiro com outro país (multidestino)", unidade: "mult" },
   // Pagamento
-  "pagamento.taxaMaquinaCartao": { grupo: "pagamento", rotulo: "Taxa da maquininha (sobre o valor financiado)", unidade: "fracao" },
-  "pagamento.jurosCartaoMes": { grupo: "pagamento", rotulo: "Juros do cartão ao mês", unidade: "fracao" },
-  "pagamento.entradaPix": { grupo: "pagamento", rotulo: "Entrada no Pix parcelado", unidade: "fracao" },
-  "pagamento.jurosPixMes": { grupo: "pagamento", rotulo: "Juros do Pix parcelado ao mês", unidade: "fracao" },
+  "pagamento.taxaMaquinaCartao": { grupo: "pagamento", secao: "Cartão de crédito", rotulo: "Taxa da maquininha (sobre o valor financiado)", unidade: "fracao" },
+  "pagamento.jurosCartaoMes": { grupo: "pagamento", secao: "Cartão de crédito", rotulo: "Juros do cartão ao mês", unidade: "fracao" },
+  "pagamento.entradaPix": { grupo: "pagamento", secao: "Pix parcelado", rotulo: "Entrada no Pix parcelado", unidade: "fracao" },
+  "pagamento.jurosPixMes": { grupo: "pagamento", secao: "Pix parcelado", rotulo: "Juros do Pix parcelado ao mês", unidade: "fracao" },
   // Perfil
   "perfil.feePorCidadeAdicional": { grupo: "perfil", secao: "Outros", rotulo: "Fee de planejamento — acréscimo por cidade além da primeira", unidade: "fracao" },
   "perfil.contingencia": { grupo: "perfil", secao: "Outros", rotulo: "Contingência sobre o custo", unidade: "fracao" },
@@ -141,11 +186,11 @@ const FIXOS: Record<string, Fixo> = {
   "doc.coe.descendente": { grupo: "documentacao", secao: "Certificado de Elegibilidade (valor do parceiro)", rotulo: "Individual — descendente", unidade: "JPY" },
   "doc.coe.conjuge": { grupo: "documentacao", secao: "Certificado de Elegibilidade (valor do parceiro)", rotulo: "Individual — cônjuge", unidade: "JPY" },
   // Empregos
-  "empregos.vistoBRL": { grupo: "empregos", rotulo: "Serviço do visto — por pessoa", unidade: "BRL" },
-  "empregos.certificadoJPY": { grupo: "empregos", rotulo: "Certificado de Elegibilidade — por pessoa", unidade: "JPY" },
-  "empregos.passagemJPY": { grupo: "empregos", rotulo: "Passagem aérea — por pessoa", unidade: "JPY" },
-  "empregos.adicionalNorteNordesteJPY": { grupo: "empregos", rotulo: "Adicional aeroporto Norte/Nordeste — por pessoa", unidade: "JPY" },
-  "empregos.cestaExtrasJPY": { grupo: "empregos", rotulo: "Cesta de serviços extras (valor fixo)", unidade: "JPY" },
+  "empregos.vistoBRL": { grupo: "empregos", secao: "Valores por pessoa", rotulo: "Serviço do visto — por pessoa", unidade: "BRL" },
+  "empregos.certificadoJPY": { grupo: "empregos", secao: "Valores por pessoa", rotulo: "Certificado de Elegibilidade — por pessoa", unidade: "JPY" },
+  "empregos.passagemJPY": { grupo: "empregos", secao: "Valores por pessoa", rotulo: "Passagem aérea — por pessoa", unidade: "JPY" },
+  "empregos.adicionalNorteNordesteJPY": { grupo: "empregos", secao: "Valores por pessoa", rotulo: "Adicional aeroporto Norte/Nordeste — por pessoa", unidade: "JPY" },
+  "empregos.cestaExtrasJPY": { grupo: "empregos", secao: "Valores por pessoa", rotulo: "Cesta de serviços extras (valor fixo)", unidade: "JPY" },
 };
 
 const FRETE: Record<string, string> = { spCapital: "São Paulo capital e Grande SP", spInterior: "Interior de São Paulo", sudeste: "RJ, MG, ES e PR", sul: "SC e RS", centroOeste: "DF, GO e MS", centroNorte: "MT e TO", nordeste: "Nordeste", norte: "Norte" };
@@ -156,7 +201,7 @@ const EXT_CIDADE: Record<string, string> = { seoul: "Seoul", beijing: "Pequim", 
 const FLEX: Record<string, string> = { fixas: "Datas fixas", tres: "± 3 dias", sete: "± 7 dias", flexivel: "Flexível" };
 
 /** Descrição de um parâmetro (null = sem rótulo — aparece em "Outros"). */
-export function descrever(id: string): DescricaoParametro | null {
+function descreverBase(id: string): DescricaoParametro | null {
   const f = FIXOS[id];
   if (f) return { ...f, secao: f.secao ?? "" };
   let m: RegExpExecArray | null;
@@ -196,8 +241,16 @@ export function descrever(id: string): DescricaoParametro | null {
     return { grupo: "documentacao", secao: "Visto específico por consulado (valor do parceiro, por pessoa)", rotulo: c?.nome ?? m[1], coluna: m[2] === "comCOE" ? "Com COE" : "Sem COE", unidade: "BRL" };
   }
   if ((m = /^doc\.coe\.familia(\d)$/.exec(id))) return { grupo: "documentacao", secao: "Certificado de Elegibilidade (valor do parceiro)", rotulo: `Família — ${m[1]} pessoas`, unidade: "JPY" };
-  if ((m = /^frete\.(.+)$/.exec(id))) return { grupo: "frete", secao: "", rotulo: FRETE[m[1]] ?? m[1], unidade: "BRL" };
+  if ((m = /^frete\.(.+)$/.exec(id))) return { grupo: "frete", secao: "Frete SEDEX do voucher (por região)", rotulo: FRETE[m[1]] ?? m[1], unidade: "BRL" };
   return null;
+}
+
+export function descrever(id: string): DescricaoParametro | null {
+  const d = descreverBase(id);
+  if (!d) return null;
+  const rota = /^motorista\.rota\.(.+)\.(preco|overtime)\./.exec(id);
+  const transfer = !!rota && ROTAS_MOTORISTA.find((r) => r.id === rota[1])?.categoria === "transfer-aeroporto";
+  return { ...d, grupo: produtoDe(id, transfer) };
 }
 
 export type ItemParametro = DescricaoParametro & { id: string; padrao: number };
