@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from
 import Link from "next/link";
 import type { Notificacao, UnidadeNotificacao } from "@/lib/crm/notificacoes";
 import { marcarNotificacoesLidas } from "../../notificacoesActions";
+import { AnexarNf } from "./AnexarNf";
 
 // Sino de notificações da Visão geral (Wilson, 22/out/2026): contorno quando
 // não há nada novo, sino preto + bolinha com o número quando há.
@@ -55,6 +56,7 @@ const COR_TIPO: Record<Notificacao["tipo"], string> = {
   execucao: "#28665D",
   pagamento: "#28665D",
   alerta: "#B42318",
+  nota_fiscal: "#B42318",
 };
 
 export function Notificacoes({
@@ -79,14 +81,16 @@ export function Notificacoes({
   const titulo = variante?.titulo ?? "Notificações";
   const bruto = useSyncExternalStore(inscrever, () => ler(chaveLocal), () => VAZIO);
   const local = parse(bruto);
-  const visiveis = lista.filter((n) => !local.removidas.includes(n.id));
-  const ehNova = (n: Notificacao) => !n.lida && !local.lidas.includes(n.id);
+  // Alerta de nota fiscal pendente (Wilson, 04/nov/2026): não pode ser
+  // removido nem marcado como lido — some só quando a NF é anexada.
+  const visiveis = lista.filter((n) => n.nf || !local.removidas.includes(n.id));
+  const ehNova = (n: Notificacao) => !!n.nf || (!n.lida && !local.lidas.includes(n.id));
   const qtdNovas = visiveis.filter(ehNova).length;
   const marcarLida = (id: string) => gravar(chaveLocal, { ...local, lidas: [...local.lidas.filter((x) => x !== id), id] });
   const marcarNaoLida = (id: string) => gravar(chaveLocal, { ...local, lidas: local.lidas.filter((x) => x !== id) });
   const remover = (id: string) => gravar(chaveLocal, { ...local, removidas: [...local.removidas, id] });
   function marcarTodas() {
-    gravar(chaveLocal, { ...local, lidas: [...local.lidas, ...visiveis.filter(ehNova).map((n) => n.id)] });
+    gravar(chaveLocal, { ...local, lidas: [...local.lidas, ...visiveis.filter((n) => !n.nf && ehNova(n)).map((n) => n.id)] });
     if (!variante) iniciar(() => marcarNotificacoesLidas(unidade));
   }
   const caixa = useRef<HTMLDivElement>(null);
@@ -111,6 +115,7 @@ export function Notificacoes({
 
   void naoLidas;
   const tem = qtdNovas > 0;
+  const temComuns = visiveis.some((n) => !n.nf && ehNova(n));
   return (
     <div ref={caixa} className="relative">
       <button
@@ -143,7 +148,7 @@ export function Notificacoes({
               <p className="text-base font-semibold text-[#20252B]">{titulo}</p>
               {variante && <p className="text-[12px] text-[#626B75]">{variante.subtitulo}</p>}
             </div>
-            {tem ? (
+            {temComuns ? (
               <button type="button" onClick={marcarTodas} className="text-[13px] font-medium text-[#24476B] hover:underline">
                 Marcar todas como lidas
               </button>
@@ -161,6 +166,28 @@ export function Notificacoes({
             <ul className="max-h-[min(60vh,420px)] divide-y divide-[#EEF0F2] overflow-y-auto">
               {visiveis.map((n) => {
                 const nova = ehNova(n);
+                if (n.nf) {
+                  return (
+                    <li key={n.id} className="relative border-l-[3px] border-[#B42318] bg-[#FDF3F2]">
+                      <Link
+                        href={`${n.href ?? `/crm/clientes/${n.clienteId}`}#nota-fiscal`}
+                        onClick={() => setAberto(false)}
+                        className="flex gap-3 pb-1.5 pl-4 pr-4 pt-3 transition hover:bg-[#FBE9E7]"
+                      >
+                        <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#B42318]" />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold text-[#20252B]">{n.titulo}</span>
+                          <span className="block text-sm text-[#20252B]">{n.clienteNome}</span>
+                          {n.detalhe && <span className="line-clamp-1 block text-[13px] text-[#626B75]">{n.detalhe}</span>}
+                          <span className="block text-[13px] tabular-nums text-[#626B75]">Concluído em {fmt(n.quando)}</span>
+                        </span>
+                      </Link>
+                      <div className="pb-3 pl-9 pr-4">
+                        <AnexarNf origem={n.nf.origem} registroId={n.nf.registroId} compacto />
+                      </div>
+                    </li>
+                  );
+                }
                 return (
                   <li key={n.id} className={`group relative ${nova ? "bg-[#F2F6FC]" : ""}`}>
                     <Link

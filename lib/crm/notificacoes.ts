@@ -3,6 +3,7 @@ import { ESTAGIO_LABEL } from "./estagios";
 import { ESTAGIO_ENTREGA_LABEL } from "./estagiosEntrega";
 import { ehRegistroTeste, ehSelfService } from "./origem";
 import type { Estagio, EstagioEntrega } from "./types";
+import { nfPendentes } from "./notasFiscais";
 
 // Notificações do CRM (Wilson, 22/out/2026): novos clientes/propostas,
 // propostas enviadas, mudanças de etapa, propostas anexadas e pagamentos.
@@ -17,7 +18,7 @@ const JANELA_DIAS = 30;
 
 export type Notificacao = {
   id: string;
-  tipo: "novo_cliente" | "proposta" | "etapa" | "execucao" | "arquivo_proposta" | "pagamento" | "alerta";
+  tipo: "novo_cliente" | "proposta" | "etapa" | "execucao" | "arquivo_proposta" | "pagamento" | "alerta" | "nota_fiscal";
   /** Link do item (cada CRM tem a sua tela de detalhe). */
   href?: string;
   titulo: string;
@@ -26,6 +27,9 @@ export type Notificacao = {
   clienteNome: string;
   quando: string;
   lida: boolean;
+  /** Alerta fixo de nota fiscal pendente (lib/crm/notasFiscais.ts): fica no
+   * topo, sempre como novo, até a NF ser anexada pela própria notificação. */
+  nf?: { origem: "agencia" | "seguro" | "documentacao"; registroId: string };
 };
 
 export async function carregarNotificacoes(
@@ -93,11 +97,7 @@ export async function carregarNotificacoes(
     }
   }
 
-  lista.sort((a, b) => Date.parse(b.quando) - Date.parse(a.quando));
-  // Sem cookie (primeiro acesso), só os últimos 7 dias contam como não lidos.
-  const corte = lidasEm ? Date.parse(lidasEm) : Date.now() - 7 * 86400000;
-  const comLeitura = lista.map((n) => ({ ...n, lida: Date.parse(n.quando) <= corte }));
-  return { lista: comLeitura.slice(0, 30), naoLidas: comLeitura.filter((n) => !n.lida).length };
+  return fecharLista(lista, lidasEm, await nfPendentes("agencia"));
 }
 
 // ── Sino nos 4 CRMs (Wilson, 29/out/2026: "sino de notificação, botões
@@ -110,11 +110,13 @@ export const cookieNotificacoes = (u: UnidadeNotificacao) => (u === "agencia" ? 
 type Item = Omit<Notificacao, "lida">;
 const dentroJanela = (iso: string | null | undefined, desde: string) => !!iso && iso >= desde;
 
-function fecharLista(lista: Item[], lidasEm: string | null) {
+// Sem cookie (primeiro acesso), só os últimos 7 dias contam como não lidos.
+// Alertas de nota fiscal pendente vão sempre no topo, inteiros e como novos.
+function fecharLista(lista: Item[], lidasEm: string | null, fixos: Notificacao[] = []) {
   lista.sort((a, b) => Date.parse(b.quando) - Date.parse(a.quando));
   const corte = lidasEm ? Date.parse(lidasEm) : Date.now() - 7 * 86400000;
   const comLeitura = lista.map((n) => ({ ...n, lida: Date.parse(n.quando) <= corte }));
-  return { lista: comLeitura.slice(0, 30), naoLidas: comLeitura.filter((n) => !n.lida).length };
+  return { lista: [...fixos, ...comLeitura.slice(0, 30)], naoLidas: fixos.length + comLeitura.filter((n) => !n.lida).length };
 }
 
 export async function carregarNotificacoesUnidade(
@@ -209,5 +211,5 @@ export async function carregarNotificacoesUnidade(
     }
   }
 
-  return fecharLista(lista, lidasEm);
+  return fecharLista(lista, lidasEm, await nfPendentes(unidade));
 }

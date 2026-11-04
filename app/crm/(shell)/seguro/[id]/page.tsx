@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: "Pedido — CRM Seguro Viagem",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
+import { NotasFiscaisServico } from "../../components/NotasFiscaisServico";
+
 export const dynamic = "force-dynamic";
 
 export default async function PedidoSeguroPage({ params }: { params: Promise<{ id: string }> }) {
@@ -29,7 +31,12 @@ export default async function PedidoSeguroPage({ params }: { params: Promise<{ i
     );
   }
   const pedido = { ...data, viajantes: Array.isArray(data.viajantes) ? data.viajantes : [], historico: Array.isArray(data.historico) ? data.historico : [] } as PedidoSeguro;
-  return <DetalheSeguro pedido={completarPedido(pedido)} agora={agoraMs()} />;
+  return (
+    <>
+      <DetalheSeguro pedido={completarPedido(pedido)} agora={agoraMs()} />
+      <NotasFiscaisServico origem="seguro" registroId={id} concluido={pedido.etapa === "concluido"} />
+    </>
+  );
 }
 
 // Hora do servidor no momento da renderização (prazo de 24 h da apólice).

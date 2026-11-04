@@ -38,6 +38,7 @@ import {
   type EventoHistorico,
 } from "@/lib/crm/processo";
 import { FinanceiroSection } from "./financeiro/FinanceiroSection";
+import { NotasFiscaisServico } from "../../components/NotasFiscaisServico";
 import { carregarFinanceiro } from "./financeiro/carregar";
 import { ConfirmacaoCadastro } from "./ConfirmacaoCadastro";
 import { UploadArquivoCliente } from "./UploadArquivoCliente";
@@ -459,6 +460,7 @@ export default async function ClienteDetalhePage({
 
       <div className="mt-6">
         <FinanceiroSection clienteId={id} {...financeiro} abrirRecebimento={sp.receber ?? null} />
+        <NotasFiscaisServico origem="agencia" registroId={id} concluido={cliente.estagio_entrega === "concluida"} />
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">

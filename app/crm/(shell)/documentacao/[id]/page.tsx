@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   title: "Processo — CRM Documentação",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
+import { NotasFiscaisServico } from "../../components/NotasFiscaisServico";
+
 export const dynamic = "force-dynamic";
 
 export default async function ProcessoDocPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,10 +45,13 @@ export default async function ProcessoDocPage({ params }: { params: Promise<{ id
   // Despachantes cadastrados em Acessos (migração 029).
   const { data: despachantes } = await createAdminClient().from("perfis").select("id, nome, email").eq("papel", "despachante").order("nome");
   return (
-    <DetalheDocumentacao
-      processo={processo}
-      pagamentos={(pagamentos ?? []) as PagamentoDoc[]}
-      despachantes={(despachantes ?? []).map((d) => ({ id: d.id as string, nome: (d.nome as string) || (d.email as string) }))}
-    />
+    <>
+      <DetalheDocumentacao
+        processo={processo}
+        pagamentos={(pagamentos ?? []) as PagamentoDoc[]}
+        despachantes={(despachantes ?? []).map((d) => ({ id: d.id as string, nome: (d.nome as string) || (d.email as string) }))}
+      />
+      <NotasFiscaisServico origem="documentacao" registroId={id} concluido={processo.etapa === "concluido"} />
+    </>
   );
 }
