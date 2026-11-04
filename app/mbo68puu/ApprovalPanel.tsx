@@ -6552,15 +6552,9 @@ const INFO_CARDS: { label: string; descricao: string; Icon: (p: { className?: st
 
 // Demonstração: sem número de apólice, sem voucher e sem contato do sinistro
 // (dados do cliente real). Os cards ficam só para mostrar o recurso.
-const SERVICOS_ADICIONAIS_CARDS: {
-  label: string;
-  Icon: (p: { className?: string }) => ReactElement;
-  apoliceNumero?: string;
-  documentoImagens?: string[];
-  whatsapp?: string;
-}[] = [
-  { label: "Apólice Seguro Viagem", Icon: IconInsurance },
-  { label: "Emergência Médica / Ativação de Sinistro", Icon: IconMedicalEmergency },
+const SERVICOS_ADICIONAIS_CARDS: { label: string; descricao: string; Icon: (p: { className?: string }) => ReactElement }[] = [
+  { label: "Apólice do seguro viagem", descricao: "Número da apólice e voucher completo, sempre à mão.", Icon: IconInsurance },
+  { label: "Emergência médica", descricao: "Contato direto da seguradora para acionar atendimento ou sinistro.", Icon: IconMedicalEmergency },
 ];
 
 function IconFork({ className }: { className?: string }) {
@@ -7568,7 +7562,6 @@ export function ApprovalPanel({
   >("dia");
   const contentRef = useRef<HTMLDivElement>(null);
   const daysMenuRef = useRef<HTMLDivElement>(null);
-  const [zoomDocumentoSeguro, setZoomDocumentoSeguro] = useState(false);
 
   function scrollToContent() {
     requestAnimationFrame(() => {
@@ -7804,92 +7797,26 @@ export function ApprovalPanel({
             Serviços adicionais contratados
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 border-b border-[#E3E6EA] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon, apoliceNumero, documentoImagens, whatsapp }) => {
-            const iconClassName =
-              label === "Emergência Médica / Ativação de Sinistro" ? "h-[4.5rem] w-[4.5rem]" : "h-20 w-20";
-            const cardContent = (
-              <>
-                <Icon className={iconClassName} />
-                <span>
-                  {label}
-                  {apoliceNumero && (
-                    <span className="mt-0.5 block text-[12px] font-semibold text-[#C0392B]">
-                      Apólice: {apoliceNumero}
-                    </span>
-                  )}
+        <div className="grid grid-cols-1 gap-3 border-b border-[#E3E6EA] px-6 pb-6 pt-3 sm:grid-cols-2 sm:px-10 lg:grid-cols-4">
+          {SERVICOS_ADICIONAIS_CARDS.map(({ label, descricao, Icon }) => (
+            // Mesmo modelo dos cards de "Informações detalhadas" (Wilson,
+            // 04/nov/2026). Na demonstração não há apólice nem contato real.
+            <div key={label} className="flex flex-col justify-between rounded-xl border border-[#D5DAE0] bg-white p-4 text-left">
+              <span className="flex items-start gap-3">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-black/10 bg-white">
+                  <Icon className="h-8 w-8" />
                 </span>
-                {whatsapp && (
-                  <a
-                    href={`https://wa.me/${whatsapp}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="mt-1 flex items-center gap-1.5 rounded-full bg-[#25D366]/12 px-2.5 py-1 text-[12px] font-semibold text-[#128C4A] transition hover:bg-[#25D366]/20"
-                  >
-                    <IconWhatsapp className="h-3.5 w-3.5 shrink-0" />
-                    +{whatsapp.replace(/^1/, "1 ").replace(/(\d{3})(\d{3})(\d{4})$/, "$1 $2 $3")}
-                  </a>
-                )}
-              </>
-            );
-            if (documentoImagens) {
-              return (
-                <button
-                  key={label}
-                  type="button"
-                  onClick={() => setZoomDocumentoSeguro(true)}
-                  className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#20252B]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#C0392B]/35 hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]"
-                >
-                  {cardContent}
-                </button>
-              );
-            }
-            return (
-              <div
-                key={label}
-                className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#20252B]/75"
-              >
-                {cardContent}
-              </div>
-            );
-          })}
-        </div>
-
-        {zoomDocumentoSeguro && (
-          <div
-            className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-            onClick={() => setZoomDocumentoSeguro(false)}
-          >
-            <button
-              type="button"
-              onClick={() => setZoomDocumentoSeguro(false)}
-              className="fixed right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
-              aria-label="Fechar"
-            >
-              <IconX className="h-5 w-5" />
-            </button>
-            <div
-              className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-4"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {SERVICOS_ADICIONAIS_CARDS.find((c) => c.documentoImagens)?.documentoImagens?.map(
-                (src, i) => (
-                  <img
-                    loading="lazy"
-                    key={src}
-                    src={src}
-                    alt={`Apólice do Seguro Viagem — página ${i + 1}`}
-                    className="w-full rounded-2xl bg-white object-contain shadow-lg"
-                  />
-                ),
-              )}
-              <p className="pb-4 text-center text-xs font-semibold text-white/85">
-                Apólice do Seguro Viagem
-              </p>
+                <span className="min-w-0">
+                  <span className="block text-[15px] font-semibold leading-snug text-[#20252B]">{label}</span>
+                  <span className="mt-1 block text-[13px] leading-5 text-[#626B75]">{descricao}</span>
+                </span>
+              </span>
+              <span className="mt-3 inline-flex items-center gap-1.5 text-[12px] text-[#8A939C]">
+                <IconLock className="h-3 w-3" /> No roteiro completo
+              </span>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
 
         <div ref={contentRef} className="scroll-mt-24 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "dxb" ? (
