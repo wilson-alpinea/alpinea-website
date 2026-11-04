@@ -6519,20 +6519,11 @@ function IconWhatsapp({ className }: { className?: string }) {
   );
 }
 
-const INFO_CARDS = [
-  {
-    label: "Aeroporto HND (Haneda)",
-    Icon: IconPlane,
-    view: "haneda" as const,
-    subLabel: "CHEGADA E RETORNO",
-  },
-  { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
-  { label: "Metrô", Icon: IconMetro, view: "trem" as const },
-  { label: "Ônibus", Icon: IconBus, view: "onibus" as const },
-  { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" as const },
-  { label: "Câmbio", Icon: IconExchange, view: "cambio" as const },
-  { label: "Costumes", Icon: IconCustoms, view: "costumes" as const },
-  { label: "Palavras Comuns", Icon: IconWords, view: "palavras" as const },
+// Demonstração (Wilson, 04/nov/2026): só Ônibus e Trem Bala em
+// "Informações Detalhadas".
+const INFO_CARDS: { label: string; Icon: (p: { className?: string }) => ReactElement; view: "onibus" | "shinkansen"; subLabel?: string }[] = [
+  { label: "Ônibus", Icon: IconBus, view: "onibus" },
+  { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" },
 ];
 
 // Demonstração: sem número de apólice, sem voucher e sem contato do sinistro
