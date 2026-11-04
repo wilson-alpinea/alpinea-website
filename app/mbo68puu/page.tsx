@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { bodoniModa } from "@/app/fonts/bodoni";
 import { ApprovalPanel, PassagemAereaSecao } from "./ApprovalPanel";
 
@@ -14,6 +15,7 @@ import { ApprovalPanel, PassagemAereaSecao } from "./ApprovalPanel";
 // principal e pontos de interesse).
 
 const display = bodoniModa;
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 // Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
 // cliente na contratação. Usada só como leitura interna da equipe pra
@@ -86,7 +88,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             Array.from({ length: n }, (_, i) => point(level * radius, i)),
           )}
           fill="none"
-          stroke="#24211D"
+          stroke="#000000"
           strokeOpacity={0.08}
           strokeWidth={1}
         />
@@ -101,7 +103,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             y1={cy}
             x2={p.x}
             y2={p.y}
-            stroke="#24211D"
+            stroke="#000000"
             strokeOpacity={0.08}
             strokeWidth={1}
           />
@@ -156,7 +158,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             x={tx}
             y={startY}
             textAnchor={anchor}
-            className="fill-[#24211D] uppercase"
+            className="fill-[#000000] uppercase"
             fontSize={12}
             fontWeight={700}
             style={{ letterSpacing: "0.03em" }}
@@ -215,66 +217,42 @@ export const metadata: Metadata = {
 
 export default function AprovacaoRoteiroPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-black text-white">
-      {/* Glow ambiente saindo das bordas da página — mesma paleta azul/roxa
-          do /roteirolandingpage, fixo por trás de todo o conteúdo. */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div
-          className="absolute -left-56 -top-56 h-[640px] w-[640px] rounded-full opacity-70 blur-[150px]"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(25,70,150,0.38) 0%, rgba(16,42,108,0.2) 45%, transparent 75%)",
-          }}
-        />
-        <div
-          className="absolute -right-56 -top-56 h-[640px] w-[640px] rounded-full opacity-70 blur-[150px]"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(75,42,128,0.34) 0%, rgba(20,68,145,0.18) 45%, transparent 75%)",
-          }}
-        />
-        <div
-          className="absolute -bottom-56 left-1/2 h-[640px] w-[900px] -translate-x-1/2 rounded-full opacity-50 blur-[150px]"
-          style={{
-            background:
-              "radial-gradient(ellipse, rgba(25,70,150,0.3) 0%, rgba(16,42,108,0.15) 45%, transparent 75%)",
-          }}
-        />
+    <main className={`${inter.className} min-h-screen overflow-x-clip bg-white pt-14 text-black`}>
+      {/* Identidade atual do site (Wilson, 04/nov/2026): fundo branco, Inter
+          no texto, Bodoni nos títulos e a barra azul-marinho das páginas de
+          produto (BarraProduto em app/produtos/templateProduto.tsx). */}
+      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
+        <a href="https://www.alpinea.io/produtos/roteiro-personalizado" className="flex min-h-[44px] items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+          Voltar
+        </a>
+        <span className="h-4 w-px bg-white/20" aria-hidden="true" />
+        <p className={`${display.className} truncate whitespace-nowrap text-base font-medium text-white sm:text-lg md:text-xl`}>Roteiro Personalizado</p>
+        <span className="hidden shrink-0 rounded-full border border-white/40 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.15em] text-white/85 sm:inline">Demonstração</span>
+        <div className="flex-1" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
       </div>
 
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/70 px-6 py-5 backdrop-blur-2xl md:px-16">
-        <img
-          src="/images/alpinea-ajisai-final-logo-branco.webp"
-          alt="Alpinea — Empresa do Grupo Ajisai"
-          className="h-7 w-auto object-contain sm:h-9 md:h-[60px] lg:h-[72px]"
-        />
-        <span className="rounded-full border border-white bg-white/[0.06] px-2.5 py-1 text-center text-[9px] uppercase tracking-[0.1em] text-white sm:px-3 sm:py-1.5 sm:text-[10px] sm:tracking-[0.15em] md:px-4 md:py-2 md:text-xs md:tracking-[0.2em]">
-          Demonstração
-        </span>
-      </header>
-
-      <section className="px-5 pb-4 pt-28 md:px-16 md:pt-36 lg:pt-40">
+      <section className="px-5 pb-4 pt-8 md:px-16 md:pt-12">
         <div className="relative mx-auto max-w-4xl">
-          {/* Glow via box-shadow direto no card — nunca "vaza" para dentro do
-              fundo opaco, já que sombra CSS só pinta fora da caixa. */}
           <details
-            className="group overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F2F1ED] sm:rounded-[2rem]"
-            style={{
-              boxShadow:
-                "0 0 90px 6px rgba(35,90,190,0.28), 0 0 42px -4px rgba(90,50,155,0.28), 0 20px 60px -30px rgba(0,0,0,0.6)",
-            }}
+            className="group overflow-hidden rounded-2xl border border-[#E3E6EA] bg-white sm:rounded-[2rem]"
+            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 20px 50px -30px rgba(10,37,64,0.35)" }}
             open
           >
             <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-6 [&::-webkit-details-marker]:hidden sm:p-8">
               <span className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <span className="w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
+                <span className="w-fit rounded-full border border-[#E3E6EA] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#000000]/85">
                   Dados do Cliente
                 </span>
-                <span className="text-xs text-[#24211D]/55 sm:text-sm">
+                <span className="text-xs text-[#000000]/55 sm:text-sm">
                   Cliente exemplo · 7 dias · Maio
                 </span>
               </span>
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#F3F1EB] text-[#000000] transition-colors duration-300 group-hover:bg-[#000000] group-hover:text-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E3E6EA] bg-[#F3F5F7] text-[#000000] transition-colors duration-300 group-hover:bg-[#000000] group-hover:text-white">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -289,29 +267,29 @@ export default function AprovacaoRoteiroPage() {
               </span>
             </summary>
 
-            <div className="border-t border-[#DDD8CF] px-6 pb-6 pt-6 sm:px-8 sm:pb-8">
-            <div className="grid grid-cols-1 gap-5 border-b border-[#DDD8CF] pb-6 sm:grid-cols-3">
+            <div className="border-t border-[#E3E6EA] px-6 pb-6 pt-6 sm:px-8 sm:pb-8">
+            <div className="grid grid-cols-1 gap-5 border-b border-[#E3E6EA] pb-6 sm:grid-cols-3">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
                   Data da Contratação
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#24211D]">
+                <p className="mt-1 text-sm font-semibold text-[#000000]">
                   —
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
                   Cliente
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#24211D]">
+                <p className="mt-1 text-sm font-semibold text-[#000000]">
                   Cliente exemplo
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
                   Duração
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#24211D]">
+                <p className="mt-1 text-sm font-semibold text-[#000000]">
                   7 Dias
                 </p>
               </div>
@@ -320,7 +298,7 @@ export default function AprovacaoRoteiroPage() {
             <PassagemAereaSecao />
 
             <div className="mt-8">
-              <p className="mx-auto mb-1 block w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
+              <p className="mx-auto mb-1 block w-fit rounded-full border border-[#E3E6EA] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#000000]/85">
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
@@ -336,7 +314,7 @@ export default function AprovacaoRoteiroPage() {
         </div>
       </section>
 
-      <footer className="px-6 py-8 text-center text-xs text-white/40 md:px-16">
+      <footer className="border-t border-black/10 px-6 py-8 text-center text-xs text-black/50 md:px-16">
         <p>
           © {new Date().getFullYear()} AjisaiWork Japan Agência de Viagens
           LTDA — CNPJ 43.544.605/0001-56
