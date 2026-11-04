@@ -53,9 +53,10 @@ function ServiceCard({
   );
 }
 
-function TipBox({ title, children }: { title: string; children: React.ReactNode }) {
+// semMarca: sem "Ajisai"/"Alpinea" nos textos (demonstração — Wilson, 04/nov/2026).
+function TipBox({ title, children, semMarca = false }: { title: string; children: React.ReactNode; semMarca?: boolean }) {
   return (
-    <ContentCard variant="success" icon={IconBulb} eyebrow="Recomendação Ajisai" headline={title} size="sm">
+    <ContentCard variant="success" icon={IconBulb} eyebrow={semMarca ? "Recomendação" : "Recomendação Ajisai"} headline={title} size="sm">
       {children}
     </ContentCard>
   );
@@ -105,9 +106,11 @@ function NumberedSteps({ items }: { items: string[] }) {
 export function ShinkansenGuideContent({
   displayClassName,
   internal = true,
+  semMarca = false,
 }: {
   displayClassName: string;
   internal?: boolean;
+  semMarca?: boolean;
 }) {
   return (
     <div className="bg-[#FDFCF9] text-[#24211D]">
@@ -172,14 +175,14 @@ export function ShinkansenGuideContent({
                 className="h-full w-full object-cover"
               />
             </div>
-            <TipBox title="Procure a área com atendimento humano">
+            <TipBox semMarca={semMarca} title="Procure a área com atendimento humano">
               <p>
                 Chegando na estação, procure a área que tem atendimento humano para compra dos
                 tickets — os funcionários vão poder te ajudar a emitir a passagem certa.
               </p>
             </TipBox>
           </div>
-          <TipBox title="Para simplificar">
+          <TipBox semMarca={semMarca} title="Para simplificar">
             <p>Se você possui JR Pass, procure sempre HIKARI.</p>
           </TipBox>
         </div>
@@ -204,7 +207,7 @@ export function ShinkansenGuideContent({
               Ticket Machines das principais estações JR — tenha o JR Pass em mãos.
             </p>
           </div>
-          <TipBox title="O que você recebe ao reservar">
+          <TipBox semMarca={semMarca} title="O que você recebe ao reservar">
             <p>
               Um Reserved Seat Ticket com informações como <strong>HIKARI 507 · TOKYO → KYOTO ·
               10:03 · CAR 9 · SEAT 12-E</strong>. Esse papel mostra os detalhes da reserva — mas o
@@ -244,7 +247,7 @@ export function ShinkansenGuideContent({
               e plataforma.
             </p>
           </div>
-          <TipBox title="Pense no Shinkansen como um voo">
+          <TipBox semMarca={semMarca} title="Pense no Shinkansen como um voo">
             <p>
               Assim como "EK261" identifica um voo, "HIKARI 507" identifica seu trem. É normal o
               painel mostrar um destino diferente do seu (ex.: SHIN-OSAKA, mesmo se você desce em
@@ -308,7 +311,7 @@ export function ShinkansenGuideContent({
             Malas convencionais podem ser levadas normalmente. Existe uma regra especial só
             para malas grandes: some altura + largura + profundidade.
           </p>
-          <TipBox title="Acima de 160 cm é bagagem especial">
+          <TipBox semMarca={semMarca} title="Acima de 160 cm é bagagem especial">
             <p>
               Se a soma ultrapassar 160 cm, a mala é considerada "oversized baggage". Entre 161
               e 250 cm, é necessário reservar um assento com espaço para bagagem extra-grande —
@@ -400,7 +403,7 @@ export function ShinkansenGuideContent({
               outro lado — o passe continua válido para outras viagens até a data de expiração.
             </p>
           </div>
-          <TipBox title="Perdeu o Hikari reservado?">
+          <TipBox semMarca={semMarca} title="Perdeu o Hikari reservado?">
             <p>
               Procure um funcionário da JR e mostre o JR Pass e o Reserved Seat Ticket — ele vai
               orientar sobre a próxima opção disponível e, quando possível, fazer uma nova
@@ -428,7 +431,7 @@ export function ShinkansenGuideContent({
               "Embarque.",
             ]}
           />
-          <TipBox title="Regra de ouro">
+          <TipBox semMarca={semMarca} title="Regra de ouro">
             <p>
               Com JR Pass, para viajar entre Tokyo, Kyoto e Osaka: procure HIKARI. Depois
               confira nome + número, horário, plataforma, vagão e assento — por exemplo:{" "}

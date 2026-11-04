@@ -24,9 +24,10 @@ import {
 // (design system único de cards informativos, em AirportGuideKit) — mantidos
 // aqui só para não precisar alterar todos os pontos de uso abaixo.
 
-function TipBox({ title, children }: { title: string; children: React.ReactNode }) {
+// semMarca: sem "Ajisai"/"Alpinea" nos textos (demonstração — Wilson, 04/nov/2026).
+function TipBox({ title, children, semMarca = false }: { title: string; children: React.ReactNode; semMarca?: boolean }) {
   return (
-    <ContentCard variant="success" icon={IconBulb} eyebrow="Recomendação Ajisai" headline={title} size="sm">
+    <ContentCard variant="success" icon={IconBulb} eyebrow={semMarca ? "Recomendação" : "Recomendação Ajisai"} headline={title} size="sm">
       {children}
     </ContentCard>
   );
@@ -105,9 +106,11 @@ function CrossroadDiagram() {
 export function OnibusGuideContent({
   displayClassName,
   internal = true,
+  semMarca = false,
 }: {
   displayClassName: string;
   internal?: boolean;
+  semMarca?: boolean;
 }) {
   return (
     <div className="bg-[#FDFCF9] text-[#24211D]">
@@ -130,7 +133,7 @@ export function OnibusGuideContent({
           { Icon: IconWarning, number: 7, label: "Voltando: Outro Ponto, Não o Mesmo", href: "#onibus-secao-7" },
           { Icon: IconBulb, number: 8, label: "Técnicas de Confirmação", href: "#onibus-secao-8" },
           { Icon: IconClock, number: 9, label: "Se Pegou o Sentido Errado", href: "#onibus-secao-9" },
-          { Icon: IconCheck, number: 10, label: "Método Alpinea e Regra de Ouro", href: "#onibus-secao-10" },
+          { Icon: IconCheck, number: 10, label: semMarca ? "Método e Regra de Ouro" : "Método Alpinea e Regra de Ouro", href: "#onibus-secao-10" },
         ]}
       />
 
@@ -159,7 +162,7 @@ export function OnibusGuideContent({
               </p>
             </div>
           </div>
-          <TipBox title="Para pegar um ônibus em Kyoto, confirme sempre">
+          <TipBox semMarca={semMarca} title="Para pegar um ônibus em Kyoto, confirme sempre">
             <ChecklistCard
               items={["Número da linha", "Direção", "Letra do ponto", "Destino"]}
             />
@@ -219,7 +222,7 @@ export function OnibusGuideContent({
               "⑤ Letra do ponto (A/B/C/D), quando indicada",
             ]}
           />
-          <TipBox title="Regra prática">
+          <TipBox semMarca={semMarca} title="Regra prática">
             <p>
               Ao abrir uma rota, monte mentalmente a frase: "Vou pegar o ônibus 206, no ponto A,
               sentido Kyoto Station." Se você souber responder essas quatro informações,
@@ -314,7 +317,7 @@ export function OnibusGuideContent({
               "Entre na fila indicada.",
             ]}
           />
-          <TipBox title="“Kyoto Station” sozinho não é suficiente">
+          <TipBox semMarca={semMarca} title="“Kyoto Station” sozinho não é suficiente">
             <p>
               A estação tem várias áreas de ônibus e terminais em lados diferentes — por exemplo,
               Kyoto Station / Karasuma Exit e Kyoto Station Hachijo Exit ficam em lados opostos.
@@ -335,7 +338,7 @@ export function OnibusGuideContent({
               letra.
             </p>
           </div>
-          <TipBox title="Regra prática">
+          <TipBox semMarca={semMarca} title="Regra prática">
             <p>
               O ponto de volta geralmente não é o mesmo do desembarque. Abra uma nova rota no
               aplicativo e deixe-o indicar exatamente qual ponto usar — não tente deduzir
@@ -421,7 +424,7 @@ export function OnibusGuideContent({
         className="border-t border-[#DDD8CF] bg-white px-6 py-14 md:px-10 md:py-20"
       >
         <div className="mx-auto max-w-5xl space-y-8">
-          <SectionMarker number={10} label="Método Alpinea e Regra de Ouro" />
+          <SectionMarker number={10} label={semMarca ? "Método e Regra de Ouro" : "Método Alpinea e Regra de Ouro"} />
           <NumberedSteps
             items={[
               "Qual é o número? (ex.: 206)",
@@ -433,7 +436,7 @@ export function OnibusGuideContent({
               "Embarque.",
             ]}
           />
-          <TipBox title="Regra de ouro">
+          <TipBox semMarca={semMarca} title="Regra de ouro">
             <p>
               Em Kyoto, não procure apenas "o ônibus 205" — procure "ônibus 205, no ponto C,
               sentido Kyoto Station." Quanto mais completo esse pensamento, menor a chance de

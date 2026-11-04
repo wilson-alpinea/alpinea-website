@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { bodoniModa } from "@/app/fonts/bodoni";
+import { interCrm } from "@/lib/crm/fonte";
 import { ApprovalPanel, PassagemAereaSecao } from "./ApprovalPanel";
 
 // DEMONSTRAÇÃO do roteiro personalizado (Wilson, 04/nov/2026) — baseada no
@@ -14,8 +13,6 @@ import { ApprovalPanel, PassagemAereaSecao } from "./ApprovalPanel";
 // substituída por uma visão simplificada dos 7 dias (Manhã/Tarde, atração
 // principal e pontos de interesse).
 
-const display = bodoniModa;
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 // Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
 // cliente na contratação. Usada só como leitura interna da equipe pra
@@ -88,7 +85,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             Array.from({ length: n }, (_, i) => point(level * radius, i)),
           )}
           fill="none"
-          stroke="#000000"
+          stroke="#24476B"
           strokeOpacity={0.08}
           strokeWidth={1}
         />
@@ -103,7 +100,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             y1={cy}
             x2={p.x}
             y2={p.y}
-            stroke="#000000"
+            stroke="#24476B"
             strokeOpacity={0.08}
             strokeWidth={1}
           />
@@ -112,13 +109,13 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 
       <polygon
         points={toPolygon(dataPoints)}
-        fill="#000000"
+        fill="#24476B"
         fillOpacity={0.16}
-        stroke="#000000"
+        stroke="#24476B"
         strokeWidth={2}
       />
       {dataPoints.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#000000" />
+        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#24476B" />
       ))}
 
       {dimensions.map((d, i) => {
@@ -158,10 +155,9 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             x={tx}
             y={startY}
             textAnchor={anchor}
-            className="fill-[#000000] uppercase"
-            fontSize={12}
-            fontWeight={700}
-            style={{ letterSpacing: "0.03em" }}
+            className="fill-[#20252B]"
+            fontSize={13}
+            fontWeight={600}
           >
             {d.lines.map((line, li) => (
               <tspan key={li} x={tx} dy={li === 0 ? 0 : lineHeight}>
@@ -176,8 +172,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 }
 
 export const metadata: Metadata = {
-  title: "Demonstração — Roteiro Personalizado | Ajisai",
-  description: "Demonstração do roteiro personalizado da Ajisai.",
+  title: "Demonstração — Roteiro Personalizado",
+  description: "Demonstração do roteiro personalizado.",
   robots: {
     index: false,
     follow: false,
@@ -191,16 +187,15 @@ export const metadata: Metadata = {
   // esta é a página que o cliente abre e encaminha no WhatsApp, então o
   // preview de link precisa mostrar a marca Ajisai, não a Alpinea.
   openGraph: {
-    title: "Demonstração — Roteiro Personalizado | Ajisai",
+    title: "Demonstração — Roteiro Personalizado",
     description:
-      "Veja como funciona o roteiro digital da Ajisai — hospedagens, passeios, deslocamentos e recomendações organizados dia a dia.",
-    siteName: "Ajisai",
+      "Veja como funciona o roteiro digital — hospedagens, passeios, deslocamentos e recomendações organizados dia a dia.",
     images: [
       {
         url: "/images/og-ajisai-roteiro.webp",
         width: 1200,
         height: 630,
-        alt: "Ajisai — Roteiro Personalizado",
+        alt: "Roteiro Personalizado — demonstração",
       },
     ],
     locale: "pt_BR",
@@ -208,56 +203,62 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Demonstração — Roteiro Personalizado | Ajisai",
+    title: "Demonstração — Roteiro Personalizado",
     description:
-      "Veja como funciona o roteiro digital da Ajisai, organizado dia a dia.",
+      "Veja como funciona o roteiro digital, organizado dia a dia.",
     images: ["/images/og-ajisai-roteiro.webp"],
   },
 };
 
+const SOMBRA = "shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]";
+
 export default function AprovacaoRoteiroPage() {
   return (
-    <main className={`${inter.className} min-h-screen overflow-x-clip bg-white pt-14 text-black`}>
-      {/* Identidade atual do site (Wilson, 04/nov/2026): fundo branco, Inter
-          no texto, Bodoni nos títulos e a barra azul-marinho das páginas de
-          produto (BarraProduto em app/produtos/templateProduto.tsx). */}
-      <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
-        <a href="https://www.alpinea.io/produtos/roteiro-personalizado" className="flex min-h-[44px] items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-          Voltar
-        </a>
-        <span className="h-4 w-px bg-white/20" aria-hidden="true" />
-        <p className={`${display.className} truncate whitespace-nowrap text-base font-medium text-white sm:text-lg md:text-xl`}>Roteiro Personalizado</p>
-        <span className="hidden shrink-0 rounded-full border border-white/40 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.15em] text-white/85 sm:inline">Demonstração</span>
-        <div className="flex-1" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
-      </div>
+    <main className={`${interCrm.className} min-h-screen overflow-x-clip bg-[#FAF9F6] text-[#20252B] [font-variant-numeric:tabular-nums]`}>
+      {/* Identidade visual do CRM (Wilson, 04/nov/2026): Inter, fundo
+          #FAF9F6, cabeçalho preto com o logo, título de página e cards
+          brancos com faixa colorida no topo (PainelUi do CRM). */}
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 md:px-10">
+          <div className="flex min-w-0 items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-8 w-auto sm:h-10" />
+            <span className="hidden h-9 w-px bg-white/15 sm:block" />
+            <span className="hidden flex-col leading-none sm:flex">
+              <span className="text-[20px] font-semibold text-white">Roteiro Personalizado</span>
+              <span className="mt-1 text-[13px] text-white/45">Demonstração</span>
+            </span>
+          </div>
+          <a
+            href="https://www.alpinea.io/produtos/roteiro-personalizado"
+            className="shrink-0 rounded-full border border-white/15 px-4 py-1.5 text-[13px] text-white/70 transition hover:border-white/40 hover:text-white"
+          >
+            Quero meu roteiro
+          </a>
+        </div>
+      </header>
 
-      <section className="px-5 pb-4 pt-8 md:px-16 md:pt-12">
-        <div className="relative mx-auto max-w-4xl">
+      <div className="mx-auto max-w-6xl px-6 py-10 md:px-10 md:py-14">
+        <h1 className="text-[28px] font-semibold leading-tight text-[#20252B] md:text-[32px]">Roteiro Personalizado</h1>
+        <p className="mt-1 text-[15px] text-[#626B75]">Demonstração · 7 dias · Tokyo e Kyoto · Veja como o roteiro chega ao cliente.</p>
+
+        <section className="mt-8">
           <details
-            className="group overflow-hidden rounded-2xl border border-[#E3E6EA] bg-white sm:rounded-[2rem]"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 20px 50px -30px rgba(10,37,64,0.35)" }}
+            className={`group overflow-hidden rounded-2xl border border-t-[3px] border-black/[0.06] bg-white ${SOMBRA}`}
+            style={{ borderTopColor: "#24476B" }}
             open
           >
-            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-6 [&::-webkit-details-marker]:hidden sm:p-8">
-              <span className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <span className="w-fit rounded-full border border-[#E3E6EA] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#000000]/85">
-                  Dados do Cliente
-                </span>
-                <span className="text-xs text-[#000000]/55 sm:text-sm">
-                  Cliente exemplo · 7 dias · Maio
-                </span>
+            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-5 [&::-webkit-details-marker]:hidden md:p-6">
+              <span className="min-w-0">
+                <span className="block text-lg font-semibold text-[#20252B]">Dados do cliente</span>
+                <span className="block text-[13px] text-[#626B75]">Cliente exemplo · 7 dias · maio</span>
               </span>
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#E3E6EA] bg-[#F3F5F7] text-[#000000] transition-colors duration-300 group-hover:bg-[#000000] group-hover:text-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#D5DAE0] bg-white text-[#20252B] transition group-hover:border-[#24476B]/50">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth={2.5}
+                  strokeWidth={2.2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="h-4 w-4 transition-transform duration-300 group-open:rotate-180"
@@ -267,30 +268,30 @@ export default function AprovacaoRoteiroPage() {
               </span>
             </summary>
 
-            <div className="border-t border-[#E3E6EA] px-6 pb-6 pt-6 sm:px-8 sm:pb-8">
-            <div className="grid grid-cols-1 gap-5 border-b border-[#E3E6EA] pb-6 sm:grid-cols-3">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
-                  Data da Contratação
+            <div className="border-t border-black/[0.06] p-5 md:p-6">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <div className="rounded-xl bg-[#F5F6F8] px-4 py-3">
+                <p className="text-[13px] text-[#626B75]">
+                  Data da contratação
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#000000]">
+                <p className="mt-0.5 text-[17px] font-semibold text-[#20252B]">
                   —
                 </p>
               </div>
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
+              <div className="rounded-xl bg-[#F5F6F8] px-4 py-3">
+                <p className="text-[13px] text-[#626B75]">
                   Cliente
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#000000]">
+                <p className="mt-0.5 text-[17px] font-semibold text-[#20252B]">
                   Cliente exemplo
                 </p>
               </div>
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
+              <div className="rounded-xl bg-[#F5F6F8] px-4 py-3">
+                <p className="text-[13px] text-[#626B75]">
                   Duração
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#000000]">
-                  7 Dias
+                <p className="mt-0.5 text-[17px] font-semibold text-[#20252B]">
+                  7 dias
                 </p>
               </div>
             </div>
@@ -298,23 +299,20 @@ export default function AprovacaoRoteiroPage() {
             <PassagemAereaSecao />
 
             <div className="mt-8">
-              <p className="mx-auto mb-1 block w-fit rounded-full border border-[#E3E6EA] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#000000]/85">
-                Perfil do Viajante
-              </p>
+              <p className="text-[15px] font-semibold text-[#20252B]">Perfil do viajante</p>
+              <p className="text-[13px] text-[#626B75]">Pontuação de 0 a 10, a partir do briefing.</p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
             </div>
             </div>
           </details>
-        </div>
-      </section>
+        </section>
 
-      <section className="px-5 pb-12 pt-6 md:px-16 md:pb-16 md:pt-8">
-        <div className="mx-auto max-w-4xl">
-          <ApprovalPanel displayClassName={display.className} />
-        </div>
-      </section>
+        <section className="mt-6">
+          <ApprovalPanel displayClassName={interCrm.className} />
+        </section>
+      </div>
 
-      <footer className="border-t border-black/10 px-6 py-8 text-center text-xs text-black/50 md:px-16">
+      <footer className="border-t border-black/[0.06] px-6 py-8 text-center text-[13px] text-[#626B75] md:px-16">
         <p>
           © {new Date().getFullYear()} AjisaiWork Japan Agência de Viagens
           LTDA — CNPJ 43.544.605/0001-56

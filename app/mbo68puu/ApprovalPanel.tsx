@@ -1476,7 +1476,7 @@ const DAY_5: DayContent = {
     visaoAnotada: {
       titulo: "Kiyomizu-dera & Higashiyama",
       imagem: "/images/raiox-kiyomizu-higashiyama.webp",
-      imagemAlt: "Raio-X Alpinea de Kiyomizu-dera e Higashiyama com Nio-mon Gate, Sannenzaka, Ninenzaka, % Arabica, Hokan-ji e a região de Gion ao fundo",
+      imagemAlt: "Raio-X de Kiyomizu-dera e Higashiyama com Nio-mon Gate, Sannenzaka, Ninenzaka, % Arabica, Hokan-ji e a região de Gion ao fundo",
       comentarios: [
         "Assim que você chegar a Kyoto, provavelmente vai perceber uma coisa imediatamente: Kyoto funciona de uma maneira completamente diferente de Tóquio.",
         "Em Tóquio, praticamente qualquer região importante possui uma estação de metrô ou trem próxima. Algumas estações possuem dez, quinze, vinte saídas diferentes e você consegue atravessar boa parte da cidade utilizando somente os trilhos. Em Kyoto, essa lógica muda bastante.",
@@ -2003,14 +2003,14 @@ const DIAS_LIBERADOS_TEXTO = (() => {
 // dedicado em vez de dividir a tarde com Sumida.
 const BAIRRO_STYLES = {
   Sumida: {
-    border: "border-[#2C6CA6]",
-    bg: "bg-[#F8FAF9]",
-    circle: "bg-[#2C6CA6]",
-    text: "text-[#2C6CA6]",
-    muted: "text-[#000000]/70",
-    starMuted: "text-[#2C6CA6]/25",
-    badge: "border-[#2C6CA6]/30 bg-[#2C6CA6]/10 text-[#2C6CA6]",
-    chip: "border-[#2C6CA6]/25 bg-[#FFFFFF] text-[#2C6CA6]",
+    border: "border-[#24476B]",
+    bg: "bg-[#F5F6F8]",
+    circle: "bg-[#24476B]",
+    text: "text-[#24476B]",
+    muted: "text-[#20252B]/70",
+    starMuted: "text-[#24476B]/25",
+    badge: "border-[#24476B]/30 bg-[#24476B]/10 text-[#24476B]",
+    chip: "border-[#24476B]/25 bg-[#FFFFFF] text-[#24476B]",
   },
   Ryogoku: {
     border: "border-[#B96432]",
@@ -2065,7 +2065,7 @@ function PriorityBadge({ prioridade }: { prioridade: NonNullable<Poi["prioridade
         : "border-[#D04E3C]/40 bg-[#D04E3C]/10 text-[#D04E3C]";
   return (
     <span
-      className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] ${style}`}
+      className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold   ${style}`}
     >
       {PRIORIDADE_LABEL[prioridade]}
     </span>
@@ -2103,14 +2103,14 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-              <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+              <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                 <IconZoom className="h-4 w-4" />
               </span>
             </div>
           </button>
           {typeof poi.ordem === "number" && (
             <span
-              className={`absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md ring-2 ring-white/70 ${s.circle}`}
+              className={`absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-white shadow-md ring-2 ring-white/70 ${s.circle}`}
             >
               {poi.ordem}
             </span>
@@ -2129,7 +2129,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
                 </button>
               ))}
               {imagens.length > 3 && (
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-white/85 bg-black/55 text-xs font-bold text-white shadow-md">
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-white/85 bg-black/55 text-xs font-semibold text-white shadow-md">
                   +{imagens.length - 3}
                 </span>
               )}
@@ -2141,12 +2141,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
       <div className="flex flex-1 flex-col gap-1.5 px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-2">
           {!hasPhoto && typeof poi.ordem === "number" && (
-            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${s.circle}`}>
+            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${s.circle}`}>
               {poi.ordem}
             </span>
           )}
           {poi.bairro && (
-            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${s.badge}`}>
+            <span className={`rounded-full border px-2 py-0.5 text-[12px] font-semibold   ${s.badge}`}>
               {poi.bairro}
             </span>
           )}
@@ -2180,7 +2180,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             {poi.lista.map((item) => (
               <span
                 key={item}
-                className={`rounded-md border px-1.5 py-0.5 text-[10px] font-medium ${s.chip}`}
+                className={`rounded-md border px-1.5 py-0.5 text-[12px] font-medium ${s.chip}`}
               >
                 {item}
               </span>
@@ -2241,7 +2241,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
               alt={imagens[zoomIndex].alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
             />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+            <p className="mt-3 text-center text-xs font-semibold text-white/85">
               {poi.title}
             </p>
             {(poi.description || imagens[zoomIndex].alt !== poi.title) && (
@@ -2259,12 +2259,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
 function ContextoBlock({ contexto }: { contexto: string[] }) {
   return (
     <div className="mb-10 rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] p-5 sm:p-6">
-      <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/68">
+      <p className="mb-3 text-xs font-semibold text-[#20252B]/68">
         Contexto
       </p>
       <div className="space-y-3">
         {contexto.map((paragrafo, index) => (
-          <p key={index} className="text-sm leading-6 text-[#000000]/85">
+          <p key={index} className="text-sm leading-6 text-[#20252B]/85">
             {paragrafo}
           </p>
         ))}
@@ -2287,13 +2287,13 @@ function BanheirosProximosBlock({
         onClick={() => setAberto((v) => !v)}
         className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
       >
-        <IconToilet className="h-20 w-20 shrink-0 text-[#000000]" />
-        <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#000000]/70 sm:text-lg">
+        <IconToilet className="h-20 w-20 shrink-0 text-[#20252B]" />
+        <span className="min-w-0 flex-1 text-base font-semibold text-[#20252B]/70 sm:text-lg">
           Banheiros Públicos Mais Próximos
         </span>
         <svg
           viewBox="0 0 24 24"
-          className={`h-4 w-4 shrink-0 text-[#000000]/45 transition-transform duration-200 ${
+          className={`h-4 w-4 shrink-0 text-[#20252B]/45 transition-transform duration-200 ${
             aberto ? "rotate-180" : ""
           }`}
           fill="none"
@@ -2309,12 +2309,12 @@ function BanheirosProximosBlock({
         <div className="space-y-3.5 px-5 pb-5">
           {itens.map((b, i) => (
             <div key={b.local} className={i > 0 ? "border-t border-[#E3E6EA] pt-3.5" : ""}>
-              <p className="text-sm font-semibold text-[#000000]">{b.local}</p>
+              <p className="text-sm font-semibold text-[#20252B]">{b.local}</p>
               {b.endereco && (
-                <p className="mt-0.5 text-xs text-[#000000]/60">{b.endereco}</p>
+                <p className="mt-0.5 text-xs text-[#20252B]/60">{b.endereco}</p>
               )}
               {b.nota && (
-                <p className="mt-1 text-xs leading-5 text-[#000000]/70">{b.nota}</p>
+                <p className="mt-1 text-xs leading-5 text-[#20252B]/70">{b.nota}</p>
               )}
             </div>
           ))}
@@ -2366,9 +2366,9 @@ function InfoOperacionalBlock({
               (h-12), centralizado na mesma caixa h-20, pra ter o mesmo peso
               visual dos outros cards. */}
           <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-            <Icon className={`h-12 w-12 ${isRegra ? "text-red-600" : "text-[#000000]"}`} />
+            <Icon className={`h-12 w-12 ${isRegra ? "text-red-600" : "text-[#20252B]"}`} />
           </span>
-          <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#000000]/70 sm:text-lg">
+          <span className="min-w-0 flex-1 text-base font-semibold text-[#20252B]/70 sm:text-lg">
             {info.titulo}
           </span>
         </div>
@@ -2379,14 +2379,14 @@ function InfoOperacionalBlock({
           className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
         >
           <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-            <Icon className={`h-12 w-12 ${isRegra ? "text-red-600" : "text-[#000000]"}`} />
+            <Icon className={`h-12 w-12 ${isRegra ? "text-red-600" : "text-[#20252B]"}`} />
           </span>
-          <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#000000]/70 sm:text-lg">
+          <span className="min-w-0 flex-1 text-base font-semibold text-[#20252B]/70 sm:text-lg">
             {info.titulo}
           </span>
           <svg
             viewBox="0 0 24 24"
-            className={`h-4 w-4 shrink-0 text-[#000000]/45 transition-transform duration-200 ${
+            className={`h-4 w-4 shrink-0 text-[#20252B]/45 transition-transform duration-200 ${
               aberto ? "rotate-180" : ""
             }`}
             fill="none"
@@ -2403,12 +2403,12 @@ function InfoOperacionalBlock({
         <div className="space-y-3.5 px-5 pb-5">
           {info.itens.map((b, i) => (
             <div key={b.local} className={i > 0 ? "border-t border-[#E3E6EA] pt-3.5" : ""}>
-              <p className="text-sm font-semibold text-[#000000]">{b.local}</p>
+              <p className="text-sm font-semibold text-[#20252B]">{b.local}</p>
               {b.endereco && (
-                <p className="mt-0.5 text-xs text-[#000000]/60">{b.endereco}</p>
+                <p className="mt-0.5 text-xs text-[#20252B]/60">{b.endereco}</p>
               )}
               {b.nota && (
-                <p className="mt-1 text-xs leading-5 text-[#000000]/70">{b.nota}</p>
+                <p className="mt-1 text-xs leading-5 text-[#20252B]/70">{b.nota}</p>
               )}
             </div>
           ))}
@@ -2429,8 +2429,8 @@ function HorarioLojasBlock({
   return (
     <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60 p-5 sm:p-7">
       <div className="mb-5 flex items-center gap-3 sm:gap-4">
-        <IconClock className="h-14 w-14 shrink-0 text-[#000000] sm:h-20 sm:w-20" />
-        <span className="min-w-0 flex-1 text-sm font-bold uppercase tracking-[0.12em] text-[#000000]/70 sm:text-lg sm:tracking-[0.2em]">
+        <IconClock className="h-14 w-14 shrink-0 text-[#20252B] sm:h-20 sm:w-20" />
+        <span className="min-w-0 flex-1 text-sm font-semibold text-[#20252B]/70 sm:text-lg">
           Horário das Lojas
         </span>
       </div>
@@ -2442,8 +2442,8 @@ function HorarioLojasBlock({
               i > 0 ? "border-t border-[#E3E6EA] pt-3" : ""
             }`}
           >
-            <p className="min-w-0 text-sm font-semibold text-[#000000] sm:flex-1">{b.nome}</p>
-            <p className="text-xs text-[#000000]/70 sm:shrink-0 sm:text-right">{b.horario}</p>
+            <p className="min-w-0 text-sm font-semibold text-[#20252B] sm:flex-1">{b.nome}</p>
+            <p className="text-xs text-[#20252B]/70 sm:shrink-0 sm:text-right">{b.horario}</p>
           </div>
         ))}
       </div>
@@ -2526,22 +2526,22 @@ function StepTimelineCarousel<T extends { titulo: string; horario?: string }>({
   const hint = !canScroll
     ? null
     : scrollState.atStart
-      ? "DESLIZE PARA EXPLORAR →"
+      ? "Deslize para explorar →"
       : scrollState.atEnd
-        ? "← DESLIZE PARA EXPLORAR"
-        : "← DESLIZE PARA EXPLORAR →";
+        ? "← Deslize para explorar"
+        : "← Deslize para explorar →";
 
   const lineColor = isDark ? "rgba(255,255,255,0.22)" : "rgba(36,33,29,0.16)";
   const arrowBtnClass = isDark
     ? "bg-white/10 text-white hover:bg-white/20"
-    : "bg-white text-[#000000] shadow-[0_4px_14px_-4px_rgba(0,0,0,0.25)] border border-[#E3E6EA] hover:bg-[#F5F3EE]";
+    : "bg-white text-[#20252B] shadow-[0_4px_14px_-4px_rgba(0,0,0,0.25)] border border-[#E3E6EA] hover:bg-[#F5F3EE]";
 
   return (
     <div>
       {hint && (
         <p
-          className={`mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.18em] ${
-            isDark ? "text-white/65" : "text-[#000000]/55"
+          className={`mb-3 text-center text-[11px] font-semibold   ${
+            isDark ? "text-white/65" : "text-[#20252B]/55"
           }`}
         >
           {hint}
@@ -2574,7 +2574,7 @@ function StepTimelineCarousel<T extends { titulo: string; horario?: string }>({
                 </div>
                 {passo.horario && (
                   <p
-                    className={`mt-2 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.08em] ${
+                    className={`mt-2 whitespace-nowrap text-[12px] font-medium   ${
                       isDark ? "text-white/55" : "text-[#B96432]"
                     }`}
                   >
@@ -2583,7 +2583,7 @@ function StepTimelineCarousel<T extends { titulo: string; horario?: string }>({
                 )}
                 <p
                   className={`mt-0.5 line-clamp-2 text-xs font-semibold leading-tight ${
-                    isDark ? "text-white" : "text-[#000000]"
+                    isDark ? "text-white" : "text-[#20252B]"
                   }`}
                 >
                   {passo.titulo}
@@ -2673,11 +2673,11 @@ function CarouselProgress({
   return (
     <div
       className={`mt-3 h-1 w-full overflow-hidden rounded-full ${
-        isDark ? "bg-white/15" : "bg-[#000000]/10"
+        isDark ? "bg-white/15" : "bg-[#20252B]/10"
       }`}
     >
       <div
-        className={`h-full rounded-full ${isDark ? "bg-white/70" : "bg-[#000000]/45"}`}
+        className={`h-full rounded-full ${isDark ? "bg-white/70" : "bg-[#20252B]/45"}`}
         style={{ width: `${thumbPct}%`, transform: `translateX(${progress * travel}%)` }}
       />
     </div>
@@ -2690,9 +2690,9 @@ function ResumoDiaBlock({
   resumo: NonNullable<DayContent["resumoDia"]>;
 }) {
   return (
-    <div className="mb-10 rounded-2xl bg-black p-5 sm:p-6">
-      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-white">
-        Resumo do Dia
+    <div className="mb-10 rounded-2xl bg-[#24476B] p-5 sm:p-6">
+      <p className="mb-5 text-xs font-semibold text-white">
+        Resumo do dia
       </p>
       <StepTimelineCarousel
         passos={resumo.passos}
@@ -2761,10 +2761,10 @@ function DiaEmNumerosBlock({
     <div className="mb-10 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#E3E6EA] bg-[#FFFFFF] p-5 sm:grid-cols-3 sm:p-6">
       {itens.map((item) => (
         <div key={item.label}>
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#000000]/45">
+          <p className="mb-1 text-[12px] font-semibold text-[#20252B]/45">
             {item.label}
           </p>
-          <p className="text-sm font-semibold text-[#000000]">{item.valor}</p>
+          <p className="text-sm font-semibold text-[#20252B]">{item.valor}</p>
         </div>
       ))}
     </div>
@@ -2788,11 +2788,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
           style={{ filter: "brightness(0) saturate(100%)" }}
         />
         <div>
-          <p className="text-base font-bold uppercase tracking-[0.2em] text-[#000000]/70 sm:text-lg">
+          <p className="text-base font-semibold text-[#20252B]/70 sm:text-lg">
             {gastronomia.titulo ?? "Gastronomia"}
           </p>
           {gastronomia.subtitulo && (
-            <p className="mt-1 text-sm text-[#000000]/65">
+            <p className="mt-1 text-sm text-[#20252B]/65">
               {gastronomia.subtitulo}
             </p>
           )}
@@ -2800,7 +2800,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
       </div>
 
       {gastronomia.intro && (
-        <p className="mt-3 text-sm leading-6 text-[#000000]/78">
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/78">
           {gastronomia.intro}
         </p>
       )}
@@ -2810,7 +2810,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
       {temItens && (
         <>
           {gastronomia.itensLabel && (
-            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#000000]/45">
+            <p className="mt-5 text-[11px] font-semibold text-[#20252B]/45">
               {gastronomia.itensLabel}
             </p>
           )}
@@ -2835,19 +2835,19 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                      <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                      <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                         <IconZoom className="h-3.5 w-3.5" />
                       </span>
                     </div>
                   </button>
                 )}
                 <div className="p-3">
-                  <p className="text-xs font-semibold leading-tight text-[#000000]">{item.nome}</p>
+                  <p className="text-xs font-semibold leading-tight text-[#20252B]">{item.nome}</p>
                   {item.descricao && (
-                    <p className="mt-1 text-[11px] leading-5 text-[#000000]/65">{item.descricao}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-[#20252B]/65">{item.descricao}</p>
                   )}
                   {(item.localizacao || item.preco) && (
-                    <div className="mt-2 space-y-1 border-t border-[#E3E6EA] pt-2 text-[10px] leading-4 text-[#000000]/55">
+                    <div className="mt-2 space-y-1 border-t border-[#E3E6EA] pt-2 text-[12px] leading-4 text-[#20252B]/55">
                       {item.localizacao && (
                         <p className="flex items-start gap-1">
                           <IconPin className="mt-0.5 h-3 w-3 shrink-0" />
@@ -2856,7 +2856,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       )}
                       {item.preco && (
                         <p className="flex items-center gap-1">
-                          <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+                          <span className="w-3 shrink-0 text-center text-[12px] font-semibold">¥</span>
                           <span>{item.preco}</span>
                         </p>
                       )}
@@ -2872,7 +2872,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
       {temRestaurantes && (
         <>
           {gastronomia.restaurantesLabel && (
-            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#000000]/45">
+            <p className="mt-5 text-[11px] font-semibold text-[#20252B]/45">
               {gastronomia.restaurantesLabel}
             </p>
           )}
@@ -2897,14 +2897,14 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                         <IconZoom className="h-4 w-4" />
                       </span>
                     </div>
                   </button>
                 )}
                 <div className="p-4">
-                  <p className="text-sm font-semibold text-[#000000]">
+                  <p className="text-sm font-semibold text-[#20252B]">
                     {r.nome}
                   </p>
                   {r.descricao && (
@@ -2913,7 +2913,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                     </p>
                   )}
                   {(r.localizacao || r.preco || r.horario) && (
-                    <div className="mt-3 space-y-1.5 border-t border-[#E3E6EA] pt-3 text-[11px] leading-5 text-[#000000]/60">
+                    <div className="mt-3 space-y-1.5 border-t border-[#E3E6EA] pt-3 text-[11px] leading-5 text-[#20252B]/60">
                       {r.localizacao && (
                         <p className="flex items-center gap-1.5">
                           <IconPin className="h-3 w-3 shrink-0" />
@@ -2922,7 +2922,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       )}
                       {r.preco && (
                         <p className="flex items-center gap-1.5">
-                          <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+                          <span className="w-3 shrink-0 text-center text-[12px] font-semibold">¥</span>
                           <span>{r.preco}</span>
                         </p>
                       )}
@@ -2944,7 +2944,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
       {temCuradoria && (
         <>
           {gastronomia.curadoriaLabel && (
-            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#000000]/45">
+            <p className="mt-5 text-[11px] font-semibold text-[#20252B]/45">
               {gastronomia.curadoriaLabel}
             </p>
           )}
@@ -2973,12 +2973,12 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                     {r.papel.toLowerCase().includes("custo-benefício") && (
-                      <span className="absolute left-2 top-2 rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+                      <span className="absolute left-2 top-2 rounded-full bg-emerald-600 px-2.5 py-1 text-[12px] font-semibold text-white shadow">
                         {r.papel}
                       </span>
                     )}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                         <IconZoom className="h-4 w-4" />
                       </span>
                     </div>
@@ -2986,19 +2986,19 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                 )}
                 <div className="flex flex-1 flex-col p-4">
                   {!r.foto && r.papel.toLowerCase().includes("custo-benefício") && (
-                    <span className="mb-2 inline-block w-fit rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                    <span className="mb-2 inline-block w-fit rounded-full bg-emerald-600 px-2.5 py-1 text-[12px] font-semibold text-white">
                       {r.papel}
                     </span>
                   )}
-                  <p className="text-sm font-semibold text-[#000000]">{r.nome}</p>
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-[#000000]/45">
+                  <p className="text-sm font-semibold text-[#20252B]">{r.nome}</p>
+                  <p className="text-[11px] font-medium text-[#20252B]/45">
                     {r.categoria}
                   </p>
-                  <p className="mt-1.5 text-xs leading-5 text-[#000000]/78">
+                  <p className="mt-1.5 text-xs leading-5 text-[#20252B]/78">
                     {r.descricao}
                   </p>
 
-                  <div className="mt-3 space-y-1.5 border-t border-[#E3E6EA] pt-3 text-[11px] leading-5 text-[#000000]/65">
+                  <div className="mt-3 space-y-1.5 border-t border-[#E3E6EA] pt-3 text-[11px] leading-5 text-[#20252B]/65">
                     {r.notaTabelog && (
                       <p className="flex items-center gap-1.5">
                         <IconStarKit className="h-3 w-3 shrink-0 text-[#B96432]" />
@@ -3009,7 +3009,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       </p>
                     )}
                     <p className="flex items-center gap-1.5">
-                      <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+                      <span className="w-3 shrink-0 text-center text-[12px] font-semibold">¥</span>
                       <span>{r.faixaPreco}</span>
                     </p>
                     <p className="flex items-center gap-1.5">
@@ -3047,7 +3047,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       href={r.linkTabelog}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#2C6CA6] hover:underline"
+                      className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#24476B] hover:underline"
                     >
                       Ver no Tabelog →
                     </a>
@@ -3083,7 +3083,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
               alt={zoomedFoto.alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
             />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+            <p className="mt-3 text-center text-xs font-semibold text-white/85">
               {zoomedFoto.alt}
             </p>
             {zoomedFoto.endereco && (
@@ -3105,10 +3105,10 @@ function ComprasExclusivasBlock({
 }) {
   return (
     <div className="mt-6 rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/68">
+      <p className="text-xs font-semibold text-[#20252B]/68">
         Compras Exclusivas
       </p>
-      <p className="mt-2 text-sm leading-6 text-[#000000]/78">
+      <p className="mt-2 text-sm leading-6 text-[#20252B]/78">
         {compras.descricao}
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -3125,11 +3125,11 @@ function ComprasExclusivasBlock({
                 className="aspect-square w-full object-cover"
               />
             ) : (
-              <div className="flex aspect-square w-full items-center justify-center bg-[#F6F8FA] text-[10px] uppercase tracking-wide text-[#000000]/55">
+              <div className="flex aspect-square w-full items-center justify-center bg-[#F6F8FA] text-[12px] text-[#20252B]/55">
                 Sem imagem
               </div>
             )}
-            <p className="p-2 text-center text-xs font-medium leading-4 text-[#000000]/90">
+            <p className="p-2 text-center text-xs font-medium leading-4 text-[#20252B]/90">
               {item.nome}
             </p>
           </div>
@@ -3150,31 +3150,31 @@ function TransporteBlock({
         <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
           <IconShinkansen className="h-12 w-12" />
         </span>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-red-700">
+        <p className="text-xs font-semibold text-red-700">
           Sugestão de Transporte
         </p>
       </div>
-      <p className="text-lg font-semibold text-[#000000]">{transporte.linha}</p>
-      <p className="mt-1 text-sm text-[#000000]/78">{transporte.tempo}</p>
-      <p className="mt-3 text-sm leading-6 text-[#000000]/90">
+      <p className="text-lg font-semibold text-[#20252B]">{transporte.linha}</p>
+      <p className="mt-1 text-sm text-[#20252B]/78">{transporte.tempo}</p>
+      <p className="mt-3 text-sm leading-6 text-[#20252B]/90">
         {transporte.recomendacao}
       </p>
       {transporte.tabelasHorarios?.map((tabela, idx) => (
         <div key={idx} className="mt-4">
           {tabela.descricao && (
-            <p className="mb-2 text-sm leading-6 text-[#000000]/90">{tabela.descricao}</p>
+            <p className="mb-2 text-sm leading-6 text-[#20252B]/90">{tabela.descricao}</p>
           )}
           {tabela.titulo && (
-            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-red-700">
+            <p className="mb-2 text-xs font-semibold text-red-700">
               {tabela.titulo}
             </p>
           )}
           <div className="overflow-x-auto rounded-lg border border-red-200 bg-white">
             <table className="w-full min-w-[380px] text-left text-xs">
               <thead>
-                <tr className="border-b border-red-200 bg-red-50/60 text-[10px] uppercase tracking-wide text-red-800">
+                <tr className="border-b border-red-200 bg-red-50/60 text-[12px] text-red-800">
                   {tabela.colunas.map((c) => (
-                    <th key={c} className="px-3 py-2 font-bold">
+                    <th key={c} className="px-3 py-2 font-semibold">
                       {c}
                     </th>
                   ))}
@@ -3187,7 +3187,7 @@ function TransporteBlock({
                       <td
                         key={j}
                         className={`whitespace-nowrap px-3 py-2 ${
-                          j === 0 ? "font-semibold text-[#000000]" : "text-[#000000]/85"
+                          j === 0 ? "font-semibold text-[#20252B]" : "text-[#20252B]/85"
                         }`}
                       >
                         {valor}
@@ -3199,7 +3199,7 @@ function TransporteBlock({
             </table>
           </div>
           {tabela.nota && (
-            <p className="mt-2 text-[11px] leading-4 text-[#000000]/60">{tabela.nota}</p>
+            <p className="mt-2 text-[11px] leading-4 text-[#20252B]/60">{tabela.nota}</p>
           )}
         </div>
       ))}
@@ -3270,12 +3270,12 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
   return (
     <div className="mb-8 space-y-5 rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] p-5 sm:p-8">
       <div>
-        <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/60">
+        <p className="mb-2 flex items-center gap-2 text-xs font-semibold text-[#20252B]/60">
           <IconPlane className="h-4 w-4" />
           Narita ↔ Tóquio
         </p>
-        <h3 className="text-lg font-semibold text-[#000000] sm:text-xl">Duas Opções de Transporte</h3>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/80">
+        <h3 className="text-lg font-semibold text-[#20252B] sm:text-xl">Duas Opções de Transporte</h3>
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/80">
           Para o deslocamento entre o Aeroporto Internacional de Narita (NRT) e a região de
           Ginza/Kyobashi, você possui duas excelentes alternativas: o Airport Limousine Bus e o
           Narita Express (N&apos;EX). Ambas são seguras, confortáveis e adequadas para viajar com
@@ -3285,18 +3285,18 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
       </div>
 
       {/* Opção 1 — Airport Limousine Bus (recomendada) */}
-      <div className="rounded-xl border-2 border-[#3E5FA8] bg-[#EDF3FC] p-5 sm:p-6">
+      <div className="rounded-xl border-2 border-[#24476B] bg-[#EDF3FC] p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]">
+          <p className="flex items-center gap-2 text-sm font-semibold text-[#24476B]">
             <IconBus className="h-6 w-6" />
             Opção 1 — Airport Limousine Bus
           </p>
-          <span className="inline-flex items-center gap-1 rounded-full border border-[#3E5FA8]/40 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#3E5FA8]">
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#24476B]/40 bg-white px-2.5 py-0.5 text-[12px] font-semibold text-[#24476B]">
             <IconCheckSmall className="h-3 w-3" />
-            Recomendada pela Alpinea
+            Recomendada
           </span>
         </div>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/85">
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/85">
           O Airport Limousine Bus é a alternativa mais prática para quem está viajando com malas.
           As bagagens maiores são entregues ao funcionário antes do embarque e transportadas no
           compartimento inferior do ônibus. Você evita plataformas, escadas, corredores e a
@@ -3304,20 +3304,20 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
         </p>
 
         <div className="mt-4 rounded-lg bg-white/70 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">{rotaLabel}</p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/85">
+          <p className="text-xs font-semibold text-[#24476B]/80">{rotaLabel}</p>
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/85">
             {variant === "chegada"
               ? "Narita Terminal 2 → Airport Limousine Bus → Tokyo Station/Yaesu → táxi curto → lyf Ginza Tokyo."
               : "remm Tokyo Kyobashi → táxi curto → ponto do Airport Limousine Bus → Narita Terminal 2."}
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/75">
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/75">
             {variant === "chegada"
               ? "Ao chegar à região de Tokyo Station, basta retirar as malas e utilizar um táxi para o pequeno trecho final até o hotel."
               : "Na volta, recomendamos sair com margem confortável de segurança, pois o tempo de viagem pode variar de acordo com as condições do trânsito."}
           </p>
         </div>
 
-        <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+        <p className="mt-4 text-xs font-semibold text-[#24476B]/80">
           Por que recomendamos esta opção?
         </p>
         <div className="mt-2 space-y-1.5">
@@ -3330,15 +3330,15 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
             "Excelente opção tanto na chegada quanto no retorno ao aeroporto",
           ].map((d) => (
             <div key={d} className="flex items-start gap-2">
-              <IconCheckSmall className="mt-0.5 h-3 w-3 shrink-0 text-[#3E5FA8]" />
-              <p className="text-xs leading-5 text-[#000000]/75">{d}</p>
+              <IconCheckSmall className="mt-0.5 h-3 w-3 shrink-0 text-[#24476B]" />
+              <p className="text-xs leading-5 text-[#20252B]/75">{d}</p>
             </div>
           ))}
         </div>
 
         {variant === "chegada" && (
           <div className="mt-4 space-y-3 rounded-lg bg-white/70 p-4">
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+            <p className="text-xs font-semibold text-[#24476B]/80">
               Como Comprar o Bilhete do Limousine Bus
             </p>
 
@@ -3348,7 +3348,7 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               alt="Balcão de venda de bilhetes do Airport Limousine Bus, com atendentes no saguão do terminal"
               className="aspect-[16/10] w-full rounded-lg border border-[#CBD9F2] object-cover sm:aspect-[16/9]"
             />
-            <p className="text-center text-xs text-[#000000]/55">Bus Ticket Counter — balcão de venda dos bilhetes</p>
+            <p className="text-center text-xs text-[#20252B]/55">Bus Ticket Counter — balcão de venda dos bilhetes</p>
 
             <img
               loading="lazy"
@@ -3356,14 +3356,14 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               alt="Ponto de embarque do Airport Limousine Bus, com funcionários organizando as bagagens dos passageiros"
               className="aspect-[16/10] w-full rounded-lg border border-[#CBD9F2] object-cover sm:aspect-[16/9]"
             />
-            <p className="text-center text-xs text-[#000000]/55">Ponto de embarque — funcionários cuidam das bagagens</p>
+            <p className="text-center text-xs text-[#20252B]/55">Ponto de embarque — funcionários cuidam das bagagens</p>
 
             <div className="space-y-3">
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   1
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   Depois de desembarcar, ao passar pela Imigração, retirar as malas e passar pela
                   Alfândega, você sai direto no{" "}
                   <span className="font-semibold">Terminal 2, 1º andar (1F), International Arrivals
@@ -3376,10 +3376,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   2
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   <span className="font-semibold">Onde comprar:</span> no Bus Ticket Counter, que
                   funciona atualmente das <span className="font-semibold">06:30 às 23:00</span>{" "}
                   aproximadamente. No balcão, informe ao atendente o destino — pode simplesmente
@@ -3390,10 +3390,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   3
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   <span className="font-semibold">Escolha o horário</span> com alguma folga — os
                   bilhetes saem vinculados a uma saída específica, então considere o tempo de comprar
                   o bilhete, ir até o ponto, entregar as malas e embarcar. A vantagem de comprar só
@@ -3403,10 +3403,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   4
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   <span className="font-semibold">Confira o bilhete</span> antes de sair do balcão:
                   DESTINATION (destino), DEPARTURE TIME (horário de saída) e BUS STOP / PLATFORM
                   (número do ponto) — este último é especialmente importante, já que várias linhas
@@ -3415,10 +3415,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   5
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   <span className="font-semibold">Vá para o ponto de ônibus</span> seguindo as placas
                   BUS / BUS STOPS — as paradas ficam do lado de fora do Terminal 2, ainda no mesmo
                   1F, sem precisar de elevador, escada ou trem. Saia pela porta indicada e procure o
@@ -3427,10 +3427,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   6
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   <span className="font-semibold">Entregue as malas</span> ao funcionário no ponto,
                   alguns minutos antes do horário — as malas grandes vão no bagageiro inferior do
                   ônibus, e você recebe um comprovante/etiqueta de bagagem. Guarde essa etiqueta até
@@ -3439,10 +3439,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
               </div>
 
               <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#24476B]/40 text-xs font-medium text-[#24476B]">
                   7
                 </span>
-                <p className="text-sm leading-6 text-[#000000]/85">
+                <p className="text-sm leading-6 text-[#20252B]/85">
                   <span className="font-semibold">Embarque:</span> quando o ônibus chegar, confirme
                   no painel frontal/lateral se o destino corresponde ao do seu bilhete, apresente o
                   bilhete ou QR Code e embarque — os assentos são individuais.
@@ -3474,34 +3474,34 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
 
       {/* Opção 2 — Narita Express (N'EX) */}
       <div className="rounded-xl border border-[#CBD9F2] bg-[#EDF3FC]/60 p-5 sm:p-6">
-        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+        <p className="flex items-center gap-2 text-sm font-semibold text-[#24476B]/80">
           <IconShinkansen className="h-6 w-6" />
           Opção 2 — Narita Express (N&apos;EX)
         </p>
-        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#000000]/55">Alternativa mais previsível</p>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/85">
+        <p className="mt-1 text-xs text-[#20252B]/55">Alternativa mais previsível</p>
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/85">
           O Narita Express, ou N&apos;EX, é o trem expresso da JR que conecta o Aeroporto de Narita
           diretamente a Tokyo Station. Possui assentos reservados e áreas destinadas às bagagens,
           sendo uma alternativa confortável para quem prefere viajar de trem.
         </p>
 
         <div className="mt-4 rounded-lg bg-white/70 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">{rotaLabel}</p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/85">
+          <p className="text-xs font-semibold text-[#24476B]/80">{rotaLabel}</p>
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/85">
             {variant === "chegada"
               ? "Narita Terminal 2 → Narita Express → Tokyo Station → táxi curto → lyf Ginza Tokyo."
               : "remm Tokyo Kyobashi → táxi curto → Tokyo Station → Narita Express → Narita Terminal 2."}
           </p>
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-[#000000]/80">
+        <p className="mt-4 text-sm leading-6 text-[#20252B]/80">
           A principal vantagem do N&apos;EX é a previsibilidade: como o percurso é ferroviário, o
           tempo de viagem não sofre influência do trânsito. Por outro lado, é necessário circular
           por Tokyo Station, uma das maiores e mais movimentadas estações do Japão, além de
           administrar a própria bagagem durante o deslocamento pela estação.
         </p>
 
-        <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">Vantagens</p>
+        <p className="mt-4 text-xs font-semibold text-[#24476B]/80">Vantagens</p>
         <div className="mt-2 space-y-1.5">
           {[
             "Ligação direta entre Tokyo Station e Narita",
@@ -3511,15 +3511,15 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
             "Não depende das condições do trânsito",
           ].map((d) => (
             <div key={d} className="flex items-start gap-2">
-              <IconCheckSmall className="mt-0.5 h-3 w-3 shrink-0 text-[#3E5FA8]/60" />
-              <p className="text-xs leading-5 text-[#000000]/75">{d}</p>
+              <IconCheckSmall className="mt-0.5 h-3 w-3 shrink-0 text-[#24476B]/60" />
+              <p className="text-xs leading-5 text-[#20252B]/75">{d}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Recomendação final */}
-      <ContentCard variant="info" icon={IconStarKit} eyebrow="Recomendação Alpinea" size="sm">
+      <ContentCard variant="info" icon={IconStarKit} eyebrow="Recomendação" size="sm">
         <p>
           Para este roteiro, nossa primeira opção é o Airport Limousine Bus, principalmente pela
           facilidade para viajar com malas e pela experiência mais simples depois de um voo
@@ -3527,10 +3527,10 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
           caso você prefira o trem ou queira eliminar a variável do trânsito.
         </p>
         <div className="mt-4 rounded-lg bg-white/70 p-4 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B4A73]/70">
+          <p className="text-[12px] font-semibold text-[#24476B]/70">
             {variant === "chegada" ? "Chegada · 04/05" : "Retorno · 11/05 à noite"}
           </p>
-          <p className="mt-2 text-sm font-medium leading-6 text-[#1B4A73]">
+          <p className="mt-2 text-sm font-medium leading-6 text-[#24476B]">
             {variant === "chegada"
               ? "Narita T2 → Airport Limousine Bus → táxi → lyf Ginza Tokyo"
               : "remm Tokyo Kyobashi → táxi → Airport Limousine Bus → Narita T2"}
@@ -3545,7 +3545,7 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
             seguir para o Aeroporto de Narita na noite do dia 11/05.
           </p>
           <p className="mt-3">
-            <span className="font-semibold">Dica Alpinea:</span> os horários específicos dos
+            <span className="font-semibold">Dica:</span> os horários específicos dos
             transportes serão confirmados mais próximo da viagem. No retorno, será indicado um
             horário de Limousine Bus que ofereça uma margem confortável para eventuais variações
             no trânsito.
@@ -3568,14 +3568,14 @@ function TransporteHanedaTokyoBlock() {
   return (
     <div className="mb-8 space-y-5 rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] p-5 sm:p-8">
       <div>
-        <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/60">
+        <p className="mb-2 flex items-center gap-2 text-xs font-semibold text-[#20252B]/60">
           <IconPlane className="h-4 w-4" />
           Tóquio ↔ Haneda
         </p>
-        <h3 className="text-lg font-semibold text-[#000000] sm:text-xl">
+        <h3 className="text-lg font-semibold text-[#20252B] sm:text-xl">
           remm Tokyo Kyobashi → Haneda Airport T3
         </h3>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/80">
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/80">
           Como você estará viajando com 3 malas grandes de aproximadamente 20 kg, recomendamos
           priorizar opções que evitem caminhadas, escadas, catracas e deslocamentos por estações
           com a bagagem. Abaixo estão as três opções, em nossa ordem de recomendação. Os valores
@@ -3585,85 +3585,85 @@ function TransporteHanedaTokyoBlock() {
       </div>
 
       {/* Opção 1 — Táxi + Airport Limousine Bus (recomendada) */}
-      <div className="rounded-xl border-2 border-[#3E5FA8] bg-[#EDF3FC] p-5 sm:p-6">
+      <div className="rounded-xl border-2 border-[#24476B] bg-[#EDF3FC] p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]">
+          <p className="flex items-center gap-2 text-sm font-semibold text-[#24476B]">
             <IconBus className="h-6 w-6" />
             Opção 1 — Táxi + Airport Limousine Bus
           </p>
-          <span className="inline-flex items-center gap-1 rounded-full border border-[#3E5FA8]/40 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#3E5FA8]">
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#24476B]/40 bg-white px-2.5 py-0.5 text-[12px] font-semibold text-[#24476B]">
             <IconCheckSmall className="h-3 w-3" />
-            Recomendada pela Alpinea
+            Recomendada
           </span>
         </div>
-        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#000000]/55">
+        <p className="mt-1 text-xs text-[#20252B]/55">
           Melhor equilíbrio entre conforto e custo
         </p>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/85">
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/85">
           remm Tokyo Kyobashi → táxi → Tokyo City Air Terminal (T-CAT) → Airport Limousine Bus →
           Haneda Airport Terminal 3.
         </p>
 
         <div className="mt-4 rounded-lg bg-white/70 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+          <p className="text-xs font-semibold text-[#24476B]/80">
             Etapa 1 · Hotel → T-CAT
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/85">
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/85">
             Peça na recepção do remm um táxi até a Tokyo City Air Terminal — T-CAT (東京シティエアターミナル).
             Informe que você está viajando com 3 malas grandes, para que seja utilizado um veículo
             com espaço adequado.
           </p>
           <div className="mt-3 grid grid-cols-3 gap-3">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Tempo
               </p>
-              <p className="text-sm font-semibold text-[#000000]">≈10–15 min</p>
+              <p className="text-sm font-semibold text-[#20252B]">≈10–15 min</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Táxi
               </p>
-              <p className="text-sm font-semibold text-[#000000]">até ¥4.000</p>
+              <p className="text-sm font-semibold text-[#20252B]">até ¥4.000</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Bagagem
               </p>
-              <p className="text-sm font-semibold text-[#000000]">No porta-malas</p>
+              <p className="text-sm font-semibold text-[#20252B]">No porta-malas</p>
             </div>
           </div>
         </div>
 
         <div className="mt-3 rounded-lg bg-white/70 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+          <p className="text-xs font-semibold text-[#24476B]/80">
             Etapa 2 · T-CAT → Haneda T3
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/85">
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/85">
             Ao chegar ao T-CAT, siga para o embarque do Airport Limousine Bus com destino a Haneda
             Airport. Entregue as malas à equipe antes do embarque — elas ficam no compartimento
             inferior do ônibus e são devolvidas no desembarque, já no Terminal 3.
           </p>
           <div className="mt-3 grid grid-cols-3 gap-3">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Tempo
               </p>
-              <p className="text-sm font-semibold text-[#000000]">≈25 min</p>
+              <p className="text-sm font-semibold text-[#20252B]">≈25 min</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Tarifa
               </p>
-              <p className="text-sm font-semibold text-[#000000]">
+              <p className="text-sm font-semibold text-[#20252B]">
                 ¥1.000/pessoa · ¥2.000 (2 pessoas)
               </p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Bagagem
               </p>
-              <p className="text-sm font-semibold text-[#000000]">No bagageiro do ônibus</p>
+              <p className="text-sm font-semibold text-[#20252B]">No bagageiro do ônibus</p>
             </div>
           </div>
         </div>
@@ -3676,7 +3676,7 @@ function TransporteHanedaTokyoBlock() {
               alt="Mascote do T-CAT (Tokyo City Air Terminal)"
               className="h-9 w-9 shrink-0 object-contain"
             />
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+            <p className="text-xs font-semibold text-[#24476B]/80">
               Como Comprar a Passagem no T-CAT
             </p>
           </div>
@@ -3688,14 +3688,14 @@ function TransporteHanedaTokyoBlock() {
             className="aspect-[16/10] w-full rounded-lg border border-[#CBD9F2] object-cover sm:aspect-[16/9]"
           />
 
-          <p className="text-sm leading-6 text-[#000000]/85">
+          <p className="text-sm leading-6 text-[#20252B]/85">
             Ao entrar no <span className="font-semibold">T-CAT Main Building, 1º andar (1F)</span>,
             procure pelas indicações <span className="font-semibold">LIMOUSINE BUS</span>,{" "}
             <span className="font-semibold">HANEDA AIRPORT</span> e{" "}
             <span className="font-semibold">BUS TICKET</span> — o balcão de passagens, as máquinas
             automáticas e a própria área de embarque ficam todos nesse mesmo andar.
           </p>
-          <p className="text-sm leading-6 text-[#000000]/85">
+          <p className="text-sm leading-6 text-[#20252B]/85">
             Você pode comprar no balcão do Airport Limousine Bus, em máquinas automáticas, ou
             antecipadamente pela internet. Para quem usa o serviço pela primeira vez, o balcão é o
             mais simples, pois o atendente confirma o terminal correto — diga{" "}
@@ -3705,27 +3705,27 @@ function TransporteHanedaTokyoBlock() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Tarifa Adulto
               </p>
-              <p className="text-sm font-semibold text-[#000000]">¥1.000</p>
+              <p className="text-sm font-semibold text-[#20252B]">¥1.000</p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              <p className="text-[12px] font-semibold text-[#24476B]/70">
                 Tarifa Criança (6–11 anos)
               </p>
-              <p className="text-sm font-semibold text-[#000000]">¥500</p>
+              <p className="text-sm font-semibold text-[#20252B]">¥500</p>
             </div>
           </div>
 
-          <p className="text-sm leading-6 text-[#000000]/85">
+          <p className="text-sm leading-6 text-[#20252B]/85">
             Aceita pagamento em dinheiro, cartão de crédito ou IC Card (Suica/Pasmo). Antes de sair
             do balcão, confira no bilhete: <span className="font-semibold">DESTINATION</span>{" "}
             (Haneda Airport), <span className="font-semibold">TERMINAL</span> e{" "}
             <span className="font-semibold">DEPARTURE TIME</span> — Haneda tem três terminais, e o
             mais importante é confirmar o terminal certo.
           </p>
-          <p className="text-sm leading-6 text-[#000000]/85">
+          <p className="text-sm leading-6 text-[#20252B]/85">
             O embarque é no próprio T-CAT Main Building, 1F — basta seguir as placas{" "}
             <span className="font-semibold">HANEDA AIRPORT / LIMOUSINE BUS</span>, sem precisar sair
             procurando um ponto na rua. Chegue alguns minutos antes do horário do bilhete, apresente-o
@@ -3733,7 +3733,7 @@ function TransporteHanedaTokyoBlock() {
             e você recebe uma etiqueta/comprovante de bagagem. Mantenha com você, dentro do ônibus,
             documentos, passaporte, dinheiro, medicamentos e outros objetos de valor.
           </p>
-          <p className="text-sm leading-6 text-[#000000]/85">
+          <p className="text-sm leading-6 text-[#20252B]/85">
             Ao chegar em Haneda, retire as malas do compartimento, tenha o comprovante em mãos e siga
             para <span className="font-semibold">DEPARTURES / 出発</span> — depois, procure o balcão de
             check-in da sua companhia aérea nos painéis do terminal.
@@ -3757,22 +3757,22 @@ function TransporteHanedaTokyoBlock() {
         </div>
 
         <div className="mt-4 rounded-lg bg-white/70 p-4 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#3E5FA8]/70">
+          <p className="text-[12px] font-semibold text-[#24476B]/70">
             Tempo e Custo Total
           </p>
-          <p className="mt-2 text-sm font-medium leading-6 text-[#000000]">
+          <p className="mt-2 text-sm font-medium leading-6 text-[#20252B]">
             ≈45–60 min (incluindo a troca e uma margem de espera pelo ônibus) · ¥3.500–6.000 para 2
             pessoas
           </p>
-          <p className="mt-1 text-xs leading-5 text-[#000000]/60">
+          <p className="mt-1 text-xs leading-5 text-[#20252B]/60">
             O limite superior considera uma margem conservadora para o táxi até o T-CAT.
           </p>
         </div>
 
-        <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+        <p className="mt-4 text-xs font-semibold text-[#24476B]/80">
           Por que recomendamos esta opção?
         </p>
-        <p className="mt-2 text-xs leading-5 text-[#000000]/75">
+        <p className="mt-2 text-xs leading-5 text-[#20252B]/75">
           Você utiliza o táxi justamente no trecho em que as malas seriam mais inconvenientes e,
           depois, entrega toda a bagagem à equipe do Limousine Bus. É a melhor combinação entre
           conforto, facilidade e custo.
@@ -3781,50 +3781,50 @@ function TransporteHanedaTokyoBlock() {
 
       {/* Opção 2 — Táxi direto para Haneda */}
       <div className="rounded-xl border border-[#CBD9F2] bg-[#EDF3FC]/60 p-5 sm:p-6">
-        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+        <p className="flex items-center gap-2 text-sm font-semibold text-[#24476B]/80">
           <IconCar className="h-6 w-6" />
           Opção 2 — Táxi Direto para Haneda
         </p>
-        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#000000]/55">
+        <p className="mt-1 text-xs text-[#20252B]/55">
           Mais simples e confortável
         </p>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/85">
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/85">
           Peça na recepção um táxi ou veículo maior diretamente para o Haneda Airport Terminal 3
           (羽田空港 第3ターミナル). Informe antecipadamente que você possui 3 malas grandes de
           aproximadamente 20 kg, pois um táxi convencional pode não ter espaço suficiente.
         </p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+            <p className="text-[12px] font-semibold text-[#24476B]/70">
               Tempo
             </p>
-            <p className="text-sm font-semibold text-[#000000]">≈25–40 min</p>
+            <p className="text-sm font-semibold text-[#20252B]">≈25–40 min</p>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+            <p className="text-[12px] font-semibold text-[#24476B]/70">
               Custo
             </p>
-            <p className="text-sm font-semibold text-[#000000]">≈¥8.000–15.000/veículo</p>
+            <p className="text-sm font-semibold text-[#20252B]">≈¥8.000–15.000/veículo</p>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+            <p className="text-[12px] font-semibold text-[#24476B]/70">
               Trocas
             </p>
-            <p className="text-sm font-semibold text-[#000000]">Nenhuma</p>
+            <p className="text-sm font-semibold text-[#20252B]">Nenhuma</p>
           </div>
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+            <p className="text-[12px] font-semibold text-[#24476B]/70">
               Caminhada
             </p>
-            <p className="text-sm font-semibold text-[#000000]">Praticamente zero</p>
+            <p className="text-sm font-semibold text-[#20252B]">Praticamente zero</p>
           </div>
         </div>
-        <p className="mt-4 text-xs leading-5 text-[#000000]/70">
+        <p className="mt-4 text-xs leading-5 text-[#20252B]/70">
           O valor máximo considera uma margem conservadora para trânsito, pedágios, horário e a
           necessidade de um veículo adequado à quantidade de bagagem.
         </p>
-        <p className="mt-3 text-xs leading-5 text-[#000000]/75">
-          <span className="font-semibold text-[#000000]/85">Quando escolher:</span> é a melhor
+        <p className="mt-3 text-xs leading-5 text-[#20252B]/75">
+          <span className="font-semibold text-[#20252B]/85">Quando escolher:</span> é a melhor
           alternativa caso você queira eliminar qualquer preocupação com conexões ou horários —
           você sai da porta do hotel e desembarca diretamente na área de embarque do Terminal 3.
         </p>
@@ -3832,33 +3832,33 @@ function TransporteHanedaTokyoBlock() {
 
       {/* Opção 3 — Trem via Takaracho */}
       <div className="rounded-xl border border-[#E3E6EA] bg-white/60 p-5 sm:p-6">
-        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#000000]/70">
+        <p className="flex items-center gap-2 text-sm font-semibold text-[#20252B]/70">
           <IconMetro className="h-6 w-6" />
           Opção 3 — Trem via Takaracho
         </p>
-        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#000000]/55">
+        <p className="mt-1 text-xs text-[#20252B]/55">
           Mais econômica · última opção com 3 malas grandes
         </p>
-        <p className="mt-3 text-sm leading-6 text-[#000000]/85">
+        <p className="mt-3 text-sm leading-6 text-[#20252B]/85">
           A estação Takaracho (宝町) fica a aproximadamente 3 minutos a pé do hotel. Alguns
           serviços da Toei Asakusa Line seguem diretamente pela Keikyu Airport Line até Haneda.
         </p>
 
         <div className="mt-4 rounded-lg bg-[#F6F8FA] p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#000000]/60">
+          <p className="text-xs font-semibold text-[#20252B]/60">
             Etapa 1 · Hotel → Takaracho
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/80">
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/80">
             Caminhada de aproximadamente 3 minutos, sem custo. Você deverá transportar
             pessoalmente as 3 malas — dentro da estação, utilize os elevadores sempre que possível
             para chegar à plataforma.
           </p>
         </div>
         <div className="mt-3 rounded-lg bg-[#F6F8FA] p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#000000]/60">
+          <p className="text-xs font-semibold text-[#20252B]/60">
             Etapa 2 · Takaracho → Haneda T3
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#000000]/80">
+          <p className="mt-2 text-sm leading-6 text-[#20252B]/80">
             Antes de embarcar, confirme no painel se o trem segue para 羽田空港 — Haneda Airport:
             nem todos os trens que passam por Takaracho seguem até o aeroporto. Tempo no trem de
             aproximadamente 30–40 minutos, ¥500–750 por pessoa (até ¥1.500 para 2 pessoas) — você
@@ -3867,15 +3867,15 @@ function TransporteHanedaTokyoBlock() {
         </div>
 
         <div className="mt-4 rounded-lg bg-[#F6F8FA] p-4 text-center">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]/55">
+          <p className="text-[12px] font-semibold text-[#20252B]/55">
             Tempo e Custo Total
           </p>
-          <p className="mt-2 text-sm font-medium leading-6 text-[#000000]">
+          <p className="mt-2 text-sm font-medium leading-6 text-[#20252B]">
             ≈40–55 min · até ¥1.500 para 2 pessoas
           </p>
         </div>
 
-        <p className="mt-4 text-xs leading-5 text-[#000000]/70">
+        <p className="mt-4 text-xs leading-5 text-[#20252B]/70">
           Apesar de ser a alternativa mais econômica, não recomendamos esta opção neste caso: com
           três malas grandes, será necessário movimentar aproximadamente 60 kg de bagagem pela
           calçada, entrada da estação, catracas, elevadores, plataforma e interior do trem.
@@ -3884,13 +3884,13 @@ function TransporteHanedaTokyoBlock() {
 
       {/* Comparativo */}
       <div>
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/55">
+        <p className="mb-3 text-xs font-semibold text-[#20252B]/55">
           Comparativo
         </p>
         <div className="overflow-x-auto rounded-xl border border-[#E3E6EA]">
           <table className="w-full min-w-[480px] border-collapse text-sm">
             <thead>
-              <tr className="bg-[#F1F0EC] text-left text-[10px] font-bold uppercase tracking-[0.1em] text-[#000000]/60">
+              <tr className="bg-[#F1F0EC] text-left text-[12px] font-semibold text-[#20252B]/60">
                 <th className="px-4 py-3">Opção</th>
                 <th className="px-4 py-3">Tempo Total</th>
                 <th className="px-4 py-3">Custo (2 pessoas)</th>
@@ -3900,25 +3900,25 @@ function TransporteHanedaTokyoBlock() {
             </thead>
             <tbody>
               <tr className="border-t border-[#E3E6EA] bg-[#EDF3FC]/40">
-                <td className="px-4 py-3 font-semibold text-[#000000]">Táxi + Limousine Bus</td>
-                <td className="px-4 py-3 text-[#000000]/80">45–60 min</td>
-                <td className="px-4 py-3 text-[#000000]/80">¥3.500–6.000</td>
-                <td className="px-4 py-3 text-[#000000]/80">Fácil</td>
-                <td className="px-4 py-3 font-semibold text-[#3E5FA8]">Recomendada</td>
+                <td className="px-4 py-3 font-semibold text-[#20252B]">Táxi + Limousine Bus</td>
+                <td className="px-4 py-3 text-[#20252B]/80">45–60 min</td>
+                <td className="px-4 py-3 text-[#20252B]/80">¥3.500–6.000</td>
+                <td className="px-4 py-3 text-[#20252B]/80">Fácil</td>
+                <td className="px-4 py-3 font-semibold text-[#24476B]">Recomendada</td>
               </tr>
               <tr className="border-t border-[#E3E6EA]">
-                <td className="px-4 py-3 font-semibold text-[#000000]">Táxi Direto</td>
-                <td className="px-4 py-3 text-[#000000]/80">25–40 min</td>
-                <td className="px-4 py-3 text-[#000000]/80">¥8.000–15.000</td>
-                <td className="px-4 py-3 text-[#000000]/80">Muito fácil</td>
-                <td className="px-4 py-3 text-[#000000]/70">Mais confortável</td>
+                <td className="px-4 py-3 font-semibold text-[#20252B]">Táxi Direto</td>
+                <td className="px-4 py-3 text-[#20252B]/80">25–40 min</td>
+                <td className="px-4 py-3 text-[#20252B]/80">¥8.000–15.000</td>
+                <td className="px-4 py-3 text-[#20252B]/80">Muito fácil</td>
+                <td className="px-4 py-3 text-[#20252B]/70">Mais confortável</td>
               </tr>
               <tr className="border-t border-[#E3E6EA]">
-                <td className="px-4 py-3 font-semibold text-[#000000]">Trem</td>
-                <td className="px-4 py-3 text-[#000000]/80">40–55 min</td>
-                <td className="px-4 py-3 text-[#000000]/80">até ¥1.500</td>
-                <td className="px-4 py-3 text-[#000000]/80">Difícil</td>
-                <td className="px-4 py-3 text-[#000000]/70">Mais econômica</td>
+                <td className="px-4 py-3 font-semibold text-[#20252B]">Trem</td>
+                <td className="px-4 py-3 text-[#20252B]/80">40–55 min</td>
+                <td className="px-4 py-3 text-[#20252B]/80">até ¥1.500</td>
+                <td className="px-4 py-3 text-[#20252B]/80">Difícil</td>
+                <td className="px-4 py-3 text-[#20252B]/70">Mais econômica</td>
               </tr>
             </tbody>
           </table>
@@ -3926,7 +3926,7 @@ function TransporteHanedaTokyoBlock() {
       </div>
 
       {/* Recomendação final */}
-      <ContentCard variant="info" icon={IconStarKit} eyebrow="Recomendação Alpinea" size="sm">
+      <ContentCard variant="info" icon={IconStarKit} eyebrow="Recomendação" size="sm">
         <p>
           <span className="font-semibold">1º · Táxi + Airport Limousine Bus.</span> Nossa
           recomendação principal — evita completamente o transporte das malas por estações e
@@ -3943,8 +3943,8 @@ function TransporteHanedaTokyoBlock() {
           economia seja a prioridade.
         </p>
         <div className="mt-4 rounded-lg bg-white/70 p-4">
-          <p className="text-sm leading-6 text-[#1B4A73]">
-            <span className="font-semibold">Dica Alpinea:</span> independentemente da opção
+          <p className="text-sm leading-6 text-[#24476B]">
+            <span className="font-semibold">Dica:</span> independentemente da opção
             escolhida, confirme sempre &ldquo;Haneda Airport Terminal 3 / 羽田空港 第3ターミナル&rdquo; como
             destino. Horários e tarifas devem ser reconfirmados próximo à data da viagem.
           </p>
@@ -4045,20 +4045,20 @@ function PassagemBasicaGrade() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {PASSAGEM_DIRECOES.map((direcao) => (
-        <div key={direcao.label} className="rounded-xl border border-[#E3E6EA] bg-[#FFFFFF] p-4">
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#000000]/65">
+        <div key={direcao.label} className="rounded-xl bg-[#F5F6F8] p-4">
+          <p className="mb-2 text-[13px] font-medium text-[#626B75]">
             {direcao.label === "IDA" ? "Ida" : "Volta"} · {direcao.periodo}
           </p>
-          <div className="space-y-1.5 text-sm text-[#000000]/90">
+          <div className="space-y-1.5 text-sm text-[#20252B]/90">
             {direcao.segmentos.map((seg) => (
               <p key={seg.numeroSegmento}>
-                <span className="font-semibold text-[#000000]">{seg.voo.replace(" ", "")}</span>
+                <span className="font-semibold text-[#20252B]">{seg.voo.replace(" ", "")}</span>
                 {" · "}
                 {seg.origem.iata} → {seg.destino.iata} · {seg.partida.hora} → {seg.chegada.hora}
               </p>
             ))}
           </div>
-          <p className="mt-2 text-xs text-[#000000]/65">{direcao.notaFinal}</p>
+          <p className="mt-2 text-[13px] text-[#626B75]">{direcao.notaFinal}</p>
         </div>
       ))}
     </div>
@@ -4076,13 +4076,11 @@ export function PassagemAereaSecao() {
                 loading="lazy"
           src="/images/lufthansa-logo.png"
           alt="Lufthansa"
-          className="h-16 w-16 object-contain sm:h-20 sm:w-20"
+          className="h-12 w-12 object-contain"
         />
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-[#000000]/65">
-            Companhia Aérea
-          </p>
-          <p className="text-sm font-semibold text-[#000000]">Lufthansa</p>
+          <p className="text-[13px] text-[#626B75]">Companhia aérea</p>
+          <p className="text-[17px] font-semibold text-[#20252B]">Lufthansa</p>
         </div>
       </div>
 
@@ -4095,7 +4093,7 @@ export function PassagemAereaSecao() {
 
 function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela }) {
   return (
-    <div className="mb-8 overflow-hidden rounded-2xl bg-black p-5 sm:p-7">
+    <div className="mb-8 overflow-hidden rounded-2xl bg-[#24476B] p-5 sm:p-7">
       <p className="mb-5 text-lg font-medium text-white sm:text-xl">
         {comparacao.titulo ?? "Comparação Rápida"}
       </p>
@@ -4108,7 +4106,7 @@ function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela })
               {comparacao.badges.map((badge, i) => (
                 <span
                   key={i}
-                  className="mb-3 inline-block w-fit rounded-full px-2.5 py-1 text-[10px] font-bold uppercase leading-tight tracking-[0.1em] text-white"
+                  className="mb-3 inline-block w-fit rounded-full px-2.5 py-1 text-[12px] font-semibold leading-tight text-white"
                   style={{ backgroundColor: "#2C6CA6" }}
                 >
                   {badge}
@@ -4129,14 +4127,14 @@ function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela })
           )}
 
           <div className="col-span-3 mb-1 border-b border-white/20" />
-          <p className="pb-2 pt-3 text-sm font-bold text-white">{comparacao.colunas[0]}</p>
-          <p className="pb-2 pt-3 text-sm font-bold text-white">{comparacao.colunas[1]}</p>
+          <p className="pb-2 pt-3 text-sm font-semibold text-white">{comparacao.colunas[0]}</p>
+          <p className="pb-2 pt-3 text-sm font-semibold text-white">{comparacao.colunas[1]}</p>
           <div />
 
           {comparacao.grupos.map((grupo, gi) => (
             <div key={grupo.titulo} className="contents">
               <p
-                className={`col-span-3 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ${
+                className={`col-span-3 mb-3 text-[12px] font-semibold   text-white/40 ${
                   gi === 0 ? "mt-1" : "mt-5 border-t border-white/10 pt-4"
                 }`}
               >
@@ -4170,7 +4168,7 @@ function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela })
 
       {comparacao.rodape && (
         <div className="mt-6 rounded-xl border border-white/15 bg-white/[0.04] p-4 sm:p-5">
-          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
+          <p className="mb-3 text-[12px] font-semibold text-white/45">
             {comparacao.rodape.titulo}
           </p>
           <ul className="space-y-2">
@@ -4222,10 +4220,10 @@ function NumberedStep({
   return (
     <div className="mb-8">
       <div className="mb-4 flex items-center gap-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#000000] text-xs font-bold text-white">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#20252B] text-xs font-semibold text-white">
           {number}
         </span>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
+        <p className="text-xs font-semibold text-[#20252B]">
           {label}
         </p>
       </div>
@@ -4243,7 +4241,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           pra origem e destino, ligados por uma seta. Fotos de estação em si
           (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
       <p
-        className={`flex items-center justify-center gap-2 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#000000]/65 ${
+        className={`flex items-center justify-center gap-2 text-center text-xs font-semibold   text-[#20252B]/65 ${
           deslocamento.estacoesIntermediarias &&
           deslocamento.estacoesIntermediarias.length > 0
             ? "mb-5 sm:mb-20"
@@ -4291,16 +4289,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )
           )}
-          <p className="text-sm font-semibold text-[#000000]">
+          <p className="text-sm font-semibold text-[#20252B]">
             {deslocamento.estacaoOrigem.nome}
           </p>
           {deslocamento.estacaoOrigem.nomeJapones && (
-            <p className="text-base text-[#000000]/55">
+            <p className="text-base text-[#20252B]/55">
               {deslocamento.estacaoOrigem.nomeJapones}
             </p>
           )}
           {deslocamento.estacaoOrigem.distancia && (
-            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#000000]/65">
+            <p className="mt-1 text-xs font-medium text-[#20252B]/65">
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
@@ -4312,7 +4310,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 alt=""
                 className="h-16 w-16 object-contain"
               />
-              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800">
+              <p className="text-xs font-semibold leading-snug text-emerald-800">
                 {deslocamento.estacaoOrigem.saida}
               </p>
             </div>
@@ -4340,7 +4338,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                       />
                     )}
                     <span
-                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-white text-[10px] font-bold leading-none"
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-white text-[12px] font-semibold leading-none"
                       style={{
                         borderColor: deslocamento.linha.cor || "#B96432",
                         color: deslocamento.linha.cor || "#B96432",
@@ -4354,11 +4352,11 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                     />
                   </div>
                   <div className="flex-1 pb-4 pt-0.5 text-left">
-                    <p className="text-xs font-semibold text-[#000000]">
+                    <p className="text-xs font-semibold text-[#20252B]">
                       {estacao.nome}
                     </p>
                     {estacao.nomeJapones && (
-                      <p className="text-[11px] text-[#000000]/60">
+                      <p className="text-[11px] text-[#20252B]/60">
                         {estacao.nomeJapones}
                       </p>
                     )}
@@ -4414,7 +4412,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 className="h-full w-full object-contain p-2"
               />
               <div className="absolute inset-0 flex items-center justify-center bg-black/0">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#000000] opacity-90 shadow-md">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#20252B] opacity-90 shadow-md">
                   <IconZoom className="h-4 w-4" />
                 </span>
               </div>
@@ -4444,16 +4442,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )
           )}
-          <p className="text-sm font-semibold text-[#000000]">
+          <p className="text-sm font-semibold text-[#20252B]">
             {deslocamento.estacaoDestino.nome}
           </p>
           {deslocamento.estacaoDestino.nomeJapones && (
-            <p className="text-base text-[#000000]/55">
+            <p className="text-base text-[#20252B]/55">
               {deslocamento.estacaoDestino.nomeJapones}
             </p>
           )}
           {deslocamento.estacaoDestino.distancia && (
-            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#000000]/65">
+            <p className="mt-1 text-xs font-medium text-[#20252B]/65">
               {deslocamento.estacaoDestino.distancia}
             </p>
           )}
@@ -4465,7 +4463,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 alt=""
                 className="h-16 w-16 object-contain"
               />
-              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800">
+              <p className="text-xs font-semibold leading-snug text-emerald-800">
                 {deslocamento.estacaoDestino.saida}
               </p>
             </div>
@@ -4496,16 +4494,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )
           )}
-          <p className="text-sm font-semibold text-[#000000]">
+          <p className="text-sm font-semibold text-[#20252B]">
             {deslocamento.estacaoOrigem.nome}
           </p>
           {deslocamento.estacaoOrigem.nomeJapones && (
-            <p className="text-base text-[#000000]/55">
+            <p className="text-base text-[#20252B]/55">
               {deslocamento.estacaoOrigem.nomeJapones}
             </p>
           )}
           {deslocamento.estacaoOrigem.distancia && (
-            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#000000]/65">
+            <p className="mt-1 text-xs font-medium text-[#20252B]/65">
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
@@ -4519,7 +4517,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 alt=""
                 className="h-20 w-20 object-contain"
               />
-              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
+              <p className="text-xs font-semibold leading-snug text-emerald-800 sm:text-sm">
                 {deslocamento.estacaoOrigem.saida}
               </p>
             </div>
@@ -4544,7 +4542,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                   return (
                     <span
                       key={`romaji-${estacao.nome}`}
-                      className="absolute bottom-2 origin-bottom-left -rotate-45 whitespace-nowrap text-[11px] font-semibold leading-tight text-[#000000] sm:text-xs"
+                      className="absolute bottom-2 origin-bottom-left -rotate-45 whitespace-nowrap text-[11px] font-semibold leading-tight text-[#20252B] sm:text-xs"
                       style={{ left: `${pct}%` }}
                     >
                       {estacao.nome}
@@ -4570,7 +4568,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               return (
                 <span
                   key={estacao.nome}
-                  className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-[9px] font-bold leading-none sm:h-6 sm:w-6 sm:text-[10px]"
+                  className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-[11px] font-semibold leading-none sm:h-6 sm:w-6 sm:text-[12px]"
                   style={{
                     left: `${pct}%`,
                     borderColor: deslocamento.linha.cor || "#B96432",
@@ -4594,7 +4592,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                   return (
                     <span
                       key={`ja-${estacao.nome}`}
-                      className="absolute top-4 -translate-x-1/2 whitespace-nowrap text-[11px] font-medium leading-none text-[#000000]/70 sm:top-5 sm:text-xs"
+                      className="absolute top-4 -translate-x-1/2 whitespace-nowrap text-[11px] font-medium leading-none text-[#20252B]/70 sm:top-5 sm:text-xs"
                       style={{
                         left: `${pct}%`,
                         writingMode: "vertical-rl",
@@ -4640,7 +4638,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                   className="h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/10">
-                  <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/95 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                  <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/95 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                     <IconZoom className="h-4 w-4" />
                   </span>
                 </div>
@@ -4671,16 +4669,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )
           )}
-          <p className="text-sm font-semibold text-[#000000]">
+          <p className="text-sm font-semibold text-[#20252B]">
             {deslocamento.estacaoDestino.nome}
           </p>
           {deslocamento.estacaoDestino.nomeJapones && (
-            <p className="text-base text-[#000000]/55">
+            <p className="text-base text-[#20252B]/55">
               {deslocamento.estacaoDestino.nomeJapones}
             </p>
           )}
           {deslocamento.estacaoDestino.distancia && (
-            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#000000]/65">
+            <p className="mt-1 text-xs font-medium text-[#20252B]/65">
               {deslocamento.estacaoDestino.distancia}
             </p>
           )}
@@ -4694,7 +4692,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 alt=""
                 className="h-20 w-20 object-contain"
               />
-              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
+              <p className="text-xs font-semibold leading-snug text-emerald-800 sm:text-sm">
                 {deslocamento.estacaoDestino.saida}
               </p>
             </div>
@@ -4708,7 +4706,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             key={opcao.meio}
             className={`rounded-xl bg-[#EDF3FC] p-4 ${
               opcao.recomendado
-                ? "border-2 border-[#3E5FA8]"
+                ? "border-2 border-[#24476B]"
                 : "border border-[#CBD9F2]"
             }`}
           >
@@ -4719,16 +4717,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 }`}
               />
               <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[#3E5FA8]/70">
+                <p className="text-[12px] text-[#24476B]/70">
                   {opcao.meio}
                 </p>
-                <p className="text-lg font-semibold text-[#000000]">
+                <p className="text-lg font-semibold text-[#20252B]">
                   {opcao.tempo}
                 </p>
               </div>
             </div>
             {opcao.recomendado && (
-              <p className="mt-2 inline-block rounded-full border border-[#3E5FA8]/35 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#3E5FA8]">
+              <p className="mt-2 inline-block rounded-full border border-[#24476B]/35 px-2.5 py-0.5 text-[11px] font-semibold text-[#24476B]">
                 Recomendado
               </p>
             )}
@@ -4737,10 +4735,10 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 <div key={i} className="flex items-start gap-2">
                   <IconCheckSmall
                     className={`mt-0.5 h-3 w-3 shrink-0 ${
-                      opcao.recomendado ? "text-[#3E5FA8]" : "text-[#3E5FA8]/50"
+                      opcao.recomendado ? "text-[#24476B]" : "text-[#24476B]/50"
                     }`}
                   />
-                  <p className="text-xs leading-5 text-[#000000]/72">{d}</p>
+                  <p className="text-xs leading-5 text-[#20252B]/72">{d}</p>
                 </div>
               ))}
             </div>
@@ -4749,7 +4747,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
       </div>
 
       {deslocamento.recomendacao && (
-        <p className="mt-5 border-t border-[#E3E6EA] pt-4 text-sm leading-6 text-[#000000]/80">
+        <p className="mt-5 border-t border-[#E3E6EA] pt-4 text-sm leading-6 text-[#20252B]/80">
           {deslocamento.recomendacao}
         </p>
       )}
@@ -4758,61 +4756,61 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         <div className="mt-5 border-t border-[#E3E6EA] pt-5">
           {deslocamento.gradeSaidas.destaque && (
             <div className="mb-5">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-[#000000]/65">
+              <p className="mb-2 text-xs font-semibold text-[#20252B]/65">
                 {deslocamento.gradeSaidas.destaque.titulo}
               </p>
               <div className="rounded-xl border-2 border-emerald-400 bg-emerald-50 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-bold text-[#000000]">
+                    <p className="text-sm font-semibold text-[#20252B]">
                       {deslocamento.gradeSaidas.destaque.linha}
                     </p>
                     {deslocamento.gradeSaidas.destaque.subtitulo && (
-                      <p className="text-xs text-[#000000]/65">
+                      <p className="text-xs text-[#20252B]/65">
                         {deslocamento.gradeSaidas.destaque.subtitulo}
                       </p>
                     )}
                   </div>
-                  <span className="shrink-0 rounded-full bg-emerald-600 px-3 py-1 text-sm font-bold text-white">
+                  <span className="shrink-0 rounded-full bg-emerald-600 px-3 py-1 text-sm font-semibold text-white">
                     {deslocamento.gradeSaidas.destaque.horario}
                   </span>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs sm:grid-cols-4">
                   {deslocamento.gradeSaidas.destaque.embarque && (
                     <div>
-                      <p className="font-medium uppercase tracking-wide text-[#000000]/55">Embarque</p>
-                      <p className="mt-0.5 font-semibold text-[#000000]">
+                      <p className="font-medium text-[#20252B]/55">Embarque</p>
+                      <p className="mt-0.5 font-semibold text-[#20252B]">
                         {deslocamento.gradeSaidas.destaque.embarque}
                       </p>
                     </div>
                   )}
                   {deslocamento.gradeSaidas.destaque.desembarque && (
                     <div>
-                      <p className="font-medium uppercase tracking-wide text-[#000000]/55">Desembarque</p>
-                      <p className="mt-0.5 font-semibold text-[#000000]">
+                      <p className="font-medium text-[#20252B]/55">Desembarque</p>
+                      <p className="mt-0.5 font-semibold text-[#20252B]">
                         {deslocamento.gradeSaidas.destaque.desembarque}
                       </p>
                     </div>
                   )}
                   {deslocamento.gradeSaidas.destaque.tempo && (
                     <div>
-                      <p className="font-medium uppercase tracking-wide text-[#000000]/55">Tempo</p>
-                      <p className="mt-0.5 font-semibold text-[#000000]">
+                      <p className="font-medium text-[#20252B]/55">Tempo</p>
+                      <p className="mt-0.5 font-semibold text-[#20252B]">
                         {deslocamento.gradeSaidas.destaque.tempo}
                       </p>
                     </div>
                   )}
                   {deslocamento.gradeSaidas.destaque.tarifa && (
                     <div>
-                      <p className="font-medium uppercase tracking-wide text-[#000000]/55">Tarifa</p>
-                      <p className="mt-0.5 font-semibold text-[#000000]">
+                      <p className="font-medium text-[#20252B]/55">Tarifa</p>
+                      <p className="mt-0.5 font-semibold text-[#20252B]">
                         {deslocamento.gradeSaidas.destaque.tarifa}
                       </p>
                     </div>
                   )}
                 </div>
                 {deslocamento.gradeSaidas.destaque.resultado && (
-                  <p className="mt-3 border-t border-emerald-200 pt-3 text-xs leading-5 text-[#000000]/80">
+                  <p className="mt-3 border-t border-emerald-200 pt-3 text-xs leading-5 text-[#20252B]/80">
                     {deslocamento.gradeSaidas.destaque.resultado}
                   </p>
                 )}
@@ -4820,16 +4818,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </div>
           )}
           {deslocamento.gradeSaidas.titulo && (
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-[#000000]/65">
+            <p className="mb-2 text-xs font-semibold text-[#20252B]/65">
               {deslocamento.gradeSaidas.titulo}
             </p>
           )}
           <div className="overflow-x-auto rounded-lg border border-[#E3E6EA]">
             <table className="w-full min-w-[320px] text-left text-xs">
               <thead>
-                <tr className="border-b border-[#E3E6EA] bg-[#F5F3EE] text-[10px] uppercase tracking-wide text-[#000000]/65">
+                <tr className="border-b border-[#E3E6EA] bg-[#F5F3EE] text-[12px] text-[#20252B]/65">
                   {deslocamento.gradeSaidas.colunas.map((c) => (
-                    <th key={c} className="px-3 py-2 font-bold">
+                    <th key={c} className="px-3 py-2 font-semibold">
                       {c}
                     </th>
                   ))}
@@ -4842,7 +4840,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                       <td
                         key={j}
                         className={`whitespace-nowrap px-3 py-2 ${
-                          j === 0 ? "font-semibold text-[#000000]" : "text-[#000000]/80"
+                          j === 0 ? "font-semibold text-[#20252B]" : "text-[#20252B]/80"
                         }`}
                       >
                         {valor}
@@ -4854,7 +4852,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </table>
           </div>
           {deslocamento.gradeSaidas.nota && (
-            <p className="mt-2 text-[11px] leading-4 text-[#000000]/55">
+            <p className="mt-2 text-[11px] leading-4 text-[#20252B]/55">
               {deslocamento.gradeSaidas.nota}
             </p>
           )}
@@ -4894,7 +4892,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               alt={zoomMapa.alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl bg-white object-contain"
             />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+            <p className="mt-3 text-center text-xs font-semibold text-white/85">
               {zoomMapa.alt}
             </p>
           </div>
@@ -5041,7 +5039,7 @@ function ZoomableImageModal({
           type="button"
           onClick={() => setClampedScale(scale - 0.5)}
           disabled={scale <= MIN_SCALE}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-lg font-bold leading-none text-white transition hover:bg-white/25 disabled:opacity-30"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-lg font-semibold leading-none text-white transition hover:bg-white/25 disabled:opacity-30"
           aria-label="Diminuir zoom"
         >
           −
@@ -5053,14 +5051,14 @@ function ZoomableImageModal({
           type="button"
           onClick={() => setClampedScale(scale + 0.5)}
           disabled={scale >= MAX_SCALE}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-lg font-bold leading-none text-white transition hover:bg-white/25 disabled:opacity-30"
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-lg font-semibold leading-none text-white transition hover:bg-white/25 disabled:opacity-30"
           aria-label="Aumentar zoom"
         >
           +
         </button>
       </div>
       {caption && (
-        <p className="max-w-2xl px-4 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+        <p className="max-w-2xl px-4 text-center text-xs font-semibold text-white/85">
           {caption}
         </p>
       )}
@@ -5084,7 +5082,7 @@ function MapaAndaresBlock({
   return (
     <div className="mt-5">
       {mapaAndares.titulo && (
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/55">
+        <p className="mb-3 text-xs font-semibold text-[#20252B]/55">
           {mapaAndares.titulo}
         </p>
       )}
@@ -5099,11 +5097,11 @@ function MapaAndaresBlock({
           alt={atual.imagemAlt}
           className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
         />
-        <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+        <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-semibold text-white shadow-md ring-2 ring-white/70">
           {atual.andar}
         </span>
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/15">
-          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
             <IconZoom className="h-4 w-4" />
           </span>
         </div>
@@ -5116,15 +5114,15 @@ function MapaAndaresBlock({
               key={m.andar}
               type="button"
               onClick={() => setSelected(m.index)}
-              className="group flex items-center gap-3 overflow-hidden rounded-xl border border-[#E3E6EA] bg-[#FFFFFF] p-3 text-left transition hover:border-[#2C6CA6]/50 hover:bg-[#EAF3FC]"
+              className="group flex items-center gap-3 overflow-hidden rounded-xl border border-[#E3E6EA] bg-[#FFFFFF] p-3 text-left transition hover:border-[#24476B]/50 hover:bg-[#EAF3FC]"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F3F5F7] text-sm font-bold text-[#000000]/70 transition group-hover:bg-[#2C6CA6] group-hover:text-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F3F5F7] text-sm font-semibold text-[#20252B]/70 transition group-hover:bg-[#24476B] group-hover:text-white">
                 {m.andar}
               </span>
-              <span className="min-w-0 text-xs font-medium text-[#000000]/80">
+              <span className="min-w-0 text-xs font-medium text-[#20252B]/80">
                 Ver mapa do {m.andar}
               </span>
-              <span className="ml-auto shrink-0 text-lg text-[#000000]/40 transition group-hover:text-[#2C6CA6]">
+              <span className="ml-auto shrink-0 text-lg text-[#20252B]/40 transition group-hover:text-[#24476B]">
                 →
               </span>
             </button>
@@ -5165,13 +5163,13 @@ function MapaVisaoGeralBlock({
           className="block h-auto max-h-[70vh] w-full object-contain transition duration-300 group-hover:scale-[1.02]"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
             <IconZoom className="h-4 w-4" />
           </span>
         </div>
       </button>
       {mapa.nota && (
-        <p className="mt-2 text-xs leading-5 text-[#000000]/60">{mapa.nota}</p>
+        <p className="mt-2 text-xs leading-5 text-[#20252B]/60">{mapa.nota}</p>
       )}
 
       {zoom && (
@@ -5210,7 +5208,7 @@ function ComentariosSecao({ comentarios }: { comentarios: string[] }) {
         <button
           type="button"
           onClick={() => setExpandido((v) => !v)}
-          className="mt-1 inline-block rounded-full bg-[#2C6CA6] px-5 py-2 text-xs font-bold uppercase tracking-[0.3em] text-white transition hover:bg-[#245a8c]"
+          className="mt-1 inline-block rounded-full bg-[#24476B] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#245a8c]"
         >
           {expandido ? "Ler menos" : "Ler leitura completa"}
         </button>
@@ -5236,8 +5234,8 @@ function VisaoAnotadaBlock({
       <div className="mb-8">
         {visaoAnotada.simples ? (
           <div className="mb-4 flex items-center gap-2.5">
-            <span className="h-2 w-2 rounded-full bg-[#000000]/50" />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/55">
+            <span className="h-2 w-2 rounded-full bg-[#20252B]/50" />
+            <span className="text-xs font-semibold text-[#20252B]/55">
               {visaoAnotada.titulo ?? "Mapa"}
             </span>
           </div>
@@ -5255,7 +5253,7 @@ function VisaoAnotadaBlock({
             }
           >
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
-              Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
+              Raio-X{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
             <div className="mx-auto my-4 h-px w-24 bg-white/40" />
             {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
@@ -5277,13 +5275,13 @@ function VisaoAnotadaBlock({
             className="block h-auto w-full transition duration-300 group-hover:scale-[1.02]"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-            <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+            <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
               <IconZoom className="h-4 w-4" />
             </span>
           </div>
         </button>
         {visaoAnotada.nota && (
-          <p className="mt-2 text-center text-xs leading-5 text-[#000000]/60">
+          <p className="mt-2 text-center text-xs leading-5 text-[#20252B]/60">
             {visaoAnotada.nota}
           </p>
         )}
@@ -5318,19 +5316,19 @@ function VisaoAnotadaBlock({
     <div className="mb-8">
       {visaoAnotada.simples ? (
         <div className="mb-4 flex items-center gap-2.5">
-          <span className="h-2 w-2 rounded-full bg-[#000000]/50" />
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/55">
+          <span className="h-2 w-2 rounded-full bg-[#20252B]/50" />
+          <span className="text-xs font-semibold text-[#20252B]/55">
             {visaoAnotada.titulo ?? "Mapa"}
           </span>
         </div>
       ) : (
-        <div className="mb-5 rounded-2xl bg-black px-6 py-5 text-center">
+        <div className="mb-5 rounded-2xl bg-[#24476B] px-6 py-5 text-center">
           <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
-            Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
+            Raio-X{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
           </p>
           {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
             <div className="mx-auto mt-4 max-w-2xl border-t border-white/15 pt-4 text-left">
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+              <p className="mb-2 text-[12px] font-semibold text-white/50">
                 Principais Comentários da Seção
               </p>
               <ComentariosSecao comentarios={visaoAnotada.comentarios} />
@@ -5352,7 +5350,7 @@ function VisaoAnotadaBlock({
           className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
-          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
             <IconZoom className="h-4 w-4" />
           </span>
         </div>
@@ -5382,16 +5380,16 @@ function VisaoAnotadaBlock({
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                    <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                       <IconZoom className="h-4 w-4" />
                     </span>
                   </div>
                   {typeof ponto.ordem === "number" ? (
-                    <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+                    <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-semibold text-white shadow-md ring-2 ring-white/70">
                       {ponto.ordem}
                     </span>
                   ) : (
-                    <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-black/70 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white shadow-md">
+                    <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-black/70 px-2.5 py-1 text-[11px] font-semibold text-white shadow-md">
                       Opcional
                     </span>
                   )}
@@ -5415,15 +5413,15 @@ function VisaoAnotadaBlock({
               </div>
             )}
             <div className="p-5">
-              <p className="text-base font-semibold text-[#000000]">
+              <p className="text-base font-semibold text-[#20252B]">
                 {ponto.titulo}
               </p>
               {ponto.nomeJapones && (
-                <p className="mt-0.5 text-[21px] font-normal text-[#000000]/50">
+                <p className="mt-0.5 text-[21px] font-normal text-[#20252B]/50">
                   {ponto.nomeJapones}
                 </p>
               )}
-              <p className="mt-2 text-sm leading-6 text-[#000000]/75">
+              <p className="mt-2 text-sm leading-6 text-[#20252B]/75">
                 {ponto.descricao}
               </p>
             </div>
@@ -5454,7 +5452,7 @@ function VisaoAnotadaBlock({
               alt={zoom.alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
             />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+            <p className="mt-3 text-center text-xs font-semibold text-white/85">
               {zoom.alt}
             </p>
             {zoom.descricao && (
@@ -5478,7 +5476,7 @@ function GaleriaBlock({
   return (
     <div className="mb-8">
       {galeria.titulo && (
-        <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/55">
+        <p className="mb-4 text-xs font-semibold text-[#20252B]/55">
           {galeria.titulo}
         </p>
       )}
@@ -5505,19 +5503,19 @@ function GaleriaBlock({
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
-                <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                   <IconZoom className="h-4 w-4" />
                 </span>
               </div>
               {galeria.imagens.length > 1 && (
-                <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+                <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-semibold text-white shadow-md ring-2 ring-white/70">
                   {i + 1}
                 </span>
               )}
             </button>
             {img.legenda && (
               <div className="p-5">
-                <p className="text-sm font-semibold leading-6 text-[#000000]">
+                <p className="text-sm font-semibold leading-6 text-[#20252B]">
                   {img.legenda}
                 </p>
               </div>
@@ -5533,20 +5531,20 @@ function GaleriaBlock({
               key={mapa.imagem}
               type="button"
               onClick={() => setZoom({ src: mapa.imagem, alt: mapa.imagemAlt })}
-              className="flex w-full items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-3.5 text-left transition hover:border-[#2C6CA6]/50"
+              className="flex w-full items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-3.5 text-left transition hover:border-[#24476B]/50"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#24476B]">
                 <IconMap className="h-4 w-4" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-medium text-[#1B4A73]">
+                <span className="block text-sm font-medium text-[#24476B]">
                   {mapa.titulo}
                 </span>
-                <span className="block text-xs text-[#2C6CA6]/70">
+                <span className="block text-xs text-[#24476B]/70">
                   Toque para ampliar
                 </span>
               </span>
-              <span className="ml-auto shrink-0 text-lg text-[#2C6CA6]/60">
+              <span className="ml-auto shrink-0 text-lg text-[#24476B]/60">
                 →
               </span>
             </button>
@@ -5600,7 +5598,7 @@ function PeriodBlock({
     <div>
       <div className="mb-6 flex items-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-[#B96432]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/65">
+        <span className="text-xs font-semibold text-[#20252B]/65">
           {period.label ?? label}
         </span>
       </div>
@@ -5614,7 +5612,7 @@ function PeriodBlock({
           period.atracaoPrincipalCompacta
             ? "mx-auto aspect-[3/4] max-w-[280px] rounded-2xl"
             : "-mx-6 aspect-[4/3] sm:-mx-10 sm:aspect-[16/9]"
-        } ${period.atracaoPrincipalImagem ? "" : "border border-[#2C6CA6]"}`}
+        } ${period.atracaoPrincipalImagem ? "" : "border border-[#24476B]"}`}
       >
         {period.atracaoPrincipalImagem ? (
           <>
@@ -5631,7 +5629,7 @@ function PeriodBlock({
               }`}
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-            <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)] sm:inset-x-10">
+            <p className="absolute inset-x-5 bottom-14 text-[12px] font-semibold text-white/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)] sm:inset-x-10">
               Atração
             </p>
             <h3
@@ -5645,9 +5643,9 @@ function PeriodBlock({
             </h3>
           </>
         ) : (
-          <div className="flex h-full items-center justify-center bg-[#F8FAF9] px-5">
+          <div className="flex h-full items-center justify-center bg-[#F5F6F8] px-5">
             <h3
-              className={`${displayClassName} text-2xl font-medium text-[#000000] md:text-3xl`}
+              className={`${displayClassName} text-2xl font-medium text-[#20252B] md:text-3xl`}
             >
               {period.atracaoPrincipal}
             </h3>
@@ -5669,17 +5667,17 @@ function PeriodBlock({
       )}
 
       {period.percursoEssencial && (
-        <div className="mb-8 rounded-2xl border border-[#2C6CA6] bg-[#F8FAF9] p-5 sm:p-6">
+        <div className="mb-8 rounded-2xl border border-[#24476B] bg-[#F5F6F8] p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
+            <p className="text-xs font-semibold text-[#20252B]">
               Percurso essencial
             </p>
             <div className="flex items-center gap-3 rounded-xl border border-amber-200/70 bg-amber-50 px-4 py-2.5 text-right">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B96432]">
+                <p className="text-[12px] font-semibold text-[#B96432]">
                   Tempo estimado de visitação
                 </p>
-                <p className="mt-0.5 text-lg font-bold leading-snug text-[#000000] sm:text-xl">
+                <p className="mt-0.5 text-lg font-semibold leading-snug text-[#20252B] sm:text-xl">
                   {period.percursoEssencial.duracao}
                 </p>
               </div>
@@ -5717,12 +5715,12 @@ function PeriodBlock({
                             }
                           />
                         </div>
-                        <span className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-xs font-bold text-white shadow-sm">
+                        <span className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#24476B] text-xs font-semibold text-white shadow-sm">
                           {passo.__numero}
                         </span>
                       </div>
                     ) : (
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-[#24476B]/35 text-[#24476B]/50">
                         <IconWalk className="h-7 w-7" />
                       </div>
                     )
@@ -5731,7 +5729,7 @@ function PeriodBlock({
               );
             })()}
           </div>
-          <p className="mt-4 text-xs leading-5 text-[#000000]/60">
+          <p className="mt-4 text-xs leading-5 text-[#20252B]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
           </p>
         </div>
@@ -5741,10 +5739,10 @@ function PeriodBlock({
         <>
           {period.regiao && (
             <div className="mb-5">
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#000000]/68">
+              <p className="text-xs font-semibold text-[#20252B]/68">
                 {period.regiao.nome}
               </p>
-              <p className="mt-1.5 text-sm leading-6 text-[#000000]/78">
+              <p className="mt-1.5 text-sm leading-6 text-[#20252B]/78">
                 {period.regiao.descricao}
               </p>
             </div>
@@ -5769,7 +5767,7 @@ function PeriodBlock({
                         <span className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-20 sm:w-20">
                           <IconInfoCircle className="h-8 w-8 text-[#8A7049] sm:h-12 sm:w-12" />
                         </span>
-                        <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#000000]/70 sm:text-lg sm:tracking-[0.2em]">
+                        <p className="text-sm font-semibold text-[#20252B]/70 sm:text-lg">
                           Informações Iniciais
                         </p>
                       </div>
@@ -5778,10 +5776,10 @@ function PeriodBlock({
                       >
                         {outros.map((item) => (
                           <div key={item.label} className="text-center">
-                            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#000000]/55">
+                            <p className="mb-1.5 text-[12px] font-semibold text-[#20252B]/55">
                               {item.label}
                             </p>
-                            <p className="text-sm font-semibold text-[#000000]">
+                            <p className="text-sm font-semibold text-[#20252B]">
                               {item.valor}
                             </p>
                           </div>
@@ -5803,16 +5801,16 @@ function PeriodBlock({
                       className="mb-5 flex items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:gap-4 sm:p-7"
                     >
                       <span className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-20 sm:w-20">
-                        <IconClockOutline className="h-8 w-8 text-[#2C6CA6] sm:h-12 sm:w-12" />
+                        <IconClockOutline className="h-8 w-8 text-[#24476B] sm:h-12 sm:w-12" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#2C6CA6]/85 sm:text-lg sm:tracking-[0.2em]">
+                        <p className="text-sm font-semibold text-[#24476B]/85 sm:text-lg">
                           Melhor Horário
                         </p>
-                        <p className="mt-0.5 text-2xl font-semibold leading-tight text-[#1B4A73] sm:text-4xl">
+                        <p className="mt-0.5 text-2xl font-semibold leading-tight text-[#24476B] sm:text-4xl">
                           {item.horarioDestaque}
                         </p>
-                        <p className="mt-1.5 text-sm leading-6 text-[#1B4A73]/80">
+                        <p className="mt-1.5 text-sm leading-6 text-[#24476B]/80">
                           {item.valor}
                         </p>
                       </div>
@@ -5831,7 +5829,7 @@ function PeriodBlock({
                             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                            <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                            <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                               <IconZoom className="h-3.5 w-3.5" />
                             </span>
                           </div>
@@ -5844,13 +5842,13 @@ function PeriodBlock({
                       className="mb-5 flex items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:gap-4 sm:p-7"
                     >
                       <span className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-20 sm:w-20">
-                        <IconClockOutline className="h-8 w-8 text-[#2C6CA6] sm:h-12 sm:w-12" />
+                        <IconClockOutline className="h-8 w-8 text-[#24476B] sm:h-12 sm:w-12" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#2C6CA6]/85 sm:text-lg sm:tracking-[0.2em]">
+                        <p className="text-sm font-semibold text-[#24476B]/85 sm:text-lg">
                           Melhor Horário
                         </p>
-                        <p className="text-sm font-semibold text-[#1B4A73]">
+                        <p className="text-sm font-semibold text-[#24476B]">
                           {item.valor}
                         </p>
                       </div>
@@ -5864,21 +5862,21 @@ function PeriodBlock({
             <div className="mb-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7">
               <div className="mb-5 flex items-center gap-4">
                 <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-                  <IconTicketOutline className="h-12 w-12 text-[#2C6CA6]" />
+                  <IconTicketOutline className="h-12 w-12 text-[#24476B]" />
                 </span>
-                <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
+                <p className="text-base font-semibold text-[#24476B]/85 sm:text-lg">
                   Ingressos & Preços
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {period.listasPraticas.map((lista) => (
                   <div key={lista.titulo}>
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[#1B4A73]/70">
+                    <p className="mb-2 text-[12px] font-semibold text-[#24476B]/70">
                       {lista.titulo}
                     </p>
                     <div className="space-y-1.5">
                       {lista.itens.map((item, i) => (
-                        <p key={i} className="text-sm leading-6 text-[#1B4A73]/85">
+                        <p key={i} className="text-sm leading-6 text-[#24476B]/85">
                           {item}
                         </p>
                       ))}
@@ -5895,14 +5893,14 @@ function PeriodBlock({
                 <span className="flex h-20 w-20 shrink-0 items-center justify-center">
                   <IconQuestionBubble className="h-12 w-12 text-emerald-700" />
                 </span>
-                <p className="text-base font-bold uppercase tracking-[0.2em] text-emerald-900 sm:text-lg">
+                <p className="text-base font-semibold text-emerald-900 sm:text-lg">
                   Dúvidas Frequentes
                 </p>
               </div>
               <div className="space-y-5">
                 {period.decisoes.map((d) => (
                   <div key={d.titulo}>
-                    <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.15em] text-emerald-900">
+                    <p className="mb-1.5 text-xs font-semibold text-emerald-900">
                       {d.titulo}
                     </p>
                     <p className="text-sm leading-6 text-emerald-950/75">
@@ -5953,7 +5951,7 @@ function PeriodBlock({
               <MapaVisaoGeralBlock mapa={period.mapaVisaoGeral} />
             )}
 
-            <p className="mb-5 text-xs text-[#000000]/65">
+            <p className="mb-5 text-xs text-[#20252B]/65">
               Pontos de interesse propostos para o período
             </p>
             {period.pois.some((p) => p.grupo) ? (
@@ -5964,7 +5962,7 @@ function PeriodBlock({
                   );
                   return (
                     <div key={grupo} className={gIndex > 0 ? "mt-6" : ""}>
-                      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]/45">
+                      <p className="mb-3 text-[12px] font-semibold text-[#20252B]/45">
                         {grupo}
                       </p>
                       <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
@@ -6035,9 +6033,9 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
     <div className="mb-6 rounded-2xl border border-[#E3E6EA] bg-[#FFFFFF] p-5 sm:p-7">
       <div className="mb-5 flex items-center gap-4">
         <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-          <IconCalendar className="h-12 w-12 text-[#000000]" />
+          <IconCalendar className="h-12 w-12 text-[#20252B]" />
         </span>
-        <p className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#000000]/70 sm:text-lg">
+        <p className="min-w-0 flex-1 text-base font-semibold text-[#20252B]/70 sm:text-lg">
           {grade.titulo ?? "Grade de Horários"}
         </p>
       </div>
@@ -6051,7 +6049,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
           >
             <span
               className={`w-12 shrink-0 text-sm font-semibold tabular-nums tracking-tight ${
-                item.recomendado ? "text-[#B96432]" : "text-[#000000]/80"
+                item.recomendado ? "text-[#B96432]" : "text-[#20252B]/80"
               }`}
             >
               {item.horario}
@@ -6059,17 +6057,17 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
             <span
               className={`min-w-0 flex-1 text-sm leading-6 ${
                 item.destaque ? "font-semibold" : "font-normal"
-              } ${item.recomendado ? "text-[#B96432]" : "text-[#000000]/75"}`}
+              } ${item.recomendado ? "text-[#B96432]" : "text-[#20252B]/75"}`}
             >
               {item.evento}
               {item.tag && (
-                <span className="ml-2.5 inline-block align-middle text-[9px] font-semibold uppercase tracking-[0.2em] text-[#000000]/40">
+                <span className="ml-2.5 inline-block align-middle text-[11px] font-semibold text-[#20252B]/40">
                   {item.tag}
                 </span>
               )}
             </span>
             {item.permanencia && (
-              <span className="shrink-0 text-right text-xs font-medium tabular-nums text-[#000000]/45">
+              <span className="shrink-0 text-right text-xs font-medium tabular-nums text-[#20252B]/45">
                 {item.permanencia}
               </span>
             )}
@@ -6077,7 +6075,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
         ))}
       </div>
       {grade.nota && (
-        <p className="mt-5 border-t border-[#E3E6EA] pt-4 text-xs leading-5 text-[#000000]/55">
+        <p className="mt-5 border-t border-[#E3E6EA] pt-4 text-xs leading-5 text-[#20252B]/55">
           {grade.nota}
         </p>
       )}
@@ -6095,18 +6093,18 @@ function SubAtracaoBlock({
   return (
     <div className="mt-6">
       <div className="mb-4 flex justify-center">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#E3E6EA] bg-[#F6F8FA] text-[#000000]/55">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#E3E6EA] bg-[#F6F8FA] text-[#20252B]/55">
           <IconArrowDown className="h-4 w-4" />
         </span>
       </div>
 
       <div className="mb-4 flex items-center justify-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-[#B96432]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/65">
+        <span className="text-xs font-semibold text-[#20252B]/65">
           {subAtracao.label ?? "Noite"}
         </span>
         {subAtracao.opcional && (
-          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
+          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-2.5 py-0.5 text-[12px] font-semibold text-amber-700">
             Opcional
           </span>
         )}
@@ -6121,12 +6119,12 @@ function SubAtracaoBlock({
       {subAtracao.visaoAnotada ? (
         <>
           <h3
-            className={`${displayClassName} mb-5 text-center text-2xl font-medium text-[#000000] md:text-3xl`}
+            className={`${displayClassName} mb-5 text-center text-2xl font-medium text-[#20252B] md:text-3xl`}
           >
             {subAtracao.titulo}
           </h3>
           {subAtracao.descricao && (
-            <p className="mb-6 text-sm leading-6 text-[#000000]/78">
+            <p className="mb-6 text-sm leading-6 text-[#20252B]/78">
               {subAtracao.descricao}
             </p>
           )}
@@ -6139,7 +6137,7 @@ function SubAtracaoBlock({
         <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] p-3">
           <div
             className={`relative aspect-square h-36 w-36 shrink-0 overflow-hidden rounded-xl sm:h-40 sm:w-40 ${
-              subAtracao.imagem ? "" : "border border-[#2C6CA6]"
+              subAtracao.imagem ? "" : "border border-[#24476B]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -6156,17 +6154,17 @@ function SubAtracaoBlock({
                 }`}
               />
             ) : (
-              <div className="flex h-full items-center justify-center bg-[#F8FAF9]" />
+              <div className="flex h-full items-center justify-center bg-[#F5F6F8]" />
             )}
           </div>
           <div className="min-w-0 flex-1">
             <h3
-              className={`${displayClassName} text-base font-medium leading-snug text-[#000000] md:text-lg`}
+              className={`${displayClassName} text-base font-medium leading-snug text-[#20252B] md:text-lg`}
             >
               {subAtracao.titulo}
             </h3>
             {subAtracao.descricao && (
-              <p className="mt-1 text-xs leading-5 text-[#000000]/78">
+              <p className="mt-1 text-xs leading-5 text-[#20252B]/78">
                 {subAtracao.descricao}
               </p>
             )}
@@ -6176,7 +6174,7 @@ function SubAtracaoBlock({
         <>
           <div
             className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
-              subAtracao.imagem ? "" : "border border-[#2C6CA6]"
+              subAtracao.imagem ? "" : "border border-[#24476B]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -6201,9 +6199,9 @@ function SubAtracaoBlock({
                 </h3>
               </>
             ) : (
-              <div className="flex h-full items-center justify-center bg-[#F8FAF9] px-5">
+              <div className="flex h-full items-center justify-center bg-[#F5F6F8] px-5">
                 <h3
-                  className={`${displayClassName} text-2xl font-medium text-[#000000] md:text-3xl`}
+                  className={`${displayClassName} text-2xl font-medium text-[#20252B] md:text-3xl`}
                 >
                   {subAtracao.titulo}
                 </h3>
@@ -6212,7 +6210,7 @@ function SubAtracaoBlock({
           </div>
 
           {subAtracao.descricao && (
-            <p className="mb-5 text-sm leading-6 text-[#000000]/78">
+            <p className="mb-5 text-sm leading-6 text-[#20252B]/78">
               {subAtracao.descricao}
             </p>
           )}
@@ -6231,7 +6229,7 @@ function SubAtracaoBlock({
 
       {subAtracao.pois && subAtracao.pois.length > 0 && (
         <>
-          <p className="mb-5 text-xs text-[#000000]/65">
+          <p className="mb-5 text-xs text-[#20252B]/65">
             {subAtracao.poisLabel ?? "Restaurantes sugeridos"}
           </p>
           <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
@@ -6519,11 +6517,17 @@ function IconWhatsapp({ className }: { className?: string }) {
   );
 }
 
-// Demonstração (Wilson, 04/nov/2026): só Ônibus e Trem Bala em
-// "Informações Detalhadas".
-const INFO_CARDS: { label: string; Icon: (p: { className?: string }) => ReactElement; view: "onibus" | "shinkansen"; subLabel?: string }[] = [
+// Demonstração (Wilson, 04/nov/2026): só Ônibus e Trem Bala abrem; os
+// demais cards aparecem, com cadeado, sem clique.
+const INFO_CARDS: { label: string; Icon: (p: { className?: string }) => ReactElement; view?: "onibus" | "shinkansen"; subLabel?: string }[] = [
+  { label: "Aeroporto HND (Haneda)", Icon: IconPlane, subLabel: "Chegada e retorno" },
+  { label: "Aeroporto NRT (Narita)", Icon: IconPlane },
+  { label: "Metrô", Icon: IconMetro },
   { label: "Ônibus", Icon: IconBus, view: "onibus" },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" },
+  { label: "Câmbio", Icon: IconExchange },
+  { label: "Costumes", Icon: IconCustoms },
+  { label: "Palavras Comuns", Icon: IconWords },
 ];
 
 // Demonstração: sem número de apólice, sem voucher e sem contato do sinistro
@@ -7224,7 +7228,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
             aria-hidden="true"
           />
           <div className="absolute inset-0 bg-[#F6F8FA]/45" />
-          <span className="relative rounded-lg bg-[#0B2530] px-5 py-3 text-lg font-bold text-white sm:px-6 sm:py-3.5 sm:text-xl">
+          <span className="relative rounded-lg bg-[#0B2530] px-5 py-3 text-lg font-semibold text-white sm:px-6 sm:py-3.5 sm:text-xl">
             {hotel.nome}
           </span>
         </div>
@@ -7233,35 +7237,35 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
       {/* Identificação — endereço, telefone, site e horários */}
       <div className="border-b border-[#E3E6EA] bg-[#F6F8FA] px-5 py-6 text-center sm:px-8">
         {!hotel.fotoHero && (
-          <p className="text-base font-semibold text-[#000000] sm:text-lg">
+          <p className="text-base font-semibold text-[#20252B] sm:text-lg">
             {hotel.nome}
           </p>
         )}
-        <p className={`text-sm text-[#000000]/80 sm:text-base ${!hotel.fotoHero ? "mt-1" : ""}`}>
+        <p className={`text-sm text-[#20252B]/80 sm:text-base ${!hotel.fotoHero ? "mt-1" : ""}`}>
           {hotel.endereco}
         </p>
         {hotel.enderecoJapones && (
-          <p className="mt-1 text-sm text-[#000000]/65 sm:text-base">{hotel.enderecoJapones}</p>
+          <p className="mt-1 text-sm text-[#20252B]/65 sm:text-base">{hotel.enderecoJapones}</p>
         )}
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-[#000000]/80">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-[#20252B]/80">
           {hotel.telefone && <span>{hotel.telefone}</span>}
-          {hotel.telefone && hotel.site && <span className="text-[#000000]/35">·</span>}
+          {hotel.telefone && hotel.site && <span className="text-[#20252B]/35">·</span>}
           {hotel.site && (
             <a
               href={hotel.site}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold uppercase tracking-[0.1em] text-[#000000] hover:underline"
+              className="font-semibold text-[#20252B] hover:underline"
             >
               Site oficial
             </a>
           )}
         </div>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
-          <span className="rounded-full border border-[#000000]/25 bg-[#000000]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]">
+          <span className="rounded-full border border-[#20252B]/25 bg-[#20252B]/[0.06] px-4 py-1.5 text-[12px] font-semibold text-[#20252B]">
             Check-in · {hotel.checkin}
           </span>
-          <span className="rounded-full border border-[#000000]/25 bg-[#000000]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]">
+          <span className="rounded-full border border-[#20252B]/25 bg-[#20252B]/[0.06] px-4 py-1.5 text-[12px] font-semibold text-[#20252B]">
             Check-out · {hotel.checkout}
           </span>
         </div>
@@ -7269,16 +7273,16 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
       {/* 2. Estrutura & Serviços — bloco de largura total */}
       <div className="border-t border-[#E3E6EA] bg-[#FFFFFF] p-5 sm:p-8">
-        <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/68">
+        <p className="mb-5 text-xs font-semibold text-[#20252B]/68">
           Estrutura &amp; Serviços
         </p>
         <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2">
           {hotel.estrutura.map((item) => (
             <div key={item.label} className="flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#000000]/[0.08] text-[#000000]">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#20252B]/[0.08] text-[#20252B]">
                 <item.Icon className="h-4 w-4" />
               </span>
-              <span className="pt-1.5 text-sm leading-5 text-[#000000]/92">
+              <span className="pt-1.5 text-sm leading-5 text-[#20252B]/92">
                 {item.label}
               </span>
             </div>
@@ -7290,7 +7294,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
           existe mais de uma opção de linha e vale destacar a diferença. */}
       {hotel.transporte && (
         <div className="border-t border-[#E3E6EA] bg-[#FFFFFF] p-5 sm:p-8">
-          <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/68">
+          <p className="mb-5 text-xs font-semibold text-[#20252B]/68">
             Transporte
           </p>
           <div className="grid grid-cols-2 gap-4 sm:gap-6">
@@ -7308,13 +7312,13 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                     className="object-contain p-4"
                   />
                 </div>
-                <p className="border-t border-[#E3E6EA] px-3 py-2.5 text-center text-xs font-semibold text-[#000000]/85">
+                <p className="border-t border-[#E3E6EA] px-3 py-2.5 text-center text-xs font-semibold text-[#20252B]/85">
                   {estacao.nome}
                 </p>
               </div>
             ))}
           </div>
-          <p className="mt-5 text-sm leading-6 text-[#000000]/80">
+          <p className="mt-5 text-sm leading-6 text-[#20252B]/80">
             {hotel.transporte.nota}
           </p>
         </div>
@@ -7334,7 +7338,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
             />
           </div>
         )}
-        <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/68">
+        <p className="mb-5 text-xs font-semibold text-[#20252B]/68">
           Localização &amp; Arredores
         </p>
         <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
@@ -7349,20 +7353,20 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                   <item.Icon className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#000000]/65">
+                  <p className="text-[12px] font-semibold text-[#20252B]/65">
                     {item.label}
                   </p>
-                  <p className="text-sm font-semibold leading-5 text-[#000000]">
+                  <p className="text-sm font-semibold leading-5 text-[#20252B]">
                     {item.nome}
                   </p>
                   {item.detalhe && (
-                    <p className="mt-0.5 text-xs leading-5 text-[#000000]/75">
+                    <p className="mt-0.5 text-xs leading-5 text-[#20252B]/75">
                       {item.detalhe}
                     </p>
                   )}
                 </div>
                 {rotas.length > 0 && (
-                  <span className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center self-center rounded-full bg-[#000000]/[0.06] text-[#000000] transition group-hover:bg-[#000000]/[0.12]">
+                  <span className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center self-center rounded-full bg-[#20252B]/[0.06] text-[#20252B] transition group-hover:bg-[#20252B]/[0.12]">
                     <IconZoom className="h-3.5 w-3.5" />
                   </span>
                 )}
@@ -7389,7 +7393,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
           <div className="mt-6">
             {hotel.mapa.rotas && hotel.mapa.rotas.length > 0 && (
               <div>
-                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]/58">
+                <p className="mb-3 text-[12px] font-semibold text-[#20252B]/58">
                   Rotas a pé (prints do Google Maps)
                 </p>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -7398,7 +7402,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                       key={rota.label}
                       type="button"
                       onClick={() => openRotas([rota])}
-                      className="group block overflow-hidden rounded-xl border border-[#E3E6EA] bg-[#F8FAF9] text-left"
+                      className="group block overflow-hidden rounded-xl border border-[#E3E6EA] bg-[#F5F6F8] text-left"
                     >
                       <div className="relative aspect-[4/3] w-full overflow-hidden">
                         <Image
@@ -7409,12 +7413,12 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                           className="object-cover transition duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#20252B] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                             <IconZoom className="h-4 w-4" />
                           </span>
                         </div>
                       </div>
-                      <p className="px-2.5 py-2 text-[10px] font-semibold leading-tight text-[#000000]/85">
+                      <p className="px-2.5 py-2 text-[12px] font-semibold leading-tight text-[#20252B]/85">
                         {rota.label}
                       </p>
                     </button>
@@ -7429,16 +7433,16 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
       {/* 4. Informações úteis — só aparece quando há conteúdo real */}
       {hotel.informacoesUteis && hotel.informacoesUteis.length > 0 && (
         <div className="border-t border-[#E3E6EA] bg-[#F6F8FA] p-5 sm:p-8">
-          <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#000000]/68">
+          <p className="mb-5 text-xs font-semibold text-[#20252B]/68">
             Informações Úteis
           </p>
           <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
             {hotel.informacoesUteis.map((item) => (
               <div key={item.label}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#B96432]">
+                <p className="text-[12px] font-semibold text-[#B96432]">
                   {item.label}
                 </p>
-                <p className="mt-1 text-xs leading-5 text-[#000000]/85">{item.texto}</p>
+                <p className="mt-1 text-xs leading-5 text-[#20252B]/85">{item.texto}</p>
               </div>
             ))}
           </div>
@@ -7502,7 +7506,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
               alt={rotaModal.items[rotaModal.index].imagemAlt}
               className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
             />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+            <p className="mt-3 text-center text-xs font-semibold text-white/85">
               {rotaModal.items[rotaModal.index].label}
               {rotaModal.items.length > 1 &&
                 ` · ${rotaModal.index + 1}/${rotaModal.items.length}`}
@@ -7563,21 +7567,20 @@ export function ApprovalPanel({
   return (
     <>
       <div className="relative">
-        {/* Demonstração no padrão atual do site: card branco, sombra suave. */}
+        {/* Demonstração no padrão visual do CRM (PainelUi): card branco,
+            faixa colorida no topo, sombra suave. */}
         <div
-          className="overflow-hidden rounded-2xl border border-[#E3E6EA] bg-white sm:rounded-[2rem]"
-          style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.04), 0 20px 50px -30px rgba(10,37,64,0.35)" }}
+          className="overflow-hidden rounded-2xl border border-t-[3px] border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]"
+          style={{ borderTopColor: "#24476B" }}
         >
-        <div className="border-b border-[#E3E6EA] px-6 py-7 text-center sm:px-10">
-          <p className="mx-auto mb-5 inline-block rounded-full bg-[#0A2540] px-5 py-2 text-xs uppercase tracking-[0.3em] text-white">
-            Demonstração · Roteiro de 7 dias
-          </p>
-          <h2 className={`${displayClassName} text-2xl font-medium text-[#000000] md:text-3xl`}>
-            Painel Interativo
-          </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#000000]/72">
-            Amostra com {DIAS_LIBERADOS_TEXTO} abertos. Os demais dias, hotéis e guias mostram como o painel funciona.
-          </p>
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-black/[0.06] px-6 py-5 sm:px-10">
+          <div className="min-w-0">
+            <h2 className={`${displayClassName} text-lg font-semibold text-[#20252B]`}>Painel interativo</h2>
+            <p className="mt-0.5 max-w-xl text-[13px] text-[#626B75]">
+              Amostra com {DIAS_LIBERADOS_TEXTO} abertos. Os demais dias, hotéis e guias mostram como o painel funciona.
+            </p>
+          </div>
+          <span className="shrink-0 rounded-full bg-[#EAF1F8] px-3 py-1 text-[12px] font-medium text-[#24476B]">Roteiro de 7 dias</span>
         </div>
 
         <div
@@ -7602,7 +7605,7 @@ export function ApprovalPanel({
                 aria-label={d.bloqueado ? `${d.city} ${d.date ?? ""} — disponível no roteiro completo` : undefined}
               >
                 <span
-                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
+                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold transition-all duration-300 ${
                     d.badge
                       ? `text-[9px] tracking-tight text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.75)] ${
                           active ? "" : "hover:-translate-y-0.5 hover:!shadow-[0_0_0_2px_#DC2626]"
@@ -7634,8 +7637,8 @@ export function ApprovalPanel({
                   )}
                 </span>
                 <span
-                  className={`flex items-center gap-1 text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-[#000000]" : "text-[#000000]/65"
+                  className={`flex items-center gap-1 text-[12px]   ${
+                    active ? "text-[#20252B]" : "text-[#20252B]/65"
                   }`}
                 >
                   {d.bloqueado && <IconLock className="h-2.5 w-2.5 shrink-0" />}
@@ -7643,19 +7646,19 @@ export function ApprovalPanel({
                 </span>
                 {d.date && (
                   <span
-                    className={`flex flex-col items-center leading-tight tracking-[0.1em] ${
-                      active ? "text-[#000000]/72" : "text-[#000000]/55"
+                    className={`flex flex-col items-center leading-tight  ${
+                      active ? "text-[#20252B]/72" : "text-[#20252B]/55"
                     }`}
                   >
                     <span className="text-sm font-semibold">
                       {d.date.split(" ")[0]}
                     </span>
-                    <span className="text-xs uppercase">
+                    <span className="text-xs">
                       {d.date.split(" ")[1]}
                     </span>
                     {DIA_SEMANA[d.date] && (
                       <span
-                        className="mt-0.5 text-[9px] uppercase tracking-[0.15em]"
+                        className="mt-0.5 text-[11px]"
                         style={{ color: "#2C6CA6" }}
                       >
                         {DIA_SEMANA[d.date]}
@@ -7668,7 +7671,7 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]/60 sm:px-10">
+        <p className="px-6 pt-6 text-[12px] font-semibold text-[#20252B]/60 sm:px-10">
           Hotéis
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
@@ -7699,17 +7702,17 @@ export function ApprovalPanel({
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
-                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-semibold transition ${
                     active
-                      ? "border-[#000000] bg-[#E7F4E9] text-[#000000] hover:border-transparent hover:bg-[#000000] hover:text-white"
-                      : "border-[#E3E6EA] bg-[#E7F4E9] text-[#000000]/72 hover:border-transparent hover:bg-[#000000] hover:text-white"
+                      ? "border-[#20252B] bg-[#E7F4E9] text-[#20252B] hover:border-transparent hover:bg-[#20252B] hover:text-white"
+                      : "border-[#E3E6EA] bg-[#E7F4E9] text-[#20252B]/72 hover:border-transparent hover:bg-[#20252B] hover:text-white"
                   }`}
                 >
                   {index + 1}
                 </span>
                 <span
-                  className={`text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-[#000000]" : "text-[#000000]/65"
+                  className={`text-[12px]   ${
+                    active ? "text-[#20252B]" : "text-[#20252B]/65"
                   }`}
                 >
                   {HOTEIS[index].cidade}
@@ -7720,14 +7723,14 @@ export function ApprovalPanel({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]/60">
-            Informações Detalhadas
+          <p className="text-[15px] font-semibold text-[#20252B]">
+            Informações detalhadas
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#E3E6EA] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon, view, subLabel }) => {
             const cardClassName =
-              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DCE7F2] bg-[#F1F6FB] px-3 py-4 text-center text-xs leading-5 text-[#000000]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#2C6CA6]/35 hover:bg-[#E9F1FA] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
+              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#D5DAE0] bg-white px-3 py-4 text-center text-xs leading-5 text-[#20252B]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#24476B]/35 hover:bg-[#E9F1FA] hover:text-[#20252B] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
                 <Icon
@@ -7742,7 +7745,7 @@ export function ApprovalPanel({
                 <span>
                   {label}
                   {subLabel ? (
-                    <span className="mt-0.5 block text-[9px] font-bold uppercase tracking-[0.2em] text-[#C0392B]">
+                    <span className="mt-0.5 block text-[11px] font-semibold text-[#C0392B]">
                       {subLabel}
                     </span>
                   ) : null}
@@ -7762,16 +7765,25 @@ export function ApprovalPanel({
                 {content}
               </button>
             ) : (
-              <div key={label} className={cardClassName}>
-                {content}
+              <div
+                key={label}
+                aria-disabled="true"
+                title="Disponível no roteiro completo"
+                className="relative flex min-h-[112px] cursor-default select-none flex-col items-center justify-center gap-2.5 rounded-xl border border-[#E3E6EA] bg-[#F6F8FA] px-3 py-4 text-center text-xs leading-5 text-[#20252B]/45"
+              >
+                <span className="absolute right-2.5 top-2.5 text-[#20252B]/40" aria-hidden="true">
+                  <IconLock className="h-3.5 w-3.5" />
+                </span>
+                <span className="flex flex-col items-center gap-2.5 opacity-45">{content}</span>
+                <span className="sr-only">Disponível no roteiro completo</span>
               </div>
             );
           })}
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]/60">
-            Serviços Adicionais Contratados
+          <p className="text-[15px] font-semibold text-[#20252B]">
+            Serviços adicionais contratados
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#E3E6EA] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
@@ -7784,7 +7796,7 @@ export function ApprovalPanel({
                 <span>
                   {label}
                   {apoliceNumero && (
-                    <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#C0392B]">
+                    <span className="mt-0.5 block text-[12px] font-semibold text-[#C0392B]">
                       Apólice: {apoliceNumero}
                     </span>
                   )}
@@ -7795,7 +7807,7 @@ export function ApprovalPanel({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="mt-1 flex items-center gap-1.5 rounded-full bg-[#25D366]/12 px-2.5 py-1 text-[10px] font-semibold text-[#128C4A] transition hover:bg-[#25D366]/20"
+                    className="mt-1 flex items-center gap-1.5 rounded-full bg-[#25D366]/12 px-2.5 py-1 text-[12px] font-semibold text-[#128C4A] transition hover:bg-[#25D366]/20"
                   >
                     <IconWhatsapp className="h-3.5 w-3.5 shrink-0" />
                     +{whatsapp.replace(/^1/, "1 ").replace(/(\d{3})(\d{3})(\d{4})$/, "$1 $2 $3")}
@@ -7809,7 +7821,7 @@ export function ApprovalPanel({
                   key={label}
                   type="button"
                   onClick={() => setZoomDocumentoSeguro(true)}
-                  className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#000000]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#C0392B]/35 hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]"
+                  className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#20252B]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#C0392B]/35 hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]"
                 >
                   {cardContent}
                 </button>
@@ -7818,7 +7830,7 @@ export function ApprovalPanel({
             return (
               <div
                 key={label}
-                className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#000000]/75"
+                className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#20252B]/75"
               >
                 {cardContent}
               </div>
@@ -7854,7 +7866,7 @@ export function ApprovalPanel({
                   />
                 ),
               )}
-              <p className="pb-4 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              <p className="pb-4 text-center text-xs font-semibold text-white/85">
                 Apólice do Seguro Viagem
               </p>
             </div>
@@ -7864,7 +7876,7 @@ export function ApprovalPanel({
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "dxb" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Conexão em Dubai (DXB)
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
@@ -7873,16 +7885,16 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "onibus" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Ônibus em Kyoto
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
-                <OnibusGuideContent displayClassName={displayClassName} internal={false} />
+                <OnibusGuideContent displayClassName={displayClassName} internal={false} semMarca />
               </div>
             </>
           ) : viewMode === "cambio" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Onde Trocar Dinheiro
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
@@ -7891,7 +7903,7 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "narita" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Aeroporto de Narita (NRT)
               </p>
               {/* -mx cancela o px-6/sm:px-10 do painel — o Narita já traz seu
@@ -7904,7 +7916,7 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "haneda" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Aeroporto de Haneda (HND)
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
@@ -7913,7 +7925,7 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "trem" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Metrô e Trens no Japão
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
@@ -7922,7 +7934,7 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "costumes" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Costumes & Etiqueta
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
@@ -7931,7 +7943,7 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "palavras" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Palavras e Expressões Úteis
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
@@ -7940,32 +7952,32 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "shinkansen" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Trem Bala (Shinkansen)
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
-                <ShinkansenGuideContent displayClassName={displayClassName} internal={false} />
+                <ShinkansenGuideContent displayClassName={displayClassName} internal={false} semMarca />
               </div>
             </>
           ) : viewMode === "hotel" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Hotel · {HOTEIS[hotelCity].cidade}
               </p>
               <HotelGuestGuide hotel={HOTEIS[hotelCity]} />
             </>
           ) : current.bloqueado ? (
             <div className="rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] px-6 py-10 text-center sm:px-10">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-black text-white">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#24476B] text-white">
                 <IconLock className="h-5 w-5" />
               </span>
-              <p className="mt-4 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/65">
+              <p className="mt-4 text-xs font-semibold text-[#20252B]/65">
                 {current.travel ? current.city : `Dia ${current.day} · ${current.city}`} · {current.date}
               </p>
-              <p className={`${displayClassName} mx-auto mt-3 max-w-md text-xl text-[#000000]`}>
+              <p className={`${displayClassName} mx-auto mt-3 max-w-md text-xl text-[#20252B]`}>
                 Disponível no roteiro completo
               </p>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#000000]/72">
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#20252B]/72">
                 Esta é uma demonstração com {DIAS_LIBERADOS_TEXTO} abertos. No seu roteiro, todos os dias vêm detalhados assim: horários,
                 deslocamentos, restaurantes e pontos de interesse.
               </p>
@@ -7979,7 +7991,7 @@ export function ApprovalPanel({
                         setActiveDay(index);
                         scrollToContent();
                       }}
-                      className="rounded-full border border-black/20 px-5 py-2 text-xs uppercase tracking-[0.2em] text-[#000000] transition hover:bg-black hover:text-white"
+                      className="rounded-full border border-black/20 px-5 py-2 text-xs text-[#20252B] transition hover:bg-[#24476B] hover:text-white"
                     >
                       Ver Dia {d.day} · {d.city}
                     </button>
@@ -7987,7 +7999,7 @@ export function ApprovalPanel({
                 )}
                 <a
                   href="/produtos/roteiro-personalizado"
-                  className="rounded-full bg-black px-5 py-2 text-xs uppercase tracking-[0.2em] text-white transition hover:bg-black/80"
+                  className="rounded-xl bg-[#24476B] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#1c3956]"
                 >
                   Quero meu roteiro
                 </a>
@@ -7996,10 +8008,10 @@ export function ApprovalPanel({
           ) : current.travel ? (
             <>
               <div className="mb-8 rounded-2xl border border-[#E3E6EA] bg-[#F6F8FA] p-6 text-center sm:p-8">
-                <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]/65">
+                <p className="text-xs font-semibold text-[#20252B]/65">
                   {current.city} · {current.date}
                 </p>
-                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#000000]/75">
+                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#20252B]/75">
                   {current.travelNote}
                 </p>
               </div>
@@ -8007,7 +8019,7 @@ export function ApprovalPanel({
             </>
           ) : (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+              <p className="mb-4 text-lg font-semibold text-[#20252B]">
                 Dia {current.day}
               </p>
               {current.contexto && (
@@ -8046,12 +8058,12 @@ export function ApprovalPanel({
               <button
                 type="button"
                 onClick={scrollToDaysMenu}
-                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#000000]/20 bg-[#F8FAF9] py-6 text-center transition hover:bg-[#EAF1EF]"
+                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#20252B]/20 bg-[#F5F6F8] py-6 text-center transition hover:bg-[#EAF1EF]"
               >
-                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#000000] text-white">
+                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#20252B] text-white">
                   <IconArrowUp className="h-5 w-5" />
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]">
+                <span className="text-[12px] font-semibold text-[#20252B]">
                   Voltar para o menu de dias do roteiro
                 </span>
               </button>
@@ -8072,7 +8084,7 @@ export function ApprovalPanel({
       <button
         type="button"
         onClick={scrollToDaysMenu}
-        className="fixed right-3 z-50 flex flex-col items-center gap-1 rounded-2xl bg-[#0A2540] px-2.5 py-2.5 text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-x-0.5 sm:right-5"
+        className="fixed right-3 z-50 flex flex-col items-center gap-1 rounded-2xl bg-[#24476B] px-2.5 py-2.5 text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-x-0.5 sm:right-5"
         style={{ bottom: "calc(6rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ background: corCidade("Tokyo") }}>
@@ -8080,7 +8092,7 @@ export function ApprovalPanel({
             <path d="M5 7h14M5 12h14M5 17h14" />
           </svg>
         </span>
-        <span className="text-[8px] font-bold uppercase leading-tight tracking-[0.1em]">
+        <span className="text-[8px] font-semibold leading-tight">
           Menu
         </span>
       </button>
