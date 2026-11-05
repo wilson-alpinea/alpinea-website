@@ -144,35 +144,39 @@ function LinhaProduto({ valor, label, marcadoInicial, regra }: { valor: string; 
   const [marcado, setMarcado] = useState(marcadoInicial);
   const [tipo, setTipo] = useState<string>(regra?.tipo ?? "padrao");
   return (
-    <div className={`rounded-lg border p-2.5 transition ${marcado ? "border-[#24476B]/30 bg-white" : "border-transparent"}`}>
-      <label className="flex items-center gap-2 text-sm text-[#20252B]">
+    <div className={`min-w-0 rounded-lg border p-2.5 transition ${marcado ? "border-[#24476B]/30 bg-white" : "border-transparent"}`}>
+      <label className="flex min-w-0 items-center gap-2 text-sm text-[#20252B]">
         <input type="checkbox" name="produtos_parceiro" value={valor} checked={marcado} onChange={(e) => setMarcado(e.target.checked)} className="h-4 w-4 shrink-0 accent-[#24476B]" />
         {label}
       </label>
       {marcado && (
-        <div className="mt-2 flex flex-wrap items-center gap-2 pl-6">
+        <div className="mt-2 grid min-w-0 gap-2 pl-6">
+          {/* Select em largura total + valor/% na linha de baixo: no celular o
+              select estourava a borda do card (Wilson, 05/nov/2026). */}
           <select
             name={`remp_tipo_${valor}`}
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
             aria-label={`Remuneração de ${label}`}
-            className="h-9 rounded-lg border border-[#D5DAE0] bg-white px-2 text-[13px] text-[#20252B]"
+            className="h-9 w-full min-w-0 max-w-full rounded-lg border border-[#D5DAE0] bg-white px-2 text-[13px] text-[#20252B]"
           >
             <option value="padrao">Remuneração padrão</option>
             <option value="percentual">% da receita líquida</option>
             <option value="fixo">Valor fixo por venda (R$)</option>
           </select>
           {tipo !== "padrao" && (
+            <div className="flex items-center gap-2">
             <input
               name={`remp_valor_${valor}`}
               defaultValue={regra?.valor != null ? String(regra.valor).replace(".", ",") : ""}
               inputMode="decimal"
               placeholder={tipo === "percentual" ? "Ex.: 10" : "Ex.: 150,00"}
               aria-label={`Valor da remuneração de ${label}`}
-              className="h-9 w-28 rounded-lg border border-[#D5DAE0] bg-white px-2 text-[13px] tabular-nums text-[#20252B]"
+              className="h-9 w-28 min-w-0 rounded-lg border border-[#D5DAE0] bg-white px-2 text-[13px] tabular-nums text-[#20252B]"
             />
+            <span className="text-[13px] text-[#626B75]">{tipo === "percentual" ? "%" : "por venda"}</span>
+            </div>
           )}
-          {tipo === "percentual" && <span className="text-[13px] text-[#626B75]">%</span>}
         </div>
       )}
     </div>
@@ -218,7 +222,7 @@ function ProdutosParceiro({ inicial, unidadesIniciais, remuneracao, ajuda }: { i
             {grupos.map((g) => (
               <fieldset key={g.unidade}>
                 <legend className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#626B75]">{g.crm}</legend>
-                <div className="grid gap-1.5 sm:grid-cols-2">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,15rem),1fr))] gap-1.5">
                   {g.produtos.map((p) => (
                     <LinhaProduto key={p.valor} valor={p.valor} label={p.label} marcadoInicial={!!inicial?.includes(p.valor)} regra={remuneracao?.[p.valor]} />
                   ))}
