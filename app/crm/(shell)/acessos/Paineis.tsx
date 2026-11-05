@@ -129,7 +129,10 @@ function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes |
         </select>
         <p className="mt-1.5 text-[13px] text-[#626B75]">“Somente cadastrar” cria clientes, notas e arquivos novos, mas não altera nem exclui o que já existe.</p>
       </div>
-      <p className="text-[13px] text-[#626B75]">O consultor vê somente os registros dele mesmo — os que ele criou ou que forem atribuídos a ele.</p>
+      {/* Wilson, 05/nov/2026: "deixar claro que consultor só vê os próprios leads, apenas admin vê tudo". */}
+      <p className="rounded-lg border border-[#2f80c9]/25 bg-[#2f80c9]/[0.06] px-3.5 py-2.5 text-[13px] leading-5 text-[#26313B]">
+        <strong className="font-semibold">O consultor vê somente os próprios leads</strong> — os que ele criou ou que forem atribuídos a ele. Ele não vê os leads de outros consultores nem de parceiros. <strong className="font-semibold">Apenas administradores veem todos os leads.</strong>
+      </p>
     </div>
   );
 }

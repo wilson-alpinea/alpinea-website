@@ -373,7 +373,7 @@ export default function ProdutosPage() {
                 iconHeight={1024}
                 title="Transporte Privado"
                 description="Motorista particular à disposição para deslocamentos e passeios de dia inteiro."
-                requirement="Inclui Roteiro Personalizado"
+                requirement="Requer Roteiro Personalizado"
                 cta="Calcular meu transporte"
                 className="lg:col-span-2"
               />

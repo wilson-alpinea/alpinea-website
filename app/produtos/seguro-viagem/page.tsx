@@ -327,7 +327,9 @@ export default function SeguroViagemPage() {
                 <p className="mt-1 text-sm text-black/70">
                   {formatarDataBR(partida)} a {formatarDataBR(retorno)} · {viajantes.length} {viajantes.length === 1 ? "viajante" : "viajantes"} · valor total do grupo
                 </p>
-                <ul className="mt-4 grid gap-4 md:grid-cols-3">
+                {/* gap-y-8 no mobile: o selo "Recomendado" (-top-3) encostava no link
+                    "Condições gerais" do card de cima (Calori, 05/nov/2026). */}
+                <ul className="mt-6 grid gap-x-4 gap-y-8 md:grid-cols-3">
                   {NIVEIS.map((nivel) => {
                     const p = planos.find((x) => x.nivel === nivel.id);
                     if (!p) return null;
@@ -341,7 +343,7 @@ export default function SeguroViagemPage() {
                           className={`relative flex h-full w-full flex-col rounded-2xl border p-5 text-left transition ${ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.03] ring-1 ring-[#2f80c9]" : "border-black/10 bg-white hover:border-black/25"}`}
                         >
                           {p.nivel === "recomendado" && (
-                            <span className="absolute -top-2.5 left-5 rounded-full bg-[#0A2540] px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white">Recomendado para o Japão</span>
+                            <span className="absolute -top-3 left-5 max-w-[calc(100%-2.5rem)] truncate rounded-full bg-[#0A2540] px-2.5 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white">Recomendado para o Japão</span>
                           )}
                           <span className="text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">{nivel.titulo}</span>
                           <span className="mt-2 flex items-center gap-2.5">
@@ -445,7 +447,11 @@ export default function SeguroViagemPage() {
       {status !== "enviado" && (
         <RodapeCheckout
           containerRef={rodapeRef}
-          pendencias={pendencias}
+          // Antes de cotar, nada de lista "Faltam X itens" (nome, CPF…): no
+          // mobile os Termos já aparecem na tela e a lista surgia antes da
+          // simulação começar (Calori, 05/nov/2026). O rodapé já mostra o
+          // aviso "Informe as datas…" nessa fase.
+          pendencias={planos ? pendencias : []}
           formValido={formValido}
           enviando={status === "enviando"}
           onFinalizar={finalizar}
