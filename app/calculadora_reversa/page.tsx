@@ -1975,7 +1975,7 @@ export default function CalculadoraReversaPage() {
     // experiências/reservas, complexidade operacional). Itens já
     // precificados um a um (parques, guia, motorista, JR Pass…) mantêm o
     // preço real e não passam por multiplicador.
-    const ritmo = calcularComponentesRitmo({
+    const ritmoBruto = calcularComponentesRitmo({
       perfil: perfilViajante,
       dias,
       pessoas,
@@ -1983,6 +1983,16 @@ export default function CalculadoraReversaPage() {
       parquesDiaInteiro: diasParquesDiaInteiro,
       cotacaoUSD: cambioCotacao,
     });
+    // Pedido do Wilson, 13/nov/2026: "Transporte urbano do roteiro" e
+    // "Coordenação e logística do roteiro" saem da Calculadora Reversa
+    // (não entram nem na lista de serviços nem no total).
+    const RITMO_REMOVIDOS = new Set(["ritmo-transporte", "ritmo-operacional"]);
+    const ritmoLinhas = ritmoBruto.linhas.filter((l) => !RITMO_REMOVIDOS.has(l.chave));
+    const ritmo = {
+      ...ritmoBruto,
+      linhas: ritmoLinhas,
+      total: ritmoLinhas.reduce((s, l) => s + l.precoBRL, 0),
+    };
     // Ajuste por origem do voo — pedido do Wilson, 14/set/2026, valor fixo
     // por pessoa (ida e volta) a partir do pedido de 16/set/2026 (ver
     // comentário em ORIGENS_VOO). Não se aplica no modo manual (o valor já
