@@ -365,7 +365,7 @@ export async function POST(req: Request) {
       }${certificadoJapones ? ` (certificado anexado: ${certificadoJapones.nome})` : ""}`,
       `Experiência em fábrica/produção: ${respostas.experienciaSetor === "sim" ? "Sim" : respostas.experienciaSetor === "nao" ? "Não" : "Não respondeu"}`,
       `Re-Entry válido: ${respostas.reEntry === "sim" ? "SIM — embarque mais rápido" : respostas.reEntry === "nao" ? "Não" : "Não respondeu"}`,
-      `Ascendência japonesa: ${ascendenciaLabel || "Não informada"}`,
+      `Ascendência japonesa: ${ascendenciaLabel || "Não informada"}${respostas.reEntry !== "sim" && respostas.ascendencia !== "nissei" && respostas.ascendencia !== "sansei" && respostas.ascendencia !== "conjugeDependente" ? " ⚠ (sem Re-Entry — conferir visto)" : ""}`,
       ...linhasPerfil(),
       `Quando gostaria de embarcar: ${quandoEmbarcarLabel || "Não informado"}`,
       `Classificação: ${

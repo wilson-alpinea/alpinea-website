@@ -95,7 +95,8 @@ export type PerguntaTriagemKey =
 // um critério unificado". Cada vaga pode ter `criteriosTriagem` próprio em
 // app/lib/vagasCatalogo.ts; sem isso vale CRITERIOS_TRIAGEM_PADRAO.
 // - "eliminatorio": resposta "Não" barra a etapa de foto, qualquer que
-//   seja a pontuação (o candidato vê o motivo no resultado).
+//   seja a pontuação. O motivo fica só no CRM e no e-mail da equipe — o
+//   candidato vê apenas "candidatura em análise" (15/out e 17/nov/2026).
 // - "qualificatorio": "Sim" soma os pontos do critério; "Não" só deixa de
 //   somar.
 // - "informativo": não pontua nem barra; vai destacado no e-mail da equipe.
@@ -104,6 +105,12 @@ export type ModoCriterioTriagem = "eliminatorio" | "qualificatorio" | "informati
 export type CriteriosTriagem = {
   experiencia: ModoCriterioTriagem;
   reEntry: ModoCriterioTriagem;
+  // Elegibilidade de visto (Wilson, 17/nov/2026 — caso de candidato sem
+  // ascendência e sem Re-Entry que chegou até a pré-entrevista): brasileiro
+  // sem ascendência japonesa, sem ser cônjuge/dependente de descendente e
+  // sem Re-Entry válido não tem como obter visto de trabalho por essas
+  // vagas. Ver regra em calcularPontuacaoCandidatura.
+  elegibilidadeVisto: ModoCriterioTriagem;
   // Perguntas de perfil (06/out/2026 — ver app/lib/triagemPerfil.ts).
   turnoAlternado: ModoCriterioTriagem;
   daltonismo: ModoCriterioTriagem;
@@ -139,6 +146,7 @@ export type CriteriosTriagem = {
 export const CRITERIOS_TRIAGEM_PADRAO: CriteriosTriagem = {
   experiencia: "qualificatorio",
   reEntry: "qualificatorio",
+  elegibilidadeVisto: "eliminatorio",
   turnoAlternado: "informativo",
   daltonismo: "informativo",
   dividasBrasil: "informativo",
@@ -524,6 +532,28 @@ export function calcularPontuacaoCandidatura(params: {
   if (regras.reEntry === "eliminatorio" && respostas.reEntry !== "sim") {
     eliminadoPor.push("Esta vaga exige Re-Entry válido.");
   }
+
+  // Elegibilidade de visto (17/nov/2026). Com Re-Entry válido o candidato
+  // já tem visto de residência — passa. Sem Re-Entry, precisa de ascendência
+  // que dê direito ao visto (nissei, sansei, cônjuge/dependente).
+  // "Não tenho ascendência" e "Outro / não sei" eliminam (equipe, 17/nov:
+  // "não sei = não tem, historicamente falando"); yonsei ou campo vazio
+  // (formulário antigo) vão para revisão manual da equipe.
+  const revisarVisto: string[] = [];
+  if (respostas.reEntry !== "sim") {
+    const asc = respostas.ascendencia;
+    if (asc === "nenhuma" || asc === "outro") {
+      if (regras.elegibilidadeVisto === "eliminatorio") {
+        // Texto só para a equipe (CRM / e-mail interno) — o candidato nunca
+        // vê o motivo da eliminação (Wilson, 17/nov/2026).
+        eliminadoPor.push("Sem ascendência japonesa e sem Re-Entry válido — não elegível ao visto.");
+      } else if (regras.elegibilidadeVisto === "informativo") {
+        revisarVisto.push("Sem ascendência e sem Re-Entry (visto)");
+      }
+    } else if (asc === "yonsei" || asc === "") {
+      revisarVisto.push("Elegibilidade de visto a confirmar");
+    }
+  }
   for (const motivo of eliminadoPor) {
     criterios.push({ chave: "eliminatorio", label: "Requisito obrigatório da vaga", pontosObtidos: 0, pontosMaximos: 0, detalhe: motivo });
   }
@@ -538,6 +568,6 @@ export function calcularPontuacaoCandidatura(params: {
     eliminado,
     motivosEliminacao: eliminadoPor,
     classificacao: eliminado ? "eliminado" : pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA ? "aprovado_alto" : "aprovado_baixo",
-    pontosRevisar: pontosParaRevisar(perfil),
+    pontosRevisar: [...pontosParaRevisar(perfil), ...revisarVisto],
   };
 }
