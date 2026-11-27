@@ -1,21 +1,29 @@
 // Checklist de prospecção das 100 agências (Wilson, 27/nov/2026) — tipos e
 // status compartilhados pela página, pelo componente e pelas actions.
+// Cores no padrão dos CRMs (fundo suave + texto, faixa forte na lateral).
 
 export const STATUS_AGENCIA = [
-  { id: "a_abordar", label: "A abordar", cor: "#626B75", fundo: "#EEF0F2" },
-  { id: "buscando_contato", label: "Buscando contato", cor: "#7A5B00", fundo: "#FFF4D6" },
-  { id: "email_enviado", label: "E-mail enviado", cor: "#24476B", fundo: "#EAF1F8" },
-  { id: "follow_up", label: "Follow-up enviado", cor: "#24476B", fundo: "#DCE8F4" },
-  { id: "respondeu", label: "Respondeu", cor: "#6B4A9E", fundo: "#F0EBF7" },
-  { id: "reuniao", label: "Reunião marcada", cor: "#6B4A9E", fundo: "#E6DDF3" },
-  { id: "proposta", label: "Piloto / proposta", cor: "#9A3D5C", fundo: "#FBEAF0" },
-  { id: "parceiro", label: "Parceiro fechado", cor: "#1F6B4E", fundo: "#E3F3EC" },
-  { id: "sem_interesse", label: "Sem interesse", cor: "#8A2A2A", fundo: "#FBE9E9" },
-  { id: "pausado", label: "Pausado", cor: "#626B75", fundo: "#F3F4F6" },
+  { id: "a_abordar", label: "A abordar", cor: "#59636F", fundo: "#F1F3F5", forte: "#9AA2AB" },
+  { id: "buscando_contato", label: "Buscando contato", cor: "#946200", fundo: "#FFF4DE", forte: "#E0A526" },
+  { id: "email_enviado", label: "E-mail enviado", cor: "#24476B", fundo: "#EAF1F8", forte: "#2F80C9" },
+  { id: "follow_up", label: "Follow-up enviado", cor: "#1C6EA8", fundo: "#E1EFFA", forte: "#5AA6E6" },
+  { id: "respondeu", label: "Respondeu", cor: "#665582", fundo: "#F0EBF7", forte: "#8E6FC4" },
+  { id: "reuniao", label: "Reunião marcada", cor: "#5B3BA8", fundo: "#EDE5FB", forte: "#7C4FD1" },
+  { id: "proposta", label: "Piloto / proposta", cor: "#9A3D5C", fundo: "#FBEAF0", forte: "#D45B85" },
+  { id: "parceiro", label: "Parceiro fechado", cor: "#28665D", fundo: "#E8F4EE", forte: "#3A8C5A" },
+  { id: "sem_interesse", label: "Sem interesse", cor: "#B42318", fundo: "#FDEDEC", forte: "#D9534F" },
+  { id: "pausado", label: "Pausado", cor: "#6B737C", fundo: "#F5F6F7", forte: "#C2C8CE" },
 ] as const;
 export type StatusAgencia = (typeof STATUS_AGENCIA)[number]["id"];
 export const isStatusAgencia = (v: unknown): v is StatusAgencia => STATUS_AGENCIA.some((s) => s.id === v);
 export const statusInfo = (v: string) => STATUS_AGENCIA.find((s) => s.id === v) ?? STATUS_AGENCIA[0];
+
+/** Prioridade da planilha ("1 · Abordar"...) → cor do selo. */
+export const PRIORIDADE_COR: Record<string, { cor: string; fundo: string }> = {
+  "1": { cor: "#B42318", fundo: "#FDEDEC" },
+  "2": { cor: "#946200", fundo: "#FFF4DE" },
+  "3": { cor: "#665582", fundo: "#F0EBF7" },
+};
 
 export type Agencia = {
   ordem: number;
