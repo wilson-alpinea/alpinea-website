@@ -66,7 +66,7 @@ function Bloco({ titulo, children }: { titulo: string; children: React.ReactNode
   );
 }
 
-function LinhaAgencia({ a, autor, aoSalvar }: { a: Agencia; autor: () => string; aoSalvar: (nova: Agencia) => void }) {
+function LinhaAgencia({ a, n, autor, aoSalvar }: { a: Agencia; n: number; autor: () => string; aoSalvar: (nova: Agencia) => void }) {
   const [aberto, setAberto] = useState(false);
   const [pendente, iniciar] = useTransition();
   const [erro, setErro] = useState<string | null>(null);
@@ -103,9 +103,12 @@ function LinhaAgencia({ a, autor, aoSalvar }: { a: Agencia; autor: () => string;
     <li className={`${CARD} overflow-hidden transition ${aberto ? "ring-1 ring-black/10" : "hover:border-black/15"}`}>
       <div className="grid items-center gap-3 px-4 py-3.5 md:grid-cols-[minmax(0,2.3fr)_minmax(0,1.25fr)_minmax(0,1.15fr)_minmax(0,1.7fr)_2rem] md:gap-4">
         <button type="button" onClick={() => setAberto((v) => !v)} aria-expanded={aberto} className="min-w-0 text-left">
-          {/* Sem o nº da linha da planilha (Wilson, 27/nov/2026: "os números estão bizarros"). */}
-          <span className="block truncate text-[15px] font-semibold text-[#20252B]">{a.conta}</span>
-          <span className="mt-0.5 block truncate text-[12px] text-[#8A929B]">
+          {/* Numeração sequencial na ordem da lista (Wilson, 27/nov/2026) — não o nº da linha da planilha. */}
+          <span className="flex items-baseline gap-2.5">
+            <span className="w-6 shrink-0 text-right text-[13px] tabular-nums text-[#9AA2AB]">{n}</span>
+            <span className="truncate text-[15px] font-semibold text-[#20252B]">{a.conta}</span>
+          </span>
+          <span className="mt-0.5 block truncate pl-[2.125rem] text-[12px] text-[#8A929B]">
             <span className="font-medium" style={{ color: (PRIORIDADE_COR[numPrioridade(a.prioridade)] ?? { cor: "#626B75" }).cor }}>
               {a.prioridade ?? "Sem prioridade"}
             </span>
@@ -390,7 +393,7 @@ export function Checklist({ inicial }: { inicial: Agencia[] }) {
               );
             })}
           </div>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Filtrar por status" className={`${CAMPO} w-auto min-w-[190px]`}>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Filtrar por status" className="rounded-xl border border-[#D5DAE0] bg-white px-3.5 py-2.5 text-sm text-[#20252B] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25">
             <option value="">Todos os status</option>
             {STATUS_AGENCIA.map((s) => (
               <option key={s.id} value={s.id}>
@@ -417,15 +420,15 @@ export function Checklist({ inicial }: { inicial: Agencia[] }) {
 
       <div>
         <div className="mb-2 hidden px-4 text-[12px] font-medium text-[#8A929B] md:grid md:grid-cols-[minmax(0,2.3fr)_minmax(0,1.25fr)_minmax(0,1.15fr)_minmax(0,1.7fr)_2rem] md:gap-4">
-          <span>Agência · {visiveis.length}</span>
+          <span className="pl-[2.125rem]">Agência · {visiveis.length}</span>
           <span>Status</span>
           <span>E-mail</span>
           <span>Próximo passo</span>
           <span />
         </div>
         <ul className="space-y-2.5">
-          {visiveis.map((a) => (
-            <LinhaAgencia key={a.ordem} a={a} autor={autor} aoSalvar={atualizar} />
+          {visiveis.map((a, i) => (
+            <LinhaAgencia key={a.ordem} a={a} n={i + 1} autor={autor} aoSalvar={atualizar} />
           ))}
         </ul>
         {visiveis.length === 0 && (
