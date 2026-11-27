@@ -57,11 +57,6 @@ function Selo({ texto, cor, fundo }: { texto: string; cor: string; fundo: string
   );
 }
 
-function SeloPrioridade({ p }: { p: string | null }) {
-  const c = PRIORIDADE_COR[numPrioridade(p)] ?? { cor: "#59636F", fundo: "#F1F3F5" };
-  return <Selo texto={p ?? "Sem prioridade"} cor={c.cor} fundo={c.fundo} />;
-}
-
 function Bloco({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <div>
@@ -105,15 +100,17 @@ function LinhaAgencia({ a, autor, aoSalvar }: { a: Agencia; autor: () => string;
   };
 
   return (
-    <li className={`${CARD} overflow-hidden border-l-4 transition ${aberto ? "ring-1 ring-black/10" : "hover:-translate-y-px"}`} style={{ borderLeftColor: st.forte }}>
+    <li className={`${CARD} overflow-hidden transition ${aberto ? "ring-1 ring-black/10" : "hover:border-black/15"}`}>
       <div className="grid items-center gap-3 px-4 py-3.5 md:grid-cols-[minmax(0,2.3fr)_minmax(0,1.25fr)_minmax(0,1.15fr)_minmax(0,1.7fr)_2rem] md:gap-4">
         <button type="button" onClick={() => setAberto((v) => !v)} aria-expanded={aberto} className="min-w-0 text-left">
           {/* Sem o nº da linha da planilha (Wilson, 27/nov/2026: "os números estão bizarros"). */}
           <span className="block truncate text-[15px] font-semibold text-[#20252B]">{a.conta}</span>
-          <span className="mt-1 flex flex-wrap items-center gap-1.5">
-            <SeloPrioridade p={a.prioridade} />
-            {a.perfil && <Selo texto={a.perfil} cor="#59636F" fundo="#F1F3F5" />}
-            {a.grupo && a.grupo !== a.conta && <span className="truncate text-[12px] text-[#8A929B]">{a.grupo}</span>}
+          <span className="mt-0.5 block truncate text-[12px] text-[#8A929B]">
+            <span className="font-medium" style={{ color: (PRIORIDADE_COR[numPrioridade(a.prioridade)] ?? { cor: "#626B75" }).cor }}>
+              {a.prioridade ?? "Sem prioridade"}
+            </span>
+            {a.perfil ? ` · ${a.perfil}` : ""}
+            {a.grupo && a.grupo !== a.conta ? ` · ${a.grupo}` : ""}
           </span>
         </button>
 
@@ -124,8 +121,8 @@ function LinhaAgencia({ a, autor, aoSalvar }: { a: Agencia; autor: () => string;
             value={a.status}
             disabled={pendente}
             onChange={(e) => salvar({ status: e.target.value })}
-            className="w-full cursor-pointer appearance-none rounded-full py-1.5 pl-7 pr-7 text-[13px] font-semibold outline-none ring-1 ring-inset transition focus:ring-2 disabled:opacity-60"
-            style={{ color: st.cor, backgroundColor: st.fundo, ["--tw-ring-color" as string]: `${st.forte}66` }}
+            className="w-full cursor-pointer appearance-none rounded-full py-1.5 pl-7 pr-7 text-[13px] font-medium outline-none transition focus:ring-2 focus:ring-[#24476B]/30 disabled:opacity-60"
+            style={{ color: st.cor, backgroundColor: st.fundo }}
           >
             {STATUS_AGENCIA.map((s) => (
               <option key={s.id} value={s.id}>
@@ -340,7 +337,7 @@ export function Checklist({ inicial }: { inicial: Agencia[] }) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[13px] text-[#626B75]">100 potenciais parceiros no Brasil · nov/2026</p>
-          <h1 className="mt-1 text-3xl font-semibold text-[#20252B] md:text-4xl">Prospecção de agências</h1>
+          <h1 className="mt-1 text-3xl font-medium text-[#20252B] md:text-4xl">Prospecção de agências</h1>
         </div>
         <label className="text-[13px] text-[#626B75]">
           Seu nome (aparece nas alterações)
@@ -348,55 +345,25 @@ export function Checklist({ inicial }: { inicial: Agencia[] }) {
         </label>
       </div>
 
-      {/* Indicadores clicáveis, como na lista de Clientes do CRM */}
+      {/* Indicadores clicáveis — brancos, só um ponto de cor (Wilson, 27/nov/2026: "agora está over demais"). */}
       <section aria-label="Resumo">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {indicadores.map((ind) => {
             const sel = grupo === ind.id && ind.id !== "";
+            const alerta = ind.id === "atrasados" && ind.n > 0;
             return (
               <button
                 key={ind.titulo}
                 type="button"
                 aria-pressed={sel}
                 onClick={() => setGrupo(sel ? "" : ind.id)}
-                className={`rounded-2xl border border-t-[3px] p-4 text-left shadow-[0_1px_2px_rgba(0,0,0,0.04),0_10px_24px_-18px_rgba(0,0,0,0.2)] transition hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 ${sel ? "ring-2" : "border-black/[0.06]"}`}
-                style={{ backgroundColor: ind.fundo, borderTopColor: ind.cor, ...(sel ? { ["--tw-ring-color" as string]: ind.cor, borderColor: ind.cor } : {}) }}
+                className={`${CARD} p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24476B]/30 ${sel ? "ring-2 ring-[#24476B]/40" : "hover:border-black/15"}`}
               >
-                <span className="block text-[13px] font-medium text-[#626B75]">{ind.titulo}</span>
-                <span className="mt-0.5 block text-[28px] font-semibold leading-tight tabular-nums" style={{ color: ind.cor }}>
-                  {ind.n}
+                <span className="flex items-center gap-1.5 text-[13px] text-[#626B75]">
+                  <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ backgroundColor: ind.cor }} />
+                  {ind.titulo}
                 </span>
-                {sel && <span className="text-[12px] text-[#626B75]">Filtrando · clique para remover</span>}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Distribuição por status */}
-      <section className={`${CARD} p-4`} aria-label="Distribuição por status">
-        <div className="flex h-3 overflow-hidden rounded-full bg-[#F1F3F5]" role="img" aria-label="Agências por status">
-          {STATUS_AGENCIA.map((s) => {
-            const n = contagem.get(s.id) ?? 0;
-            return n ? <span key={s.id} title={`${s.label}: ${n}`} style={{ width: `${(n / Math.max(agencias.length, 1)) * 100}%`, backgroundColor: s.forte }} /> : null;
-          })}
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {STATUS_AGENCIA.map((s) => {
-            const n = contagem.get(s.id) ?? 0;
-            const sel = status === s.id;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setStatus(sel ? "" : s.id)}
-                aria-pressed={sel}
-                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-medium transition ${sel ? "ring-2" : "hover:brightness-95"} ${n ? "" : "opacity-50"}`}
-                style={{ color: s.cor, backgroundColor: s.fundo, ["--tw-ring-color" as string]: s.forte }}
-              >
-                <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ backgroundColor: s.forte }} />
-                {s.label}
-                <span className="tabular-nums opacity-70">{n}</span>
+                <span className={`mt-1 block text-2xl font-semibold tabular-nums ${alerta ? "text-[#B42318]" : "text-[#20252B]"}`}>{ind.n}</span>
               </button>
             );
           })}
@@ -409,7 +376,6 @@ export function Checklist({ inicial }: { inicial: Agencia[] }) {
           <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar agência, grupo, contato…" aria-label="Buscar" className={`${CAMPO} min-w-[220px] flex-1`} />
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Prioridade">
             {PRIORIDADES.map((p) => {
-              const c = PRIORIDADE_COR[p.id];
               const sel = prioridade === p.id;
               return (
                 <button
@@ -417,14 +383,21 @@ export function Checklist({ inicial }: { inicial: Agencia[] }) {
                   type="button"
                   onClick={() => setPrioridade(p.id)}
                   aria-pressed={sel}
-                  className={`rounded-full border px-3 py-1.5 text-[13px] font-medium transition ${sel ? "" : "border-[#D5DAE0] bg-white text-[#20252B] hover:border-[#24476B]/50"}`}
-                  style={sel ? { color: c ? c.cor : "#FFFFFF", backgroundColor: c ? c.fundo : "#24476B", borderColor: c ? c.cor : "#24476B" } : undefined}
+                  className={`rounded-full border px-3 py-1.5 text-[13px] font-medium transition ${sel ? "border-[#24476B] bg-[#24476B] text-white" : "border-[#D5DAE0] bg-white text-[#20252B] hover:border-[#24476B]/50"}`}
                 >
                   {p.label}
                 </button>
               );
             })}
           </div>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Filtrar por status" className={`${CAMPO} w-auto min-w-[190px]`}>
+            <option value="">Todos os status</option>
+            {STATUS_AGENCIA.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label} ({contagem.get(s.id) ?? 0})
+              </option>
+            ))}
+          </select>
           {filtrosAtivos && (
             <button
               type="button"
