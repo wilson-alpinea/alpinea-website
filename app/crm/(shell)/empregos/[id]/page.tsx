@@ -13,10 +13,13 @@ import {
   adicionarCandidatoBlacklist,
   concluirFollowUp,
   criarFollowUp,
+  desfazerEmailRecusaManual,
   excluirFollowUp,
+  registrarEmailRecusaManual,
   salvarNotaArquivo,
 } from "@/app/crm/empregosExtrasActions";
 import { dataBR, diasAte, followUpsDaCandidatura, hojeSP, rotuloPrazo } from "@/lib/empregos/followups";
+import { situacaoEmailRecusa } from "@/lib/empregos/emailRecusa";
 import { cpfDaFicha, type EntradaBlacklist } from "@/lib/empregos/blacklist";
 import type { NotaArquivo } from "@/lib/crm/andamentoManual";
 import { ETAPAS_MANUAIS, dataHoraSP, lerAndamentoManual } from "@/lib/crm/andamentoManual";
@@ -43,6 +46,9 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
+
+/** Agora em horário de Brasília, no formato do <input type="datetime-local">. */
+const agoraInputSP = () => new Date(Date.now() - 3 * 3600_000).toISOString().slice(0, 16);
 
 type Criterio = { label: string; pontosObtidos: number; pontosMaximos: number; detalhe: string };
 
@@ -182,6 +188,11 @@ export default async function CandidatoPage({
   const anulada = Boolean(c.anulada_em);
   const cpfCandidato = cpfDaFicha(c.ficha);
   const incluirBlacklist = adicionarCandidatoBlacklist.bind(null, id);
+  // Aviso do e-mail de resposta ao eliminado (Wilson, 19/nov/2026 — migração 041).
+  const emailResposta = situacaoEmailRecusa(c);
+  const registrarEmailResposta = registrarEmailRecusaManual.bind(null, id);
+  const desfazerEmailResposta = desfazerEmailRecusaManual.bind(null, id);
+  const agoraSP = agoraInputSP();
 
   return (
     <div>
@@ -223,6 +234,76 @@ export default async function CandidatoPage({
       {c.foto_path && (
         <div className="ml-auto mt-1 w-[180px] max-w-full text-right [&_form]:justify-end [&_summary]:text-right">
           <NotaArquivoInline candidaturaId={id} chave={c.foto_path} nota={notasArquivos[c.foto_path]} />
+        </div>
+      )}
+
+      {/* E-mail de resposta ao candidato eliminado — enviado / programado /
+          não enviado, com registro de envio manual (Wilson, 19/nov/2026).
+          O motivo da eliminação nunca vai para o candidato. */}
+      {emailResposta && (
+        <div
+          id="email-resposta"
+          className={`mt-4 scroll-mt-28 rounded-xl border px-4 py-3 text-sm ${
+            emailResposta.tipo === "enviado"
+              ? "border-[#27675B]/25 bg-[#EEF5F2] text-[#1F4F46]"
+              : emailResposta.tipo === "programado"
+                ? "border-[#93703D]/25 bg-[#FAF5EB] text-[#6E5430]"
+                : "border-[#DEE6E2] bg-white text-[#626E69]"
+          }`}
+        >
+          {emailResposta.tipo === "enviado" ? (
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <p>
+                <span className="font-semibold text-[#27675B]">E-mail de resposta enviado</span> em {dataHoraSP(emailResposta.em)}
+                {" · "}
+                {emailResposta.por === "sistema" || !emailResposta.por
+                  ? "envio automático do sistema"
+                  : `enviado manualmente, registrado por ${emailResposta.por.replace(/\s*\(manual\)$/, "")}`}
+              </p>
+              {emailResposta.por?.endsWith("(manual)") && (
+                <form action={desfazerEmailResposta}>
+                  <button type="submit" className="text-[12px] text-[#626E69] underline underline-offset-2 hover:text-[#B42318]">
+                    Desfazer registro
+                  </button>
+                </form>
+              )}
+            </div>
+          ) : (
+            <>
+              <p>
+                {emailResposta.tipo === "programado" ? (
+                  <>
+                    <span className="font-semibold">E-mail de resposta programado</span> para {dataBR(emailResposta.previstoPara)}, às 8h (automático). Reclassificar como
+                    aprovado cancela o envio.
+                  </>
+                ) : (
+                  <>
+                    <span className="font-semibold text-[#202B28]">E-mail de resposta ainda não enviado</span> ao candidato.
+                  </>
+                )}
+              </p>
+              <details className="mt-1.5">
+                <summary className="cursor-pointer text-[13px] font-medium underline underline-offset-2">Já enviei manualmente — registrar envio</summary>
+                <form action={registrarEmailResposta} className="mt-2 flex flex-wrap items-end gap-2">
+                  <label className="text-[12px]">
+                    Enviado em (horário de Brasília)
+                    <input
+                      type="datetime-local"
+                      name="enviadoEm"
+                      defaultValue={agoraSP}
+                      max={agoraSP}
+                      required
+                      className="mt-0.5 block rounded-lg border border-black/15 bg-white px-2.5 py-1.5 text-sm text-[#202B28]"
+                    />
+                  </label>
+                  <button type="submit" className="rounded-xl bg-[#27675B] px-4 py-2 text-sm font-medium text-white hover:bg-[#27675B]/90">
+                    Registrar envio
+                  </button>
+                </form>
+                {emailResposta.tipo === "programado" && <p className="mt-1 text-[12px]">Registrar o envio manual cancela o e-mail automático.</p>}
+              </details>
+            </>
+          )}
         </div>
       )}
 

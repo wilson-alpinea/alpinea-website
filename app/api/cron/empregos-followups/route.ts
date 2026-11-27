@@ -4,9 +4,12 @@ import { enviarEmailResend, escapeHtml } from "@/lib/email/enviar";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { HOST_EMPREGOS } from "@/lib/crm/unidades";
 import { dataBR, followUpsVencidos, rotuloPrazo } from "@/lib/empregos/followups";
+import { enviarEmailsRecusa } from "@/lib/empregos/emailRecusa";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Até 100 e-mails de recusa com pausa de 0,6s entre eles (~60s).
+export const maxDuration = 300;
 
 // E-mail dos follow-ups do CRM de Empregos que vencem hoje ou já venceram
 // (Wilson, 04/nov/2026). Chamado 1x por dia pelo Vercel Cron (vercel.json).
@@ -14,6 +17,9 @@ export const dynamic = "force-dynamic";
 // do CRM continua até alguém concluir o follow-up na tela do candidato.
 // Proteção: header Authorization: Bearer <CRON_SECRET> (o Vercel manda
 // sozinho quando a variável CRON_SECRET existe no projeto).
+// Mesma execução manda o e-mail de retorno aos candidatos eliminados pelo
+// filtro automático, 2 dias depois da candidatura (lib/empregos/emailRecusa.ts
+// — Wilson, 18/nov/2026).
 
 export async function GET(req: Request) {
   const segredo = process.env.CRON_SECRET;
@@ -50,5 +56,10 @@ export async function GET(req: Request) {
       await admin.from("empregos_followups").update({ email_enviado_em: new Date().toISOString() }).eq("id", f.id);
     }
   }
-  return NextResponse.json({ pendentes: pendentes.length, enviados });
+  // Erro aqui não derruba os follow-ups (já enviados acima).
+  const recusas = await enviarEmailsRecusa(admin).catch((erro) => {
+    console.error("Erro no e-mail de recusa (cron):", erro);
+    return { erro: "excecao" };
+  });
+  return NextResponse.json({ pendentes: pendentes.length, enviados, recusas });
 }

@@ -23,6 +23,7 @@ export type EmailClienteParams = {
   nome: string;
   titulo: string; // ex.: "Recebemos seu pedido de JR Pass"
   intro: string;
+  /** Vazio = e-mail sem linha do tempo (ex.: retorno de candidatura recusada). */
   etapas: EtapaEmail[];
   /** Índice (0-based) da etapa em que o cliente está agora. */
   etapaAtual: number;
@@ -133,8 +134,8 @@ export function emailClienteHtml(p: EmailClienteParams): string {
       <p style="margin:0 0 6px 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#334155;">Olá, ${esc(p.nome)}!</p>
       <p style="margin:0 0 24px 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#334155;">${esc(p.intro)}</p>
       ${resumo}
-      <div style="margin:0 0 14px 0;font-family:Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:0.14em;text-transform:uppercase;color:#64748b;">${esc(p.rotuloAndamento ?? "Andamento do seu pedido")}</div>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">${linhaDoTempo(p.etapas, p.etapaAtual)}</table>
+      ${p.etapas.length ? `<div style="margin:0 0 14px 0;font-family:Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:0.14em;text-transform:uppercase;color:#64748b;">${esc(p.rotuloAndamento ?? "Andamento do seu pedido")}</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">${linhaDoTempo(p.etapas, p.etapaAtual)}</table>` : ""}
       ${aviso}
       ${extras}
     </td></tr>
@@ -164,12 +165,16 @@ export function emailClienteTexto(p: EmailClienteParams): string {
     p.intro,
     "",
     ...(p.resumo?.length ? [...p.resumo.map(([r, v]) => `${r}: ${v}`), ""] : []),
-    `${p.rotuloAndamento ?? "Andamento do seu pedido"}:`,
-    ...p.etapas.map((e, i) => {
-      const marca = i < p.etapaAtual ? "[✓]" : i === p.etapaAtual ? "[>> VOCÊ ESTÁ AQUI]" : "[ ]";
-      return `${marca} ${i + 1}. ${e.titulo}${e.texto ? ` — ${e.texto}` : ""}`;
-    }),
-    "",
+    ...(p.etapas.length
+      ? [
+          `${p.rotuloAndamento ?? "Andamento do seu pedido"}:`,
+          ...p.etapas.map((e, i) => {
+            const marca = i < p.etapaAtual ? "[✓]" : i === p.etapaAtual ? "[>> VOCÊ ESTÁ AQUI]" : "[ ]";
+            return `${marca} ${i + 1}. ${e.titulo}${e.texto ? ` — ${e.texto}` : ""}`;
+          }),
+          "",
+        ]
+      : []),
     ...(p.aviso ? [`IMPORTANTE: ${p.aviso}`, ""] : []),
     ...(p.extras ?? []).flatMap((t) => [t, ""]),
     `Precisa de ajuda? Fale com a equipe Ajisai pelo WhatsApp ${WHATSAPP_AJISAI_EXIBICAO} (${linkWhatsapp()}) ou responda este e-mail.`,

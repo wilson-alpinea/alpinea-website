@@ -227,3 +227,48 @@ export async function removerBlacklist(entradaId: string) {
   revalidatePath("/crm/empregos", "layout");
   voltarBlacklist({ ok: `Removido da blacklist.${anuladas?.length ? ` ${anuladas.length} ${anuladas.length === 1 ? "candidatura voltou" : "candidaturas voltaram"} a aparecer como eliminada(s) — reclassifique no candidato se for o caso.` : ""}` });
 }
+
+// ── E-mail de resposta ao candidato eliminado (Wilson, 19/nov/2026) ─
+// Registra que a equipe mandou à mão o e-mail de resposta ("não seguiremos
+// com o processo") — aparece no aviso do topo da página do candidato e
+// impede o envio automático do cron (lib/empregos/emailRecusa.ts), que só
+// pega quem está com email_recusa_enviado_em vazio. Migração 041.
+export async function registrarEmailRecusaManual(candidaturaId: string, formData: FormData) {
+  if (!UUID.test(candidaturaId)) voltarCandidato(candidaturaId, "Candidatura inválida.");
+  const por = await operador();
+  // datetime-local vem sem fuso: é horário de Brasília (sem horário de verão).
+  const valor = String(formData.get("enviadoEm") ?? "").trim();
+  const em = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(valor) ? new Date(`${valor}:00-03:00`) : new Date();
+  if (Number.isNaN(em.getTime()) || em.getTime() > Date.now() + 5 * 60_000)
+    voltarCandidato(candidaturaId, "Informe a data e a hora em que o e-mail foi enviado (não pode ser no futuro).");
+  const { data: c } = await createAdminClient().from("candidaturas_vagas").select("created_at").eq("id", candidaturaId).maybeSingle();
+  if (c && em.getTime() < Date.parse(c.created_at)) voltarCandidato(candidaturaId, "O envio não pode ser anterior à candidatura.");
+  const { error } = await createAdminClient()
+    .from("candidaturas_vagas")
+    .update({ email_recusa_enviado_em: em.toISOString(), email_recusa_por: `${por} (manual)`, updated_at: new Date().toISOString() })
+    .eq("id", candidaturaId)
+    .is("email_recusa_enviado_em", null);
+  if (error) {
+    console.error("Erro ao registrar e-mail de resposta:", error.message);
+    voltarCandidato(candidaturaId, "Não foi possível registrar o envio. As migrações 040 e 041 já rodaram no Supabase?");
+  }
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  voltarCandidato(candidaturaId);
+}
+
+/** Desfaz um registro manual feito por engano (o automático do sistema não se desfaz). */
+export async function desfazerEmailRecusaManual(candidaturaId: string) {
+  if (!UUID.test(candidaturaId)) voltarCandidato(candidaturaId, "Candidatura inválida.");
+  await operador();
+  const { error } = await createAdminClient()
+    .from("candidaturas_vagas")
+    .update({ email_recusa_enviado_em: null, email_recusa_por: null, updated_at: new Date().toISOString() })
+    .eq("id", candidaturaId)
+    .like("email_recusa_por", "%(manual)");
+  if (error) {
+    console.error("Erro ao desfazer registro do e-mail de resposta:", error.message);
+    voltarCandidato(candidaturaId, "Não foi possível desfazer o registro.");
+  }
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  voltarCandidato(candidaturaId);
+}
