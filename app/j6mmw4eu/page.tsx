@@ -21,11 +21,18 @@ export const dynamic = "force-dynamic";
 export default async function ProspeccaoAgenciasPage() {
   const admin = createAdminClient();
   let { data, error } = await admin.from("agencias_prospeccao").select("*").order("ordem");
-  // Primeira vez: tabela vazia → grava as 100 agências da planilha. Não
-  // sobrescreve nada (ignora as que já existirem).
+  // Primeira vez: tabela vazia → grava as 100 agências da planilha, em
+  // lotes, com todas as colunas em todas as linhas. Não sobrescreve nada
+  // (ignora as que já existirem). Se falhar, o erro aparece na página.
+  let erroCarga: string | null = null;
   if (!error && (data ?? []).length === 0) {
-    const r = await admin.from("agencias_prospeccao").upsert(AGENCIAS_INICIAIS, { onConflict: "ordem", ignoreDuplicates: true });
-    if (r.error) console.error("Erro na carga inicial das agências:", r.error.message);
+    const colunas = Array.from(new Set(AGENCIAS_INICIAIS.flatMap((a) => Object.keys(a))));
+    const linhas = AGENCIAS_INICIAIS.map((a) => Object.fromEntries(colunas.map((c) => [c, (a as Record<string, unknown>)[c] ?? null])));
+    for (let i = 0; i < linhas.length && !erroCarga; i += 25) {
+      const r = await admin.from("agencias_prospeccao").upsert(linhas.slice(i, i + 25), { onConflict: "ordem", ignoreDuplicates: true });
+      if (r.error) erroCarga = `${r.error.code ?? ""} ${r.error.message}`.trim();
+    }
+    if (erroCarga) console.error("Erro na carga inicial das agências:", erroCarga);
     ({ data, error } = await admin.from("agencias_prospeccao").select("*").order("ordem"));
   }
   const semTabela = !!error;
@@ -43,9 +50,14 @@ export default async function ProspeccaoAgenciasPage() {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10">
+        {erroCarga && (
+          <p className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            Não foi possível carregar as 100 agências: {erroCarga}
+          </p>
+        )}
         {semTabela ? (
           <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Rode a migração 043 no Supabase para carregar as 100 agências.
+            Não foi possível ler a tabela de agências{error?.message ? `: ${error.message}` : ""}. Confira se a migração 043 rodou no Supabase.
           </p>
         ) : (
           <Checklist inicial={(data ?? []) as Agencia[]} />

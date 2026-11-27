@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { createCliente } from "../../../actions";
 import { ClienteForm } from "../ClienteForm";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { exigirAdmin } from "@/lib/crm/acesso";
 
@@ -24,6 +25,8 @@ export default async function NovoClientePage({
     .in("tipo", ["agencia", "afiliado", "promotor"])
     .eq("ativo", true)
     .order("nome");
+  // Guias cadastrados (migração 044) para o campo "Guia Turístico".
+  const { data: guias } = await createAdminClient().from("guias").select("id, nome, ativo, tipo").order("nome");
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -39,7 +42,7 @@ export default async function NovoClientePage({
       )}
 
       <div className="mt-8 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
-        <ClienteForm action={createCliente} submitLabel="Cadastrar cliente" parceiros={parceiros ?? []} consultorEmailPadrao={acesso.email} />
+        <ClienteForm action={createCliente} submitLabel="Cadastrar cliente" parceiros={parceiros ?? []} consultorEmailPadrao={acesso.email} guias={guias ?? []} />
       </div>
     </div>
   );

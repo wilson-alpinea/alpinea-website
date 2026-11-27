@@ -12,6 +12,8 @@ const NAV_AGENCIA = [
   { href: "/crm", label: "Dashboard" },
   { href: "/crm/clientes", label: "Clientes" },
   { href: "/crm/fornecedores", label: "Fornecedores" },
+  // Cadastro dos guias (Wilson, 27/nov/2026) — só no CRM de Turismo.
+  { href: "/crm/guias", label: "Guia Turístico" },
   { href: "/crm/pipeline", label: "Pipeline" },
   { href: "/crm/acessos", label: "Acessos" },
   { href: "/crm/comissoes", label: "Comissões" },

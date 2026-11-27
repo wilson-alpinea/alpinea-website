@@ -38,6 +38,8 @@ export type Cliente = {
   observacoes: string | null;
   // Lead gerado por parceiro da agência (migração 021).
   parceiro_id?: string | null;
+  // Guia Turístico escolhido na oportunidade (migração 044 — /crm/guias).
+  guia_id?: string | null;
   // Origem estruturada (migração 022) — ver lib/crm/canal.ts.
   canal?: string | null;
   canal_detalhe?: string | null;

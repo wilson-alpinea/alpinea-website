@@ -2,6 +2,8 @@ import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { contrataGuia } from "@/lib/crm/guias";
 import { donoObrigatorio, obterAcesso } from "@/lib/crm/acesso";
 import { produtoVisivel } from "@/lib/crm/permissoes";
 
@@ -151,6 +153,9 @@ export default async function ClienteDetalhePage({
     .in("tipo", ["agencia", "afiliado", "promotor"])
     .order("nome");
   const parceiroDoLead = (parceirosAgencia ?? []).find((p) => p.id === cliente.parceiro_id);
+  // Guias cadastrados (migração 044) para o campo "Guia Turístico".
+  const { data: guias } = await createAdminClient().from("guias").select("id, nome, ativo, tipo").order("nome");
+  const guiaDoLead = (guias ?? []).find((g) => g.id === cliente.guia_id);
   const arquivado = Boolean(cliente.arquivado_em);
   const alternarArquivo = arquivarCliente.bind(null, id, !arquivado);
 
@@ -269,6 +274,11 @@ export default async function ClienteDetalhePage({
               {parceiroDoLead.tipo === "promotor" ? "Promotor" : parceiroDoLead.tipo === "afiliado" ? "Afiliado" : "Parceiro"}: {parceiroDoLead.nome}
             </span>
           )}
+          {guiaDoLead && contrataGuia(cliente.produto_secundario) && (
+            <a href="/crm/guias" className="ml-2 mt-1 inline-block rounded-full bg-[#F0F7F5] px-2.5 py-0.5 text-[13px] font-semibold text-[#28665D] hover:underline">
+              Guia: {guiaDoLead.nome}
+            </a>
+          )}
           {arquivado && (
             <span className="ml-2 mt-1 inline-block rounded-full bg-black/10 px-2.5 py-0.5 text-[13px] font-semibold text-[#626B75]">
               Arquivado em {new Date(cliente.arquivado_em!).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
@@ -356,6 +366,7 @@ export default async function ClienteDetalhePage({
             cliente={cliente}
             submitLabel="Salvar alterações"
             parceiros={parceirosAgencia ?? []}
+            guias={guias ?? []}
           />
         </div>
 

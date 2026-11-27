@@ -136,6 +136,15 @@ async function registrarMudancaEstagioEntrega(
   });
 }
 
+// Guia Turístico da oportunidade (Wilson, 27/nov/2026 — migração 044): só
+// vale quando "Guia" está marcado em Produto secundário; sem guia, limpa.
+// Formulário sem o campo (antes do deploy) não mexe na coluna.
+function guiaDoFormulario(formData: FormData): { guia_id?: string | null } {
+  if (!formData.has("guia_id")) return {};
+  const temGuia = formData.getAll("produto_secundario").map(String).includes("guia");
+  return { guia_id: temGuia ? uuidOuNull(formData.get("guia_id")) : null };
+}
+
 export async function createCliente(formData: FormData) {
   await garantirAdmin({ cadastrar: true });
   const nome = String(formData.get("nome") || "").trim();
@@ -163,6 +172,7 @@ export async function createCliente(formData: FormData) {
       responsavel_id: user?.id ?? null,
       observacoes: textoOuNull(formData.get("observacoes")),
       parceiro_id: uuidOuNull(formData.get("parceiro_id")),
+      ...guiaDoFormulario(formData),
       ...canalDoFormulario(formData),
     })
     .select("id")
@@ -204,6 +214,7 @@ export async function updateCliente(clienteId: string, formData: FormData) {
       data_viagem: textoOuNull(formData.get("data_viagem")),
       observacoes: textoOuNull(formData.get("observacoes")),
       ...(formData.has("parceiro_id") ? { parceiro_id: uuidOuNull(formData.get("parceiro_id")) } : {}),
+      ...guiaDoFormulario(formData),
       ...canalDoFormulario(formData),
     })
     .eq("id", clienteId);

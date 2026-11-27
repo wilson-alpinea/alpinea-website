@@ -190,3 +190,12 @@
 .crm-menu::-webkit-scrollbar {
   display: none;
 }
+
+/* Campo "Guia Turístico" da oportunidade (Wilson, 27/nov/2026): só aparece
+   quando o produto secundário "Guia" está marcado. */
+.form-cliente .campo-guia {
+  display: none;
+}
+.form-cliente:has(input[name="produto_secundario"][value="guia"]:checked) .campo-guia {
+  display: block;
+}

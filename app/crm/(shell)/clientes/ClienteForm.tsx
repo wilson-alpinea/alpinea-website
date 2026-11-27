@@ -74,6 +74,7 @@ export function ClienteForm({
   submitLabel,
   parceiros = [],
   consultorEmailPadrao,
+  guias = [],
 }: {
   action: (formData: FormData) => void;
   cliente?: Cliente;
@@ -83,11 +84,13 @@ export function ClienteForm({
   // Lead cadastrado à mão no CRM: origem padrão "Consultor" com o e-mail
   // de quem está cadastrando (Wilson, 21/out/2026).
   consultorEmailPadrao?: string;
+  // Guias cadastrados em /crm/guias (migração 044) — campo "Guia Turístico".
+  guias?: { id: string; nome: string; ativo: boolean; tipo: string }[];
 }) {
   const secundariosAtuais = new Set(cliente?.produto_secundario ?? []);
 
   return (
-    <form action={action} className="space-y-6">
+    <form action={action} className="form-cliente space-y-6">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <label className={labelClass}>Nome completo</label>
@@ -234,6 +237,27 @@ export function ClienteForm({
               />
             ))}
           </div>
+        </div>
+
+        {/* Guia Turístico (Wilson, 27/nov/2026): aparece quando "Guia" está
+            marcado em Produto secundário (regra em crm.css, sem JavaScript).
+            Inativos só aparecem se já estiverem escolhidos. */}
+        <div className="campo-guia sm:col-span-2">
+          <label className={labelClass} htmlFor="guia_id">
+            Guia Turístico
+          </label>
+          <select id="guia_id" name="guia_id" defaultValue={cliente?.guia_id ?? ""} className={inputClass}>
+            <option value="">A definir</option>
+            {guias
+              .filter((g) => g.ativo || g.id === cliente?.guia_id)
+              .map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.nome} — {g.tipo === "local" ? "guia local" : "guia brasileiro"}
+                  {g.ativo ? "" : " (inativo)"}
+                </option>
+              ))}
+          </select>
+          {guias.length === 0 && <p className="mt-1 text-[12px] text-[#8A929B]">Nenhum guia cadastrado. Cadastre em Guia Turístico, no menu.</p>}
         </div>
 
         <div className="sm:col-span-2">
