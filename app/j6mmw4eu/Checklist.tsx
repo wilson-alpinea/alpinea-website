@@ -145,6 +145,26 @@ function LinhaAgencia({ a, n, autor, aoSalvar }: { a: Agencia; n: number; autor:
                 <path d="M4.5 10.5l3.5 3.5 7.5-8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               E-mail {dataCurtaBR(a.email_enviado_em)}
+              {/* Desfazer clique por engano (Wilson, 27/nov/2026): limpa a data e,
+                  se o status foi para "E-mail enviado", volta para "A abordar". */}
+              <button
+                type="button"
+                disabled={pendente}
+                onClick={() =>
+                  salvar({
+                    email_enviado_em: "",
+                    ...(a.ultimo_contato_em === a.email_enviado_em ? { ultimo_contato_em: "" } : {}),
+                    ...(a.status === "email_enviado" ? { status: "a_abordar" } : {}),
+                  })
+                }
+                aria-label="Desfazer e-mail enviado"
+                title="Desfazer (não enviei)"
+                className="-mr-1 ml-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[#28665D]/70 hover:bg-[#28665D]/15 hover:text-[#28665D] disabled:opacity-50"
+              >
+                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2.4">
+                  <path d="M6 6l8 8M14 6l-8 8" strokeLinecap="round" />
+                </svg>
+              </button>
             </span>
           ) : (
             <button
