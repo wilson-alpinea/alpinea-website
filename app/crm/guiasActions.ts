@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -62,15 +63,41 @@ export async function salvarGuia(formData: FormData) {
     updated_by_email: acesso.email,
   };
   const admin = createAdminClient();
+  // Foto (migração 045): miniatura circular. Guia novo ganha o id aqui para
+  // a foto já ir para a pasta dele.
+  const idGuia = id || randomUUID();
+  const foto = await salvarFotoGuia(idGuia, formData);
+  if (foto && "erro" in foto) voltar({ erro: foto.erro }, id ? `#guia-${id}` : "");
+  const comFoto = foto ? { ...dados, foto_url: foto.url } : dados;
   const { data, error } = id
-    ? await admin.from("guias").update(dados).eq("id", id).select("id").maybeSingle()
-    : await admin.from("guias").insert(dados).select("id").single();
+    ? await admin.from("guias").update(comFoto).eq("id", id).select("id").maybeSingle()
+    : await admin.from("guias").insert({ ...comFoto, id: idGuia }).select("id").single();
   if (error || !data) {
     console.error("Erro ao salvar guia:", error?.message);
     voltar({ erro: error?.code === "42P01" || error?.code === "PGRST205" ? "Rode a migração 044 no Supabase." : "Não foi possível salvar o guia." });
   }
   revalidatePath("/crm/guias");
   voltar({ ok: id ? `Guia "${nome}" atualizado.` : `Guia "${nome}" cadastrado.` }, `#guia-${data.id}`);
+}
+
+const TIPOS_FOTO: Record<string, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
+
+/** null = sem mudança; { url: null } = remover; { url } = nova foto. */
+async function salvarFotoGuia(guiaId: string, formData: FormData): Promise<{ url: string | null } | { erro: string } | null> {
+  if (formData.get("remover_foto") === "on") return { url: null };
+  const arquivo = formData.get("foto");
+  if (!(arquivo instanceof File) || arquivo.size === 0) return null;
+  const ext = TIPOS_FOTO[arquivo.type];
+  if (!ext) return { erro: "Envie a foto em JPG, PNG ou WebP." };
+  if (arquivo.size > 2 * 1024 * 1024) return { erro: "A foto pode ter até 2 MB." };
+  const caminho = `${guiaId}/foto-${randomUUID().slice(0, 8)}.${ext}`;
+  const admin = createAdminClient();
+  const { error } = await admin.storage.from("fotos-guias").upload(caminho, Buffer.from(await arquivo.arrayBuffer()), { contentType: arquivo.type, upsert: true });
+  if (error) {
+    console.error("Erro ao enviar foto do guia:", error.message);
+    return { erro: "Não foi possível enviar a foto (a migração 045 já rodou no Supabase?)." };
+  }
+  return { url: admin.storage.from("fotos-guias").getPublicUrl(caminho).data.publicUrl };
 }
 
 export async function excluirGuia(id: string) {

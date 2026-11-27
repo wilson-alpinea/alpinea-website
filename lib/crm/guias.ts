@@ -16,6 +16,8 @@ export type Guia = {
   licenciado: boolean;
   ativo: boolean;
   observacoes: string | null;
+  /** Miniatura circular (migração 045, bucket fotos-guias). */
+  foto_url?: string | null;
   created_at: string;
   updated_at: string;
   updated_by_email: string | null;
@@ -35,3 +37,13 @@ export const formatarDiaria = (v: number | null) => (v == null ? "Diária a comb
 
 /** A oportunidade contrata guia? (produto secundário "guia") */
 export const contrataGuia = (produtoSecundario: string[] | null | undefined) => (produtoSecundario ?? []).includes("guia");
+
+/** Iniciais para o círculo quando o guia não tem foto. */
+export const iniciaisGuia = (nome: string) =>
+  nome
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((p) => p[0])
+    .filter((_, i, a) => i === 0 || i === a.length - 1)
+    .join("")
+    .toUpperCase();

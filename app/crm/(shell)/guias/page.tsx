@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { obterAcesso } from "@/lib/crm/acesso";
-import { CIDADES_GUIA_CRM, IDIOMAS_GUIA, TIPOS_GUIA, formatarDiaria, rotuloTipoGuia, type Guia } from "@/lib/crm/guias";
+import { CIDADES_GUIA_CRM, IDIOMAS_GUIA, TIPOS_GUIA, formatarDiaria, iniciaisGuia, rotuloTipoGuia, type Guia } from "@/lib/crm/guias";
 import { excluirGuia, salvarGuia } from "@/app/crm/guiasActions";
 import { SOMBRA } from "../components/PainelUi";
 
@@ -34,6 +34,18 @@ function Chips({ itens, vazio }: { itens: string[]; vazio: string }) {
   );
 }
 
+// Miniatura circular (migração 045); sem foto, as iniciais do nome.
+function FotoGuia({ guia, tamanho = "h-14 w-14 text-base" }: { guia: Pick<Guia, "nome" | "foto_url">; tamanho?: string }) {
+  return guia.foto_url ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={guia.foto_url} alt={`Foto de ${guia.nome}`} className={`${tamanho} shrink-0 rounded-full object-cover ring-2 ring-white shadow-[0_2px_8px_rgba(0,0,0,0.15)]`} />
+  ) : (
+    <span aria-hidden="true" className={`${tamanho} flex shrink-0 items-center justify-center rounded-full bg-[#F0F7F5] font-semibold text-[#28665D] ring-2 ring-white`}>
+      {iniciaisGuia(guia.nome)}
+    </span>
+  );
+}
+
 function FormGuia({ guia }: { guia?: Guia }) {
   const outrosIdiomas = (guia?.idiomas ?? []).filter((i) => !(IDIOMAS_GUIA as readonly string[]).includes(i));
   const outrasCidades = (guia?.cidades ?? []).filter((c) => !(CIDADES_GUIA_CRM as readonly string[]).includes(c));
@@ -41,6 +53,28 @@ function FormGuia({ guia }: { guia?: Guia }) {
   return (
     <form action={salvarGuia} className="grid gap-4 sm:grid-cols-2">
       {guia && <input type="hidden" name="id" value={guia.id} />}
+      <div className="flex items-center gap-4 sm:col-span-2">
+        {guia ? <FotoGuia guia={guia} tamanho="h-16 w-16 text-lg" /> : <span aria-hidden="true" className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#B8C0C8] text-[11px] text-[#8A929B]">Foto</span>}
+        <div className="min-w-0 flex-1">
+          <label className={ROTULO} htmlFor={`foto-${sufixo}`}>
+            Foto (JPG, PNG ou WebP, até 2 MB — aparece em círculo)
+          </label>
+          <input
+            id={`foto-${sufixo}`}
+            type="file"
+            name="foto"
+            accept="image/jpeg,image/png,image/webp"
+            className="block w-full text-[13px] text-[#626B75] file:mr-3 file:rounded-full file:border-0 file:bg-[#F0F7F5] file:px-3 file:py-1.5 file:text-[13px] file:font-medium file:text-[#28665D] hover:file:bg-[#E2F0EC]"
+          />
+          {guia?.foto_url && (
+            <label className="mt-1.5 flex items-center gap-2 text-[13px] text-[#626B75]">
+              <input type="checkbox" name="remover_foto" className="h-3.5 w-3.5 accent-[#B42318]" />
+              Remover foto
+            </label>
+          )}
+        </div>
+      </div>
+
       <label className="sm:col-span-2">
         <span className={ROTULO}>Nome</span>
         <input name="nome" required maxLength={160} defaultValue={guia?.nome ?? ""} className={CAMPO} placeholder="Nome completo do guia" />
@@ -192,13 +226,16 @@ export default async function GuiasPage({ searchParams }: { searchParams: Promis
           return (
             <li key={g.id} id={`guia-${g.id}`} className={`scroll-mt-32 ${CARTAO} p-5 md:p-6 ${g.ativo ? "" : "opacity-70"}`}>
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
+                <div className="flex min-w-0 items-center gap-4">
+                  <FotoGuia guia={g} />
+                  <div className="min-w-0">
                   <p className="text-lg font-medium text-[#20252B]">{g.nome}</p>
                   <p className="mt-0.5 text-[13px] text-[#626B75]">
                     {rotuloTipoGuia(g.tipo)}
                     {g.base_cidade ? ` · mora em ${g.base_cidade}` : ""}
                     {g.licenciado ? " · licenciado" : ""} · {formatarDiaria(g.diaria_jpy)}
                   </p>
+                  </div>
                 </div>
                 <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-medium ${g.ativo ? "bg-[#F0F7F5] text-[#28665D]" : "bg-black/[0.05] text-[#626B75]"}`}>{g.ativo ? "Ativo" : "Inativo"}</span>
               </div>
