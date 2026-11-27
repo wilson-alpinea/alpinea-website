@@ -2,10 +2,11 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-// Trocar de CRM pelo menu de três barras (Wilson, 29/out/2026) — substitui
-// os botões coloridos "CRM Agência / Empregos / Seguro" do topo, que já não
-// cabiam com quatro unidades. Mesmo ícone do MenuProdutos (/produtos), em
-// branco sobre o cabeçalho preto. Fecha com Esc, clique fora ou ao escolher.
+// Trocar de CRM (Wilson, 29/out/2026) — substitui os botões coloridos
+// "CRM Agência / Empregos / Seguro" do topo. Desde 27/nov/2026 o botão mostra
+// o CRM atual ("CRM Agência ▾") ao lado do logo, no lugar do título grande
+// "CRM / Agência" e do ícone de três barras, que encavalavam com o menu.
+// Fecha com Esc, clique fora ou ao escolher.
 
 export type OpcaoCrm = { chave: string; nome: string; href: string; cor: string; atual: boolean };
 
@@ -14,6 +15,7 @@ export function MenuCrm({ opcoes }: { opcoes: OpcaoCrm[] }) {
   const caixa = useRef<HTMLDivElement>(null);
   const botao = useRef<HTMLButtonElement>(null);
   const idMenu = useId();
+  const atual = opcoes.find((o) => o.atual);
 
   useEffect(() => {
     if (!aberto) return;
@@ -35,26 +37,30 @@ export function MenuCrm({ opcoes }: { opcoes: OpcaoCrm[] }) {
   }, [aberto]);
 
   return (
-    <div ref={caixa} className="relative">
+    <div ref={caixa} className="relative min-w-0">
       <button
         ref={botao}
         type="button"
-        aria-label={aberto ? "Fechar menu de CRMs" : "Trocar de CRM"}
+        aria-label={`CRM ${atual?.nome ?? ""} — trocar de CRM`}
         aria-expanded={aberto}
         aria-controls={idMenu}
         onClick={() => setAberto((a) => !a)}
-        className="flex h-10 w-10 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-md transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+        className="flex min-w-0 cursor-pointer items-center gap-2 rounded-full border border-white/15 py-1.5 pl-3 pr-2.5 text-sm font-medium text-white transition hover:border-white/40 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
       >
-        <span className={`block h-[2px] w-6 rounded-full bg-white transition ${aberto ? "translate-y-[7px] rotate-45" : ""}`} />
-        <span className={`block h-[2px] w-6 rounded-full bg-white transition ${aberto ? "opacity-0" : ""}`} />
-        <span className={`block h-[2px] w-6 rounded-full bg-white transition ${aberto ? "-translate-y-[7px] -rotate-45" : ""}`} />
+        <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: atual?.cor ?? "#fff" }} />
+        <span className="truncate">
+          CRM <span className="text-white/70">{atual?.nome}</span>
+        </span>
+        <svg aria-hidden="true" viewBox="0 0 20 20" className={`h-4 w-4 shrink-0 text-white/60 transition ${aberto ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="1.8">
+          <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
 
       {aberto && (
         <nav
           id={idMenu}
           aria-label="Trocar de CRM"
-          className="absolute right-0 top-12 z-50 w-[min(16rem,calc(100vw-2rem))] rounded-2xl border border-black/5 bg-white p-2 text-left text-[#20252B] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.45)]"
+          className="absolute left-0 top-12 z-50 w-[min(16rem,calc(100vw-2rem))] rounded-2xl border border-black/5 bg-white p-2 text-left text-[#20252B] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.45)]"
         >
           <p className="px-3 pb-1 pt-2 text-[11px] font-medium uppercase tracking-[0.18em] text-black/45">CRMs</p>
           <ul>

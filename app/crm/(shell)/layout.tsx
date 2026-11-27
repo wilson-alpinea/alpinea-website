@@ -68,43 +68,20 @@ export default async function CrmShellLayout({
 
   return (
     <div data-unidade={unidade} className="crm-pagina min-h-screen bg-[#FAF9F6] text-[#20252B]">
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
-          <div className="flex min-w-0 items-center gap-6 lg:gap-8">
-            <Link href={consultor ? NAV_CONSULTOR[unidade].href : INICIO_UNIDADE[unidade]} className="flex items-center gap-4">
+      {/* Cabeçalho em duas linhas (Wilson, 27/nov/2026: "texto em cima do
+          logo, repense num jeito mais fácil de organizar essa barra preta").
+          Linha 1: logo, troca de CRM (mostra o CRM atual) e usuário/Sair.
+          Linha 2: o menu da unidade, com rolagem lateral quando não cabe —
+          nada disputa espaço com o logo em nenhuma largura de tela. */}
+      <header className="sticky top-0 z-50 bg-black">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-6 md:px-10">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+            <Link href={consultor ? NAV_CONSULTOR[unidade].href : INICIO_UNIDADE[unidade]} className="shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60" aria-label={`Ajisai — início do CRM ${rotuloUnidade}`}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/AJISAI-LOGO.avif"
-                alt="Ajisai"
-                className="h-8 w-auto sm:h-10"
-              />
-              <span className="hidden h-9 w-px bg-white/15 sm:block" />
-              {/* Unidade embaixo de "CRM" para não invadir o menu (Wilson, 21/out/2026). */}
-              <span className="hidden flex-col leading-none sm:flex">
-                <span className="text-[28px] font-semibold leading-[1.1] text-white sm:text-[32px]">CRM</span>
-                <span className="mt-1 text-[13px] text-white/45">{rotuloUnidade}</span>
-              </span>
+              <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-7 w-auto sm:h-8" />
             </Link>
-            <nav aria-label="Navegação do CRM" className="hidden items-center gap-5 whitespace-nowrap text-sm font-medium md:flex lg:gap-6">
-              <NavCrm itens={NAV} variante="desktop" />
-            </nav>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-4">
-            <span className="hidden text-[13px] text-white/35 xl:inline">
-              {nomeExibicao}
-              {acesso.cargo ? ` · ${acesso.cargo}` : ""}
-            </span>
-            <form action={logout}>
-              <button
-                type="submit"
-                className="rounded-full border border-white/15 px-4 py-1.5 text-[13px] text-white/50 transition hover:border-white/40 hover:text-white"
-              >
-                Sair
-              </button>
-            </form>
-            {/* Trocar de CRM: menu de três barras (Wilson, 29/out/2026), no
-                lugar dos botões coloridos por unidade. */}
+            <span aria-hidden="true" className="h-7 w-px shrink-0 bg-white/15" />
+            {/* Trocar de CRM: o botão já mostra em qual CRM você está. */}
             <MenuCrm
               opcoes={crmsVisiveis.map((u) => ({
                 chave: u,
@@ -115,11 +92,28 @@ export default async function CrmShellLayout({
               }))}
             />
           </div>
+
+          <div className="flex shrink-0 items-center gap-4">
+            <span className="hidden max-w-[16rem] truncate text-[13px] text-white/45 lg:inline">
+              {nomeExibicao}
+              {acesso.cargo ? ` · ${acesso.cargo}` : ""}
+            </span>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="rounded-full border border-white/15 px-4 py-1.5 text-[13px] text-white/60 transition hover:border-white/40 hover:text-white"
+              >
+                Sair
+              </button>
+            </form>
+          </div>
         </div>
 
-        <nav aria-label="Navegação do CRM" className="flex items-center gap-5 overflow-x-auto border-t border-white/10 px-6 py-2.5 text-sm font-medium md:hidden">
-          <NavCrm itens={NAV} variante="mobile" />
-        </nav>
+        <div className="border-t border-white/10">
+          <nav aria-label={`Menu do CRM ${rotuloUnidade}`} className="crm-menu mx-auto flex max-w-6xl items-stretch gap-1 overflow-x-auto px-3 text-sm font-medium md:px-7">
+            <NavCrm itens={NAV} />
+          </nav>
+        </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 py-10 md:px-10 md:py-14">{children}</main>

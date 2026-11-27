@@ -181,3 +181,12 @@
     cursor: not-allowed;
   }
 }
+
+/* Menu do CRM na 2ª linha do cabeçalho (Wilson, 27/nov/2026): rola para o
+   lado quando não cabe, sem barra de rolagem visível. */
+.crm-menu {
+  scrollbar-width: none;
+}
+.crm-menu::-webkit-scrollbar {
+  display: none;
+}
