@@ -20,7 +20,8 @@ export default async function NovoClientePage({
   const { data: parceiros } = await supabase
     .from("parceiros")
     .select("id, nome, ativo")
-    .eq("tipo", "agencia")
+    // Agência, afiliado e promotor (migração 042).
+    .in("tipo", ["agencia", "afiliado", "promotor"])
     .eq("ativo", true)
     .order("nome");
 

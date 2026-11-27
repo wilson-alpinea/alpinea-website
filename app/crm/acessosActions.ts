@@ -1,5 +1,6 @@
 "use server";
 
+import { CODIGO_PROMOTOR, codigoPromotorDoNome, isNivelPromotor, type NivelPromotor } from "@/lib/crm/programaPromotores";
 import { PERMISSOES_VAZIAS, PRODUTOS_PARCEIRO_GRUPOS, acoesDoNivel, lerPermissoes, lerProdutosParceiro, lerUnidadesParceiro, type RemuneracaoProdutos } from "@/lib/crm/permissoes";
 
 import { randomBytes } from "node:crypto";
@@ -35,6 +36,24 @@ function slugDe(texto: string) {
     .replace(/-+$/g, "");
 }
 
+// Nível e código do promotor (migração 042). Código vazio = gerado do nome
+// (AJISAI-NOME), com sufixo se já existir; código digitado é validado como está.
+async function promotorDoForm(formData: FormData, nome: string, id: string | null): Promise<{ nivel_promotor: NivelPromotor; codigo_promotor: string } | { erro: string; campo: string }> {
+  const nivelBruto = String(formData.get("nivel_promotor") || "bronze");
+  if (!isNivelPromotor(nivelBruto)) return { erro: "Escolha o nível do promotor.", campo: "nivel_promotor" };
+  const informado = String(formData.get("codigo_promotor") || "").trim().toUpperCase();
+  let codigo = informado || codigoPromotorDoNome(nome);
+  if (!CODIGO_PROMOTOR.test(codigo)) return { erro: "O código do promotor segue o formato AJISAI-NOME (letras e números, sem espaço).", campo: "codigo_promotor" };
+  const admin = createAdminClient();
+  const consulta = admin.from("parceiros").select("id").eq("codigo_promotor", codigo);
+  const { data: existe } = await (id ? consulta.neq("id", id) : consulta).maybeSingle();
+  if (existe) {
+    if (informado) return { erro: "Esse código já está em uso por outro promotor.", campo: "codigo_promotor" };
+    codigo = `${codigo.slice(0, 26)}${randomBytes(1).toString("hex").toUpperCase()}`;
+  }
+  return { nivel_promotor: nivelBruto, codigo_promotor: codigo };
+}
+
 function revalidar() {
   revalidatePath("/crm/acessos");
 }
@@ -44,7 +63,7 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   const nome = String(formData.get("nome") || "").trim().slice(0, 120);
   const tipo = String(formData.get("tipo") || "");
   if (nome.length < 2) return { ok: false, mensagem: "Informe o nome da empresa.", campo: "nome" };
-  if (tipo !== "agencia" && tipo !== "empreiteira" && tipo !== "afiliado") return { ok: false, mensagem: "Escolha o tipo.", campo: "tipo" };
+  if (tipo !== "agencia" && tipo !== "empreiteira" && tipo !== "afiliado" && tipo !== "promotor") return { ok: false, mensagem: "Escolha o tipo.", campo: "tipo" };
   // Código personalizado: valida como está (sem "consertar" em silêncio).
   // Código automático: vem do nome e ganha um sufixo se já existir.
   const slugInformado = String(formData.get("slug") || "").trim().toLowerCase();
@@ -63,10 +82,18 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   if ("erro" in rem) return { ok: false, mensagem: rem.erro, campo: "remuneracao_valor" };
   const remP = remuneracaoProdutosDoForm(formData);
   if ("erro" in remP) return { ok: false, mensagem: remP.erro, campo: "remuneracao_valor" };
-  const { data: criado, error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...rem, produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null, unidades: tipo !== "empreiteira" && unidadesParceiroDoForm(formData).length ? unidadesParceiroDoForm(formData) : null, remuneracao_produtos: Object.keys(remP.regras).length ? remP.regras : null }).select("id").single();
+  // Promotor (migração 042): nível e código AJISAI-NOME; a comissão segue a
+  // tabela do programa (lib/crm/programaPromotores.ts), não % nem valor fixo.
+  let promotor: { nivel_promotor: string; codigo_promotor: string } | null = null;
+  if (tipo === "promotor") {
+    const r = await promotorDoForm(formData, nome, null);
+    if ("erro" in r) return { ok: false, mensagem: r.erro, campo: r.campo };
+    promotor = r;
+  }
+  const { data: criado, error } = await admin.from("parceiros").insert({ nome, tipo, slug, ...(promotor ? { ...promotor, remuneracao_tipo: null, remuneracao_valor: null } : rem), produtos: tipo !== "empreiteira" ? produtosParceiroDoForm(formData) : null, unidades: tipo !== "empreiteira" && unidadesParceiroDoForm(formData).length ? unidadesParceiroDoForm(formData) : null, remuneracao_produtos: !promotor && Object.keys(remP.regras).length ? remP.regras : null }).select("id").single();
   if (error || !criado) {
     console.error("Erro ao criar parceiro:", error);
-    return { ok: false, mensagem: "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
+    return { ok: false, mensagem: tipo === "promotor" ? "Não foi possível salvar (a migração 042 já rodou no Supabase?)." : "Não foi possível salvar (a migração 030 já rodou no Supabase?)." };
   }
   const logo = await salvarLogoParceiro(criado.id, formData);
   if (logo && "erro" in logo) {
@@ -75,7 +102,7 @@ export async function criarParceiro(_: ResultadoAcesso | null, formData: FormDat
   }
   if (logo) await admin.from("parceiros").update({ logo_url: logo.url }).eq("id", criado.id);
   revalidar();
-  return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : tipo === "afiliado" ? "Afiliado" : "Empreiteira"} "${nome}" cadastrado${tipo !== "empreiteira" ? ` · código ${slug}` : ""}.` };
+  return { ok: true, mensagem: `${tipo === "agencia" ? "Parceiro" : tipo === "afiliado" ? "Afiliado" : tipo === "promotor" ? "Promotor" : "Empreiteira"} "${nome}" cadastrado${tipo !== "empreiteira" ? ` · link ${slug}` : ""}${promotor ? ` · código ${promotor.codigo_promotor}` : ""}.` };
 }
 
 // Editar empresa: nome e (em opções avançadas) o código do link. O tipo não
@@ -95,6 +122,11 @@ export async function editarParceiro(_: ResultadoAcesso | null, formData: FormDa
   const remP = remuneracaoProdutosDoForm(formData);
   if ("erro" in remP) return { ok: false, mensagem: remP.erro, campo: "remuneracao_valor" };
   const update: Record<string, unknown> = { nome, ...rem, remuneracao_produtos: Object.keys(remP.regras).length ? remP.regras : null };
+  if (atual.tipo === "promotor") {
+    const r = await promotorDoForm(formData, nome, id);
+    if ("erro" in r) return { ok: false, mensagem: r.erro, campo: r.campo };
+    Object.assign(update, r, { remuneracao_tipo: null, remuneracao_valor: null, remuneracao_produtos: null });
+  }
   if (atual.tipo !== "empreiteira") {
     update.produtos = produtosParceiroDoForm(formData);
     const unidades = unidadesParceiroDoForm(formData);
@@ -139,9 +171,9 @@ function validarPapel(papelBruto: string, parceiroBruto: string, tipos: Map<stri
   if (papel === "admin" || papel === "despachante" || papel === "consultor" || papel === null) return { papel, parceiroId: null } as const;
   const esperado = papel === "parceiro_agencia" ? "agencia" : "empreiteira";
   const tipoEmpresa = tipos.get(parceiroBruto);
-  const confere = tipoEmpresa === esperado || (esperado === "agencia" && tipoEmpresa === "afiliado");
+  const confere = tipoEmpresa === esperado || (esperado === "agencia" && (tipoEmpresa === "afiliado" || tipoEmpresa === "promotor"));
   if (!UUID.test(parceiroBruto) || !confere) {
-    return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro ou afiliado." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;
+    return { erro: papel === "parceiro_agencia" ? "Escolha o parceiro, afiliado ou promotor." : "Escolha a empreiteira.", campo: "parceiro_id" } as const;
   }
   return { papel, parceiroId: parceiroBruto } as const;
 }

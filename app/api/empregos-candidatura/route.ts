@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
+import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { urlAposMatch } from "../../lib/testesAptidao";
 import { catalogoVagas, idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
 import { camposCandidaturaAnulada, encontrarNaBlacklist } from "../../../lib/empregos/blacklist";
@@ -266,6 +267,9 @@ export async function POST(req: Request) {
         motivos_eliminacao: resultado.motivosEliminacao,
         pontos_revisar: resultado.pontosRevisar,
         ...(bloqueio ? camposCandidaturaAnulada(bloqueio.entrada.id, resultado.motivosEliminacao) : {}),
+        // Parceiro/promotor do link de indicação e canal de origem (migração
+        // 042 — Programa de Promotores, 27/nov/2026). Janela de 60 dias.
+        ...(await atribuicaoDaRequisicao(req, supabase, "emprego")),
       };
 
     // Se o banco estiver sem alguma coluna (migração ainda não rodada no
@@ -274,7 +278,7 @@ export async function POST(req: Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- linha do banco sem tipo gerado
     let candidatura: Record<string, any> | null = null;
     let erroInsert: { code?: string; message?: string } | null = null;
-    for (let tentativa = 0; tentativa < 6; tentativa++) {
+    for (let tentativa = 0; tentativa < 10; tentativa++) {
       const r = await supabase
         .from("candidaturas_vagas")
         .insert(dadosCandidatura)

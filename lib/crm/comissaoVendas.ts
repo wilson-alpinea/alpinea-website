@@ -52,7 +52,9 @@ export async function beneficiariosDoCliente(cliente: { parceiro_id?: string | n
   const out: BeneficiarioVenda[] = [];
   if (cliente.parceiro_id) {
     const { data } = await admin.from("parceiros").select("*").eq("id", cliente.parceiro_id).maybeSingle();
-    if (data) out.push({ chave: `e:${data.id}`, nome: data.nome, tipo: "empresa", excecoes: lerValores(data.comissao_itens) });
+    // Promotor (migração 042) recebe pelo Programa de Promotores (card próprio
+    // no cliente), não pela tabela por serviço — evita pagar duas vezes.
+    if (data && data.tipo !== "promotor") out.push({ chave: `e:${data.id}`, nome: data.nome, tipo: "empresa", excecoes: lerValores(data.comissao_itens) });
   }
   if (cliente.responsavel_id) {
     const { data } = await admin.from("perfis").select("*").eq("id", cliente.responsavel_id).maybeSingle();

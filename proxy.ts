@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import {
   COOKIE_INDICACAO,
+  COOKIE_INDICACAO_EM,
   HOST_UNIDADE,
   INICIO_UNIDADE,
   SLUG_PARCEIRO,
@@ -19,8 +20,11 @@ import { X_ROBOTS_PRIVADO, caminhoPrivado, ehRoboIndexador } from "./lib/privaci
 // (No Next.js 16, "middleware.ts" foi renomeado para "proxy.ts".)
 //
 // 1. Site público: guarda o link de indicação de parceiro (?parceiro=slug)
-//    num cookie de 30 dias — os formulários self-service usam para marcar
-//    o lead com o parceiro (Wilson, 21/out/2026).
+//    num cookie — os formulários self-service e a candidatura de empregos
+//    usam para marcar o lead com o parceiro (Wilson, 21/out/2026). Desde o
+//    Programa de Promotores (27/nov/2026): cookie de 90 dias, vale o
+//    PRIMEIRO código registrado, e a janela de cada linha (viagem 30/90
+//    dias, emprego 60) é conferida em lib/crm/atribuicao.ts.
 // 2. Domínios dos CRMs: crm.alpinea.io = agência, empregos.alpinea.io =
 //    empregos, seguro.alpinea.io = seguro viagem. Cada domínio só abre as telas da sua unidade.
 // 3. /crm/*: exige sessão e respeita o papel — parceiro da agência só abre
@@ -82,14 +86,14 @@ async function proxyBase(request: NextRequest) {
         httpOnly: true,
       });
     }
-    if (slug && SLUG_PARCEIRO.test(slug)) {
-      response.cookies.set(COOKIE_INDICACAO, slug, {
-        path: "/",
-        maxAge: 60 * 60 * 24 * 30,
-        sameSite: "lax",
-        secure: cookieSeguro,
-        httpOnly: true,
-      });
+    const slugAtual = (request.cookies.get(COOKIE_INDICACAO)?.value || "").toLowerCase();
+    const primeiroCodigo = SLUG_PARCEIRO.test(slugAtual) && slugAtual !== slug;
+    if (slug && SLUG_PARCEIRO.test(slug) && !primeiroCodigo) {
+      const opcoes = { path: "/", maxAge: 60 * 60 * 24 * 90, sameSite: "lax" as const, secure: cookieSeguro, httpOnly: true };
+      response.cookies.set(COOKIE_INDICACAO, slug, opcoes);
+      // Mesmo código de novo: mantém a data do primeiro registro.
+      const em = request.cookies.get(COOKIE_INDICACAO_EM)?.value;
+      response.cookies.set(COOKIE_INDICACAO_EM, slugAtual === slug && em && /^\d{4}-\d{2}-\d{2}$/.test(em) ? em : new Date().toISOString().slice(0, 10), opcoes);
     }
     return response;
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { NIVEIS_PROMOTOR, VALORES_PROMOTOR, codigoPromotorDoNome, formatarIeneP, isNivelPromotor } from "@/lib/crm/programaPromotores";
 import { useActionState, useState, useTransition } from "react";
 import {
   alterarAcessoUsuario,
@@ -140,7 +141,7 @@ function PermissoesConsultor({ inicial, cargo, estado }: { inicial: Permissoes |
 // Produtos que o parceiro/afiliado pode ver (Wilson, 29/out/2026). Nenhum marcado = todos.
 // Produto + remuneração própria (Wilson, 29/out/2026: "cada valor tem que ser
 // atribuído por produto"). Sem regra própria = usa a remuneração padrão.
-function LinhaProduto({ valor, label, marcadoInicial, regra }: { valor: string; label: string; marcadoInicial: boolean; regra?: RegraRemuneracao }) {
+function LinhaProduto({ valor, label, marcadoInicial, regra, semRemuneracao }: { valor: string; label: string; marcadoInicial: boolean; regra?: RegraRemuneracao; semRemuneracao?: boolean }) {
   const [marcado, setMarcado] = useState(marcadoInicial);
   const [tipo, setTipo] = useState<string>(regra?.tipo ?? "padrao");
   return (
@@ -149,7 +150,7 @@ function LinhaProduto({ valor, label, marcadoInicial, regra }: { valor: string; 
         <input type="checkbox" name="produtos_parceiro" value={valor} checked={marcado} onChange={(e) => setMarcado(e.target.checked)} className="h-4 w-4 shrink-0 accent-[#24476B]" />
         {label}
       </label>
-      {marcado && (
+      {marcado && !semRemuneracao && (
         <div className="mt-2 grid min-w-0 gap-2 pl-6">
           {/* Select em largura total + valor/% na linha de baixo: no celular o
               select estourava a borda do card (Wilson, 05/nov/2026). */}
@@ -183,7 +184,7 @@ function LinhaProduto({ valor, label, marcadoInicial, regra }: { valor: string; 
   );
 }
 
-function ProdutosParceiro({ inicial, unidadesIniciais, remuneracao, ajuda }: { inicial?: string[]; unidadesIniciais?: UnidadeCrm[]; remuneracao?: RemuneracaoProdutos; ajuda: string }) {
+function ProdutosParceiro({ inicial, unidadesIniciais, remuneracao, ajuda, semRemuneracao }: { inicial?: string[]; unidadesIniciais?: UnidadeCrm[]; remuneracao?: RemuneracaoProdutos; ajuda: string; semRemuneracao?: boolean }) {
   // 1º a unidade de negócio, depois os produtos dela (Wilson, 29/out/2026).
   const [unidades, setUnidades] = useState<UnidadeCrm[]>(unidadesIniciais ?? []);
   const grupos = PRODUTOS_PARCEIRO_GRUPOS.filter((g) => unidades.includes(g.unidade));
@@ -224,7 +225,7 @@ function ProdutosParceiro({ inicial, unidadesIniciais, remuneracao, ajuda }: { i
                 <legend className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[#626B75]">{g.crm}</legend>
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,15rem),1fr))] gap-1.5">
                   {g.produtos.map((p) => (
-                    <LinhaProduto key={p.valor} valor={p.valor} label={p.label} marcadoInicial={!!inicial?.includes(p.valor)} regra={remuneracao?.[p.valor]} />
+                    <LinhaProduto key={p.valor} valor={p.valor} label={p.label} marcadoInicial={!!inicial?.includes(p.valor)} regra={remuneracao?.[p.valor]} semRemuneracao={semRemuneracao} />
                   ))}
                 </div>
               </fieldset>
@@ -296,7 +297,7 @@ export function PainelUsuario({
   const [papel, setPapel] = useState<string>(usuario ? usuario.papel ?? "sem_acesso" : "parceiro_agencia");
   const tipo = papel === "parceiro_agencia" ? "agencia" : papel === "empreiteira" ? "empreiteira" : null;
   // Parceiro da agência e afiliado parceiro usam o mesmo perfil (portal de leads).
-  const opcoes = empresas.filter((e) => e.tipo === tipo || (tipo === "agencia" && e.tipo === "afiliado"));
+  const opcoes = empresas.filter((e) => e.tipo === tipo || (tipo === "agencia" && (e.tipo === "afiliado" || e.tipo === "promotor")));
   const descricao = PERFIS.find((p) => p.valor === papel)?.descricao;
   const formId = editando ? "form-editar-usuario" : "form-novo-usuario";
 
@@ -403,7 +404,7 @@ export function PainelUsuario({
           {tipo && (
             <div>
               <label className={LABEL} htmlFor="u-empresa">
-                {tipo === "agencia" ? "Parceiro da agência ou afiliado" : "Empreiteira"}
+                {tipo === "agencia" ? "Parceiro da agência, afiliado ou promotor" : "Empreiteira"}
               </label>
               {opcoes.length === 0 ? (
                 <p className="rounded-xl border border-[#946200]/20 bg-[#FFF4DB] px-3 py-2 text-sm text-[#6F4A00]">
@@ -501,6 +502,43 @@ export function PainelSenha({ usuario, onFechar }: { usuario: UsuarioAcesso; onF
   );
 }
 
+// Programa de Promotores (migração 042): nível e código AJISAI-NOME. A
+// comissão vem da tabela do programa — sem % nem valor fixo por empresa.
+function CamposPromotor({ nivel, codigo, nome, estado }: { nivel?: string | null; codigo?: string | null; nome: string; estado: ResultadoAcesso | null }) {
+  const [nivelAtual, setNivelAtual] = useState<string>(nivel ?? "bronze");
+  const v = VALORES_PROMOTOR[isNivelPromotor(nivelAtual) ? nivelAtual : "bronze"];
+  return (
+    <div className="space-y-4 rounded-xl border border-[#E6E9ED] p-4">
+      <fieldset>
+        <legend className={LABEL}>Nível do promotor</legend>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {NIVEIS_PROMOTOR.map((n) => (
+            <label key={n.id} className={`flex cursor-pointer gap-2 rounded-lg border px-3 py-2 text-sm ${nivelAtual === n.id ? "border-[#24476B] bg-white" : "border-[#D5DAE0] bg-white/60"}`}>
+              <input type="radio" name="nivel_promotor" value={n.id} checked={nivelAtual === n.id} onChange={() => setNivelAtual(n.id)} className="mt-0.5 h-4 w-4 accent-[#24476B]" />
+              <span>
+                <span className="block font-medium text-[#20252B]">{n.label}</span>
+                <span className="block text-[12px] text-[#626B75]">{n.meta}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <p className="mt-2 text-[13px] text-[#626B75]">
+          Pacote {formatarIeneP(v.pacote)}/passageiro · passagem avulsa {formatarIeneP(v.passagem)}/bilhete · contratação {formatarIeneP(v.contratacao)} · vaga incentivada {formatarIeneP(v.incentivada)}. Revisão em jan, abr, jul e out.
+        </p>
+        <ErroDoCampo estado={estado} campo="nivel_promotor" />
+      </fieldset>
+      <div>
+        <label className={LABEL} htmlFor="e-codigo-promotor">
+          Código do promotor (etiqueta no WhatsApp)
+        </label>
+        <input id="e-codigo-promotor" name="codigo_promotor" defaultValue={codigo ?? ""} placeholder={codigoPromotorDoNome(nome || "nome")} className={`${CAMPO} font-mono uppercase`} maxLength={31} aria-invalid={estado?.campo === "codigo_promotor"} />
+        <p className="mt-1 text-[13px] text-[#626B75]">Vazio = gerado do nome. A equipe marca este código no primeiro contato; sem código no primeiro contato, a venda não é atribuída.</p>
+        <ErroDoCampo estado={estado} campo="codigo_promotor" />
+      </div>
+    </div>
+  );
+}
+
 // ── Empresa: nova / editar ───────────────────────────────────────
 export function PainelEmpresa({
   empresa,
@@ -509,14 +547,14 @@ export function PainelEmpresa({
   onFechar,
 }: {
   empresa?: EmpresaAcesso;
-  tipoInicial?: "agencia" | "empreiteira" | "afiliado";
+  tipoInicial?: "agencia" | "empreiteira" | "afiliado" | "promotor";
   slugsEmUso: string[];
   onFechar: () => void;
 }) {
   const editando = !!empresa;
   const [estado, acao, pendente] = useActionState(editando ? editarParceiro : criarParceiro, null);
   const [nome, setNome] = useState(empresa?.nome ?? "");
-  const [tipo, setTipo] = useState<"agencia" | "empreiteira" | "afiliado">(empresa?.tipo ?? tipoInicial);
+  const [tipo, setTipo] = useState<"agencia" | "empreiteira" | "afiliado" | "promotor">(empresa?.tipo ?? tipoInicial);
   const comLink = tipo !== "empreiteira";
   const [avancado, setAvancado] = useState(false);
   const [slugManual, setSlugManual] = useState(editando ? empresa!.slug : "");
@@ -568,7 +606,7 @@ export function PainelEmpresa({
           {editando ? (
             <>
               <input type="hidden" name="tipo" value={tipo} />
-              <p className="text-sm text-[#20252B]">{tipo === "agencia" ? "Parceiro da agência" : tipo === "afiliado" ? "Afiliado parceiro" : "Empreiteira"}</p>
+              <p className="text-sm text-[#20252B]">{tipo === "agencia" ? "Parceiro da agência" : tipo === "afiliado" ? "Afiliado parceiro" : tipo === "promotor" ? "Promotor (influenciador)" : "Empreiteira"}</p>
               <p className="text-[13px] text-[#626B75]">O tipo não muda depois do cadastro, porque os usuários vinculados dependem dele.</p>
             </>
           ) : (
@@ -577,6 +615,7 @@ export function PainelEmpresa({
                 [
                   { v: "agencia", t: "Parceiro da agência", d: "Gera leads pelo link de indicação." },
                   { v: "afiliado", t: "Afiliado parceiro", d: "Indica clientes pelo link e recebe comissão." },
+                  { v: "promotor", t: "Promotor (influenciador)", d: "Programa de Promotores: valor fixo por passageiro e por contratado, por nível." },
                   { v: "empreiteira", t: "Empreiteira", d: "Vê candidatos das vagas vinculadas." },
                 ] as const
               ).map((o) => (
@@ -595,14 +634,19 @@ export function PainelEmpresa({
 
         <CampoLogo atual={empresa?.logoUrl} estado={estado} />
 
-        <CamposRemuneracao inicial={empresa?.remuneracao} estado={estado} />
+        {tipo === "promotor" ? (
+          <CamposPromotor nivel={empresa?.nivelPromotor} codigo={empresa?.codigoPromotor} nome={nome} estado={estado} />
+        ) : (
+          <CamposRemuneracao inicial={empresa?.remuneracao} estado={estado} />
+        )}
 
         {comLink && (
           <ProdutosParceiro
             inicial={empresa?.produtos}
             unidadesIniciais={empresa?.unidades}
             remuneracao={empresa?.remuneracaoProdutos}
-            ajuda="Marque os produtos e, em cada um, a remuneração — ou deixe a padrão (acima). Em cada unidade, nenhum marcado = todos os produtos dela."
+            semRemuneracao={tipo === "promotor"}
+            ajuda={tipo === "promotor" ? "Marque os produtos que o promotor vê no portal. Em cada unidade, nenhum marcado = todos os produtos dela." : "Marque os produtos e, em cada um, a remuneração — ou deixe a padrão (acima). Em cada unidade, nenhum marcado = todos os produtos dela."}
           />
         )}
 
@@ -660,7 +704,7 @@ export function PainelEmpresa({
               <summary className="cursor-pointer font-medium text-[#20252B]">Como funciona a indicação</summary>
               <ul className="mt-2 list-disc space-y-1 pl-5">
                 <li>O link funciona em qualquer página do site, por exemplo alpinea.io/produtos/jrpass?parceiro={slug || "codigo"}.</li>
-                <li>O código fica guardado no navegador do cliente por 30 dias; quem se cadastrar nesse período entra como lead do parceiro.</li>
+                <li>Vale o primeiro código que o cliente abriu. Viagem: quem fizer o pedido em até {tipo === "promotor" ? 90 : 30} dias entra como lead {tipo === "promotor" ? "do promotor" : "do parceiro"}; emprego: candidatura em até 60 dias.</li>
                 <li>Leads também podem ser atribuídos ao parceiro manualmente, na ficha do cliente.</li>
                 <li>Empresa desativada deixa de receber novos leads e seus usuários perdem o acesso; os leads já atribuídos continuam registrados.</li>
               </ul>

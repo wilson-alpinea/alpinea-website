@@ -7,6 +7,9 @@ import { GRUPOS_COMISSAO, ITENS_COMISSAO, formatarIene, lerValores } from "@/app
 import { MULT_SEGURO_VENDEDOR } from "@/app/lib/margemSeguroViagemParceiro";
 import { carregarTabelaPadrao } from "@/lib/crm/comissaoVendas";
 import { salvarRegrasBeneficiario, salvarTabelaComissoes } from "@/app/crm/comissoesActions";
+import { desfazerPagamentoComissao, marcarPagamentoComissao } from "@/app/crm/promotoresActions";
+import { extratosGerais, hojeSP } from "@/lib/crm/portalComissoes";
+import { NIVEIS_PROMOTOR, VALORES_PROMOTOR, formatarDataCurta, formatarIeneP, rotuloMes } from "@/lib/crm/programaPromotores";
 
 // Comissões por serviço (Wilson, 04/nov/2026 — migração 038), só admin:
 // tabela padrão em ienes, exceções por empresa parceira (PJ) ou consultor
@@ -36,6 +39,13 @@ export default async function ComissoesPage({ searchParams }: { searchParams: Pr
     db.from("perfis").select("*").in("papel", ["consultor", "parceiro_agencia"]).order("nome"),
     db.from("comissoes_vendas").select("cliente_id, origem, updated_at, updated_by_email, clientes(nome)").eq("status", "rascunho").order("updated_at", { ascending: false }).limit(50),
   ]);
+  // Programa de Promotores (migração 042): extratos mensais e pagamentos.
+  const [{ extratos, erro: semMigracao042 }, rRascProm] = await Promise.all([
+    extratosGerais(db),
+    db.from("promotor_comissoes").select("cliente_id, candidatura_id, updated_at, updated_by_email, parceiros(nome)").eq("status", "rascunho").order("updated_at", { ascending: false }).limit(50),
+  ]);
+  const hoje = hojeSP();
+  const rascunhosPromotor = (rRascProm.data ?? []) as unknown as { cliente_id: string | null; candidatura_id: string | null; updated_at: string; updated_by_email: string | null; parceiros: { nome: string } | null }[];
 
   const linhas: Linha[] = [
     ...(rPar.data ?? []).map((p) => ({
@@ -89,6 +99,139 @@ export default async function ComissoesPage({ searchParams }: { searchParams: Pr
           </ul>
         </section>
       )}
+
+      <section id="extratos" className={`mt-6 scroll-mt-28 ${CARTAO}`}>
+        <h2 className="text-lg font-medium text-[#20252B]">Extratos e pagamentos</h2>
+        <p className="mt-1 max-w-3xl text-[13px] text-[#626B75]">
+          O que cada parceiro vê no portal é este mesmo extrato. Promotores: em ienes, pela Ajisai Japan, até o dia 15 do mês seguinte à liberação. Agências, afiliados e
+          consultores: comissões aprovadas no cliente, em reais, até o 10º dia útil do mês seguinte à aprovação. Ao marcar como pago, o parceiro vê a data no portal.
+        </p>
+        {semMigracao042 && <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">Rode a migração 042 no Supabase para ver os extratos dos promotores e marcar pagamentos.</p>}
+        {rascunhosPromotor.length > 0 && (
+          <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50/50 p-4">
+            <p className="text-sm font-medium text-[#20252B]">Comissões de promotor para aprovar ({rascunhosPromotor.length})</p>
+            <ul className="mt-2 space-y-1 text-[13px]">
+              {rascunhosPromotor.map((r) => {
+                const href = r.cliente_id ? `/crm/clientes/${r.cliente_id}#comissao-promotor` : `/crm/empregos/${r.candidatura_id}#comissao-promotor`;
+                return (
+                  <li key={href}>
+                    <Link href={href} className="font-medium text-[#24476B] underline-offset-2 hover:underline">
+                      {r.parceiros?.nome ?? "Promotor"} · {r.cliente_id ? "viagem" : "emprego"}
+                    </Link>
+                    <span className="text-[#626B75]"> · {dataHora(r.updated_at)}{r.updated_by_email ? ` · ${r.updated_by_email}` : ""}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+        {extratos.length === 0 ? (
+          <p className="mt-3 text-sm text-[#626B75]">Nenhuma comissão aprovada ainda.</p>
+        ) : (
+          <ul className="mt-4 space-y-3">
+            {extratos.map((b) => (
+              <li key={b.chave} className="rounded-xl border border-black/10">
+                <details>
+                  <summary className="flex cursor-pointer flex-wrap items-baseline justify-between gap-2 px-4 py-3">
+                    <span className="text-sm font-medium text-[#20252B]">
+                      {b.nome} <span className="font-normal text-[#626B75]">· {b.tipo === "promotor" ? "promotor" : b.tipo === "empresa" ? "empresa parceira" : "consultor"}</span>
+                    </span>
+                    <span className="text-[13px] text-[#626B75]">
+                      {b.meses.filter((m) => !m.pago && m.total > 0).length} mês(es) a pagar
+                    </span>
+                  </summary>
+                  <ul className="divide-y divide-black/5 border-t border-black/10">
+                    {b.meses.slice(0, 12).map((m) => {
+                      const valor = m.moeda === "JPY" ? formatarIeneP(m.total) : m.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                      const atrasado = !m.pago && m.total > 0 && m.prazo < hoje;
+                      return (
+                        <li key={m.mes} className="px-4 py-3">
+                          <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
+                            <span className="font-medium text-[#20252B]">
+                              {rotuloMes(m.mes)} · <span className="tabular-nums">{valor}</span>
+                            </span>
+                            <span className={`text-[13px] ${m.pago ? "text-emerald-700" : atrasado ? "text-red-700" : "text-[#626B75]"}`}>
+                              {m.pago ? `Pago em ${formatarDataCurta(m.pago.pago_em)}` : m.total <= 0 ? "Sem valor a pagar (descontos)" : `${atrasado ? "Atrasado — " : ""}pagar até ${formatarDataCurta(m.prazo)}`}
+                            </span>
+                          </div>
+                          <ul className="mt-1 space-y-0.5 text-[12px] text-[#626B75]">
+                            {m.itens.map((i, k) => (
+                              <li key={k} className="flex justify-between gap-3">
+                                <span>
+                                  {i.lead} — {i.descricao}
+                                </span>
+                                <span className="tabular-nums">{m.moeda === "JPY" ? formatarIeneP(i.valor) : i.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          {m.pago ? (
+                            <form action={desfazerPagamentoComissao.bind(null, b.chave, m.mes)} className="mt-2">
+                              <button type="submit" className="text-[13px] text-[#626B75] underline underline-offset-2 hover:text-[#20252B]">
+                                Desfazer pagamento
+                              </button>
+                            </form>
+                          ) : (
+                            m.total > 0 && (
+                              <form action={marcarPagamentoComissao.bind(null, b.chave, m.mes, m.moeda, m.total)} className="mt-2 flex flex-wrap items-end gap-2">
+                                <label className="text-[12px] text-[#626B75]">
+                                  Pago em
+                                  <input type="date" name="pago_em" required defaultValue={hoje} className="mt-0.5 block rounded-lg border border-black/15 px-2 py-1 text-sm" />
+                                </label>
+                                <label className="min-w-0 flex-1 text-[12px] text-[#626B75]">
+                                  Observação (ex.: nº da transferência)
+                                  <input name="observacao" maxLength={500} className="mt-0.5 block w-full rounded-lg border border-black/15 px-2 py-1 text-sm" />
+                                </label>
+                                <button type="submit" className="rounded-xl bg-[#24476B] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#2C5480]">
+                                  Marcar como pago
+                                </button>
+                              </form>
+                            )
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className={`mt-6 ${CARTAO}`}>
+        <h2 className="text-lg font-medium text-[#20252B]">Programa de Promotores — valores por nível (¥)</h2>
+        <p className="mt-1 text-[13px] text-[#626B75]">
+          Valor fixo por resultado validado. O nível de cada promotor é definido em Acessos e revisado em jan, abr, jul e out; a comissão grava o nível do dia da aprovação.
+        </p>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full min-w-[520px] text-sm">
+            <thead>
+              <tr className="text-left text-[13px] text-[#626B75]">
+                <th className="py-1.5 font-normal">Nível</th>
+                <th className="py-1.5 text-right font-normal">Pacote · passageiro</th>
+                <th className="py-1.5 text-right font-normal">Passagem avulsa · bilhete</th>
+                <th className="py-1.5 text-right font-normal">Contratação</th>
+                <th className="py-1.5 text-right font-normal">Vaga incentivada</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-black/5">
+              {NIVEIS_PROMOTOR.map((n) => (
+                <tr key={n.id}>
+                  <td className="py-2">
+                    {n.label}
+                    <span className="block text-[12px] text-[#8A929B]">{n.meta}</span>
+                  </td>
+                  <td className="py-2 text-right tabular-nums">{formatarIeneP(VALORES_PROMOTOR[n.id].pacote)}</td>
+                  <td className="py-2 text-right tabular-nums">{formatarIeneP(VALORES_PROMOTOR[n.id].passagem)}</td>
+                  <td className="py-2 text-right tabular-nums">{formatarIeneP(VALORES_PROMOTOR[n.id].contratacao)}</td>
+                  <td className="py-2 text-right tabular-nums">{formatarIeneP(VALORES_PROMOTOR[n.id].incentivada)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-2 text-[12px] text-[#8A929B]">Viagem: 50% na quitação e 50% no mês seguinte ao embarque; cancelamento desconta os 50% já pagos. Emprego: paga quando o contratado completa 30 dias.</p>
+      </section>
 
       <form action={salvarTabelaComissoes} className={`mt-6 ${CARTAO}`}>
         <div className="flex flex-wrap items-baseline justify-between gap-3">

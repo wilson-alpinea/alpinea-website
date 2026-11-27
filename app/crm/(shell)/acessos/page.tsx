@@ -41,7 +41,7 @@ export default async function AcessosPage() {
     tipo: x.remuneracao_tipo === "percentual" || x.remuneracao_tipo === "fixo" ? x.remuneracao_tipo : null,
     valor: x.remuneracao_valor == null ? null : Number(x.remuneracao_valor),
   });
-  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p), produtos: lerProdutosParceiro(p.produtos), unidades: lerUnidadesParceiro(p.unidades), remuneracaoProdutos: lerRemuneracaoProdutos(p.remuneracao_produtos), logoUrl: (p.logo_url as string | null) ?? null }));
+  const empresas: EmpresaAcesso[] = (rParceiros.data ?? []).map((p) => ({ id: p.id, nome: p.nome, slug: p.slug, tipo: p.tipo, ativo: p.ativo, remuneracao: remun(p), produtos: lerProdutosParceiro(p.produtos), unidades: lerUnidadesParceiro(p.unidades), remuneracaoProdutos: lerRemuneracaoProdutos(p.remuneracao_produtos), logoUrl: (p.logo_url as string | null) ?? null, nivelPromotor: (p.nivel_promotor as string | null) ?? null, codigoPromotor: (p.codigo_promotor as string | null) ?? null }));
   const usuarios: UsuarioAcesso[] = (rPerfis.data ?? []).map((u) => ({
     id: u.id,
     nome: u.nome ?? null,

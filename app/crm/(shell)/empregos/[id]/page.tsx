@@ -2,6 +2,9 @@ import Link from "next/link";
 import { donoObrigatorio, obterAcesso } from "@/lib/crm/acesso";
 import { VoltarLista } from "../../components/VoltarLista";
 import { CardsCandidatura } from "./CardsCandidatura";
+import { ComissaoPromotorCard } from "../../components/ComissaoPromotorCard";
+import { inicioTrabalho } from "@/lib/crm/portalComissoes";
+import { definirParceiroCandidatura } from "@/app/crm/promotoresActions";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -93,10 +96,10 @@ export default async function CandidatoPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ salvo?: string; erro?: string }>;
+  searchParams: Promise<{ salvo?: string; erro?: string; promotorOk?: string; promotorErro?: string }>;
 }) {
   const { id } = await params;
-  const { salvo, erro } = await searchParams;
+  const { salvo, erro, promotorOk, promotorErro } = await searchParams;
   const supabase = await createClient();
   const { data: c, error } = await supabase.from("candidaturas_vagas").select("*").eq("id", id).maybeSingle();
   if (error) console.error("Erro ao carregar candidatura:", error);
@@ -162,6 +165,10 @@ export default async function CandidatoPage({
   // automáticas e as posteriores (empreiteira, COE, visto, embarque).
   // Linha do tempo compartilhada com o portal da empreiteira.
   const andamento = lerAndamentoManual(c.andamento_manual);
+  // Parceiro/promotor que indicou (migração 042 — Programa de Promotores).
+  const { data: parceirosLista } = await createAdminClient().from("parceiros").select("*").in("tipo", ["agencia", "afiliado", "promotor"]).order("nome");
+  const parceiroCand = (parceirosLista ?? []).find((p) => p.id === c.parceiro_id) ?? null;
+  const salvarParceiroCand = definirParceiroCandidatura.bind(null, id);
   const linhaTempo = linhaTempoCandidatura(c, entrevista ?? null);
   const etapasPendentes = linhaTempo.filter((e) => e.id && !e.ok);
   const registrarAndamento = registrarAndamentoCandidatura.bind(null, id);
@@ -598,6 +605,42 @@ export default async function CandidatoPage({
               </>
             )}
           </section>
+
+          {/* Indicação (Programa de Promotores — Wilson, 27/nov/2026). */}
+          <section id="indicacao" className={`scroll-mt-28 ${CARTAO} border-t-[#9A3D5C]`}>
+            <h2 className="text-[#202B28]">Indicação</h2>
+            <p className="mt-1 text-[13px] text-[#626E69]">
+              {parceiroCand
+                ? `${parceiroCand.tipo === "promotor" ? "Promotor" : parceiroCand.tipo === "afiliado" ? "Afiliado" : "Parceiro"}: ${parceiroCand.nome}${parceiroCand.codigo_promotor ? ` · ${parceiroCand.codigo_promotor}` : ""}${c.canal === "parceiro" && c.utm ? " · pelo link de indicação" : ""}`
+                : "Sem parceiro ou promotor. Marque aqui o código informado no primeiro contato (etiqueta do WhatsApp)."}
+            </p>
+            <form action={salvarParceiroCand} className="mt-3 flex flex-wrap items-end gap-2">
+              <select name="parceiro_id" defaultValue={c.parceiro_id ?? ""} aria-label="Parceiro ou promotor que indicou" className="min-w-0 flex-1 rounded-lg border border-black/15 px-3 py-2 text-sm">
+                <option value="">Nenhum (candidatura direta)</option>
+                {(parceirosLista ?? []).map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome}
+                    {p.tipo === "promotor" ? ` (promotor${p.codigo_promotor ? ` · ${p.codigo_promotor}` : ""})` : p.tipo === "afiliado" ? " (afiliado)" : ""}
+                    {p.ativo ? "" : " — inativo"}
+                  </option>
+                ))}
+              </select>
+              <button type="submit" className="rounded-xl border border-black/15 px-4 py-2 text-sm text-[#20252B] hover:border-black/40">
+                Salvar
+              </button>
+            </form>
+            {promotorErro && !parceiroCand && <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm text-red-700">{promotorErro}</p>}
+          </section>
+
+          {parceiroCand?.tipo === "promotor" && (
+            <ComissaoPromotorCard
+              origem="candidatura"
+              id={id}
+              promotor={parceiroCand}
+              fatos={{ inicioEm: inicioTrabalho(c.andamento_manual) }}
+              mensagem={{ ok: promotorOk === "1", erro: promotorErro }}
+            />
+          )}
 
           <section id="andamento" className="scroll-mt-28 rounded-2xl border border-t-[3px] border-[#DEE6E2] border-t-[#27675B] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
             <h2 className="text-[#202B28]">Andamento</h2>

@@ -80,6 +80,7 @@ export async function calcularComissoes(meses: string[]): Promise<ResumoComissoe
     return { nome, tipo: Object.keys(porProduto).length ? "por_produto" : r!.tipo, valor: r?.valor ?? 0, porProduto, ...(r ? { padrao: r } : {}) } as Regra & { padrao?: { tipo: "percentual" | "fixo"; valor: number } };
   };
   for (const p of rPar.data ?? []) {
+    if (p.tipo === "promotor") continue; // Programa de Promotores: extrato próprio, em ienes (migração 042)
     const r = montar(p.nome, p);
     if (r) empresas.set(p.id, r);
   }

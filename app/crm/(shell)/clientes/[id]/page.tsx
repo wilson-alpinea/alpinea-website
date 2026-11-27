@@ -39,6 +39,8 @@ import {
 } from "@/lib/crm/processo";
 import { FinanceiroSection } from "./financeiro/FinanceiroSection";
 import { ComissaoVendaCard } from "./ComissaoVendaCard";
+import { ComissaoPromotorCard } from "../../components/ComissaoPromotorCard";
+import { datasQuitacao } from "@/lib/crm/portalComissoes";
 import { NotasFiscaisServico } from "../../components/NotasFiscaisServico";
 import { carregarFinanceiro } from "./financeiro/carregar";
 import { ConfirmacaoCadastro } from "./ConfirmacaoCadastro";
@@ -57,7 +59,7 @@ export default async function ClienteDetalhePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ erro?: string; criado?: string; receber?: string; comissaoOk?: string; comissaoErro?: string }>;
+  searchParams: Promise<{ erro?: string; criado?: string; receber?: string; comissaoOk?: string; comissaoErro?: string; promotorOk?: string; promotorErro?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -141,11 +143,12 @@ export default async function ClienteDetalhePage({
   // Financeiro (Wilson, 22/out/2026): parcelas, recebimentos e histórico.
   const financeiro = await carregarFinanceiro(supabase, cliente);
 
-  // Parceiros da agência para atribuição manual do lead (migração 021).
+  // Parceiros para atribuição manual do lead (migração 021): agência,
+  // afiliado e promotor (migração 042 — etiqueta do primeiro contato).
   const { data: parceirosAgencia } = await supabase
     .from("parceiros")
-    .select("id, nome, ativo")
-    .eq("tipo", "agencia")
+    .select("*")
+    .in("tipo", ["agencia", "afiliado", "promotor"])
     .order("nome");
   const parceiroDoLead = (parceirosAgencia ?? []).find((p) => p.id === cliente.parceiro_id);
   const arquivado = Boolean(cliente.arquivado_em);
@@ -263,7 +266,7 @@ export default async function ClienteDetalhePage({
           </p>
           {parceiroDoLead && (
             <span className="ml-2 mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-[13px] font-semibold text-amber-800">
-              Parceiro: {parceiroDoLead.nome}
+              {parceiroDoLead.tipo === "promotor" ? "Promotor" : parceiroDoLead.tipo === "afiliado" ? "Afiliado" : "Parceiro"}: {parceiroDoLead.nome}
             </span>
           )}
           {arquivado && (
@@ -462,7 +465,17 @@ export default async function ClienteDetalhePage({
       <div className="mt-6">
         <FinanceiroSection clienteId={id} {...financeiro} abrirRecebimento={sp.receber ?? null} />
         <NotasFiscaisServico origem="agencia" registroId={id} concluido={cliente.estagio_entrega === "concluida"} />
-        <ComissaoVendaCard clienteId={id} cliente={cliente} mensagem={{ ok: sp.comissaoOk === "1", erro: sp.comissaoErro }} />
+        {parceiroDoLead?.tipo === "promotor" ? (
+          <ComissaoPromotorCard
+            origem="cliente"
+            id={id}
+            promotor={parceiroDoLead}
+            fatos={{ quitadoEm: (await datasQuitacao([cliente])).get(cliente.id) ?? null, embarque: cliente.data_viagem ?? null }}
+            mensagem={{ ok: sp.promotorOk === "1", erro: sp.promotorErro }}
+          />
+        ) : (
+          <ComissaoVendaCard clienteId={id} cliente={cliente} mensagem={{ ok: sp.comissaoOk === "1", erro: sp.comissaoErro }} />
+        )}
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">

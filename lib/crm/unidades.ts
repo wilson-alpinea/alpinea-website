@@ -147,4 +147,7 @@ export function urlUnidade(unidade: UnidadeCrm): string {
 
 // Cookie do link de indicação (?parceiro=<slug>).
 export const COOKIE_INDICACAO = "alpinea_parceiro";
+// Dia em que o código foi registrado (Programa de Promotores, 27/nov/2026):
+// vale o primeiro código, e a janela de atribuição conta a partir daqui.
+export const COOKIE_INDICACAO_EM = "alpinea_parceiro_em";
 export const SLUG_PARCEIRO = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/;
